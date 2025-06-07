@@ -1,0 +1,112 @@
+import React from "react";
+import AuthenLayout from "../layouts/Authen";
+import SignIn from "../pages/SignIn";
+import { MainLayout } from "../layouts/Main";
+import Customers from "../pages/Customers";
+import Users from "../pages/Users";
+import {
+  ACCOUNT_DETAIL_ROUTE,
+  ACCOUNT_ROUTE,
+  AUTHORIZATION_ROUTE,
+  CUSTOMER_ROUTE,
+  HOME_ROUTE,
+  ROLE_GROUPS_CREATE_ROUTE,
+  TICKET_ROUTE,
+  USER_ROUTE,
+  VIDEO_ROUTE,
+} from "src/constants/routes.constants";
+import Tickets from "src/pages/Tickets";
+
+const AccountDetailPage = React.lazy(() => import("src/pages/AccountDetail"));
+const AccountsPage = React.lazy(() => import("src/pages/Accounts"));
+const AuthorizationsPage = React.lazy(() => import("src/pages/Authorizations"));
+const RoleGroupCreatePage = React.lazy(
+  () => import("src/pages/RoleGroupCreate")
+);
+const Home = React.lazy(() => import("../pages/Home"));
+const Video = React.lazy(() => import("../pages/Video"));
+export const routes = [
+  {
+    key: "unauthen",
+    layout: AuthenLayout,
+    routes: [
+      {
+        path: "/signin",
+        name: "SignIn",
+        key: "signin",
+        isProtect: false,
+        component: SignIn,
+      },
+    ],
+  },
+  {
+    key: "main",
+    layout: MainLayout,
+    routes: [
+      {
+        path: HOME_ROUTE,
+        isProtect: true,
+        key: "home",
+        name: "Home",
+        component: Home,
+      },
+      {
+        path: VIDEO_ROUTE,
+        isProtect: true,
+        key: "video",
+        name: "Video",
+        component: Video,
+      },
+      
+      {
+        path: CUSTOMER_ROUTE,
+        isProtect: true,
+        key: "quan-ly-khach-hang",
+        name: "Customers",
+        component: Customers,
+      },
+      {
+        path: TICKET_ROUTE,
+        isProtect: true,
+        key: "ticket",
+        name: "Tickets",
+        component: Tickets,
+      },
+      {
+        path: USER_ROUTE,
+        isProtect: true,
+        key: "users",
+        name: "Users",
+        component: Users,
+      },
+      {
+        path: ACCOUNT_ROUTE,
+        isProtect: true,
+        key: "accounts",
+        name: "accounts",
+        component: AccountsPage,
+      },
+      {
+        path: ACCOUNT_DETAIL_ROUTE,
+        isProtect: true,
+        key: "accountDetail",
+        name: "accountDetail",
+        component: AccountDetailPage,
+      },
+      {
+        path: AUTHORIZATION_ROUTE,
+        isProtect: true,
+        key: "authorizations",
+        name: "authorizations",
+        component: AuthorizationsPage,
+      },
+      {
+        path: ROLE_GROUPS_CREATE_ROUTE,
+        isProtect: true,
+        key: "roleGroupCreate",
+        name: "roleGroupCreate",
+        component: RoleGroupCreatePage,
+      },
+    ],
+  },
+];

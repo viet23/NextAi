@@ -1,0 +1,60 @@
+{
+  "common": {
+    "all": "Tất cả"
+  },
+  "home": {
+    "title": "Hệ thống merchant site !",
+    "account_info": "Thông tin tài khoản"
+  },
+  "signin": {
+    "title": "Đăng nhập"
+  },
+  "vitual_accounts": {
+    "form_search": {
+      "title": "Tìm kiếm",
+      "date_ranger": "Từ ngày - Đến ngày",
+      "va_account_number": "Số tài khoản VA",
+      "bank": "Ngân hàng",
+      "status": "Trạng thái",
+      "button": {
+        "reset": "Làm mới",
+        "search": "Tìm kiếm",
+        "create_account": "Tạo mới tài khoản"
+      }
+    },
+    "list": {
+      "title": "Danh sách tài khoản VA",
+      "table": {
+        "columns": {
+          "va_account_number": "Số tài khoản VA",
+          "va_account_name": "Tên tài khoản VA",
+          "status": "Trạng thái",
+          "va_account_bank": "Ngân hàng",
+          "bank": "Ngân hàng",
+          "created_at": "Ngày tạo",
+          "updated_by": "Tài khoản cập nhật",
+          "detail": "Xem chi tiết"
+        }
+      }
+    },
+    "detail": {
+      "title": "Chi tiết tài khoản VA",
+      "table": {
+        "columns": {
+          "va_trans_code": "Mã giao dịch"
+        }
+      }
+    },
+    "create": {
+      "modal_otp": {
+        "title": "Bạn có muốn yêu cầu đổi tài khoản VA",
+        "description": "Mã xác thực đã được gửi tới {{email}}. Kiểm tra email và nhập xác thực 6 số để tiếp tục",
+        "cancel_text": "Thoat",
+        "button": {
+          "cancel": "Hủy",
+          "confirm": "Xác nhận"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,62 @@
+.authorizations {
+  .title {
+    padding-bottom: 0.75rem;
+
+    &.border-b {
+      border-bottom: 1px solid #d9d9d9;
+    }
+  }
+
+  .group-roles {
+    .list-item {
+      position: relative;
+      height: 3rem;
+      border-bottom: 1px solid #d9d9d9 !important;
+      padding-left: 1.75rem;
+      transition: all 0.2s ease;
+      color: #4a4a4a;
+      font-size: 1rem;
+      cursor: pointer;
+
+      & > div {
+        flex: 1;
+        margin-bottom: 0;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      &:hover div,
+      &.active div {
+        color: #2aa7df !important;
+        font-weight: 600 !important;
+        border-bottom-color: #2aa7df !important;
+      }
+
+      & div::before {
+        content: "";
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        translate: 0 -50%;
+        height: 0.25rem;
+        width: 0.25rem;
+        border-radius: 50%;
+        background-color: currentColor;
+      }
+    }
+
+    .add-btn {
+      height: 2.5rem;
+      width: 3.1875rem;
+      margin-top: 0.5rem;
+    }
+  }
+
+  .roles {
+    .save-btn {
+      margin-bottom: 0.625rem;
+      width: 5.5625rem;
+    }
+  }
+}

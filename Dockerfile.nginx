@@ -1,0 +1,8 @@
+# Sử dụng Nginx chính thức
+FROM nginx:alpine
+
+# Sao chép cấu hình Nginx vào container
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Mở cổng cho Nginx
+EXPOSE 80

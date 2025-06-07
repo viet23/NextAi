@@ -1,0 +1,9 @@
+export const HOME_ROUTE = "/";
+export const VIDEO_ROUTE = "/video";
+export const CUSTOMER_ROUTE = "/quan-ly-khach-hang";
+export const TICKET_ROUTE = "/ticket";
+export const USER_ROUTE = "/quan-ly-nguoi-dung";
+export const ACCOUNT_ROUTE = "/tai-khoan";
+export const ACCOUNT_DETAIL_ROUTE = ACCOUNT_ROUTE + "/:id";
+export const AUTHORIZATION_ROUTE = "/phan-quyen";
+export const ROLE_GROUPS_CREATE_ROUTE = "/phan-quyen/tao-nhom-quyen";

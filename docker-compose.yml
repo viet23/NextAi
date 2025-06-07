@@ -1,0 +1,53 @@
+version: "3.5"
+services:
+  db:
+    image: postgres:latest
+    container_name: db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Gtelpay@2024!.
+      - POSTGRES_DB=gtelpay_v1
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    restart: unless-stopped
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: api
+    environment:
+      - PORT=3001
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=gtelpay_v1
+      - DB_USER=postgres
+      - DB_PASSWORD=Gtelpay@2024!.
+      - DB_EXTERNAL_HOST=172.16.150.101
+      - DB_EXTERNAL_PORT=5432
+      - DB_EXTERNAL_DATABASE=acs
+      - DB_EXTERNAL_USER=postgres
+      - DB_EXTERNAL_PASSWORD=N9dRw58xn4GvS6cobAFKgsk5z5iaiDfsPiCvMHlWHZc
+    ports:
+      - 3001:3001
+    depends_on:
+      - db
+    links:
+      - db:db
+    volumes:
+      - ./api:/usr/src/app
+      - /usr/src/app/node_modules
+  ui:
+    build:
+      context: ./ui-admin-os-bk
+      dockerfile: Dockerfile
+    container_name: ui
+    volumes:
+      - ./ui-admin-os-bk/src:/app/src
+    ports:
+      - 80:80
+    depends_on:
+      - api
+volumes:
+  postgres_data:

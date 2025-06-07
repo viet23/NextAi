@@ -1,0 +1,30 @@
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.mb-0 {
+  margin-bottom: 0;
+}
+
+.table-scroll {
+  &.ant-table-wrapper .ant-table {
+    scrollbar-color: unset;
+  }
+
+  & .ant-table-content,
+  & .ant-table-body {
+    &::-webkit-scrollbar {
+      height: 0.5rem;
+      width: 0.5rem;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #3d84ad;
+      border-radius: 8px;
+    }
+  }
+}
