@@ -158,7 +158,12 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
             placeholder="Nhập link Facebook Page"
             style={{ marginBottom: 16 }}
           />
-          <Button type="primary" loading={loading} onClick={analyzeFacebookPage}>
+          <Button style={{
+            backgroundColor: "#D2E3FC",
+            color: "#000", // màu chữ đen cho dễ đọc
+            border: "1px solid #D2E3FC",
+            borderRadius: 6,
+          }} type="primary" loading={loading} onClick={analyzeFacebookPage}>
             Phân tích page & Gợi ý phát triển kênh
           </Button>
         </div>
@@ -169,15 +174,39 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
             <Title level={4}>📊 Phân tích Page</Title>
             <Card>
               <Title level={5}>THÔNG TIN CHUNG</Title>
-              <TextArea value={analysis.overview} rows={4} readOnly style={{ marginBottom: 12 }} />
+              <TextArea
+                value={analysis.overview}
+                readOnly
+                autoSize
+                style={{ marginBottom: 12, whiteSpace: "pre-wrap" }}
+              />
+
               <Title level={5}>SẢN PHẨM / DỊCH VỤ</Title>
-              <TextArea value={analysis.products} rows={4} readOnly style={{ marginBottom: 12 }} />
+              <TextArea
+                value={analysis.products}
+                readOnly
+                autoSize
+                style={{ marginBottom: 12, whiteSpace: "pre-wrap" }}
+              />
+
               <Title level={5}>TƯƠNG TÁC KHÁCH HÀNG</Title>
-              <TextArea value={analysis.engagement} rows={4} readOnly style={{ marginBottom: 12 }} />
+              <TextArea
+                value={analysis.engagement}
+                readOnly
+                autoSize
+                style={{ marginBottom: 12, whiteSpace: "pre-wrap" }}
+              />
+
               <Title level={5}>CHIẾN LƯỢC TRUYỀN THÔNG</Title>
-              <TextArea value={analysis.strategy} rows={4} readOnly />
+              <TextArea
+                value={analysis.strategy}
+                readOnly
+                autoSize
+                style={{ whiteSpace: "pre-wrap" }}
+              />
             </Card>
           </div>
+
 
           {/* Cột phải */}
           <div style={{ flex: 1, minWidth: 400 }}>

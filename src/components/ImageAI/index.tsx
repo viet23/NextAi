@@ -1,18 +1,52 @@
 import React, { useState } from "react";
-import { Layout, Input, Button, Typography, Card, message } from "antd";
+import { Layout, Input, Button, message } from "antd";
 
 const { Content } = Layout;
-const { Title } = Typography;
 const { TextArea } = Input;
 
 const FullscreenSplitCard = () => {
   const [caption, setCaption] = useState("");
   const [prompt, setPrompt] = useState("");
-  const [imagePrompt, setImagePrompt] = useState(""); // tiếng Anh
   const [imageUrl, setImageUrl] = useState("");
   const [loadingImage, setLoadingImage] = useState(false);
   const [loadingCaption, setLoadingCaption] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+
+  const [resolution, setResolution] = useState("720p");
+  const [ratio, setRatio] = useState("16:9");
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setUploadedImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const res = await fetch("https://api.imgbb.com/1/upload?key=8c9e574f76ebba8ad136a2715581c81c&expiration=1800", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data?.data?.url) {
+        setUploadedImageUrl(data.data.url);
+        message.success("Ảnh đã được tải lên thành công!");
+      } else {
+        message.error("Lỗi tải ảnh lên imgbb.");
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      message.error("Lỗi khi upload ảnh.");
+    }
+  };
 
   const translatePromptToEnglish = async (text: string) => {
     try {
@@ -27,15 +61,7 @@ const FullscreenSplitCard = () => {
           messages: [
             {
               role: "user",
-              content: `
-You are an expert in creating prompts for photorealistic AI image generation.
-
-Given the following Vietnamese description, translate it into an **English prompt**, and **expand it** into a detailed, vivid, and visually rich description including design ideas such as lighting, setting, mood, subject details, background elements, and camera angle.
-
-Make sure the final prompt is optimized for a model like DALL·E 3.
-
-Vietnamese description: "${text}"
-`,
+              content: `Translate and expand into detailed English prompt: "${text}"`,
             },
           ],
           temperature: 0.9,
@@ -46,11 +72,10 @@ Vietnamese description: "${text}"
       const data = await response.json();
       return data?.choices?.[0]?.message?.content?.trim() || "";
     } catch (err) {
-      console.error("Translation/Expansion error:", err);
+      console.error("Translation error:", err);
       return "";
     }
   };
-
 
   const generateImage = async () => {
     if (!prompt) {
@@ -62,45 +87,32 @@ Vietnamese description: "${text}"
     setImgError(false);
 
     try {
-      // Step 1: Translate to English
       const translatedPrompt = await translatePromptToEnglish(prompt);
-
       if (!translatedPrompt) {
         message.error("Failed to translate prompt.");
         return;
       }
 
-      setImagePrompt(translatedPrompt); // Optional: hiển thị cho người dùng
-
-      // Step 2: Generate image with translated prompt
-      const response = await fetch("https://api.openai.com/v1/images/generations", {
+      const response = await fetch("http://31.97.67.219:4001/generate-image", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "dall-e-3", // vẫn là model này cho hình ảnh
           prompt: translatedPrompt,
-          n: 1,
-          size: "1024x1024", // hoặc "1024x1792", "1792x1024" tùy yêu cầu
-          response_format: "b64_json" // có thể đổi thành 'url' nếu muốn link ảnh
+          resolution,
+          ratio,
+          referenceImage: uploadedImageUrl,
         }),
       });
 
-
       const data = await response.json();
-
-      if (data?.data?.[0]?.b64_json) {
-        const base64Image = `data:image/png;base64,${data.data[0].b64_json}`;
-        setImageUrl(base64Image);
+      if (data?.imageUrl) {
+        setImageUrl(data.imageUrl);
       } else {
         message.error("Image generation failed.");
-        console.error("API response:", data);
       }
     } catch (err) {
-      console.error("Error generating image:", err);
-      message.error("Error generating image.");
+      console.error("Image error:", err);
+      message.error("Image generation error.");
     } finally {
       setLoadingImage(false);
     }
@@ -111,11 +123,8 @@ Vietnamese description: "${text}"
       message.warning("Please enter a prompt first.");
       return;
     }
-    console.log('logg-----------',process.env.REACT_APP_OPENAI_API_KEY);
-    
 
     setLoadingCaption(true);
-
     try {
       const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
@@ -128,7 +137,7 @@ Vietnamese description: "${text}"
           messages: [
             {
               role: "user",
-              content: `Viết một caption sáng tạo và hấp dẫn bằng tiếng Việt cho mô tả hình ảnh sau: "${prompt}"`,
+              content: `Viết một caption hấp dẫn bằng tiếng Việt cho mô tả hình ảnh: "${prompt}"`,
             },
           ],
           temperature: 0.8,
@@ -137,16 +146,10 @@ Vietnamese description: "${text}"
       });
 
       const data = await response.json();
-
-      if (data?.choices?.[0]?.message?.content) {
-        setCaption(data.choices[0].message.content.trim());
-      } else {
-        message.error("Caption generation failed.");
-        console.error("Caption API response:", data);
-      }
+      setCaption(data?.choices?.[0]?.message?.content?.trim() || "");
     } catch (error) {
-      console.error("Error generating caption:", error);
-      message.error("Error generating caption.");
+      console.error("Caption error:", error);
+      message.error("Caption generation error.");
     } finally {
       setLoadingCaption(false);
     }
@@ -154,102 +157,99 @@ Vietnamese description: "${text}"
 
   return (
     <Layout style={{ minHeight: "100vh", background: "#fff" }}>
-      <Content style={{ padding: "24px", display: "flex", justifyContent: "center" }}>
-        <div style={{ width: "100%", maxWidth: 1200 }}>
-          <Input
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Mô tả ảnh bằng tiếng Việt"
-            style={{ width: "100%", marginBottom: 16 }}
-          />
+      <Content style={{ padding: 24 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 24, justifyContent: "center" }}>
+          <div style={{ flex: 1, minWidth: 320, maxWidth: 600 }}>
+            <TextArea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Describe your image"
+              rows={5}
+              style={{ marginBottom: 16, fontSize: 16 }}
+            />
+            <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
+              <select
+                style={{ flex: 1, padding: 8, fontSize: 14 }}
+                value={resolution}
+                onChange={(e) => setResolution(e.target.value)}
+              >
+                <option value="" disabled>Image Resolution</option>
+                <option value="720p">720p</option>
+                <option value="1080p">1080p</option>
+              </select>
+              <select
+                style={{ flex: 1, padding: 8, fontSize: 14 }}
+                value={ratio}
+                onChange={(e) => setRatio(e.target.value)}
+              >
+                <option value="" disabled>Image Size</option>
+                <option value="16:9">16:9</option>
+                <option value="9:16">9:16</option>
+                <option value="1:1">1:1</option>
+                <option value="4:3">4:3</option>
+                <option value="3:4">3:4</option>
+                <option value="21:9">21:9</option>
+              </select>
+            </div>
+            <br />
+            <div style={{ textAlign: "center", marginBottom: 16 }}>
+              <Button
+                type="primary"
+                size="large"
+                onClick={() => document.getElementById("upload-image")?.click()}
+                style={{ backgroundColor: "#D2E3FC", color: "#000", border: "1px solid #D2E3FC", borderRadius: 6 }}
+              >
+                Upload product Image
+              </Button>
+              <input
+                id="upload-image"
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={handleImageUpload}
+              />
+            </div>
+            <div style={{ textAlign: "center", marginBottom: 16 }}>
+              <img
+                src={uploadedImage || "https://via.placeholder.com/300x200?text=Upload"}
+                alt="Uploaded"
+                style={{ maxWidth: "100%", height: "auto", objectFit: "contain", opacity: uploadedImage ? 1 : 0.6, borderRadius: 6, border: "1px solid #ccc" }}
+              />
+            </div>
+            <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
+              <Button style={{ backgroundColor: "#D2E3FC", color: "#000", border: "1px solid #D2E3FC", borderRadius: 6 }} type="primary" size="large" onClick={generateImage} loading={loadingImage}>
+                Generate Image
+              </Button>
+              <Button style={{ backgroundColor: "#D2E3FC", color: "#000", border: "1px solid #D2E3FC", borderRadius: 6 }} type="primary" size="large" onClick={generateCaption} loading={loadingCaption}>
+                Generate Caption
+              </Button>
+            </div>
+          </div>
 
-          <div
-            style={{
-              marginBottom: 24,
-              display: "flex",
-              gap: 12,
-              flexWrap: "wrap",
-              justifyContent: "center",
-            }}
-          >
-            <Button type="primary" loading={loadingImage} onClick={generateImage}>
-              Generate Image
-            </Button>
-            <Button type="primary" loading={loadingCaption} onClick={generateCaption}>
-              Generate Caption
-            </Button>
-            <Button type="primary" disabled>
+          <div style={{ flex: 1, minWidth: 320, maxWidth: 600 }}>
+            <div style={{ background: "#f0f0f0", height: 400, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 10, marginBottom: 16, overflow: "hidden" }}>
+              {!imgError && imageUrl ? (
+                <img
+                  src={imageUrl}
+                  alt="Generated"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  onError={() => setImgError(true)}
+                />
+              ) : (
+                <span style={{ color: "#999" }}>No Image</span>
+              )}
+            </div>
+            <TextArea
+              rows={4}
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+              placeholder="Caption"
+              style={{ fontSize: 15, marginBottom: 16 }}
+            />
+            <Button type="primary" style={{ backgroundColor: "#D2E3FC", color: "#000", border: "1px solid #D2E3FC", borderRadius: 6 }} block size="large">
               Post Facebook
             </Button>
           </div>
-
-          <Card
-            style={{ width: "100%", borderRadius: 12, boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
-            bodyStyle={{ padding: 24 }}
-          >
-            <div
-              style={{
-                display: "flex",
-                gap: 24,
-                flexWrap: "wrap",
-                justifyContent: "center",
-                alignItems: "stretch",
-              }}
-            >
-              <div
-                style={{
-                  flex: 1,
-                  minWidth: 300,
-                  backgroundColor: "#f0f0f0",
-                  borderRadius: 12,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  overflow: "hidden",
-                  maxHeight: 400,
-                }}
-              >
-                {!imgError && imageUrl ? (
-                  <img
-                    src={imageUrl}
-                    alt="Generated"
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    onError={() => setImgError(true)}
-                  />
-                ) : (
-                  <span style={{ color: "#999" }}>No Image</span>
-                )}
-              </div>
-
-              <div style={{ flex: 1, minWidth: 300, display: "flex", flexDirection: "column" }}>
-                <Title level={5}>Caption</Title>
-                <TextArea
-                  rows={6}
-                  value={caption}
-                  onChange={(e) => setCaption(e.target.value)}
-                  placeholder="Enter your caption..."
-                  style={{ borderRadius: 8, flex: 1 }}
-                />
-              </div>
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                paddingTop: 24,
-                flexWrap: "wrap",
-                gap: 12,
-              }}
-            >
-              <Button type="primary" onClick={generateImage}>
-                Regenerate
-              </Button>
-              <Button type="primary" onClick={generateCaption}>
-                Regenerate Caption
-              </Button>
-            </div>
-          </Card>
         </div>
       </Content>
     </Layout>

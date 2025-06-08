@@ -39,18 +39,17 @@ export const Sidebar = ({
     <Sider className="sider" width="17.5rem" collapsed={collapsed}>
       <Flex justify="space-between" align="center" className="head">
         {!collapsed && (
-          <Link to="/">
+          <Link to="/" style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <img className="logo" src={Logo} alt="logo" />
           </Link>
-          
         )}
-        <span>NEXT ADS AI</span>
         <NavbarIcon
           fontSize={24}
           cursor="pointer"
           onClick={handleToggleCollapsed}
         />
       </Flex>
+
 
       {!isFetching && (
         <Menu
