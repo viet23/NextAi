@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { HOME_ROUTE } from "src/constants/routes.constants";
+import { IMAGE_ROUTE } from "src/constants/routes.constants";
 import { IRootState } from "src/interfaces/app.interface";
 import { IRole } from "src/interfaces/roles.interface";
 
@@ -9,7 +9,7 @@ interface IProps {
 }
 
 export const usePageAuthorize = ({
-  redirect = HOME_ROUTE,
+  redirect = IMAGE_ROUTE,
   roleNames = [],
 }: IProps) => {
   const authRoles = useSelector<IRootState>(

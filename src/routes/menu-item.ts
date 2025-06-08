@@ -1,14 +1,15 @@
 import { ReactNode, createElement } from "react";
-import { PictureOutlined, UserOutlined, VideoCameraOutlined } from "@ant-design/icons";
+import { FacebookOutlined, PictureOutlined, UserOutlined, VideoCameraOutlined } from "@ant-design/icons";
 import { DotIcon, } from "src/components/MenuItemIcon";
 import { SettingIcon } from "src/components/MenuItemIcon/SettingIcon";
 import {
   ACCOUNT_ROUTE,
   CUSTOMER_ROUTE,
-  HOME_ROUTE,
+  IMAGE_ROUTE,
   AUTHORIZATION_ROUTE,
   TICKET_ROUTE,
   VIDEO_ROUTE,
+  FB_ANALYSIS_ROUTE,
 } from "src/constants/routes.constants";
 
 import { TicketManageIcon } from "src/components/MenuItemIcon/TicketIcon";
@@ -23,20 +24,25 @@ export interface IMenuItem {
   children?: IMenuItem[];
 }
 
-  // <Menu.Item key="2" icon={<PictureOutlined />}>
-  //           AI Image generation
-  //         </Menu.Item>
-  //         <Menu.Item key="3" icon={<VideoCameraOutlined />}>
-  //           AI Video generation
-  //         </Menu.Item>
-  //         <Menu.Item key="4" icon={<FileTextOutlined />}>
-  //           Dashboard
-  //         </Menu.Item>
-  //       </Menu>
+// <Menu.Item key="2" icon={<PictureOutlined />}>
+//           AI Image generation
+//         </Menu.Item>
+//         <Menu.Item key="3" icon={<VideoCameraOutlined />}>
+//           AI Video generation
+//         </Menu.Item>
+//         <Menu.Item key="4" icon={<FileTextOutlined />}>
+//           Dashboard
+//         </Menu.Item>
+//       </Menu>
 
 export const menuItems: IMenuItem[] = [
   {
-    key: HOME_ROUTE,
+    key: FB_ANALYSIS_ROUTE,
+    label: "AI Facebook Analysis ",
+    icon: createElement(FacebookOutlined),
+  },
+  {
+    key: IMAGE_ROUTE,
     label: "AI Image generation ",
     icon: createElement(PictureOutlined),
   },

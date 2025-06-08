@@ -9,22 +9,23 @@ import {
   ACCOUNT_ROUTE,
   AUTHORIZATION_ROUTE,
   CUSTOMER_ROUTE,
-  HOME_ROUTE,
+  FB_ANALYSIS_ROUTE,
+  IMAGE_ROUTE,
   ROLE_GROUPS_CREATE_ROUTE,
   TICKET_ROUTE,
   USER_ROUTE,
   VIDEO_ROUTE,
 } from "src/constants/routes.constants";
 import Tickets from "src/pages/Tickets";
-
 const AccountDetailPage = React.lazy(() => import("src/pages/AccountDetail"));
 const AccountsPage = React.lazy(() => import("src/pages/Accounts"));
 const AuthorizationsPage = React.lazy(() => import("src/pages/Authorizations"));
 const RoleGroupCreatePage = React.lazy(
   () => import("src/pages/RoleGroupCreate")
 );
-const Home = React.lazy(() => import("../pages/Home"));
-const Video = React.lazy(() => import("../pages/Video"));
+const FacebookAnalysis = React.lazy(() => import("../pages/FacebookAnalysis"));
+const ImageAI = React.lazy(() => import("../pages/ImageAI"));
+const Video = React.lazy(() => import("../pages/VideoAI"));
 export const routes = [
   {
     key: "unauthen",
@@ -44,11 +45,18 @@ export const routes = [
     layout: MainLayout,
     routes: [
       {
-        path: HOME_ROUTE,
+        path: FB_ANALYSIS_ROUTE,
         isProtect: true,
-        key: "home",
-        name: "Home",
-        component: Home,
+        key: "facebookAnalysis",
+        name: "FacebookAnalysis",
+        component: FacebookAnalysis,
+      },
+      {
+        path: IMAGE_ROUTE,
+        isProtect: true,
+        key: "imageAI",
+        name: "ImageAI",
+        component: ImageAI,
       },
       {
         path: VIDEO_ROUTE,
@@ -57,7 +65,7 @@ export const routes = [
         name: "Video",
         component: Video,
       },
-      
+
       {
         path: CUSTOMER_ROUTE,
         isProtect: true,
