@@ -112,9 +112,7 @@
     "xlsx": "^0.18.5",
     "yup": "^1.4.0"
   },
-  // "proxy": "http://localhost:3001",
   "proxy": "http://31.97.67.219:3001",
-  
   "scripts": {
     "start": "cross-env HTTPS=true react-scripts start",
     "build": "react-scripts build",
