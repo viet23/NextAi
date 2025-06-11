@@ -7,9 +7,10 @@ import {
   CUSTOMER_ROUTE,
   IMAGE_ROUTE,
   AUTHORIZATION_ROUTE,
-  TICKET_ROUTE,
+  MEDIA_ROUTE,
   VIDEO_ROUTE,
   FB_ANALYSIS_ROUTE,
+  DASHBOARD_ROUTE,
 } from "src/constants/routes.constants";
 
 import { TicketManageIcon } from "src/components/MenuItemIcon/TicketIcon";
@@ -23,17 +24,6 @@ export interface IMenuItem {
   allRoleRequired?: boolean;
   children?: IMenuItem[];
 }
-
-// <Menu.Item key="2" icon={<PictureOutlined />}>
-//           AI Image generation
-//         </Menu.Item>
-//         <Menu.Item key="3" icon={<VideoCameraOutlined />}>
-//           AI Video generation
-//         </Menu.Item>
-//         <Menu.Item key="4" icon={<FileTextOutlined />}>
-//           Dashboard
-//         </Menu.Item>
-//       </Menu>
 
 export const menuItems: IMenuItem[] = [
   {
@@ -51,6 +41,17 @@ export const menuItems: IMenuItem[] = [
     label: "AI Video generation ",
     icon: createElement(VideoCameraOutlined),
   },
+  {
+    key: MEDIA_ROUTE,
+    label: "AI media list",
+    icon: createElement(TicketManageIcon),
+  },
+  {
+    key: DASHBOARD_ROUTE,
+    label: "Dashboardt",
+    icon: createElement(TicketManageIcon),
+  },
+
 
   {
     key: "customer",
@@ -65,19 +66,7 @@ export const menuItems: IMenuItem[] = [
       },
     ],
   },
-  {
-    key: "ticket",
-    label: "Quản lý bài viết",
-    icon: createElement(TicketManageIcon),
-    // rolenames: [GET_CASE],
-    children: [
-      {
-        key: TICKET_ROUTE,
-        label: "Quản lý bài viết",
-        icon: createElement(DotIcon),
-      },
-    ],
-  },
+
   {
     key: "accounts",
     icon: createElement(SettingIcon),

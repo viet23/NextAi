@@ -12,11 +12,13 @@ import {
   FB_ANALYSIS_ROUTE,
   IMAGE_ROUTE,
   ROLE_GROUPS_CREATE_ROUTE,
-  TICKET_ROUTE,
+  MEDIA_ROUTE,
   USER_ROUTE,
   VIDEO_ROUTE,
+  DASHBOARD_ROUTE,
 } from "src/constants/routes.constants";
-import Tickets from "src/pages/Tickets";
+import MediaList from "src/pages/MediaList";
+import Dashboard from "src/pages/Dashboard";
 const AccountDetailPage = React.lazy(() => import("src/pages/AccountDetail"));
 const AccountsPage = React.lazy(() => import("src/pages/Accounts"));
 const AuthorizationsPage = React.lazy(() => import("src/pages/Authorizations"));
@@ -74,11 +76,18 @@ export const routes = [
         component: Customers,
       },
       {
-        path: TICKET_ROUTE,
+        path: MEDIA_ROUTE,
         isProtect: true,
-        key: "ticket",
-        name: "Tickets",
-        component: Tickets,
+        key: "mediaList",
+        name: "MediaList",
+        component: MediaList,
+      },
+       {
+        path: DASHBOARD_ROUTE,
+        isProtect: true,
+        key: "dashboard",
+        name: "Dashboard",
+        component: Dashboard,
       },
       {
         path: USER_ROUTE,
