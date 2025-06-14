@@ -13,8 +13,9 @@ import { setCurrentUser, setIsLogin, setToken } from "../slice/auth.slice";
 
 const mutex = new Mutex();
 export const baseQuery = fetchBaseQuery({
+  baseUrl: `${process.env.REACT_APP_PUBLIC_URL}` || "http://localhost:3001",  // 👈 THÊM DÒNG NÀY
   cache: "no-cache",
-  credentials: 'include',
+  credentials: "include",
   prepareHeaders: (headers) => {
     const { auth } = store.getState();
     const token = auth.token || null;
@@ -23,6 +24,7 @@ export const baseQuery = fetchBaseQuery({
     }
   },
 });
+
 
 const baseQueryWithReauth: BaseQueryFn<
   string | FetchArgs,
