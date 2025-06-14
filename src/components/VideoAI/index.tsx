@@ -56,7 +56,7 @@ const VideoGenerator = () => {
 
     message.loading("Đang gửi yêu cầu ghép video...");
     try {
-      const res = await fetch(`${process.env.REACT_APP_URL}:4001/merge-videos`, {
+      const res = await fetch(`${process.env.REACT_APP_URL}/merge-videos`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ videos: selectedUrls }),
@@ -78,7 +78,7 @@ const VideoGenerator = () => {
 
       let mergedUrl = "";
       while (attempts < maxAttempts) {
-        const statusRes = await fetch(`${process.env.REACT_APP_URL}:4001/render-status/${renderId}`);
+        const statusRes = await fetch(`${process.env.REACT_APP_URL}/render-status/${renderId}`);
         const statusData = await statusRes.json();
 
         if (statusData?.response?.status === "done") {
@@ -147,7 +147,7 @@ const VideoGenerator = () => {
     // }
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_URL}:4001/generate-video`, {
+      const res = await fetch(`${process.env.REACT_APP_URL}/generate-video`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

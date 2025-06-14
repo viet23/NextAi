@@ -72,7 +72,7 @@ Hãy đề xuất kế hoạch phát triển kênh Facebook Page cho nhà hàng 
 
     try {
       // 1. Crawl dữ liệu từ page
-      const crawlRes = await fetch(`${process.env.REACT_APP_URL}:4001/analyze-facebook`, {
+      const crawlRes = await fetch(`${process.env.REACT_APP_URL}/analyze-facebook`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url }),
