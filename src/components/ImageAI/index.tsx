@@ -93,7 +93,7 @@ const FullscreenSplitCard = () => {
         return;
       }
 
-      const response = await fetch("http://31.97.67.219:4001/generate-image", {
+      const response = await fetch(`${process.env.REACT_APP_URL}:4001//generate-image`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

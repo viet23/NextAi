@@ -192,6 +192,13 @@ const MediaList: React.FC<any> = () => {
                     fixed: "left",
                     dataIndex: "urlVideo",
                     key: "urlVideo",
+                    width: 200, // thêm chiều rộng hợp lý để video hiển thị tốt
+                    render: (url) => (
+                      <video width="180" height="100" controls>
+                        <source src={url} type="video/mp4" />
+                        Trình duyệt không hỗ trợ video.
+                      </video>
+                    ),
                   },
                   {
                     title: "Caption",
