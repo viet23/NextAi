@@ -54,19 +54,19 @@ export const menuItems: IMenuItem[] = [
   },
 
 
-  {
-    key: "customer",
-    label: "Khách hàng",
-    icon: createElement(UserOutlined, { style: { fontSize: 22 } }),
-    children: [
-      {
-        key: CUSTOMER_ROUTE,
-        label: "Khách hàng",
-        icon: createElement(DotIcon),
-        rolenames: [GET_BLACK_LIST],
-      },
-    ],
-  },
+  // {
+  //   key: "customer",
+  //   label: "Khách hàng",
+  //   icon: createElement(UserOutlined, { style: { fontSize: 22 } }),
+  //   children: [
+  //     {
+  //       key: CUSTOMER_ROUTE,
+  //       label: "Khách hàng",
+  //       icon: createElement(DotIcon),
+  //       rolenames: [GET_BLACK_LIST],
+  //     },
+  //   ],
+  // },
 
   {
     key: "accounts",
