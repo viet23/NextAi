@@ -35,7 +35,8 @@ const SignIn = () => {
     );
 
     const handleMessage = (event: MessageEvent) => {
-      if (event.origin !== "http://localhost:3001") return;
+
+      // if (event.origin !== "http://localhost:3001") return;
 
       const { token, user } = event.data;
       store.dispatch(setToken(token));
