@@ -19,7 +19,7 @@ const SignIn = () => {
 
   const handleLogin = async () => {
     try {
-     const response = await signIn({ username, password }).unwrap();
+      const response = await signIn({ username, password }).unwrap();
       message.success("Đăng nhập thành công!");
       navigate("/");
     } catch (error) {
@@ -27,35 +27,35 @@ const SignIn = () => {
     }
   };
 
- const handleSocialLogin = (provider: "facebook" | "google") => {
-  const popup = window.open(
-    `${process.env.REACT_APP_PUBLIC_URL}/api/v1/auth/${provider}`,
-    "_blank",
-    "width=600,height=700"
-  );
+  const handleSocialLogin = (provider: "facebook" | "google") => {
+    const popup = window.open(
+      `${process.env.REACT_APP_PUBLIC_URL}/api/v1/auth/${provider}`,
+      "_blank",
+      "width=600,height=700"
+    );
 
-  const handleMessage = (event: MessageEvent) => {
-    if (event.origin !== "http://localhost:3001") return;
+    const handleMessage = (event: MessageEvent) => {
+      if (event.origin !== "http://localhost:3001") return;
 
-    const { token, user } = event.data;
-    if (token && user?.email) {
-      message.success(`Xin chào, ${user.name || user.email}!`);
-       store.dispatch(setToken(token));
-        store.dispatch(setCurrentUser(user));
-        store.dispatch(setIsLogin(true));
-     setTimeout(() => {
-    navigate("/");
-  }, 500);
-    }
+      const { token, user } = event.data;
+      store.dispatch(setToken(token));
+      store.dispatch(setCurrentUser(user));
+      store.dispatch(setIsLogin(true));
+      if (token && user?.email) {
 
-    // Gỡ listener & đóng popup
-    window.removeEventListener("message", handleMessage);
-    popup?.close();
+        message.success(`Xin chào, ${user.name || user.email}!`);
+        navigate("/");
+
+      }
+
+      // Gỡ listener & đóng popup
+      window.removeEventListener("message", handleMessage);
+      popup?.close();
+    };
+
+    // ✅ KHÔNG console.log(popup) – sẽ gây lỗi CORS internal
+    window.addEventListener("message", handleMessage);
   };
-
-  // ✅ KHÔNG console.log(popup) – sẽ gây lỗi CORS internal
-  window.addEventListener("message", handleMessage);
-};
 
 
   return (
