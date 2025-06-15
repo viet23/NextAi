@@ -189,8 +189,8 @@ const FullscreenSplitCard = () => {
           body: JSON.stringify(payload),
         });
 
-        const body = { urlVideo: imageUrl, caption };
-        await createCase(body).unwrap();
+        // const body = { urlVideo: imageUrl, caption };
+        // await createCase(body).unwrap();
         message.success("Đã đăng lên Facebook (qua Make.com) thành công!");
       } else {
         message.error("Chưa cấu hình đăng bài lên Facebook.");
