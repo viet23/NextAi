@@ -14,6 +14,7 @@ import {
 } from "src/constants/routes.constants";
 
 import { TicketManageIcon } from "src/components/MenuItemIcon/TicketIcon";
+import { GET_BLACK_LIST, GET_GROUP, GET_ROLE, GET_USER } from "src/constants/roles.constants";
 
 
 export interface IMenuItem {
@@ -62,7 +63,7 @@ export const menuItems: IMenuItem[] = [
         key: CUSTOMER_ROUTE,
         label: "Khách hàng",
         icon: createElement(DotIcon),
-        // rolenames: [GET_BLACK_LIST],
+        rolenames: [GET_BLACK_LIST],
       },
     ],
   },
@@ -76,13 +77,13 @@ export const menuItems: IMenuItem[] = [
         key: ACCOUNT_ROUTE,
         icon: createElement(DotIcon),
         label: "TK người dùng",
-        // rolenames: [GET_USER],
+        rolenames: [GET_USER],
       },
       {
         key: AUTHORIZATION_ROUTE,
         icon: createElement(DotIcon),
         label: "Phân quyền",
-        // rolenames: [GET_GROUP, GET_ROLE],
+        rolenames: [GET_GROUP, GET_ROLE],
         allRoleRequired: true,
       },
     ],

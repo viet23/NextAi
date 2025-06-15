@@ -10,17 +10,22 @@ import { AppProvider } from './context/AppContext';
 import './i18n';
 import { persistor, store } from './store/store';
 import { PersistGate } from 'redux-persist/integration/react';
+import { App as AntdApp } from 'antd';
+
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <Provider store={store} >
+  <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <AppProvider>
-        <App />
-      </AppProvider>
+      <AntdApp> {/* ✅ Bọc ở đây */}
+        <AppProvider>
+          <App />
+        </AppProvider>
+      </AntdApp>
     </PersistGate>
   </Provider>
 );
+
 reportWebVitals();

@@ -1,11 +1,40 @@
 import React, { useState } from "react";
-import { Layout, Input, Button, message, Checkbox, Select, Row, Col } from "antd";
+import { Layout, Input, Button, message, Checkbox, Select, Row, Col, Modal, Radio, Spin, Typography } from "antd";
 import { useCreateCaseMutation } from "src/store/api/ticketApi";
 import { UploadOutlined } from "@ant-design/icons";
+// import { Row, Col, Button, Modal, Radio, Typography, Spin, message } from 'antd';
+import axios from 'axios';
+const genres = [
+  "Ambient", "Piano", "Orchestra", "Lofi", "Chill", "Hiphop", "Electronic",
+  "Pop", "Rock", "Jazz", "Blues", "Acoustic", "Guitar", "Drums", "Trap",
+  "Classical", "Funk", "Dubstep", "House", "Trance", "Folk", "Reggae",
+  "Metal", "Synth", "Vocals", "Choir", "Soundtrack", "Score"
+];
+
 
 const { Content } = Layout;
 const { TextArea } = Input;
 const { Option } = Select;
+const { Text } = Typography;
+
+type MusicItem = {
+  id: number;
+  name: string;
+  url: string;
+  previews?: {
+    'preview-lq-mp3': string;
+  };
+};
+
+type FreesoundResponse = {
+  results: MusicItem[];
+};
+
+type FreesoundDetail = {
+  previews: {
+    'preview-lq-mp3': string;
+  };
+};
 
 const durationSceneMap: any = {
   5: 1,
@@ -24,7 +53,190 @@ const VideoGenerator = () => {
   const [uploadedImageUrls, setUploadedImageUrls]: any = useState([]);
   const [generatedVideos, setGeneratedVideos] = useState<{ index: number; url: string; selected: boolean }[]>([]);
   const [videoDuration, setVideoDuration] = useState(5);
-  const [selectedVideoIndex, setSelectedVideoIndex] = useState(null);
+
+  const [selectedId, setSelectedId] = useState(null);
+  const [loadingMusic, setLoadingMusic] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+  const [musicList, setMusicList] = useState<MusicItem[]>([]);
+  const [selectedMusic, setSelectedMusic] = useState<MusicItem | null>(null);
+  const [playingId, setPlayingId] = useState<number | null>(null);
+  const [selectedGenre, setSelectedGenre] = useState<string>('lofi');
+
+  const [description, setDescription] = useState("");
+
+  const handleMergeMusic = async () => {
+    
+    if (!selectedMusic || !videoSrc) {
+      message.warning("Vui lòng chọn nhạc và đảm bảo đã có video trước khi ghép nhạc.");
+      return;
+    }
+
+    try {
+      // 1. Lấy URL nhạc từ Freesound
+      const res = await axios.get<FreesoundDetail>(
+        `https://freesound.org/apiv2/sounds/${selectedMusic.id}/`,
+        {
+          headers: {
+            Authorization: 'Token iBAdDZZGpucb5MVWNUbeNTXiAbqux8zOu8T3skyf',
+          },
+        }
+      );
+
+      const audioUrl = res.data.previews['preview-lq-mp3'];
+      if (!audioUrl) {
+        message.error("Không lấy được link nhạc từ Freesound.");
+        return;
+      }
+
+      // 2. Tạo payload gửi Shotstack để render video mới
+      const payload = {
+        timeline: {
+          soundtrack: {
+            src: audioUrl,
+            effect: "fadeInFadeOut",
+          },
+          tracks: [
+            {
+              clips: [
+                {
+                  asset: {
+                    type: "video",
+                    src: videoSrc,
+                  },
+                  start: 0,
+                  length: videoDuration, 
+                },
+              ],
+            },
+          ],
+        },
+        output: {
+          format: "mp4",
+          resolution: "hd",
+        },
+      };
+
+      const SHOTSTACK_API_KEY = "PyGEoO1yaHXsTRNjBn8HsHMCp6aeG7S8agkgOsYm";
+
+      // 3. Gửi render request đến Shotstack
+      const response = await axios.post("https://api.shotstack.io/v1/render", payload, {
+        headers: {
+          "x-api-key": SHOTSTACK_API_KEY,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const renderId = (response.data as { response: { id: string } }).response.id;
+      message.success("Đã gửi yêu cầu ghép nhạc. Đang xử lý...");
+
+      // 4. (Tuỳ chọn) Kiểm tra kết quả sau vài giây
+      setTimeout(async () => {
+        const statusRes = await axios.get(`https://api.shotstack.io/v1/render/${renderId}`, {
+          headers: {
+            "x-api-key": SHOTSTACK_API_KEY,
+          },
+        });
+
+      
+
+        const status = (statusRes.data as { response: { status: string; url?: string } }).response.status;
+        if (status === "done") {
+          const finalUrl = (statusRes.data as { response: { status: string; url?: string } }).response.url;
+          message.success("Ghép nhạc thành công!");
+          console.log("🎬 Video đã ghép nhạc:", finalUrl);
+          if (finalUrl) {
+            setVideoSrc(finalUrl)
+          }
+        } else {
+          message.info(`Video đang ở trạng thái: ${status}`);
+        }
+      }, 8000);
+    } catch (error) {
+      console.error("Lỗi khi ghép nhạc:", error);
+      message.error("Ghép nhạc thất bại. Vui lòng thử lại.");
+    }
+  };
+
+
+
+
+  const fetchMusic = async (genre: string) => {
+    setLoadingMusic(true);
+    try {
+      const res = await axios.get<FreesoundResponse>(
+        `https://freesound.org/apiv2/search/text/?query=${genre}&filter=duration%3A[60%20TO%20*]`,
+        {
+          headers: {
+            Authorization: 'Token iBAdDZZGpucb5MVWNUbeNTXiAbqux8zOu8T3skyf',
+          },
+        }
+      );
+      setMusicList(res.data.results.slice(0, 5));
+    } catch (err) {
+      message.error('Lỗi tải danh sách nhạc');
+    }
+    setLoadingMusic(false);
+  };
+
+
+  const playPreview = async (id: number) => {
+    if (playingId === id) {
+      // Nếu đang phát bài đó → thì dừng lại
+      if (audio) audio.pause();
+      setAudio(null);
+      setPlayingId(null);
+      return;
+    }
+
+    try {
+      const res = await axios.get<FreesoundDetail>(`https://freesound.org/apiv2/sounds/${id}/`, {
+        headers: {
+          Authorization: 'Token iBAdDZZGpucb5MVWNUbeNTXiAbqux8zOu8T3skyf',
+        },
+      });
+      const url = res.data.previews['preview-lq-mp3'];
+
+      if (audio) audio.pause(); // Dừng nhạc cũ
+      const newAudio = new Audio(url);
+      newAudio.play();
+
+      setAudio(newAudio);
+      setPlayingId(id);
+    } catch (err) {
+      message.error('Không thể phát nhạc');
+    }
+  };
+
+  const openMusicModal = () => {
+    setModalOpen(true);
+    if (musicList.length === 0) {
+      fetchMusic(selectedGenre);
+    }
+  };
+
+  const closeModal = () => {
+    if (audio) audio.pause();
+    setAudio(null);
+    setPlayingId(null);
+    setModalOpen(false);
+  };
+
+  const confirmSelect = () => {
+    const track = musicList.find((t) => t.id === selectedId);
+    if (!track) {
+      message.warning('Vui lòng chọn một bài nhạc');
+      return;
+    }
+    if (audio) audio.pause();
+    console.log('track', track);
+
+    setSelectedMusic(track);
+    setAudio(null);
+    setPlayingId(null);
+    setModalOpen(false);
+    message.success(`Đã chọn: ${track.name}`);
+  };
 
   const handlePostFacebook = async () => {
     if (!videoSrc || !caption) {
@@ -142,9 +354,9 @@ const VideoGenerator = () => {
     }
 
     let time = 5
-    // if (videoDuration > 5) {
-    //   time = 10
-    // }
+    if (videoDuration > 5) {
+      time = 10
+    }
 
     try {
       const res = await fetch(`${process.env.REACT_APP_URL}/generate-video`, {
@@ -159,7 +371,11 @@ const VideoGenerator = () => {
       });
 
       const data = await res.json();
+
       if (data?.videoUrl) {
+        if (videoDuration <= 10) {
+          setVideoSrc(data?.videoUrl);
+        }
         setGeneratedVideos((prev) => {
           const updated: any = [...prev.filter((v: any) => v.index !== index)];
           updated.push({ index, url: data.videoUrl, selected: false });
@@ -174,9 +390,9 @@ const VideoGenerator = () => {
   };
 
   const generateCaption = async () => {
-    const combinedPrompt = promptTexts.filter(Boolean).join(". ");
+    // const combinedPrompt = promptTexts.filter(Boolean).join(". ");
 
-    if (!combinedPrompt) {
+    if (!description) {
       message.warning("Vui lòng nhập mô tả cho ít nhất một scene");
       return;
     }
@@ -193,7 +409,7 @@ const VideoGenerator = () => {
           model: "gpt-4",
           messages: [{
             role: "user",
-            content: `Viết một caption sáng tạo bằng tiếng Việt cho video có nội dung mô tả sau:\n"${combinedPrompt}"`
+            content: `Viết một caption sáng tạo bằng tiếng Việt cho video có nội dung mô tả sau:\n"${description}"`
           }],
           temperature: 0.8,
           max_tokens: 100,
@@ -374,45 +590,155 @@ const VideoGenerator = () => {
                 </Button>
               </Col>
               <Col>
-                <Button loading={loadingCaption} style={{ backgroundColor: "#D2E3FC", color: "#000" }} onClick={generateCaption}>
-                  Generate Caption
+                <Button style={{ backgroundColor: "#D2E3FC", color: "#000" }} onClick={openMusicModal}>
+                  {selectedMusic ? `🎵 ${selectedMusic.name}` : "Chọn nhạc"}
+                </Button>
+              </Col>
+
+              <Col>
+                <Button
+                  style={{
+                    backgroundColor: "#D2E3FC",
+                    color: "#000",
+                    fontWeight: 500,
+                  }}
+                  onClick={handleMergeMusic}
+                >
+                  🎬 Ghép nhạc
                 </Button>
               </Col>
             </Row>
+
+
+            <Modal
+              title="Chọn nhạc nền"
+              open={modalOpen}
+              onOk={confirmSelect}
+              onCancel={closeModal}
+              okText="Xác nhận"
+              cancelText="Hủy"
+            >
+              <Select
+                showSearch
+                placeholder="Chọn thể loại nhạc"
+                style={{ width: '100%', marginBottom: 16 }}
+                value={selectedGenre}
+                onChange={(value) => {
+                  setSelectedGenre(value);
+                  fetchMusic(value);
+                }}
+                options={genres.map((g) => ({ label: g, value: g.toLowerCase() }))}
+              />
+
+              {loadingMusic ? (
+                <Spin />
+              ) : (
+                <Radio.Group
+                  onChange={(e) => setSelectedId(e.target.value)}
+                  value={selectedId}
+                  style={{ display: 'flex', flexDirection: 'column', gap: 12 }}
+                >
+                  {musicList.map((track) => (
+                    <Radio
+                      key={track.id}
+                      value={track.id}
+                      style={{ display: 'flex', alignItems: 'center' }}
+                    >
+                      <Button
+                        shape="circle"
+                        size="small"
+                        style={{ marginRight: 8 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          playPreview(track.id);
+                        }}
+                      >
+                        {playingId === track.id ? '⏸' : '▶'}
+                      </Button>
+                      <Text>{track.name || `Track ${track.id}`}</Text>
+                    </Radio>
+                  ))}
+                </Radio.Group>
+              )}
+            </Modal>
           </Col>
 
           {/* Cột phải: kết quả và caption */}
           <Col xs={24} md={12}>
             <div
               style={{
-                background: "#f0f0f0",
+                background: "#fafafa",
+                border: "1px solid #e0e0e0",
                 height: "40vh",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                borderRadius: 10,
-                marginBottom: 16,
+                borderRadius: 12,
+                overflow: "hidden",
+                marginBottom: 24,
+                boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
               }}
             >
               {videoSrc ? (
                 <video
                   key={videoSrc}
                   controls
-                  style={{ width: "100%", borderRadius: 12 }}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 >
                   <source src={videoSrc} type="video/mp4" />
                 </video>
               ) : (
-                <span style={{ color: "#999" }}>No Video</span>
+                <span style={{ color: "#999", fontSize: 16 }}>Chưa có video</span>
               )}
             </div>
+
+            <div style={{ marginBottom: 16 }}>
+              <TextArea
+                rows={2}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Nhập mô tả nội dung video..."
+                style={{
+                  width: "100%",
+                  fontSize: 15,
+                  borderRadius: 8,
+                  padding: 10,
+                  backgroundColor: "#ffffff",
+                  boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+                }}
+              />
+
+              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
+                <Button
+                  loading={loadingCaption}
+                  style={{
+                    backgroundColor: "#D2E3FC",
+                    color: "#000",
+                    borderRadius: 8,
+                    whiteSpace: "nowrap"
+                  }}
+                  onClick={generateCaption}
+                >
+                  Generate Caption
+                </Button>
+              </div>
+            </div>
+
+
 
             <TextArea
               rows={4}
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
-              placeholder="Caption"
-              style={{ fontSize: 15, marginBottom: 16 }}
+              placeholder="Nội dung caption sẽ hiển thị ở đây..."
+              style={{
+                fontSize: 15,
+                borderRadius: 8,
+                padding: 10,
+                marginBottom: 16,
+                backgroundColor: "#ffffff",
+                boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+              }}
             />
 
             <Button
@@ -421,6 +747,10 @@ const VideoGenerator = () => {
               size="large"
               onClick={handlePostFacebook}
               loading={creatingCase}
+              style={{
+                borderRadius: 8,
+                fontWeight: 600,
+              }}
             >
               Post Facebook
             </Button>

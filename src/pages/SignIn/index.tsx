@@ -1,22 +1,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Input, Button, Typography, Flex, message } from "antd";
+import { Input, Button, Typography, Flex, message, Divider } from "antd";
 import EmailLogo from "../../assets/images/logo-gmail.png";
 import FaceBookLogo from "../../assets/images/logo-facebook.png";
 import "./styles.scss";
+import { useSignInMutation } from "src/store/api/authApi";
+import { store } from "src/store/store";
+import { setCurrentUser, setIsLogin, setToken } from "src/store/slice/auth.slice";
 
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 const SignIn = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [signIn, { isLoading, isError, error }] = useSignInMutation();
 
   const handleLogin = async () => {
-    // Giả định gọi API đăng nhập thông thường
     try {
-      // TODO: gọi login username/password nếu có
+     const response = await signIn({ username, password }).unwrap();
       message.success("Đăng nhập thành công!");
       navigate("/");
     } catch (error) {
@@ -24,72 +27,100 @@ const SignIn = () => {
     }
   };
 
-  const handleFacebookLogin = () => {
-    const popup = window.open(
-      "http://localhost:3001/api/v1/auth/facebook", // <-- backend NestJS
-      "_blank",
-      "width=600,height=700"
-    );
+ const handleSocialLogin = (provider: "facebook" | "google") => {
+  const popup = window.open(
+    `${process.env.REACT_APP_PUBLIC_URL}/api/v1/auth/${provider}`,
+    "_blank",
+    "width=600,height=700"
+  );
 
-    const handleMessage = (event: MessageEvent) => {
-      if (event.origin !== "http://localhost:3001") return;
+  const handleMessage = (event: MessageEvent) => {
+    if (event.origin !== "http://localhost:3001") return;
 
-      const user = event.data;
-      if (user?.facebookId) {
-        // Bạn có thể lưu vào localStorage/token tùy mục đích
-        localStorage.setItem("user", JSON.stringify(user));
-        message.success(`Xin chào, ${user.name}!`);
-        navigate("/");
-      }
+    const { token, user } = event.data;
+    if (token && user?.email) {
+      message.success(`Xin chào, ${user.name || user.email}!`);
+       store.dispatch(setToken(token));
+        store.dispatch(setCurrentUser(user));
+        store.dispatch(setIsLogin(true));
+     setTimeout(() => {
+    navigate("/");
+  }, 500);
+    }
 
-      window.removeEventListener("message", handleMessage);
-      popup?.close();
-    };
-
-    window.addEventListener("message", handleMessage);
+    // Gỡ listener & đóng popup
+    window.removeEventListener("message", handleMessage);
+    popup?.close();
   };
+
+  // ✅ KHÔNG console.log(popup) – sẽ gây lỗi CORS internal
+  window.addEventListener("message", handleMessage);
+};
+
 
   return (
     <div className="auth-wrapper">
-      <div className="auth-content text-center" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div
+        className="auth-content"
+        style={{
+          maxWidth: 400,
+          margin: "auto",
+          padding: 24,
+          backgroundColor: "#fff",
+          borderRadius: 8,
+          boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
+          textAlign: "center",
+        }}
+      >
+        <Title level={3}>Đăng nhập</Title>
 
-        {/* Đăng nhập tài khoản mật khẩu */}
-        <div className="account-login-form" style={{ width: '100%', marginBottom: 100 }}>
-          <Input
-            placeholder="Tên đăng nhập"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            style={{ marginBottom: 10 }}
-          />
-          <Input.Password
-            placeholder="Mật khẩu"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ marginBottom: 10 }}
-          />
-          <Button style={{ width: '30%' }} type="primary" onClick={handleLogin} block>
-            Đăng nhập
-          </Button>
-        </div>
+        <Input
+          placeholder="Tên đăng nhập"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          style={{ marginBottom: 10 }}
+        />
+        <Input.Password
+          placeholder="Mật khẩu"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{ marginBottom: 20 }}
+        />
+        <Button type="primary" onClick={handleLogin} block size="large">
+          Đăng nhập
+        </Button>
 
-        {/* Đăng nhập Facebook */}
-        <div className="saml-login-section" style={{ width: '100%' }}>
-          <Flex className="saml-sign-btn" onClick={handleFacebookLogin}>
-            <img src={FaceBookLogo} width={75} />
-            <Text className="saml-sign-btn-title">Đăng nhập bằng tài khoản Facebook</Text>
-          </Flex>
+        <Divider plain>Hoặc đăng nhập bằng</Divider>
 
-          <Flex
-            className="saml-sign-btn"
-            onClick={() => {
-              window.location.href = `${process.env.REACT_APP_PUBLIC_URL}/adfs/auth/saml/login-gtelpay`;
+        <Flex vertical gap={12}>
+          {/* <Button
+            icon={<img src={FaceBookLogo} alt="fb" width={20} style={{ marginRight: 8 }} />}
+            onClick={() => handleSocialLogin("facebook")}
+            block
+            style={{
+              backgroundColor: "#1877f2",
+              color: "#fff",
+              border: "none",
+              fontWeight: 500,
             }}
           >
-            <img src={EmailLogo} width={75} />
-            <Text className="saml-sign-btn-title">Đăng nhập bằng tài khoản Gmail</Text>
-          </Flex>
-        </div>
+            Facebook
+          </Button> */}
 
+          <Button
+            icon={<img src={EmailLogo} alt="gmail" width={20} style={{ marginRight: 8 }} />}
+            onClick={() => handleSocialLogin("google")}
+            block
+            style={{
+              backgroundColor: "#fff",
+              color: "#000",
+              border: "1px solid #ddd",
+              fontWeight: 500,
+            }}
+          >
+            Google
+          </Button>
+        </Flex>
       </div>
     </div>
   );
