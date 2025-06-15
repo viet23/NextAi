@@ -4,6 +4,9 @@ import { useCreateCaseMutation } from "src/store/api/ticketApi";
 import { UploadOutlined } from "@ant-design/icons";
 // import { Row, Col, Button, Modal, Radio, Typography, Spin, message } from 'antd';
 import axios from 'axios';
+import { useSelector } from "react-redux";
+import { IRootState } from "src/interfaces/app.interface";
+import { useGetAccountQuery } from "src/store/api/accountApi";
 const genres = [
   "Ambient", "Piano", "Orchestra", "Lofi", "Chill", "Hiphop", "Electronic",
   "Pop", "Rock", "Jazz", "Blues", "Acoustic", "Guitar", "Drums", "Trap",
@@ -53,7 +56,7 @@ const VideoGenerator = () => {
   const [uploadedImageUrls, setUploadedImageUrls]: any = useState([]);
   const [generatedVideos, setGeneratedVideos] = useState<{ index: number; url: string; selected: boolean }[]>([]);
   const [videoDuration, setVideoDuration] = useState(5);
-
+  const { user } = useSelector((state: IRootState) => state.auth)
   const [selectedId, setSelectedId] = useState(null);
   const [loadingMusic, setLoadingMusic] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -62,11 +65,14 @@ const VideoGenerator = () => {
   const [selectedMusic, setSelectedMusic] = useState<MusicItem | null>(null);
   const [playingId, setPlayingId] = useState<number | null>(null);
   const [selectedGenre, setSelectedGenre] = useState<string>('lofi');
-
+  const { data: accountDetailData } = useGetAccountQuery(user.id || "0", {
+    skip: !user.id,
+  });
+  const SHOTSTACK_API_KEY = "fHK6q16tBau8galfuCqHp7d1K98zOqnluqIZZQAQ";
   const [description, setDescription] = useState("");
 
   const handleMergeMusic = async () => {
-    
+
     if (!selectedMusic || !videoSrc) {
       message.warning("Vui lòng chọn nhạc và đảm bảo đã có video trước khi ghép nhạc.");
       return;
@@ -105,7 +111,7 @@ const VideoGenerator = () => {
                     src: videoSrc,
                   },
                   start: 0,
-                  length: videoDuration, 
+                  length: videoDuration,
                 },
               ],
             },
@@ -117,7 +123,7 @@ const VideoGenerator = () => {
         },
       };
 
-      const SHOTSTACK_API_KEY = "PyGEoO1yaHXsTRNjBn8HsHMCp6aeG7S8agkgOsYm";
+      
 
       // 3. Gửi render request đến Shotstack
       const response = await axios.post("https://api.shotstack.io/v1/render", payload, {
@@ -130,35 +136,53 @@ const VideoGenerator = () => {
       const renderId = (response.data as { response: { id: string } }).response.id;
       message.success("Đã gửi yêu cầu ghép nhạc. Đang xử lý...");
 
-      // 4. (Tuỳ chọn) Kiểm tra kết quả sau vài giây
-      setTimeout(async () => {
-        const statusRes = await axios.get(`https://api.shotstack.io/v1/render/${renderId}`, {
-          headers: {
-            "x-api-key": SHOTSTACK_API_KEY,
-          },
-        });
+      await pollRenderStatus(renderId)
 
-      
-
-        const status = (statusRes.data as { response: { status: string; url?: string } }).response.status;
-        if (status === "done") {
-          const finalUrl = (statusRes.data as { response: { status: string; url?: string } }).response.url;
-          message.success("Ghép nhạc thành công!");
-          console.log("🎬 Video đã ghép nhạc:", finalUrl);
-          if (finalUrl) {
-            setVideoSrc(finalUrl)
-          }
-        } else {
-          message.info(`Video đang ở trạng thái: ${status}`);
-        }
-      }, 8000);
     } catch (error) {
       console.error("Lỗi khi ghép nhạc:", error);
       message.error("Ghép nhạc thất bại. Vui lòng thử lại.");
     }
   };
 
+  const pollRenderStatus = async (renderId: string, maxAttempts = 15, delay = 5000) => {
+  let attempts = 0;
 
+  const checkStatus = async () => {
+    try {
+      const statusRes = await axios.get(`https://api.shotstack.io/v1/render/${renderId}`, {
+        headers: {
+          "x-api-key": SHOTSTACK_API_KEY,
+        },
+      });
+
+      const { status, url } = (statusRes.data as { response: { status: string; url?: string } }).response;
+
+      console.log(`🎞️ Render status [${attempts + 1}]:`, status);
+
+      if (status === "done") {
+        message.success("✅ Ghép nhạc thành công!");
+        console.log("🎬 Video đã ghép nhạc:", url);
+        if (url) setVideoSrc(url);
+        return;
+      } else if (status === "failed") {
+        message.error("❌ Render thất bại!");
+        return;
+      } else {
+        attempts++;
+        if (attempts < maxAttempts) {
+          setTimeout(checkStatus, delay);
+        } else {
+          message.warning("⚠️ Quá thời gian chờ render.");
+        }
+      }
+    } catch (err) {
+      console.error("❌ Lỗi khi kiểm tra render:", err);
+      message.error("Lỗi khi kiểm tra trạng thái render.");
+    }
+  };
+
+  checkStatus();
+};
 
 
   const fetchMusic = async (genre: string) => {
@@ -238,19 +262,44 @@ const VideoGenerator = () => {
     message.success(`Đã chọn: ${track.name}`);
   };
 
+
   const handlePostFacebook = async () => {
-    if (!videoSrc || !caption) {
-      message.warning("Vui lòng tạo video và caption trước khi đăng.");
+    if (!videoSrc) {
+      message.warning("Vui lòng tạo video hoặc ảnh trước khi đăng.");
+      return;
+    }
+
+    if (!caption) {
+      message.warning("Vui lòng nhập caption.");
       return;
     }
 
     try {
-      const body = { urlVideo: videoSrc, caption };
-      await createCase(body).unwrap();
-      message.success("Đăng lên Facebook (mock) và lưu thành công!");
+      const payload = {
+        type: "video",
+        media_url: videoSrc,
+        caption: caption,
+      };
+      if (accountDetailData?.extension) {
+        await fetch(accountDetailData?.extension, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+        const body = { urlVideo: videoSrc, caption };
+        await createCase(body).unwrap();
+
+        message.success("Đã đăng lên Facebook (qua Make.com) thành công!");
+      } else {
+        message.error("Chưa cấu hình đăng bài lên Facebook.");
+      }
+
+
     } catch (err) {
-      console.error("Error creating case:", err);
-      message.error("Lỗi khi lưu dữ liệu");
+      console.error("❌ Lỗi khi gửi lên Make:", err);
+      message.error("Lỗi khi đăng bài lên Facebook.");
     }
   };
 

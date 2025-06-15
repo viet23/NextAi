@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import { Layout, Input, Button, message } from "antd";
+import { useSelector } from "react-redux";
+import { IRootState } from "src/interfaces/app.interface";
+import { useGetAccountQuery } from "src/store/api/accountApi";
+import { useCreateCaseMutation } from "src/store/api/ticketApi";
 
 const { Content } = Layout;
 const { TextArea } = Input;
@@ -12,10 +16,14 @@ const FullscreenSplitCard = () => {
   const [loadingCaption, setLoadingCaption] = useState(false);
   const [imgError, setImgError] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-
+  const { user } = useSelector((state: IRootState) => state.auth)
   const [resolution, setResolution] = useState("720p");
   const [ratio, setRatio] = useState("16:9");
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+  const { data: accountDetailData } = useGetAccountQuery(user.id || "0", {
+    skip: !user.id,
+  });
+  const [createCase, { isLoading: creatingCase }] = useCreateCaseMutation();
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -155,6 +163,46 @@ const FullscreenSplitCard = () => {
     }
   };
 
+  const handlePostFacebook = async () => {
+    if (!imageUrl) {
+      message.warning("Vui lòng tạo video hoặc ảnh trước khi đăng.");
+      return;
+    }
+
+    if (!caption) {
+      message.warning("Vui lòng nhập caption.");
+      return;
+    }
+
+    try {
+      const payload = {
+        type: "photo",
+        media_url: imageUrl,
+        caption: caption,
+      };
+      if (accountDetailData?.extension) {
+        await fetch(accountDetailData?.extension, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const body = { urlVideo: imageUrl, caption };
+        await createCase(body).unwrap();
+        message.success("Đã đăng lên Facebook (qua Make.com) thành công!");
+      } else {
+        message.error("Chưa cấu hình đăng bài lên Facebook.");
+      }
+
+
+    } catch (err) {
+      console.error("❌ Lỗi khi gửi lên Make:", err);
+      message.error("Lỗi khi đăng bài lên Facebook.");
+    }
+  };
+
   return (
     <Layout style={{ minHeight: "100vh", background: "#fff" }}>
       <Content style={{ padding: 24 }}>
@@ -246,7 +294,7 @@ const FullscreenSplitCard = () => {
               placeholder="Caption"
               style={{ fontSize: 15, marginBottom: 16 }}
             />
-            <Button type="primary" style={{ backgroundColor: "#D2E3FC", color: "#000", border: "1px solid #D2E3FC", borderRadius: 6 }} block size="large">
+            <Button onClick={handlePostFacebook} type="primary" style={{ backgroundColor: "#D2E3FC", color: "#000", border: "1px solid #D2E3FC", borderRadius: 6 }} block size="large">
               Post Facebook
             </Button>
           </div>

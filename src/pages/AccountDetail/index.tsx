@@ -158,7 +158,7 @@ const AccountDetailPage = () => {
         <span>Trạng thái: {isActive}</span>
         <Form form={form}>
           <Row gutter={[24, 0]}>
-            <Col xl={16}>
+            <Col xl={8}>
               <Form.Item
                 label="Tên đăng nhập"
                 name="username"
@@ -168,9 +168,7 @@ const AccountDetailPage = () => {
                 <Input disabled size="middle" placeholder="Tên đăng nhập" />
               </Form.Item>
             </Col>
-          </Row>
-          <Row gutter={[24, 0]}>
-            <Col xl={16}>
+             <Col xl={8}>
               <Form.Item
                 label="Họ và tên"
                 name="fullName"
@@ -181,15 +179,18 @@ const AccountDetailPage = () => {
                 <Input size="middle" placeholder="Họ và tên" />
               </Form.Item>
             </Col>
-            <Col xl={8}>
+          </Row>
+          <Row gutter={[24, 0]}>
+           
+            <Col xl={16}>
               <Form.Item
-                label="Ext"
+                label="Link make"
                 name="extension"
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
-                rules={[{ required: true, message: "Vui lòng nhập số máy lẻ" }]}
+                rules={[{ required: true, message: "Vui lòng nhập link đăng bài" }]}
               >
-                <Input size="middle" placeholder="Số máy lẻ" />
+                <Input size="middle" placeholder="Link đăng bài" />
               </Form.Item>
             </Col>
           </Row>
