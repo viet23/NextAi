@@ -74,7 +74,7 @@ const VideoGenerator = () => {
   const handleMergeMusic = async () => {
 
     if (!selectedMusic || !videoSrc) {
-      message.warning("Vui lòng chọn nhạc và đảm bảo đã có video trước khi ghép nhạc.");
+      message.warning("Please select music and make sure you have a video before adding music.");
       return;
     }
 
@@ -91,7 +91,7 @@ const VideoGenerator = () => {
 
       const audioUrl = res.data.previews['preview-lq-mp3'];
       if (!audioUrl) {
-        message.error("Không lấy được link nhạc từ Freesound.");
+        message.error("Cannot get music link from Freesound.");
         return;
       }
 
@@ -640,7 +640,7 @@ const VideoGenerator = () => {
               </Col>
               <Col>
                 <Button style={{ backgroundColor: "#D2E3FC", color: "#000" }} onClick={openMusicModal}>
-                  {selectedMusic ? `🎵 ${selectedMusic.name}` : "Chọn nhạc"}
+                  {selectedMusic ? `🎵 ${selectedMusic.name}` : "Choose music"}
                 </Button>
               </Col>
 
@@ -660,7 +660,7 @@ const VideoGenerator = () => {
 
 
             <Modal
-              title="Chọn nhạc nền"
+              title="Choose background music"
               open={modalOpen}
               onOk={confirmSelect}
               onCancel={closeModal}

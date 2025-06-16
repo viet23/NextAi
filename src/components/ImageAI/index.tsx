@@ -16,10 +16,10 @@ const FullscreenSplitCard = () => {
   const [loadingCaption, setLoadingCaption] = useState(false);
   const [imgError, setImgError] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const { user } = useSelector((state: IRootState) => state.auth)
   const [resolution, setResolution] = useState("720p");
   const [ratio, setRatio] = useState("16:9");
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+  const { user } = useSelector((state: IRootState) => state.auth)
   const { data: accountDetailData } = useGetAccountQuery(user.id || "0", {
     skip: !user.id,
   });

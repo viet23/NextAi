@@ -49,7 +49,7 @@ export const menuItems: IMenuItem[] = [
   },
   {
     key: DASHBOARD_ROUTE,
-    label: "Dashboardt",
+    label: "Dashboard",
     icon: createElement(TicketManageIcon),
   },
 

@@ -14,6 +14,7 @@ $sidebar-bg: #f1f3f4;
 $sidebar-icon: #5f6368;
 
 @mixin menu-items-style {
+
   &.ant-menu,
   .ant-menu {
     background-color: inherit !important;
@@ -62,6 +63,7 @@ $sidebar-icon: #5f6368;
     width: 100%;
     position: relative;
     align-items: center;
+    background-color: $white;
 
     .logo-link {
       position: absolute;
@@ -71,6 +73,7 @@ $sidebar-icon: #5f6368;
       img {
         width: 7.5rem;
         height: 2.875rem;
+        filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.2)); // nổi bật trên nền trắng
       }
     }
   }
@@ -87,17 +90,39 @@ $sidebar-icon: #5f6368;
   }
 
   .close-icon {
-    color: $text-light;
+    color: $text-dark;
     font-size: 1.3rem;
     cursor: pointer;
   }
 
   .ant-drawer-content-wrapper {
     padding-top: 0 !important;
+
     .ant-drawer-content {
-      background-color: $white !important;
+      background-color: $sidebar-bg !important;
 
       @include menu-items-style();
+
+      .ant-menu-item,
+      .ant-menu-submenu-title {
+        color: $text-dark !important;
+
+        &:hover {
+          background-color: $light-blue !important;
+          color: $primary-blue !important;
+        }
+
+        &.ant-menu-item-selected {
+          background-color: $button-blue !important;
+          color: $primary-blue !important;
+        }
+      }
+
+      .ant-menu-item-icon svg,
+      .ant-menu-submenu-arrow svg {
+        fill: currentColor !important;
+        color: $primary-blue !important;
+      }
     }
   }
 }
@@ -113,6 +138,7 @@ $sidebar-icon: #5f6368;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
+
     .mobile {
       display: none;
     }
@@ -147,6 +173,7 @@ $sidebar-icon: #5f6368;
   .main {
     transition: all 0.2s;
     margin-left: $sidebar-width;
+
     &-collapsed {
       margin-left: $sidebar-collapsed-width;
     }
@@ -179,6 +206,7 @@ $sidebar-icon: #5f6368;
       margin-top: 16px;
 
       &.collapsed {
+
         div.ant-menu-submenu-title,
         div.ant-menu-item {
           padding-left: 0 !important;
@@ -214,6 +242,7 @@ $sidebar-icon: #5f6368;
   }
 
   .nav-submenu-popup.ant-menu-submenu-popup {
+
     .ant-menu-item,
     .ant-menu-submenu-title {
       display: flex !important;
