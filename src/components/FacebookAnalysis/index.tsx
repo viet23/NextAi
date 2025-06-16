@@ -5,6 +5,32 @@ const { Content } = Layout;
 const { Title } = Typography;
 const { TextArea } = Input;
 
+const styles = {
+  container: {
+    minHeight: "100vh",
+    background: "#fff",
+    padding: 24,
+  },
+  inputSection: {
+    maxWidth: 1000,
+    margin: "0 auto",
+    marginBottom: 24,
+    padding: "0 16px",
+  },
+  twoColumns: {
+    display: "flex",
+    gap: 24,
+    flexWrap: "wrap" as "wrap",
+    justifyContent: "center",
+    padding: "0 16px",
+  },
+  column: {
+    flex: 1,
+    minWidth: 320, // phù hợp cả iPhone chiều ngang
+    maxWidth: 600,
+  },
+};
+
 const FacebookPageAnalysis = () => {
   const [url, setUrl] = useState("");
   const [analysis, setAnalysis] = useState({
@@ -150,27 +176,34 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
 
   return (
     <Layout style={{ minHeight: "100vh", background: "#fff" }}>
-      <Content style={{ padding: 24 }}>
-        <div style={{ maxWidth: 1000, margin: "0 auto", marginBottom: 24 }}>
+      <Content style={styles.container}>
+        <div style={styles.inputSection}>
           <Input
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="Nhập link Facebook Page"
             style={{ marginBottom: 16 }}
           />
-          <Button style={{
-            backgroundColor: "#D2E3FC",
-            color: "#000", // màu chữ đen cho dễ đọc
-            border: "1px solid #D2E3FC",
-            borderRadius: 6,
-          }} type="primary" loading={loading} onClick={analyzeFacebookPage}>
+          <Button
+            style={{
+              backgroundColor: "#D2E3FC",
+              color: "#000",
+              border: "1px solid #D2E3FC",
+              borderRadius: 6,
+              width: "100%",
+              maxWidth: 400,
+            }}
+            type="primary"
+            loading={loading}
+            onClick={analyzeFacebookPage}
+          >
             Phân tích page & Gợi ý phát triển kênh
           </Button>
         </div>
 
-        <div style={{ display: "flex", gap: 24, flexWrap: "wrap", justifyContent: "center" }}>
+        <div style={styles.twoColumns}>
           {/* Cột trái */}
-          <div style={{ flex: 1, minWidth: 400 }}>
+          <div style={styles.column}>
             <Title level={4}>📊 Phân tích Page</Title>
             <Card>
               <Title level={5}>THÔNG TIN CHUNG</Title>
@@ -207,9 +240,8 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
             </Card>
           </div>
 
-
           {/* Cột phải */}
-          <div style={{ flex: 1, minWidth: 400 }}>
+          <div style={styles.column}>
             <Title level={4}>🚀 Đề xuất phát kênh Facebook Page</Title>
             <Card>
               <TextArea value={channelPlan} rows={28} readOnly />

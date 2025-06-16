@@ -8,7 +8,9 @@ export interface IAccounts {
 export interface IAccount {
   id: string;
   fullName: string;
-  extension:string
+  extension:string;
+  idPage:string;
+  accessToken:string;
   username: string;
   phone: string;
   email: string;

@@ -102,6 +102,8 @@ const AccountDetailPage = () => {
         email: accountDetailData?.email,
         fullName: accountDetailData?.fullName,
         extension: accountDetailData?.extension,
+        idPage: accountDetailData.idPage,
+        accessToken: accountDetailData.accessToken,
       });
     } else {
       form.resetFields();
@@ -130,6 +132,8 @@ const AccountDetailPage = () => {
           email: values.email,
           fullName: values.fullName,
           extension: values.extension,
+          idPage: values.idPage,
+          accessToken: values.accessToken,
         };
 
         updateAccountGroup({
@@ -168,7 +172,7 @@ const AccountDetailPage = () => {
                 <Input disabled size="middle" placeholder="Tên đăng nhập" />
               </Form.Item>
             </Col>
-             <Col xl={8}>
+            <Col xl={8}>
               <Form.Item
                 label="Họ và tên"
                 name="fullName"
@@ -181,7 +185,17 @@ const AccountDetailPage = () => {
             </Col>
           </Row>
           <Row gutter={[24, 0]}>
-           
+            <Col xl={8}>
+              <Form.Item
+                label="Id page"
+                name="idPage"
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+                rules={[{ required: true, message: "Vui lòng nhập Id page" }]}
+              >
+                <Input size="middle" placeholder="Id page" />
+              </Form.Item>
+            </Col>
             <Col xl={16}>
               <Form.Item
                 label="Link make"
@@ -190,10 +204,35 @@ const AccountDetailPage = () => {
                 wrapperCol={{ span: 24 }}
                 rules={[{ required: true, message: "Vui lòng nhập link đăng bài" }]}
               >
-                <Input size="middle" placeholder="Link đăng bài" />
+                <Input style={{
+                  width: '100%',
+                  fontSize: 16,
+                }} size="middle" placeholder="Link đăng bài" />
               </Form.Item>
             </Col>
           </Row>
+          <Row gutter={[0, 16]} style={{ width: '100%' }}>
+            <Col span={24}>
+              <Form.Item
+                label="Access Token"
+                name="accessToken"
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+                rules={[{ required: true, message: 'Vui lòng nhập Access Token' }]}
+                style={{ marginBottom: 0 }}
+              >
+                <Input
+                  size="middle"
+                  placeholder="Access Token"
+                  style={{
+                    width: '100%',
+                    fontSize: 16,
+                  }}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
         </Form>
         <Flex className="w-full" align="center" justify="space-between">
           <Typography.Title className="mb-0" level={5} color="#4A4A4A">
