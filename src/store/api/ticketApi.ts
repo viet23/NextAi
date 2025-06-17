@@ -13,6 +13,15 @@ const TicketApi = api.injectEndpoints({
         return res;
       },
     }),
+    getAnalysis: build.query<any, any>({
+      query: (filter) => ({
+        url: `/api/v1/case/analysis?${buildQueryString(filter)}`,
+        method: "GET",
+      }),
+      transformResponse: (res: any) => {
+        return res;
+      },
+    }),
     getReportCases: build.query<any, any>({
       query: (filter) => ({
         url: `/api/v1/case/report?${buildQueryString(filter)}`,
@@ -50,7 +59,7 @@ const TicketApi = api.injectEndpoints({
       },
     }),
     updateCase: build.mutation<any, any>({
-      query: ({id, body}) => ({
+      query: ({ id, body }) => ({
         url: `/api/v1/case/${id}`,
         method: "PUT",
         body
@@ -63,6 +72,17 @@ const TicketApi = api.injectEndpoints({
     createCase: build.mutation<any, any>({
       query: (body) => ({
         url: "/api/v1/case",
+        method: "POST",
+        body,
+      }),
+      transformResponse: (res: any) => {
+        return res;
+      },
+    }),
+
+    createAnalysis: build.mutation<any, any>({
+      query: (body) => ({
+        url: "/api/v1/case/analysis",
         method: "POST",
         body,
       }),
@@ -104,16 +124,18 @@ const TicketApi = api.injectEndpoints({
         link.click();
       },
     }),
-   
+
   }),
 });
 export const {
   useGetCasesQuery,
+  useGetAnalysisQuery,
   useGetReportCasesQuery,
   useLazyDetailCaseQuery,
   useLazyGetCasesQuery,
   useUpdateCaseMutation,
   useCreateCaseMutation,
+  useCreateAnalysisMutation,
   useLazyGetCaseCustomersQuery,
   useLazyGetCaseStaffQuery,
   useLazyExportCaseExcelQuery,

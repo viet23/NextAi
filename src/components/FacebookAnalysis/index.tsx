@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Input, Button, Typography, Card, message } from "antd";
+import { useCreateAnalysisMutation, useGetAnalysisQuery } from "src/store/api/ticketApi";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -39,8 +40,28 @@ const FacebookPageAnalysis = () => {
     engagement: "",
     strategy: "",
   });
+
+  const [createAnalysis, { isLoading: creatingCase }] = useCreateAnalysisMutation();
+
   const [channelPlan, setChannelPlan] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Gọi API ngay khi component render
+  const { data, isSuccess } = useGetAnalysisQuery({});
+
+  // Khi có dữ liệu, cập nhật vào state
+  useEffect(() => {
+    if (isSuccess && data) {
+      setUrl(data.urlPage || "");
+      setAnalysis({
+        overview: data.analysis?.overview || "",
+        products: data.analysis?.products || "",
+        engagement: data.analysis?.engagement || "",
+        strategy: data.analysis?.strategy || "",
+      });
+      setChannelPlan(data.channelPlan || "");
+    }
+  }, [data, isSuccess]);
 
   const getChannelPlan = async (rawAnalysis: string) => {
     try {
@@ -56,11 +77,11 @@ const FacebookPageAnalysis = () => {
             {
               role: "user",
               content: `
-Đây là phân tích nội dung một Fanpage nhà hàng:
+Đây là phân tích nội dung một Fanpage Facebook:
 
 ${rawAnalysis}
 
-Hãy đề xuất kế hoạch phát triển kênh Facebook Page cho nhà hàng này, gồm:
+Hãy đề xuất kế hoạch phát triển kênh Facebook Page này, gồm:
 1. Mục tiêu kênh
 2. Định vị nội dung gợi ý (tỷ lệ %)
 3. Lịch đăng bài mẫu tuần
@@ -174,6 +195,31 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
     }
   };
 
+  /////
+  const saveAnalyzeFacebookPage = async () => {
+    if (!url) {
+      message.warning("Please enter Facebook Page link.");
+      return;
+    }
+    if (!analysis) {
+      message.warning("No information yet Facebook Page Analysis.");
+      return;
+    }
+    if (!channelPlan) {
+      message.warning("No information yet Suggested Facebook Page Channel.");
+      return;
+    }
+    try {
+      const body = { analysis, channelPlan, urlPage: url };
+      await createAnalysis(body).unwrap();
+    } catch (err) {
+      console.error("❌ Whole process error:", err);
+      message.error("An error occurred while parsing.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Layout style={{ minHeight: "100vh", background: "#fff" }}>
       <Content style={styles.container}>
@@ -184,22 +230,47 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
             placeholder="Enter the Facebook Page link"
             style={{ marginBottom: 16 }}
           />
-          <Button
-            style={{
-              backgroundColor: "#D2E3FC",
-              color: "#000",
-              border: "1px solid #D2E3FC",
-              borderRadius: 6,
-              width: "100%",
-              maxWidth: 400,
-            }}
-            type="primary"
-            loading={loading}
-            onClick={analyzeFacebookPage}
-          >
-            Page Analysis & Channel Development Suggestions
-          </Button>
+
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+            <Button
+              style={{
+                backgroundColor: "#D2E3FC",
+                color: "#000",
+                border: "1px solid #D2E3FC",
+                borderRadius: 6,
+                height: 40,
+                padding: "0 16px", // tạo khoảng đệm vừa đủ
+                whiteSpace: "nowrap", // không xuống dòng
+                width: "auto", // chiều ngang bám sát nội dung
+              }}
+              type="primary"
+              loading={loading}
+              onClick={analyzeFacebookPage}
+            >
+              Page Analysis & Channel Development Suggestions
+            </Button>
+
+
+            <Button
+              style={{
+                backgroundColor: "#D2E3FC",
+                color: "#000",
+                border: "1px solid #D2E3FC",
+                borderRadius: 6,
+                height: 40,
+                padding: "0 20px", // bo gọn nút
+                whiteSpace: "nowrap",
+                flexShrink: 0, // không cho co lại quá nhỏ
+              }}
+              type="primary"
+              loading={loading}
+              onClick={saveAnalyzeFacebookPage}
+            >
+              Save
+            </Button>
+          </div>
         </div>
+
 
         <div style={styles.twoColumns}>
           {/* Cột trái */}
