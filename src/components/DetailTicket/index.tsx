@@ -43,7 +43,7 @@ const DetailTicket: React.FC<TicketFormProps> = ({ id }) => {
           }
         })
         .catch(() => {
-          message.error("Lỗi khi lấy thông tin ticket!");
+          message.error("Error getting article information!");
         });
     } else {
 
@@ -55,9 +55,9 @@ const DetailTicket: React.FC<TicketFormProps> = ({ id }) => {
     <div style={{ backgroundColor: "#fff", padding: 20, borderRadius: 8 }}>
       {videoData && (
         <div style={{ marginTop: 10 }}>
-          <Title level={4}>Thông tin video</Title>
+          <Title level={4}>Video information</Title>
           <Paragraph>
-            <strong>Ngày tạo video:</strong>{" "}
+            <strong>Video creation date:</strong>{" "}
             {dayjs(videoData.createdAt).format("YYYY-MM-DD HH:mm:ss")}
           </Paragraph>
           <Paragraph>
@@ -68,7 +68,7 @@ const DetailTicket: React.FC<TicketFormProps> = ({ id }) => {
             style={{ width: "100%", borderRadius: 8 }}
             src={videoData.urlVideo}
           >
-            Trình duyệt của bạn không hỗ trợ video.
+            Your browser does not support video.
           </video>
         </div>
       )}

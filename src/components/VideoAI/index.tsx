@@ -123,7 +123,7 @@ const VideoGenerator = () => {
         },
       };
 
-      
+
 
       // 3. Gửi render request đến Shotstack
       const response = await axios.post("https://api.shotstack.io/v1/render", payload, {
@@ -134,55 +134,55 @@ const VideoGenerator = () => {
       });
 
       const renderId = (response.data as { response: { id: string } }).response.id;
-      message.success("Đã gửi yêu cầu ghép nhạc. Đang xử lý...");
+      message.success("Music merge request sent. Processing...");
 
       await pollRenderStatus(renderId)
 
     } catch (error) {
-      console.error("Lỗi khi ghép nhạc:", error);
-      message.error("Ghép nhạc thất bại. Vui lòng thử lại.");
+      console.error("Error when merging music:", error);
+      message.error("Music pairing failed. Please try again.");
     }
   };
 
   const pollRenderStatus = async (renderId: string, maxAttempts = 15, delay = 5000) => {
-  let attempts = 0;
+    let attempts = 0;
 
-  const checkStatus = async () => {
-    try {
-      const statusRes = await axios.get(`https://api.shotstack.io/v1/render/${renderId}`, {
-        headers: {
-          "x-api-key": SHOTSTACK_API_KEY,
-        },
-      });
+    const checkStatus = async () => {
+      try {
+        const statusRes = await axios.get(`https://api.shotstack.io/v1/render/${renderId}`, {
+          headers: {
+            "x-api-key": SHOTSTACK_API_KEY,
+          },
+        });
 
-      const { status, url } = (statusRes.data as { response: { status: string; url?: string } }).response;
+        const { status, url } = (statusRes.data as { response: { status: string; url?: string } }).response;
 
-      console.log(`🎞️ Render status [${attempts + 1}]:`, status);
+        console.log(`🎞️ Render status [${attempts + 1}]:`, status);
 
-      if (status === "done") {
-        message.success("✅ Ghép nhạc thành công!");
-        console.log("🎬 Video đã ghép nhạc:", url);
-        if (url) setVideoSrc(url);
-        return;
-      } else if (status === "failed") {
-        message.error("❌ Render thất bại!");
-        return;
-      } else {
-        attempts++;
-        if (attempts < maxAttempts) {
-          setTimeout(checkStatus, delay);
+        if (status === "done") {
+          message.success("✅Music pairing successful!");
+          console.log("🎬 Video with music:", url);
+          if (url) setVideoSrc(url);
+          return;
+        } else if (status === "failed") {
+          message.error("❌ Render failed!");
+          return;
         } else {
-          message.warning("⚠️ Quá thời gian chờ render.");
+          attempts++;
+          if (attempts < maxAttempts) {
+            setTimeout(checkStatus, delay);
+          } else {
+            message.warning("⚠️ Render timeout.");
+          }
         }
+      } catch (err) {
+        console.error("❌ Error when testing render:", err);
+        message.error("Error checking render status.");
       }
-    } catch (err) {
-      console.error("❌ Lỗi khi kiểm tra render:", err);
-      message.error("Lỗi khi kiểm tra trạng thái render.");
-    }
-  };
+    };
 
-  checkStatus();
-};
+    checkStatus();
+  };
 
 
   const fetchMusic = async (genre: string) => {
@@ -198,7 +198,7 @@ const VideoGenerator = () => {
       );
       setMusicList(res.data.results.slice(0, 5));
     } catch (err) {
-      message.error('Lỗi tải danh sách nhạc');
+      message.error('Playlist loading error');
     }
     setLoadingMusic(false);
   };
@@ -228,7 +228,7 @@ const VideoGenerator = () => {
       setAudio(newAudio);
       setPlayingId(id);
     } catch (err) {
-      message.error('Không thể phát nhạc');
+      message.error('Cannot play music');
     }
   };
 
@@ -249,7 +249,7 @@ const VideoGenerator = () => {
   const confirmSelect = () => {
     const track = musicList.find((t) => t.id === selectedId);
     if (!track) {
-      message.warning('Vui lòng chọn một bài nhạc');
+      message.warning('Please select a song');
       return;
     }
     if (audio) audio.pause();
@@ -259,18 +259,18 @@ const VideoGenerator = () => {
     setAudio(null);
     setPlayingId(null);
     setModalOpen(false);
-    message.success(`Đã chọn: ${track.name}`);
+    message.success(`Selected: ${track.name}`);
   };
 
 
   const handlePostFacebook = async () => {
     if (!videoSrc) {
-      message.warning("Vui lòng tạo video hoặc ảnh trước khi đăng.");
+      message.warning("Please create a video or photo before posting.");
       return;
     }
 
     if (!caption) {
-      message.warning("Vui lòng nhập caption.");
+      message.warning("Please enter caption.");
       return;
     }
 
@@ -291,15 +291,15 @@ const VideoGenerator = () => {
         const body = { urlVideo: videoSrc, caption };
         await createCase(body).unwrap();
 
-        message.success("Đã đăng lên Facebook (qua Make.com) thành công!");
+        message.success("Posted to Facebook (via Make.com) successfully!");
       } else {
-        message.error("Chưa cấu hình đăng bài lên Facebook.");
+        message.error("Not configured to post to Facebook.");
       }
 
 
     } catch (err) {
-      console.error("❌ Lỗi khi gửi lên Make:", err);
-      message.error("Lỗi khi đăng bài lên Facebook.");
+      console.error("❌ Error when submitting to Make:", err);
+      message.error("Error posting to Facebook.");
     }
   };
 
@@ -313,9 +313,9 @@ const VideoGenerator = () => {
 
   const mergeSelectedVideos = async () => {
     const selectedUrls = generatedVideos.filter((v) => v.selected).map((v) => v.url);
-    if (selectedUrls.length < 2) return message.warning("Chọn ít nhất 2 video để ghép.");
+    if (selectedUrls.length < 2) return message.warning("Select at least 2 videos to merge.");
 
-    message.loading("Đang gửi yêu cầu ghép video...");
+    message.loading("Sending video merge request...");
     try {
       const res = await fetch(`${process.env.REACT_APP_URL}/merge-videos`, {
         method: "POST",
@@ -326,7 +326,7 @@ const VideoGenerator = () => {
       const initData = await res.json();
 
       if (!initData.renderId) {
-        message.error("Gửi render thất bại");
+        message.error("Send render failed");
         return;
       }
 
@@ -358,13 +358,13 @@ const VideoGenerator = () => {
 
       if (mergedUrl) {
         setVideoSrc(mergedUrl);
-        message.success("Đã ghép xong video!");
+        message.success("Video merging done!");
       } else {
-        message.warning("Render mất quá nhiều thời gian, vui lòng thử lại sau");
+        message.warning("Rendering took too long, please try again later");
       }
     } catch (err) {
       console.error(err);
-      message.error("Lỗi server khi ghép video");
+      message.error("Server error when merging video");
     }
   };
 
@@ -386,19 +386,19 @@ const VideoGenerator = () => {
         const newUrls: any = [...uploadedImageUrls];
         newUrls[index] = data.data.url;
         setUploadedImageUrls(newUrls);
-        message.success("Upload ảnh thành công");
+        message.success("Upload photo successfully");
       } else {
-        message.error("Upload ảnh thất bại");
+        message.error("Image upload failed");
       }
     } catch (error) {
       console.error("Upload error:", error);
-      message.error("Lỗi khi upload ảnh");
+      message.error("Error when uploading photos");
     }
   };
 
   const generateSingleSceneVideo = async (index: any) => {
     if (!promptTexts[index] || !uploadedImageUrls[index]) {
-      message.warning(`Vui lòng nhập mô tả và ảnh cho Scene ${index + 1}`);
+      message.warning(`Please enter a description and photo for the Scene ${index + 1}`);
       return;
     }
 
@@ -430,11 +430,11 @@ const VideoGenerator = () => {
           updated.push({ index, url: data.videoUrl, selected: false });
           return updated;
         });
-        message.success(`Đã tạo lại video cho Scene ${index + 1}`);
+        message.success(`Recreated video for Scene ${index + 1}`);
       }
     } catch (error) {
       console.error("Generate video error:", error);
-      message.error(`Lỗi khi tạo video cho Scene ${index + 1}`);
+      message.error(`Error creating video for Scene ${index + 1}`);
     }
   };
 
@@ -442,7 +442,7 @@ const VideoGenerator = () => {
     // const combinedPrompt = promptTexts.filter(Boolean).join(". ");
 
     if (!description) {
-      message.warning("Vui lòng nhập mô tả cho ít nhất một scene");
+      message.warning("Please enter a description for at least one scene");
       return;
     }
 
@@ -469,11 +469,11 @@ const VideoGenerator = () => {
       if (data?.choices?.[0]?.message?.content) {
         setCaption(data.choices[0].message.content.trim());
       } else {
-        message.error("Không tạo được caption");
+        message.error("Unable to create caption");
       }
     } catch (err) {
       console.error("Caption error:", err);
-      message.error("Lỗi tạo caption");
+      message.error("Error creating caption");
     } finally {
       setLoadingCaption(false);
     }
@@ -653,7 +653,7 @@ const VideoGenerator = () => {
                   }}
                   onClick={handleMergeMusic}
                 >
-                  🎬 Ghép nhạc
+                  🎬 Music pairing
                 </Button>
               </Col>
             </Row>
@@ -664,12 +664,12 @@ const VideoGenerator = () => {
               open={modalOpen}
               onOk={confirmSelect}
               onCancel={closeModal}
-              okText="Xác nhận"
-              cancelText="Hủy"
+              okText="Confirm"
+              cancelText="Cancel"
             >
               <Select
                 showSearch
-                placeholder="Chọn thể loại nhạc"
+                placeholder="Choose music genre"
                 style={{ width: '100%', marginBottom: 16 }}
                 value={selectedGenre}
                 onChange={(value) => {
@@ -737,7 +737,7 @@ const VideoGenerator = () => {
                   <source src={videoSrc} type="video/mp4" />
                 </video>
               ) : (
-                <span style={{ color: "#999", fontSize: 16 }}>Chưa có video</span>
+                <span style={{ color: "#999", fontSize: 16 }}>No videos yet</span>
               )}
             </div>
 
@@ -746,7 +746,7 @@ const VideoGenerator = () => {
                 rows={2}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Nhập mô tả nội dung video..."
+                placeholder="Enter video content description..."
                 style={{
                   width: "100%",
                   fontSize: 15,
@@ -779,7 +779,7 @@ const VideoGenerator = () => {
               rows={4}
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
-              placeholder="Nội dung caption sẽ hiển thị ở đây..."
+              placeholder="The caption content will appear here..."
               style={{
                 fontSize: 15,
                 borderRadius: 8,

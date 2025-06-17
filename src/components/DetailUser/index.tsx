@@ -11,38 +11,38 @@ const CreateUser: React.FC<{ onRefetch: () => void }> = ({ onRefetch }) => {
     try {
       const values = await form.validateFields();
       await createAccount(values).unwrap();
-      message.success("Tạo tài khoản thành công!");
+      message.success("Account created successfully!");
       form.resetFields();
       onRefetch();
     } catch (error) {
-      message.error("Tạo tài khoản thất bại!");
+      message.error("Account creation failed!");
     }
   };
 
   return (
     <div style={{ backgroundColor: "#fff", padding: 20, borderRadius: 8 }}>
-      <PageTitleHOC title="Tạo tài khoản mới">
+      <PageTitleHOC title="Create a new account">
         <Card>
           <Form form={form} layout="vertical">
             <Form.Item
-              label="Tên đăng nhập"
+              label="Login name"
               name="username"
-              rules={[{ required: true, message: "Vui lòng nhập tên đăng nhập" }]}
+              rules={[{ required: true, message: "Please enter username" }]}
             >
-              <Input placeholder="Tên đăng nhập" />
+              <Input placeholder="Login name" />
             </Form.Item>
 
             <Form.Item
-              label="Mật khẩu"
+              label="Password"
               name="password"
-              rules={[{ required: true, message: "Vui lòng nhập mật khẩu" }]}
+              rules={[{ required: true, message: "Please enter password" }]}
             >
-              <Input.Password placeholder="Mật khẩu" />
+              <Input.Password placeholder="Password" />
             </Form.Item>
           </Form>
 
           <Button type="primary" onClick={handleSubmit} loading={isLoading}>
-            Tạo tài khoản
+            Create an account
           </Button>
         </Card>
       </PageTitleHOC>

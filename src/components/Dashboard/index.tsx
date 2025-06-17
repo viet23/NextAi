@@ -92,7 +92,7 @@ const Dashboard = () => {
           ) : (
             <Image width={40} src="https://via.placeholder.com/40" alt="no image" />
           ),
-          caption: post.message || "(Không có nội dung)",
+          caption: post.message || "(No content)",
           react: post.likes?.summary?.total_count || 0,
           comment: post.comments?.summary?.total_count || 0,
           share: post.shares?.count || 0,

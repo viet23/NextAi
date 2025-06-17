@@ -46,13 +46,13 @@ const FullscreenSplitCard = () => {
       const data = await res.json();
       if (data?.data?.url) {
         setUploadedImageUrl(data.data.url);
-        message.success("Ảnh đã được tải lên thành công!");
+        message.success("Photo uploaded successfully!");
       } else {
-        message.error("Lỗi tải ảnh lên imgbb.");
+        message.error("Error uploading image to imgbb.");
       }
     } catch (err) {
       console.error("Upload error:", err);
-      message.error("Lỗi khi upload ảnh.");
+      message.error("Error uploading image.");
     }
   };
 
@@ -165,12 +165,12 @@ const FullscreenSplitCard = () => {
 
   const handlePostFacebook = async () => {
     if (!imageUrl) {
-      message.warning("Vui lòng tạo video hoặc ảnh trước khi đăng.");
+      message.warning("Please create a video or photo before posting.");
       return;
     }
 
     if (!caption) {
-      message.warning("Vui lòng nhập caption.");
+      message.warning("Please enter caption.");
       return;
     }
 
@@ -191,15 +191,15 @@ const FullscreenSplitCard = () => {
 
         // const body = { urlVideo: imageUrl, caption };
         // await createCase(body).unwrap();
-        message.success("Đã đăng lên Facebook (qua Make.com) thành công!");
+        message.success("Posted to Facebook (via Make.com) successfully!");
       } else {
-        message.error("Chưa cấu hình đăng bài lên Facebook.");
+        message.error("Not configured to post to Facebook.");
       }
 
 
     } catch (err) {
-      console.error("❌ Lỗi khi gửi lên Make:", err);
-      message.error("Lỗi khi đăng bài lên Facebook.");
+      console.error("❌Error when submitting to Make:", err);
+      message.error("Error posting to Facebook.");
     }
   };
 

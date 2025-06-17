@@ -77,13 +77,13 @@ Hãy đề xuất kế hoạch phát triển kênh Facebook Page cho nhà hàng 
       const content = data?.choices?.[0]?.message?.content || "";
       setChannelPlan(content);
     } catch (err) {
-      console.error("❌ Lỗi GPT phát triển kênh:", err);
+      console.error("❌ GPT channel development error:", err);
     }
   };
 
   const analyzeFacebookPage = async () => {
     if (!url) {
-      message.warning("Vui lòng nhập đường link Facebook Page.");
+      message.warning("Please enter Facebook Page link.");
       return;
     }
 
@@ -106,7 +106,7 @@ Hãy đề xuất kế hoạch phát triển kênh Facebook Page cho nhà hàng 
 
       const crawlData = await crawlRes.json();
       if (!crawlData.success) {
-        message.error("Không lấy được dữ liệu từ Facebook Page.");
+        message.error("Unable to get data from Facebook Page.");
         setLoading(false);
         return;
       }
@@ -164,11 +164,11 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
 `;
         await getChannelPlan(rawAnalysis);
       } else {
-        message.error("GPT không phân tích được nội dung.");
+        message.error("GPT cannot parse the content.");
       }
     } catch (err) {
-      console.error("❌ Lỗi toàn bộ quá trình:", err);
-      message.error("Đã xảy ra lỗi khi phân tích.");
+      console.error("❌ Whole process error:", err);
+      message.error("An error occurred while parsing.");
     } finally {
       setLoading(false);
     }
@@ -181,7 +181,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
           <Input
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            placeholder="Nhập link Facebook Page"
+            placeholder="Enter the Facebook Page link"
             style={{ marginBottom: 16 }}
           />
           <Button
@@ -197,16 +197,16 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
             loading={loading}
             onClick={analyzeFacebookPage}
           >
-            Phân tích page & Gợi ý phát triển kênh
+            Page Analysis & Channel Development Suggestions
           </Button>
         </div>
 
         <div style={styles.twoColumns}>
           {/* Cột trái */}
           <div style={styles.column}>
-            <Title level={4}>📊 Phân tích Page</Title>
+            <Title level={4}>📊 Page Analysis</Title>
             <Card>
-              <Title level={5}>THÔNG TIN CHUNG</Title>
+              <Title level={5}>GENERAL INFORMATION</Title>
               <TextArea
                 value={analysis.overview}
                 readOnly
@@ -214,7 +214,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
                 style={{ marginBottom: 12, whiteSpace: "pre-wrap" }}
               />
 
-              <Title level={5}>SẢN PHẨM / DỊCH VỤ</Title>
+              <Title level={5}>PRODUCTS / SERVICES</Title>
               <TextArea
                 value={analysis.products}
                 readOnly
@@ -222,7 +222,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
                 style={{ marginBottom: 12, whiteSpace: "pre-wrap" }}
               />
 
-              <Title level={5}>TƯƠNG TÁC KHÁCH HÀNG</Title>
+              <Title level={5}>CUSTOMER INTERACTION</Title>
               <TextArea
                 value={analysis.engagement}
                 readOnly
@@ -230,7 +230,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
                 style={{ marginBottom: 12, whiteSpace: "pre-wrap" }}
               />
 
-              <Title level={5}>CHIẾN LƯỢC TRUYỀN THÔNG</Title>
+              <Title level={5}>COMMUNICATIONS STRATEGY</Title>
               <TextArea
                 value={analysis.strategy}
                 readOnly
@@ -242,7 +242,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
 
           {/* Cột phải */}
           <div style={styles.column}>
-            <Title level={4}>🚀 Đề xuất phát kênh Facebook Page</Title>
+            <Title level={4}>🚀 Suggested Facebook Page Channel</Title>
             <Card>
               <TextArea value={channelPlan} rows={28} readOnly />
             </Card>
