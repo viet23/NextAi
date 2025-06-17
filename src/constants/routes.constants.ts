@@ -1,5 +1,5 @@
-export const IMAGE_ROUTE = "/image";
-export const VIDEO_ROUTE = "/video";
+export const IMAGE_ROUTE = "/image-ai";
+export const VIDEO_ROUTE = "/video-ai";
 export const FB_ANALYSIS_ROUTE = "/";
 export const CUSTOMER_ROUTE = "/quan-ly-khach-hang";
 export const MEDIA_ROUTE = "/media"; 

@@ -44,7 +44,7 @@ const SignIn = () => {
       store.dispatch(setIsLogin(true));
       if (token && user?.email) {
 
-        message.success(`Xin chào, ${user.name || user.email}!`);
+        message.success(`Hello, ${user.name || user.email}!`);
         navigate("/");
 
       }
@@ -73,25 +73,25 @@ const SignIn = () => {
           textAlign: "center",
         }}
       >
-        <Title level={3}>Đăng nhập</Title>
+        <Title level={3}>Log in</Title>
 
         <Input
-          placeholder="Tên đăng nhập"
+          placeholder="User name"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           style={{ marginBottom: 10 }}
         />
         <Input.Password
-          placeholder="Mật khẩu"
+          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           style={{ marginBottom: 20 }}
         />
         <Button type="primary" onClick={handleLogin} block size="large">
-          Đăng nhập
+          Log in
         </Button>
 
-        <Divider plain>Hoặc đăng nhập bằng</Divider>
+        <Divider plain>Or log in with</Divider>
 
         <Flex vertical gap={12}>
           {/* <Button

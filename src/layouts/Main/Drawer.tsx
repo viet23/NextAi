@@ -103,7 +103,7 @@ export const Drawer = ({
                 label: (
                   <Flex gap={5}>
                     <LogoutOutlined style={{ fontSize: 19 }} />
-                    <span>Đăng xuất</span>
+                    <span>Sign out</span>
                   </Flex>
                 ),
                 onClick: handleLogout,

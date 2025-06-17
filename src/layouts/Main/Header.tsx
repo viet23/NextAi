@@ -41,7 +41,7 @@ export const Header = ({ setOpenDrawer }: IProps) => {
         label: (
           <Flex gap={5} onClick={handleLogout}>
             <LogoutOutlined />
-            <span>Đăng xuất</span>
+            <span>Sign out</span>
           </Flex>
         ),
         key: "0",
