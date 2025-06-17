@@ -29,23 +29,23 @@ export const AuthorizationsRolesTable = memo(
     const columns = useMemo<ColumnsType<IRole>>(
       () => [
         {
-          title: "STT",
+          title: "NO",
           key: "index",
           width: 90,
           render: (_v, _r, index) => index + 1,
         },
         {
-          title: "Tên quyền",
+          title: "Permission name",
           dataIndex: "name",
           key: "name",
         },
         {
-          title: "Mô tả",
+          title: "Describe",
           dataIndex: "description",
           key: "description",
         },
         {
-          title: "Truy cập",
+          title: "Access",
           key: "id",
           dataIndex: "id",
           align: "center",
@@ -70,7 +70,7 @@ export const AuthorizationsRolesTable = memo(
       <>
         <Flex align="center" justify="space-between">
           <Typography.Title className="title" level={4} color="#1B1B1B">
-            Thiết lập quyền
+            Set permissions
           </Typography.Title>
           <ActionAuthorize roleNames={[CREATE_ROLE]}>
             <Button
@@ -79,7 +79,7 @@ export const AuthorizationsRolesTable = memo(
               type="primary"
               onClick={handleSave}
             >
-              Lưu
+              Save
             </Button>
           </ActionAuthorize>
         </Flex>
@@ -91,7 +91,7 @@ export const AuthorizationsRolesTable = memo(
           dataSource={dataSource}
           pagination={false}
           locale={{
-            emptyText: <Empty description="Vui lòng chọn nhóm quyền"></Empty>,
+            emptyText: <Empty description="Please select permission group"></Empty>,
           }}
           scroll={{ x: 600, y: 500 }}
         />

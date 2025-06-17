@@ -93,41 +93,41 @@ const AccountsPage = () => {
   const columns = useMemo<ColumnsType<any>>(
     () => [
       {
-        title: "STT",
+        title: "NO",
         key: "index",
         width: 90,
         render: (_value, _record, index) => index + 1,
       },
       {
-        title: "Tên đăng nhập",
+        title: "Login name",
         key: "username",
         dataIndex: "username",
       },
       {
-        title: "Họ và Tên",
+        title: "Full Name",
         key: "fullName",
         dataIndex: "fullName",
       },
       {
-        title: "Ngày tạo",
+        title: "Creation date",
         key: "createdAt",
         dataIndex: "createdAt",
         render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
       },
       {
-        title: "Trạng thái",
+        title: "Status",
         key: "status",
         dataIndex: "isActive",
         render: (value) =>
           value ? ACCOUNT_STATUS_ACTIVE_LABEL : ACCOUNT_STATUS_INACTIVE_LABEL,
       },
       {
-        title: "Thao tác",
+        title: "Actions",
         key: "actions",
         dataIndex: "id",
         render: (id) => (
           <Link className="edit" to={`/tai-khoan/${id}`}>
-            Sửa
+           edit
           </Link>
         ),
       },
@@ -186,10 +186,10 @@ const AccountsPage = () => {
   };
 
   return (
-    <PageTitleHOC title="Danh sách tài khoản">
+    <PageTitleHOC title="List of accounts">
       <Card className="accounts">
         <Typography.Title className="title" level={4} color="#1B1B1B">
-          Danh sách tài khoản người dùng
+          List of user accounts
         </Typography.Title>
 
         <Form
@@ -207,7 +207,7 @@ const AccountsPage = () => {
                   allowClear
                   size="large"
                   prefix={<SearchOutlined />}
-                  placeholder="Tìm kiếm"
+                  placeholder="Search"
                 />
               </Form.Item>
             </Col>
@@ -216,7 +216,7 @@ const AccountsPage = () => {
                 <Select
                   allowClear
                   size="large"
-                  placeholder="Trạng thái tài khoản"
+                  placeholder="Account status"
                 >
                   {ACCOUNT_STATUS.map((status) => (
                     <Select.Option key={status.value}>
@@ -229,7 +229,7 @@ const AccountsPage = () => {
             <Col xs={24} lg={8}>
               <Flex justify="end">
                 <Button size="large" type="primary" onClick={handleAddNew}>
-                  Thêm mới
+                  Add new
                 </Button>
               </Flex>
             </Col>

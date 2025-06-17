@@ -71,18 +71,18 @@ export const menuItems: IMenuItem[] = [
   {
     key: "accounts",
     icon: createElement(SettingIcon),
-    label: "Tài khoản",
+    label: "Accounts",
     children: [
       {
         key: ACCOUNT_ROUTE,
         icon: createElement(DotIcon),
-        label: "TK người dùng",
+        label: "User account",
         rolenames: [GET_USER],
       },
       {
         key: AUTHORIZATION_ROUTE,
         icon: createElement(DotIcon),
-        label: "Phân quyền",
+        label: "User authorization",
         rolenames: [GET_GROUP, GET_ROLE],
         allRoleRequired: true,
       },

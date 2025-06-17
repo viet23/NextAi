@@ -115,17 +115,17 @@ const MediaList: React.FC<any> = () => {
       <div className="layout-content">
         <Row gutter={[24, 0]} style={{ marginBottom: 24 }}>
           <Col xs="24" xl={24}>
-            <Card className=" tablespace mb-24" title="Tìm kiếm" style={{ padding: 20 }} >
+            <Card className=" tablespace mb-24" title="Search" style={{ padding: 20 }} >
               <Form form={form} onFinish={handleOnFinish} layout="vertical">
                 <Row gutter={[24, 0]}>
 
                   <Col xl={6} md={12} sm={24}>
                     <Form.Item name="caption" label="Caption">
-                      <Input placeholder="Nhập Caption" />
+                      <Input placeholder="Enter Caption" />
                     </Form.Item>
                   </Col>
                   <Col xl={6} md={12} sm={24}>
-                    <Form.Item name="dateTime" label="Từ ngày - Đến ngày">
+                    <Form.Item name="dateTime" label="From date - To date">
                       <RangePicker style={{ width: "100%" }} />
                     </Form.Item>
                   </Col>
@@ -138,10 +138,10 @@ const MediaList: React.FC<any> = () => {
                           icon={<CloseOutlined />}
                           onClick={handleResetField}
                         >
-                          Bỏ lọc
+                          Unfilter
                         </Button>
                         <Button type="primary" htmlType="submit" icon={<SearchOutlined />}>
-                          Tìm kiếm
+                          Search
                         </Button>
                       </Space>
                     </Form.Item>
@@ -196,7 +196,7 @@ const MediaList: React.FC<any> = () => {
                     render: (url) => (
                       <video width="180" height="100" controls>
                         <source src={url} type="video/mp4" />
-                        Trình duyệt không hỗ trợ video.
+                        Browser does not support video.
                       </video>
                     ),
                   },
@@ -208,14 +208,14 @@ const MediaList: React.FC<any> = () => {
                   },
 
                   {
-                    title: "Hành động",
+                    title: "Actions",
                     key: "action",
                     dataIndex: "action",
                     fixed: "right",
                     width: 40,
                     render: (text, record, index) => (
                       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-                        <Tooltip title="Xem chi tiết">
+                        <Tooltip title="See details">
                           <EyeOutlined onClick={() => handleOnClickDetail(record)} />
                         </Tooltip>
                       </div>

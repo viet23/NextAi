@@ -35,7 +35,7 @@ export const AuthorizationsGroupRoles = memo(
               level={4}
               color="#1B1B1B"
             >
-              Thiết lập nhóm quyền người dùng
+             Set up user rights groups
             </Typography.Title>
           </Col>
         </Row>
