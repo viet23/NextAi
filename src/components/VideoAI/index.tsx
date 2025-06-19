@@ -142,7 +142,7 @@ const VideoGenerator = () => {
 
     } catch (error) {
       console.error("Error when merging music:", error);
-      message.error("Music pairing failed. Please try again.");
+      message.error("Music pairing failed. Your budget run out! Please contact Admin");
     }
   };
 
@@ -167,7 +167,7 @@ const VideoGenerator = () => {
           if (url) setVideoSrc(url);
           return;
         } else if (status === "failed") {
-          message.error("❌ Render failed!");
+          message.error("❌ Render failed! Your budget run out! Please contact Admin");
           return;
         } else {
           attempts++;
@@ -179,7 +179,7 @@ const VideoGenerator = () => {
         }
       } catch (err) {
         console.error("❌ Error when testing render:", err);
-        message.error("Error checking render status.");
+        message.error("Error checking render status. Your budget run out! Please contact Admin");
       }
     };
 
@@ -200,7 +200,7 @@ const VideoGenerator = () => {
       );
       setMusicList(res.data.results.slice(0, 5));
     } catch (err) {
-      message.error('Playlist loading error');
+      message.error('Playlist loading error. Your budget run out! Please contact Admin');
     }
     setLoadingMusic(false);
   };
@@ -230,7 +230,7 @@ const VideoGenerator = () => {
       setAudio(newAudio);
       setPlayingId(id);
     } catch (err) {
-      message.error('Cannot play music');
+      message.error('Cannot play music . Your budget run out! Please contact Admin');
     }
   };
 
@@ -328,7 +328,7 @@ const VideoGenerator = () => {
       const initData = await res.json();
 
       if (!initData.renderId) {
-        message.error("Send render failed");
+        message.error("Send render failed , Your budget run out! Please contact Admin");
         return;
       }
 
@@ -350,7 +350,7 @@ const VideoGenerator = () => {
         }
 
         if (statusData?.response?.status === "failed") {
-          message.error("Render thất bại");
+          message.error("Render thất bại , Your budget run out! Please contact Admin");
           return;
         }
 
@@ -366,7 +366,7 @@ const VideoGenerator = () => {
       }
     } catch (err) {
       console.error(err);
-      message.error("Server error when merging video");
+      message.error("Server error when merging video , Your budget run out! Please contact Admin");
     }
   };
 
@@ -436,7 +436,8 @@ const VideoGenerator = () => {
       }
     } catch (error) {
       console.error("Generate video error:", error);
-      message.error(`Error creating video for Scene ${index + 1}`);
+      message.error(`Error creating video for Scene ${index + 1} Your budget run out!
+Please contact Admin`);
     }
   };
 

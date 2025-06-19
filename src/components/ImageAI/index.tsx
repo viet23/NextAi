@@ -100,7 +100,7 @@ const FullscreenSplitCard = () => {
     try {
       const translatedPrompt = await translatePromptToEnglish(prompt);
       if (!translatedPrompt) {
-        message.error("Failed to translate prompt.");
+        message.error("Failed to translate prompt. Your budget run out! Please contact Admin");
         return;
       }
 
@@ -119,11 +119,11 @@ const FullscreenSplitCard = () => {
       if (data?.imageUrl) {
         setImageUrl(data.imageUrl);
       } else {
-        message.error("Image generation failed.");
+        message.error("Image generation failed. Your budget run out! Please contact Admin");
       }
     } catch (err) {
       console.error("Image error:", err);
-      message.error("Image generation error.");
+      message.error("Image generation error. Your budget run out! Please contact Admin");
     } finally {
       setLoadingImage(false);
     }
@@ -160,7 +160,7 @@ const FullscreenSplitCard = () => {
       setCaption(data?.choices?.[0]?.message?.content?.trim() || "");
     } catch (error) {
       console.error("Caption error:", error);
-      message.error("Caption generation error.");
+      message.error("Caption generation error.Your budget run out! Please contact Admin");
     } finally {
       setLoadingCaption(false);
     }
