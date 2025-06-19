@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
 import { useGetAccountQuery } from "src/store/api/accountApi";
+import AutoPostModal from "../AutoPostModal";
 const genres = [
   "Ambient", "Piano", "Orchestra", "Lofi", "Chill", "Hiphop", "Electronic",
   "Pop", "Rock", "Jazz", "Blues", "Acoustic", "Guitar", "Drums", "Trap",
@@ -70,6 +71,7 @@ const VideoGenerator = () => {
   });
   const SHOTSTACK_API_KEY = "fHK6q16tBau8galfuCqHp7d1K98zOqnluqIZZQAQ";
   const [description, setDescription] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   const handleMergeMusic = async () => {
 
@@ -496,8 +498,8 @@ const VideoGenerator = () => {
         <Row gutter={[24, 24]} justify="center" wrap>
           {/* Cột trái: nhập mô tả và upload */}
           <Col xs={24} md={12}>
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ fontWeight: 500 }}>Video duration:</label>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <label style={{ fontWeight: 500, whiteSpace: "nowrap" }}>Video duration:</label>
               <Select
                 value={videoDuration}
                 onChange={(value) => {
@@ -506,7 +508,7 @@ const VideoGenerator = () => {
                   setUploadedImageUrls(Array(durationSceneMap[value]).fill(""));
                   setGeneratedVideos([]);
                 }}
-                style={{ width: "100%", marginTop: 4 }}
+                style={{ width: 150, marginLeft: 12 }}
               >
                 <Option value={5}>5 seconds</Option>
                 <Option value={10}>10 seconds</Option>
@@ -514,6 +516,7 @@ const VideoGenerator = () => {
                 <Option value={60}>60 seconds</Option>
               </Select>
             </div>
+
 
             {Array.from({ length: activeScenes }).map((_, index) => (
               <div key={index} style={{ marginBottom: 24 }}>
@@ -714,6 +717,32 @@ const VideoGenerator = () => {
 
           {/* Cột phải: kết quả và caption */}
           <Col xs={24} md={12}>
+            {/* Modal hiển thị khi click */}
+            <AutoPostModal visible={showModal} onClose={() => setShowModal(false)} />
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end", // ✅ đẩy nút sang phải
+                padding: "6px 0",           // ✅ khoảng trống trên dưới (có thể tăng/giảm)
+              }}
+            >
+              <button
+                onClick={() => setShowModal(true)}
+                style={{
+                  backgroundColor: "#D2E3FC",
+                  color: "#000",
+                  border: "1px solid #D2E3FC",
+                  borderRadius: 6,
+                  padding: "6px 12px",       // ✅ padding cho nút đẹp hơn
+                  fontSize: 11,
+                  cursor: "pointer",
+                  marginRight: 16,           // ✅ nếu cần cách xa mép phải
+                }}
+              >
+                Thiết lập đăng bài tự động
+              </button>
+            </div>
             <div
               style={{
                 background: "#fafafa",

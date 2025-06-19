@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { setPageTitle } from "src/store/slice/app.slice";
 
 interface IProps {
-  title: string;
+  title: ReactNode;
   children: ReactNode;
 }
 

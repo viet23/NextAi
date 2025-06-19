@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
 import { useGetAccountQuery } from "src/store/api/accountApi";
 import { useCreateCaseMutation } from "src/store/api/ticketApi";
+import AutoPostModal from "../AutoPostModal";
 
 const { Content } = Layout;
 const { TextArea } = Input;
@@ -23,6 +24,8 @@ const FullscreenSplitCard = () => {
   const { data: accountDetailData } = useGetAccountQuery(user.id || "0", {
     skip: !user.id,
   });
+  const [showModal, setShowModal] = useState(false);
+
   const [createCase, { isLoading: creatingCase }] = useCreateCaseMutation();
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -208,6 +211,7 @@ const FullscreenSplitCard = () => {
       <Content style={{ padding: 24 }}>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 24, justifyContent: "center" }}>
           <div style={{ flex: 1, minWidth: 320, maxWidth: 600 }}>
+
             <TextArea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
@@ -275,7 +279,34 @@ const FullscreenSplitCard = () => {
           </div>
 
           <div style={{ flex: 1, minWidth: 320, maxWidth: 600 }}>
-            <div style={{ background: "#f0f0f0", height: 400, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 10, marginBottom: 16, overflow: "hidden" }}>
+            {/* Modal hiển thị khi click */}
+            <AutoPostModal visible={showModal} onClose={() => setShowModal(false)} />
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end", // ✅ đẩy nút sang phải
+                padding: "6px 0",           // ✅ khoảng trống trên dưới (có thể tăng/giảm)
+              }}
+            >
+              <button
+                onClick={() => setShowModal(true)}
+                style={{
+                  backgroundColor: "#D2E3FC",
+                  color: "#000",
+                  border: "1px solid #D2E3FC",
+                  borderRadius: 6,
+                  padding: "6px 12px",       // ✅ padding cho nút đẹp hơn
+                  fontSize: 11,
+                  cursor: "pointer",
+                  marginRight: 16,           // ✅ nếu cần cách xa mép phải
+                }}
+              >
+                Thiết lập đăng bài tự động
+              </button>
+            </div>
+
+            <div style={{ background: "#f0f0f0", height: 350, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 10, marginBottom: 16, overflow: "hidden" }}>
               {!imgError && imageUrl ? (
                 <img
                   src={imageUrl}

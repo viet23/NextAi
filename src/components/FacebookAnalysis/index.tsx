@@ -41,7 +41,7 @@ const FacebookPageAnalysis = () => {
     strategy: "",
   });
 
-  const [createAnalysis, { isLoading: creatingCase }] = useCreateAnalysisMutation();
+  const [createAnalysis, { isLoading: createAnaly }] = useCreateAnalysisMutation();
 
   const [channelPlan, setChannelPlan] = useState("");
   const [loading, setLoading] = useState(false);
@@ -184,6 +184,7 @@ TƯƠNG TÁC KHÁCH HÀNG: ${result.engagement}
 CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
 `;
         await getChannelPlan(rawAnalysis);
+        saveAnalyzeFacebookPage()
       } else {
         message.error("GPT cannot parse the content.");
       }
@@ -250,7 +251,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
               Page Analysis & Channel Development Suggestions
             </Button>
 
-
+{/* 
             <Button
               style={{
                 backgroundColor: "#D2E3FC",
@@ -267,7 +268,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
               onClick={saveAnalyzeFacebookPage}
             >
               Save
-            </Button>
+            </Button> */}
           </div>
         </div>
 
