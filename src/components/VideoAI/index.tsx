@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Input, Button, message, Checkbox, Select, Row, Col, Modal, Radio, Spin, Typography } from "antd";
 import { useCreateCaseMutation } from "src/store/api/ticketApi";
 import { UploadOutlined } from "@ant-design/icons";
@@ -72,6 +72,11 @@ const VideoGenerator = () => {
   const SHOTSTACK_API_KEY = "fHK6q16tBau8galfuCqHp7d1K98zOqnluqIZZQAQ";
   const [description, setDescription] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [activeScenes, setActiveScenes] = useState(1);
+  const [scriptModalOpen, setScriptModalOpen] = useState(false);
+  const [scriptPrompt, setScriptPrompt] = useState("");
+  const [loadingScript, setLoadingScript] = useState(false);
+
 
   const handleMergeMusic = async () => {
 
@@ -185,6 +190,80 @@ const VideoGenerator = () => {
 
     checkStatus();
   };
+
+  const generateScriptByGPT = async () => {
+    if (!scriptPrompt) {
+      message.warning("Please enter your request");
+      return;
+    }
+
+    setLoadingScript(true);
+
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "gpt-4",
+          messages: [
+            {
+              role: "user",
+              content: `${scriptPrompt}
+
+Trả về kết quả dưới dạng JSON mảng các chuỗi, mỗi chuỗi là một cảnh. Mỗi cảnh mô tả chi tiết bằng 2–4 câu. Và đúng số lượng cảnh theo yêu cầu, không được thêm hoặc bớt cảnh.
+
+Ví dụ:
+[
+  "Cảnh 1: ...",
+  "Cảnh 2: ...",
+  "Cảnh 3: ..."
+]`
+            },
+          ],
+          temperature: 0.8,
+          max_tokens: 800,
+        }),
+      });
+
+      const data = await response.json();
+      const content = data?.choices?.[0]?.message?.content;
+
+      if (!content) {
+        message.error("Không nhận được phản hồi từ GPT.");
+        return;
+      }
+
+      let scenes: string[] = [];
+      try {
+        scenes = JSON.parse(content);
+      } catch (err) {
+        console.error("Lỗi parse JSON:", err);
+        message.error("Không đọc được định dạng kịch bản từ GPT. Vui lòng thử lại.");
+        return;
+      }
+
+      if (scenes.length === 0) {
+        message.warning("GPT không tạo được nội dung cảnh.");
+        return;
+      }
+
+      setPromptTexts(scenes);
+      setUploadedImageUrls(Array(scenes.length).fill(""));
+      setGeneratedVideos([]);
+      setActiveScenes(scenes.length);
+      setScriptModalOpen(false);
+      message.success(`Đã tạo ${scenes.length} cảnh thành công!`);
+    } catch (error) {
+      console.error("Lỗi gọi GPT:", error);
+      message.error("Có lỗi khi tạo kịch bản.");
+    } finally {
+      setLoadingScript(false);
+    }
+  };
+
 
 
   const fetchMusic = async (genre: string) => {
@@ -370,7 +449,6 @@ const VideoGenerator = () => {
     }
   };
 
-
   const handleImageUpload = async (index: any, file: any) => {
     const formData = new FormData();
     formData.append("image", file);
@@ -491,7 +569,9 @@ Please contact Admin`);
     );
   };
 
-  const activeScenes = durationSceneMap[videoDuration] || 1;
+  useEffect(() => {
+    setActiveScenes(durationSceneMap[videoDuration]);
+  }, [videoDuration]);
 
   return (
     <Layout style={{ minHeight: "100vh", background: "#fff" }}>
@@ -516,13 +596,20 @@ Please contact Admin`);
                 <Option value={30}>30 seconds</Option>
                 <Option value={60}>60 seconds</Option>
               </Select>
+              <Button
+                size="small"
+                style={{ backgroundColor: "#D2E3FC", color: "#000" }}
+                onClick={() => setScriptModalOpen(true)}
+              >
+                Generate Script
+              </Button>
             </div>
 
 
             {Array.from({ length: activeScenes }).map((_, index) => (
               <div key={index} style={{ marginBottom: 24 }}>
                 <TextArea
-                  rows={2}
+                  autoSize={{ minRows: 2, maxRows: 10 }} // ✅ tự co giãn chiều cao
                   placeholder={`Scene ${index + 1} description`}
                   value={promptTexts[index] || ""}
                   onChange={(e) => {
@@ -836,12 +923,42 @@ Please contact Admin`);
           </Col>
         </Row>
       </Content>
+
+      <Modal
+        title="Generate Video Script"
+        open={scriptModalOpen}
+        onCancel={() => setScriptModalOpen(false)}
+        okText="Generate"
+        cancelText="Cancel"
+        confirmLoading={loadingScript}
+        onOk={generateScriptByGPT} // ✅ tách logic ra hàm
+      >
+        <TextArea
+          rows={4}
+          value={scriptPrompt}
+          onChange={(e) => setScriptPrompt(e.target.value)}
+          placeholder="Ví dụ: Cho tôi 3 cảnh video quảng cáo quán lẩu..."
+          onPressEnter={(e) => {
+            if (!e.shiftKey) {
+              e.preventDefault();
+              generateScriptByGPT(); // ✅ nhấn Enter cũng chạy như click
+            }
+          }}
+        />
+      </Modal>
+
+
+
     </Layout>
   );
+
+
 
 };
 
 export default VideoGenerator;
+
+
 
 
 

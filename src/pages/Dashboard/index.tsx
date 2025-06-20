@@ -7,7 +7,7 @@ const Dashboard = () => {
   const { t } = useTranslation();
   useEffect(() => {}, []);
   return (
-    <PageTitleHOC title=" Next Ads AI ">
+    <PageTitleHOC title=" ALL ONE ADS ">
       <DashboardAI />
     </PageTitleHOC>
   );

@@ -7,7 +7,7 @@ const Video = () => {
   const { t } = useTranslation();
   useEffect(() => {}, []);
   return (
-    <PageTitleHOC title=" Next Ads AI ">
+    <PageTitleHOC title=" ALL ONE ADS ">
       <VideoAI />
     </PageTitleHOC>
   );
