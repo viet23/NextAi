@@ -159,7 +159,7 @@ Hãy phân tích nội dung thành 4 phần:
           model: "gpt-4",
           messages: [{ role: "user", content: prompt }],
           temperature: 0.7,
-          max_tokens: 700,
+          max_tokens: 1000,
         }),
       });
 

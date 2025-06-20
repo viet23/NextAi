@@ -224,7 +224,7 @@ Ví dụ:
             },
           ],
           temperature: 0.8,
-          max_tokens: 800,
+          max_tokens: 1000,
         }),
       });
 
@@ -557,7 +557,7 @@ Please contact Admin`);
             content: `Viết một caption sáng tạo bằng tiếng Việt cho video có nội dung mô tả sau:\n"${description}"`
           }],
           temperature: 0.8,
-          max_tokens: 100,
+          max_tokens: 1000,
         }),
       });
 

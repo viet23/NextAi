@@ -76,7 +76,7 @@ const FullscreenSplitCard = () => {
             },
           ],
           temperature: 0.9,
-          max_tokens: 300,
+          max_tokens: 1000,
         }),
       });
 
@@ -152,7 +152,7 @@ const FullscreenSplitCard = () => {
             },
           ],
           temperature: 0.8,
-          max_tokens: 100,
+          max_tokens: 1000,
         }),
       });
 
