@@ -250,12 +250,28 @@ Ví dụ:
         return;
       }
 
+      // Gán nội dung cảnh và reset trạng thái liên quan
       setPromptTexts(scenes);
       setUploadedImageUrls(Array(scenes.length).fill(""));
       setGeneratedVideos([]);
       setActiveScenes(scenes.length);
+
+      // Đồng bộ videoDuration tương ứng
+      const reverseSceneMap: Record<number, number> = {
+        1: 5,
+        3: 30,
+        6: 60,
+      };
+      const matchedDuration = reverseSceneMap[scenes.length];
+      if (matchedDuration) {
+        setVideoDuration(matchedDuration);
+      } else {
+        message.warning("Số lượng cảnh không khớp với thời lượng video được hỗ trợ. Hãy yêu cầu GPT trả về đúng 1, 3 hoặc 6 cảnh.");
+        return;
+      }
+
       setScriptModalOpen(false);
-      message.success(`Đã tạo ${scenes.length} cảnh thành công!`);
+      message.success(`✅ Đã tạo ${scenes.length} cảnh thành công!`);
     } catch (error) {
       console.error("Lỗi gọi GPT:", error);
       message.error("Có lỗi khi tạo kịch bản.");
@@ -263,7 +279,6 @@ Ví dụ:
       setLoadingScript(false);
     }
   };
-
 
 
   const fetchMusic = async (genre: string) => {
