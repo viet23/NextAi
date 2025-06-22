@@ -1,10 +1,9 @@
 import { ReactNode, createElement } from "react";
-import { FacebookOutlined, PictureOutlined, UserOutlined, VideoCameraOutlined } from "@ant-design/icons";
+import { FacebookOutlined, PictureOutlined, VideoCameraOutlined } from "@ant-design/icons";
 import { DotIcon, } from "src/components/MenuItemIcon";
 import { SettingIcon } from "src/components/MenuItemIcon/SettingIcon";
 import {
   ACCOUNT_ROUTE,
-  CUSTOMER_ROUTE,
   IMAGE_ROUTE,
   AUTHORIZATION_ROUTE,
   MEDIA_ROUTE,
@@ -49,7 +48,7 @@ export const menuItems: IMenuItem[] = [
   },
   {
     key: DASHBOARD_ROUTE,
-    label: "Dashboard",
+    label: "AI ADS",
     icon: createElement(TicketManageIcon),
   },
 

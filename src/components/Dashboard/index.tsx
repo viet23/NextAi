@@ -1,10 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Typography, Card, Table, Image, Row, Col } from "antd";
+import {
+  Layout,
+  Typography,
+  Card,
+  Table,
+  Image,
+  Row,
+  Col,
+  Spin,
+} from "antd";
 import { Column } from "@ant-design/plots";
 import { useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
 import { useGetAccountQuery } from "src/store/api/accountApi";
-import type { ColumnsType } from 'antd/es/table';
+import type { ColumnsType } from "antd/es/table";
+import dayjs from "dayjs";
 
 const { Title } = Typography;
 
@@ -14,7 +24,7 @@ const columns: ColumnsType<any> = [
     dataIndex: "key",
     key: "key",
     width: 60,
-    responsive: ['md'], // Ẩn cột này trên mobile
+    responsive: ["md"],
   },
   {
     title: "Media",
@@ -27,7 +37,21 @@ const columns: ColumnsType<any> = [
     title: "Caption",
     dataIndex: "caption",
     key: "caption",
-    ellipsis: true,
+    width: 250,
+  },
+  {
+    title: "Created time",
+    dataIndex: "createdTime",
+    key: "createdTime",
+    width: 120,
+    align: "center",
+  },
+  {
+    title: "Reach",
+    dataIndex: "reach",
+    key: "reach",
+    width: 90,
+    align: "center",
   },
   {
     title: "React",
@@ -59,11 +83,16 @@ const Dashboard = () => {
   });
 
   const [postData, setPostData] = useState<any[]>([]);
-  const [barData, setBarData] = useState<{ date: string; quantity: number }[]>([]);
+  const [barData, setBarData] = useState<{ date: string; quantity: number }[]>(
+    []
+  );
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchFacebookPosts = async () => {
       try {
+        setLoading(true);
+
         const fields =
           "id,message,created_time,full_picture,permalink_url,likes.summary(true),comments.summary(true),shares";
 
@@ -81,11 +110,30 @@ const Dashboard = () => {
 
         const data = await response.json();
         if (!response.ok) {
-          throw new Error(data.error?.message || "Unknown error from Facebook API");
+          throw new Error(
+            data.error?.message || "Unknown error from Facebook API"
+          );
         }
 
         const posts = data?.data || [];
-        const formattedPosts = posts.map((post: any, index: number) => ({
+
+        const postsWithReach = await Promise.all(
+          posts.map(async (post: any) => {
+            try {
+              const insightsRes = await fetch(
+                `https://graph.facebook.com/v19.0/${post.id}/insights?metric=post_impressions_unique&access_token=${accountDetailData?.accessToken}`
+              );
+              const insightsData = await insightsRes.json();
+              const reach = insightsData?.data?.[0]?.values?.[0]?.value || 0;
+              return { ...post, reach };
+            } catch (err) {
+              console.error("❌ Lỗi khi lấy reach:", err);
+              return { ...post, reach: 0 };
+            }
+          })
+        );
+
+        const formattedPosts = postsWithReach.map((post: any, index: number) => ({
           key: (index + 1).toString(),
           media: post.full_picture ? (
             <Image width={40} src={post.full_picture} alt="media" />
@@ -96,7 +144,10 @@ const Dashboard = () => {
           react: post.likes?.summary?.total_count || 0,
           comment: post.comments?.summary?.total_count || 0,
           share: post.shares?.count || 0,
+          createdTime: dayjs(post.created_time).format("YYYY-MM-DD HH:mm:ss") || "",
+          reach: post.reach || 0,
         }));
+
         setPostData(formattedPosts);
 
         const monthlyCount = Array.from({ length: 12 }, (_, i) => ({
@@ -110,6 +161,8 @@ const Dashboard = () => {
         setBarData(monthlyCount);
       } catch (err) {
         console.error("❌ Lỗi khi gọi Facebook API:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -166,13 +219,15 @@ const Dashboard = () => {
             Post list
           </Title>
           <div style={{ overflowX: "auto" }}>
-            <Table
-              columns={columns}
-              dataSource={postData}
-              pagination={{ pageSize: 5 }}
-              bordered
-              scroll={{ x: "max-content" }}
-            />
+            <Spin spinning={loading}>
+              <Table
+                columns={columns}
+                dataSource={postData}
+                pagination={{ pageSize: 5 }}
+                bordered
+                scroll={{ x: "max-content" }}
+              />
+            </Spin>
           </div>
         </Col>
       </Row>

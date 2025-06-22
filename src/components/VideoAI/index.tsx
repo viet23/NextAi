@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Layout, Input, Button, message, Checkbox, Select, Row, Col, Modal, Radio, Spin, Typography } from "antd";
 import { useCreateCaseMutation } from "src/store/api/ticketApi";
 import { UploadOutlined } from "@ant-design/icons";
@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
 import { useGetAccountQuery } from "src/store/api/accountApi";
 import AutoPostModal from "../AutoPostModal";
+import FullscreenLoader from "../FullscreenLoader";
 const genres = [
   "Ambient", "Piano", "Orchestra", "Lofi", "Chill", "Hiphop", "Electronic",
   "Pop", "Rock", "Jazz", "Blues", "Acoustic", "Guitar", "Drums", "Trap",
@@ -76,6 +77,7 @@ const VideoGenerator = () => {
   const [scriptModalOpen, setScriptModalOpen] = useState(false);
   const [scriptPrompt, setScriptPrompt] = useState("");
   const [loadingScript, setLoadingScript] = useState(false);
+  const uploadRefs = useRef<(HTMLInputElement | null)[]>([]);
 
 
   const handleMergeMusic = async () => {
@@ -535,8 +537,6 @@ Please contact Admin`);
   };
 
   const generateCaption = async () => {
-    // const combinedPrompt = promptTexts.filter(Boolean).join(". ");
-
     if (!description) {
       message.warning("Please enter a description for at least one scene");
       return;
@@ -589,7 +589,7 @@ Please contact Admin`);
   }, [videoDuration]);
 
   return (
-    <Layout style={{ minHeight: "100vh", background: "#fff" }}>
+    <><FullscreenLoader spinning={loading || loadingCaption || loadingScript || creatingCase || loadingMusic} /><Layout style={{ minHeight: "100vh", background: "#fff" }}>
       <Content style={{ padding: 24 }}>
         <Row gutter={[24, 24]} justify="center" wrap>
           {/* Cột trái: nhập mô tả và upload */}
@@ -619,8 +619,6 @@ Please contact Admin`);
                 Generate Script
               </Button>
             </div>
-
-
             {Array.from({ length: activeScenes }).map((_, index) => (
               <div key={index} style={{ marginBottom: 24 }}>
                 <TextArea
@@ -632,12 +630,11 @@ Please contact Admin`);
                     newPrompts[index] = e.target.value;
                     setPromptTexts(newPrompts);
                   }}
-                  style={{ marginBottom: 8 }}
-                />
+                  style={{ marginBottom: 8 }} />
 
                 <Row gutter={[8, 8]} justify="center" wrap style={{ marginBottom: 8 }}>
                   <Col xs={24} sm={10}>
-                    <Button
+                    {/* <Button
                       type="dashed"
                       block
                       size="small"
@@ -655,8 +652,36 @@ Please contact Admin`);
                         if (e.target.files?.[0]) {
                           handleImageUpload(index, e.target.files[0]);
                         }
+                      }} /> */}
+
+                    <input
+                      type="file"
+                      accept="image/*"
+                      ref={(el) => (uploadRefs.current[index] = el)}
+                      style={{ display: "none" }}
+                      onChange={(e) => {
+                        if (e.target.files?.[0]) {
+                          handleImageUpload(index, e.target.files[0]);
+                        }
                       }}
                     />
+
+                    <Button
+                      type="dashed"
+                      block
+                      size="small"
+                      icon={<UploadOutlined />}
+                      onClick={() => {
+                        if (uploadRefs.current[index]) {
+                          uploadRefs.current[index]?.click();
+                        } else {
+                          console.warn("❗Không tìm thấy input file tại index:", index);
+                        }
+                      }}
+                    >
+                      Upload Image
+                    </Button>
+
                   </Col>
 
                   <Col xs={24} sm={10}>
@@ -685,8 +710,7 @@ Please contact Admin`);
                           objectFit: "cover",
                           borderRadius: 6,
                           border: "1px solid #ccc",
-                        }}
-                      />
+                        }} />
                     )}
                   </Col>
 
@@ -703,12 +727,9 @@ Please contact Admin`);
                             border: "1px solid #ccc",
                           }}
                           controls
-                          muted
-                        />
+                          muted />
                         <Checkbox
-                          checked={
-                            generatedVideos.find((v) => v.index === index)?.selected
-                          }
+                          checked={generatedVideos.find((v) => v.index === index)?.selected}
                           onChange={() => handleCheckboxChange(index)}
                           style={{
                             position: "absolute",
@@ -718,8 +739,7 @@ Please contact Admin`);
                             padding: 2,
                             borderRadius: 4,
                             zIndex: 2,
-                          }}
-                        />
+                          }} />
                       </>
                     )}
                   </Col>
@@ -763,8 +783,6 @@ Please contact Admin`);
                 </Button>
               </Col>
             </Row>
-
-
             <Modal
               title="Choose background music"
               open={modalOpen}
@@ -782,8 +800,7 @@ Please contact Admin`);
                   setSelectedGenre(value);
                   fetchMusic(value);
                 }}
-                options={genres.map((g) => ({ label: g, value: g.toLowerCase() }))}
-              />
+                options={genres.map((g) => ({ label: g, value: g.toLowerCase() }))} />
 
               {loadingMusic ? (
                 <Spin />
@@ -827,7 +844,7 @@ Please contact Admin`);
               style={{
                 display: "flex",
                 justifyContent: "flex-end", // ✅ đẩy nút sang phải
-                padding: "6px 0",           // ✅ khoảng trống trên dưới (có thể tăng/giảm)
+                padding: "6px 0", // ✅ khoảng trống trên dưới (có thể tăng/giảm)
               }}
             >
               <button
@@ -837,10 +854,10 @@ Please contact Admin`);
                   color: "#000",
                   border: "1px solid #D2E3FC",
                   borderRadius: 6,
-                  padding: "6px 12px",       // ✅ padding cho nút đẹp hơn
+                  padding: "6px 12px", // ✅ padding cho nút đẹp hơn
                   fontSize: 11,
                   cursor: "pointer",
-                  marginRight: 16,           // ✅ nếu cần cách xa mép phải
+                  marginRight: 16, // ✅ nếu cần cách xa mép phải
                 }}
               >
                 Thiết lập đăng bài tự động
@@ -886,8 +903,7 @@ Please contact Admin`);
                   padding: 10,
                   backgroundColor: "#ffffff",
                   boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
-                }}
-              />
+                }} />
 
               <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
                 <Button
@@ -904,9 +920,6 @@ Please contact Admin`);
                 </Button>
               </div>
             </div>
-
-
-
             <TextArea
               rows={4}
               value={caption}
@@ -919,8 +932,7 @@ Please contact Admin`);
                 marginBottom: 16,
                 backgroundColor: "#ffffff",
                 boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
-              }}
-            />
+              }} />
 
             <Button
               type="primary"
@@ -958,17 +970,10 @@ Please contact Admin`);
               e.preventDefault();
               generateScriptByGPT(); // ✅ nhấn Enter cũng chạy như click
             }
-          }}
-        />
+          }} />
       </Modal>
-
-
-
-    </Layout>
+    </Layout></>
   );
-
-
-
 };
 
 export default VideoGenerator;

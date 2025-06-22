@@ -250,25 +250,6 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
             >
               Page Analysis & Channel Development Suggestions
             </Button>
-
-{/* 
-            <Button
-              style={{
-                backgroundColor: "#D2E3FC",
-                color: "#000",
-                border: "1px solid #D2E3FC",
-                borderRadius: 6,
-                height: 40,
-                padding: "0 20px", // bo gọn nút
-                whiteSpace: "nowrap",
-                flexShrink: 0, // không cho co lại quá nhỏ
-              }}
-              type="primary"
-              loading={loading}
-              onClick={saveAnalyzeFacebookPage}
-            >
-              Save
-            </Button> */}
           </div>
         </div>
 

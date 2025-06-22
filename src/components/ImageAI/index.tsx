@@ -5,6 +5,7 @@ import { IRootState } from "src/interfaces/app.interface";
 import { useGetAccountQuery } from "src/store/api/accountApi";
 import { useCreateCaseMutation } from "src/store/api/ticketApi";
 import AutoPostModal from "../AutoPostModal";
+import FullscreenLoader from "../FullscreenLoader";
 
 const { Content } = Layout;
 const { TextArea } = Input;
@@ -20,7 +21,7 @@ const FullscreenSplitCard = () => {
   const [resolution, setResolution] = useState("720p");
   const [ratio, setRatio] = useState("16:9");
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
-  const { user } = useSelector((state: IRootState) => state.auth)
+  const { user } = useSelector((state: IRootState) => state.auth);
   const { data: accountDetailData } = useGetAccountQuery(user.id || "0", {
     skip: !user.id,
   });
@@ -192,14 +193,10 @@ const FullscreenSplitCard = () => {
           body: JSON.stringify(payload),
         });
 
-        // const body = { urlVideo: imageUrl, caption };
-        // await createCase(body).unwrap();
         message.success("Posted to Facebook (via Make.com) successfully!");
       } else {
         message.error("Not configured to post to Facebook.");
       }
-
-
     } catch (err) {
       console.error("❌Error when submitting to Make:", err);
       message.error("Error posting to Facebook.");
@@ -331,6 +328,7 @@ const FullscreenSplitCard = () => {
           </div>
         </div>
       </Content>
+      <FullscreenLoader spinning={loadingImage || loadingCaption || creatingCase} />
     </Layout>
   );
 };
