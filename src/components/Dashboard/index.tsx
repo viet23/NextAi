@@ -158,6 +158,8 @@ const Dashboard = () => {
           const month = new Date(post.created_time).getMonth();
           monthlyCount[month].quantity += 1;
         });
+
+        
         setBarData(monthlyCount);
       } catch (err) {
         console.error("❌ Lỗi khi gọi Facebook API:", err);
@@ -171,26 +173,30 @@ const Dashboard = () => {
     }
   }, [accountDetailData?.idPage, accountDetailData?.accessToken]);
 
-  const chartConfig = {
-    data: barData,
-    xField: "date",
-    yField: "quantity",
-    columnWidthRatio: 0.5,
-    color: "#1890ff",
+ const chartConfig = {
+  data: barData,
+  xField: "date",
+  yField: "quantity",
+  columnWidthRatio: 0.5,
+  color: "#1890ff",
+  label: {
+    position: "top",
+    style: { fill: "#000", fontSize: 12 },
+    formatter: (datum: any) => (datum.quantity > 0 ? datum.quantity.toString() : ""),
+  },
+  xAxis: {
+    title: { text: "Date" },
+    label: { autoRotate: false },
+  },
+  yAxis: {
+    title: { text: "Quantity" },
     label: {
-      position: "top",
-      style: { fill: "#000", fontSize: 12 },
+      formatter: (value: number) => (value > 0 ? value.toString() : ""),
     },
-    xAxis: {
-      title: { text: "Date" },
-      label: { autoRotate: false },
-    },
-    yAxis: {
-      title: { text: "Quantity" },
-    },
-    height: 300,
-    responsive: true,
-  };
+  },
+  height: 300,
+  responsive: true,
+};
 
   return (
     <Layout
