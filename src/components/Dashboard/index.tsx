@@ -40,6 +40,30 @@ const columns: ColumnsType<any> = [
     width: 250,
   },
   {
+    title: "Action",
+    key: "action",
+    width: 60,
+    align: "center",
+    render: (_, record) => (
+      <button
+        style={{
+          backgroundColor: "#D2E3FC",
+          border: "1px solid #D2E3FC",
+          borderRadius: 6,
+          padding: "4px 10px",
+          fontSize: 12,
+          cursor: "pointer",
+        }}
+        onClick={() => {
+          console.log("📢 Quảng cáo bài:", record);
+          // TODO: Thực hiện logic quảng cáo tại đây (ví dụ mở modal)
+        }}
+      >
+       Advertisement
+      </button>
+    ),
+  },
+  {
     title: "Created time",
     dataIndex: "createdTime",
     key: "createdTime",
@@ -75,6 +99,7 @@ const columns: ColumnsType<any> = [
     align: "center",
   },
 ];
+
 
 const Dashboard = () => {
   const { user } = useSelector((state: IRootState) => state.auth);
