@@ -104,6 +104,9 @@ const AccountDetailPage = () => {
         extension: accountDetailData?.extension,
         idPage: accountDetailData.idPage,
         accessToken: accountDetailData.accessToken,
+        accessTokenUser: accountDetailData.accessTokenUser,
+        accountAdsId: accountDetailData.accountAdsId,
+
       });
     } else {
       form.resetFields();
@@ -134,6 +137,8 @@ const AccountDetailPage = () => {
           extension: values.extension,
           idPage: values.idPage,
           accessToken: values.accessToken,
+          accessTokenUser: values.accessTokenUser,
+          accountAdsId: values.accountAdsId,
         };
 
         updateAccountGroup({
@@ -224,6 +229,48 @@ const AccountDetailPage = () => {
                 <Input
                   size="middle"
                   placeholder="Access Token"
+                  style={{
+                    width: '100%',
+                    fontSize: 16,
+                  }}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+           <Row gutter={[0, 16]} style={{ width: '100%' }}>
+            <Col span={16}>
+              <Form.Item
+                label="Account Ads Id "
+                name="accountAdsId"
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+                rules={[{ required: true, message: 'Vui lòng nhập Account Ads Id' }]}
+                style={{ marginBottom: 0 }}
+              >
+                <Input
+                  size="middle"
+                  placeholder="Account Ads Id"
+                  style={{
+                    width: '100%',
+                    fontSize: 16,
+                  }}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+           <Row gutter={[0, 16]} style={{ width: '100%' }}>
+            <Col span={24}>
+              <Form.Item
+                label="Access Token User"
+                name="accessTokenUser"
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+                rules={[{ required: true, message: 'Vui lòng nhập Access Token User' }]}
+                style={{ marginBottom: 0 }}
+              >
+                <Input
+                  size="middle"
+                  placeholder="Access Token User"
                   style={{
                     width: '100%',
                     fontSize: 16,

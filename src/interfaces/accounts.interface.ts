@@ -8,14 +8,16 @@ export interface IAccounts {
 export interface IAccount {
   id: string;
   fullName: string;
-  extension:string;
-  idPage:string;
-  accessToken:string;
+  extension: string;
+  idPage: string;
+  accessToken: string;
+  accessTokenUser: string;
+  accountAdsId: string;
   username: string;
   phone: string;
   email: string;
   roles: IRole[];
-  groups: IRoleGroup[]; 
+  groups: IRoleGroup[];
   isActive: boolean,
 }
 
