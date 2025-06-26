@@ -40,18 +40,50 @@ const DETAILED_TARGETING_OPTIONS = [
   },
 ];
 
+const languages = [
+  { label: "English (US)", value: "en" },
+  { label: "English (UK)", value: "en-uk" },
+  { label: "Français (France)", value: "fr" },
+  { label: "Español (Spain)", value: "es" },
+  { label: "Español (Latin America)", value: "es-la" },
+  { label: "Italiano (Italian)", value: "it" },
+  { label: "Português (Brazil)", value: "pt-br" },
+  { label: "Português (Latin America)", value: "pt-la" },
+  { label: "Deutsch (German)", value: "de" },
+  { label: "Tiếng Việt (Vietnamese)", value: "vi" },
+  { label: "العربية (Arabic)", value: "ar" },
+  { label: "Čeština (Czech)", value: "cs" },
+  { label: "Dansk (Danish)", value: "da" },
+  { label: "Ελληνικά (Greek)", value: "el" },
+  { label: "ภาษาไทย (Thai)", value: "th" },
+  { label: "中文(台灣) (Chinese – Taiwan)", value: "zh-tw" },
+  { label: "Magyar (Hungarian)", value: "hu" },
+  { label: "Nederlands (Dutch)", value: "nl" },
+  { label: "Norsk (Norwegian)", value: "no" },
+  { label: "Polski (Polish)", value: "pl" },
+  { label: "Română (Romanian)", value: "ro" },
+  { label: "Русский (Russian)", value: "ru" },
+  { label: "Suomi (Finnish)", value: "fi" },
+  { label: "Svenska (Swedish)", value: "sv" },
+  { label: "Türkçe (Turkish)", value: "tr" },
+  { label: "Українська (Ukrainian)", value: "uk" },
+  { label: "日本語 (Japanese)", value: "ja" },
+  { label: "한국어 (Korean)", value: "ko" },
+  { label: "עברית (Hebrew)", value: "he" },
+];
+
 
 interface AdsFormProps {
   id: string | null;
-  detailMedia: string | null;
-  detailCaption: string | null;
-  onRefetch: () => void;
+  pageId: string | null;
 }
 
-const DetailAds: React.FC<AdsFormProps> = ({ id, detailMedia, detailCaption , onRefetch}) => {
+const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
+
   // Form state
   const [goal, setGoal] = useState("message");
   const [caption, setCaption] = useState("");
+  const [urlWebsite, setUrleWbsite] = useState<string | undefined>(undefined);
   const [aiTargeting, setAiTargeting] = useState(true);
   const [gender, setGender] = useState("all");
   const [age, setAge] = useState<[number, number]>([18, 65]);
@@ -60,9 +92,11 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, detailMedia, detailCaption , on
     dayjs(),
     dayjs().add(5, "day"),
   ]);
+  const [language, setLanguage] = useState<string>("en");
   const [location, setLocation] = useState({ lat: 21.023556274318445, lng: 105.55110069580077 });
   const [radius, setRadius] = useState(16000); // 16km
-
+  const postIdOnly = id?.split("_")[1];
+  const iframeSrc = `https://www.facebook.com/plugins/post.php?href=https://www.facebook.com/${pageId}/posts/${postIdOnly}&show_text=true&width=500`;
 
   const [budget, setBudget] = useState(2);
   const [campaignName, setCampaignName] = useState("Generated Campaign");
@@ -70,10 +104,18 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, detailMedia, detailCaption , on
 
   const handlePublish = async () => {
     try {
+
+      if (goal === "traffic" && (!urlWebsite || urlWebsite.trim() === "")) {
+        message.error("Please enter website link when selecting goal as 'Get more website visitors'");
+        return;
+      }
+
       const body: any = {
         goal,
         campaignName,
         caption,
+        language,
+        urlWebsite,
         aiTargeting: Boolean(aiTargeting),
         startTime: range[0].toISOString(),
         endTime: range[1].toISOString(),
@@ -81,7 +123,8 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, detailMedia, detailCaption , on
         postId: id?.toString(),
       };
 
-      if (aiTargeting) {
+
+      if (!aiTargeting) {
         body.gender = gender;
         body.ageRange = [age[0], age[1]];
         body.location = location;
@@ -129,15 +172,36 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, detailMedia, detailCaption , on
             </Select>
           </div>
 
+          {goal === "leads" && (
+            <div style={{ marginBottom: 12 }}>
+              <label>🌐 Choose language of form collecting customer information</label>
+              <Select
+                value={language}
+                onChange={setLanguage}
+                style={{ width: "100%" }}
+                showSearch
+                optionFilterProp="label"
+              >
+                {languages.map((lang) => (
+                  <Option key={lang.value} value={lang.value} label={lang.label}>
+                    {lang.label}
+                  </Option>
+                ))}
+              </Select>
+            </div>
+          )}
 
-          {/* <div style={{ marginBottom: 12 }}>
-            <label>📝 Ads Text</label>
-            <Input.TextArea
-              rows={3}
-              value={caption}
-              onChange={(e) => setCaption(e.target.value)}
-            />
-          </div> */}
+          {goal === "traffic" && (
+            <div style={{ marginBottom: 12 }}>
+              <label>📝 Link website <span style={{ color: "red" }}>*</span></label>
+              <Input.TextArea
+                rows={1}
+                value={urlWebsite}
+                onChange={(e) => setUrleWbsite(e.target.value)}
+                placeholder="link website..."
+              />
+            </div>
+          )}
 
           <div style={{ marginBottom: 12 }}>
             <label>👥 Audience</label>
@@ -147,7 +211,7 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, detailMedia, detailCaption , on
             </div>
           </div>
 
-          {aiTargeting && (
+          {!aiTargeting && (
             <>
               <Row gutter={12} style={{ marginBottom: 12 }}>
                 <Col span={12}>
@@ -232,31 +296,20 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, detailMedia, detailCaption , on
         <Col xs={24} md={10}>
           <Card title="Preview" bordered>
             <div style={{ border: "1px solid #eee", padding: 10 }}>
-              <div style={{ fontWeight: "bold" }}>{detailCaption}</div>
-              {/* Media Preview (ảnh lớn, có fallback nếu lỗi hoặc không có ảnh) */}
-              {detailMedia ? (
-                <Image
-                  width="100%"
-                  src={detailMedia}
-                  alt="media"
-                  style={{ borderRadius: 8 }}
-                  fallback="https://via.placeholder.com/600x400?text=No+Image"
-                />
-              ) : (
-                <Image
-                  width="100%"
-                  src="https://via.placeholder.com/600x400?text=No+Image"
-                  alt="no image"
-                  style={{ borderRadius: 8 }}
-                />
-              )}
-
-              <Button block style={{ marginTop: 10 }}>
-                Send Message
-              </Button>
+              <iframe
+                src={iframeSrc}
+                width="100%"
+                height="570"
+                style={{ border: "none", overflow: "hidden", borderRadius: 8 }}
+                scrolling="no"
+                frameBorder="0"
+                allowFullScreen={true}
+                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+              />
             </div>
           </Card>
         </Col>
+
 
       </Row>
     </Card>

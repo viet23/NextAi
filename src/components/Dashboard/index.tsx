@@ -36,14 +36,11 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [detailId, setDetailId] = useState(null);
-  const [detailMedia, setDetailMedia] = useState(null);
-  const [detailCaption, setDetailCaption] = useState(null);
-  const handleOnClickDetail = (record: any) => {
-    console.log(`record`, record);
+  const [pageId, setPageId] = useState<string | undefined>(undefined);
 
+  const handleOnClickDetail = (record: any) => {
     setDetailId(record?.id);
-    setDetailMedia(record?.url);
-    setDetailCaption(record?.caption);
+    setPageId(accountDetailData?.idPage);
     setIsOpen(true);
   };
   const handleOnCloseDrawer = () => {
@@ -291,9 +288,7 @@ const Dashboard = () => {
       >
         <DetailAds
           id={detailId}
-          detailMedia={detailMedia}
-          detailCaption={detailCaption}
-          onRefetch={() => { fetchFacebookPosts() }}
+          pageId={pageId ?? null}
         />
       </Drawer>
     </Layout>
