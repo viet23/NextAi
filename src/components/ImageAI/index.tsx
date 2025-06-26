@@ -158,7 +158,7 @@ const FullscreenSplitCard = () => {
       });
 
       const data = await response.json();
-      setCaption(data?.choices?.[0]?.message?.content?.trim() || "");
+      setCaption(data?.choices?.[0]?.message?.content?.trim().replace(/^"|"$/g, '') || "");
     } catch (error) {
       console.error("Caption error:", error);
       message.error("Caption generation error.Your budget run out! Please contact Admin");

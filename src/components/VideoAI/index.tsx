@@ -563,7 +563,7 @@ Please contact Admin`);
 
       const data = await response.json();
       if (data?.choices?.[0]?.message?.content) {
-        setCaption(data.choices[0].message.content.trim());
+        setCaption(data.choices[0].message.content.trim().replace(/^"|"$/g, ''));
       } else {
         message.error("Unable to create caption");
       }
