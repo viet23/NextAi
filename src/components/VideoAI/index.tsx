@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Layout, Input, Button, message, Checkbox, Select, Row, Col, Modal, Radio, Spin, Typography } from "antd";
+import { Layout, Input, Button, message, Checkbox, Select, Row, Col, Modal, Radio, Spin, Typography, Progress } from "antd";
 import { useCreateCaseMutation } from "src/store/api/ticketApi";
 import { UploadOutlined } from "@ant-design/icons";
 // import { Row, Col, Button, Modal, Radio, Typography, Spin, message } from 'antd';
@@ -9,6 +9,7 @@ import { IRootState } from "src/interfaces/app.interface";
 import { useGetAccountQuery } from "src/store/api/accountApi";
 import AutoPostModal from "../AutoPostModal";
 import FullscreenLoader from "../FullscreenLoader";
+import { contentFetchOpportunityScore, contentGenerateCaption } from "src/utils/facebook-utild";
 const genres = [
   "Ambient", "Piano", "Orchestra", "Lofi", "Chill", "Hiphop", "Electronic",
   "Pop", "Rock", "Jazz", "Blues", "Acoustic", "Guitar", "Drums", "Trap",
@@ -20,7 +21,7 @@ const genres = [
 const { Content } = Layout;
 const { TextArea } = Input;
 const { Option } = Select;
-const { Text } = Typography;
+const { Title, Text } = Typography;
 
 type MusicItem = {
   id: number;
@@ -78,6 +79,76 @@ const VideoGenerator = () => {
   const [scriptPrompt, setScriptPrompt] = useState("");
   const [loadingScript, setLoadingScript] = useState(false);
   const uploadRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [score, setScore] = useState<number | null>(null);
+  const [scoreLabel, setScoreLabel] = useState<string | null>(null);
+  const [suggestion, setSuggestion] = useState<string | null>(null);
+
+  const fetchOpportunityScore = async (captionText: string) => {
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-4",
+          temperature: 0.3,
+          messages: [
+            {
+              role: "system",
+              content: contentFetchOpportunityScore,
+            },
+            {
+              role: "user",
+              content: `${captionText}\n\nChấm theo thang 100 điểm. Chỉ trả lời bằng một con số.`,
+            },
+          ],
+        }),
+      });
+
+      const data = await response.json();
+      const content = data?.choices?.[0]?.message?.content || "";
+
+      // Tách dữ liệu từ phản hồi
+      const scoreMatch = content.match(/Điểm:\s*(\d+)/i);
+      const ratingMatch = content.match(/Đánh giá:\s*(Kém|Khá|Tốt)/i);
+      const suggestionMatch = content.match(/Gợi ý:\s*([\s\S]*)/i);
+
+      const scoreValue = scoreMatch ? parseInt(scoreMatch[1]) : null;
+      const rating = ratingMatch ? ratingMatch[1] : null;
+      const suggestion = suggestionMatch ? suggestionMatch[1].trim() : null;
+
+      // ✅ Cập nhật UI nếu dùng trong React
+      if (scoreValue !== null && !isNaN(scoreValue)) {
+        setScore(scoreValue);         // ví dụ: 84
+      } else {
+        setScore(null);
+      }
+
+      setScoreLabel(rating || null);  // ví dụ: "Tốt"
+      setSuggestion(suggestion || null); // ví dụ: "Nên thêm icon mở đầu..."
+    } catch (error) {
+      console.error("❌ Error fetching score:", error);
+      setScore(null);
+    }
+  };
+
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleCaptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setCaption(value);
+
+    if (value.length > 10) {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => {
+        fetchOpportunityScore(value);
+      }, 800);
+    } else {
+      setScore(null);
+    }
+  };
 
 
   const handleMergeMusic = async () => {
@@ -552,10 +623,20 @@ Please contact Admin`);
         },
         body: JSON.stringify({
           model: "gpt-4",
-          messages: [{
-            role: "user",
-            content: `Viết một caption sáng tạo bằng tiếng Việt cho video có nội dung mô tả sau:\n"${description}"`
-          }],
+          // messages: [{
+          //   role: "user",
+          //   content: `Viết một caption sáng tạo bằng tiếng Việt cho video có nội dung mô tả sau:\n"${description}"`
+          // }],
+          messages: [
+            {
+              role: "system",
+              content: contentGenerateCaption,
+            },
+            {
+              role: "user",
+              content: `Mô tả hình ảnh sản phẩm: "${description}". Hãy viết một caption quảng cáo theo đúng 10 tiêu chí trên.`,
+            },
+          ],
           temperature: 0.8,
           max_tokens: 1000,
         }),
@@ -634,26 +715,6 @@ Please contact Admin`);
 
                 <Row gutter={[8, 8]} justify="center" wrap style={{ marginBottom: 8 }}>
                   <Col xs={24} sm={10}>
-                    {/* <Button
-                      type="dashed"
-                      block
-                      size="small"
-                      icon={<UploadOutlined />}
-                      onClick={() => document.getElementById(`upload-${index}`)?.click()}
-                    >
-                      Upload Image
-                    </Button>
-                    <input
-                      id={`upload-${index}`}
-                      type="file"
-                      accept="image/*"
-                      style={{ display: "none" }}
-                      onChange={(e) => {
-                        if (e.target.files?.[0]) {
-                          handleImageUpload(index, e.target.files[0]);
-                        }
-                      }} /> */}
-
                     <input
                       type="file"
                       accept="image/*"
@@ -923,7 +984,7 @@ Please contact Admin`);
             <TextArea
               rows={4}
               value={caption}
-              onChange={(e) => setCaption(e.target.value)}
+              onChange={handleCaptionChange}
               placeholder="The caption content will appear here..."
               style={{
                 fontSize: 15,
@@ -933,6 +994,48 @@ Please contact Admin`);
                 backgroundColor: "#ffffff",
                 boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
               }} />
+
+            {/* Chỉ hiển thị nếu có điểm */}
+            {score !== null && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: 16,
+                  borderRadius: 12,
+                  backgroundColor: "#fff",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                  marginBottom: 24,
+                  maxWidth: 500,
+                }}
+              >
+                <div style={{ marginRight: 24 }}>
+                  <Progress
+                    type="circle"
+                    percent={score}
+                    width={80}
+                    strokeColor={
+                      score >= 80 ? "#52c41a" : score >= 50 ? "#faad14" : "#f5222d"
+                    }
+                    format={() => (
+                      <div style={{ fontSize: 16, color: "#000" }}>
+                        <div style={{ fontWeight: 500 }}>{score}</div>
+                        <div style={{ fontSize: 12, color: "#999" }}>points</div>
+                      </div>
+                    )}
+                  />
+                </div>
+
+                <div>
+                  <Title level={5} style={{ margin: 0 }}>
+                    {scoreLabel} <span style={{ color: '#999' }}>ℹ️</span>
+                  </Title>
+                  <Text type="secondary">
+                    {suggestion}
+                  </Text>
+                </div>
+              </div>
+            )}
 
             <Button
               type="primary"
