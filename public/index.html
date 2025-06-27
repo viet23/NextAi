@@ -5,15 +5,15 @@
     <link rel="icon" href="%PUBLIC_URL%/next-logo.jpg" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta name="description" content="Nền tảng quảng cáo AI – tạo ảnh, video, caption, chạy ads tự động." />
+    <meta name="description" content="AI advertising platform – create photos, videos, captions, run ads automatically." />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/next-logo.jpg" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
     <title>ALL ONE ADS</title>
 
     <!-- ✅ Open Graph / Facebook -->
-    <meta property="og:title" content="ALL ONE ADS – Quảng cáo AI đa kênh thông minh" />
-    <meta property="og:description" content="Tạo quảng cáo Facebook tự động: ảnh, video, caption & chạy ads chỉ với vài cú nhấp chuột!" />
+    <meta property="og:title" content="ALL ONE ADS – Smart multi-channel AI advertising" />
+    <meta property="og:description" content="Create Facebook ads automatically: photos, videos, captions & run ads with just a few clicks!" />
     <meta property="og:image" content="https://alloneads.com/og-image.png" />
     <meta property="og:url" content="https://alloneads.com/" />
     <meta property="og:type" content="website" />
@@ -21,13 +21,70 @@
 
     <!-- ✅ Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="ALL ONE ADS – Nền tảng quảng cáo AI" />
-    <meta name="twitter:description" content="Giải pháp tối ưu giúp doanh nghiệp tạo quảng cáo hiệu quả nhanh chóng." />
+    <meta name="twitter:title" content="ALL ONE ADS – AI Advertising Platform" />
+    <meta name="twitter:description" content="The optimal solution to help businesses create effective advertising quickly." />
     <meta name="twitter:image" content="https://alloneads.com/og-image.png" />
+
+    <!-- ✅ Beautify Google Translate Dropdown -->
+   <style>
+  .goog-logo-link,
+  .goog-te-gadget span {
+    display: none !important;
+  }
+
+  #google_translate_element {
+    position: fixed;
+    top: 16px;
+    right: 80px; /* 👈 dịch sang trái */
+    z-index: 9999;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 14px;
+    font-family: 'Arial', sans-serif;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .goog-te-combo {
+    border: none;
+    background-color: transparent;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .goog-te-banner-frame.skiptranslate {
+    display: none !important;
+  }
+
+  body {
+    top: 0px !important;
+  }
+</style>
   </head>
 
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+
+    <!-- ✅ Google Translate Dropdown -->
+    <div id="google_translate_element"></div>
+
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          {
+            pageLanguage: 'en',
+            includedLanguages: 'en,vi',
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+          },
+          'google_translate_element'
+        );
+      }
+    </script>
+    <script
+      type="text/javascript"
+      src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+    ></script>
   </body>
 </html>

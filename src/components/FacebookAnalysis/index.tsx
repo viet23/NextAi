@@ -225,16 +225,16 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
   return (
       <><Helmet>
       <title>All One Ads – Phân tích fanpage & đề xuất phát triển kênh</title>
-      <meta property="og:title" content="All One Ads – AI phân tích và gợi ý nội dung fanpage" />
-      <meta property="og:description" content="Tự động phân tích fanpage và đề xuất kế hoạch phát triển nội dung, chiến lược truyền thông theo phong cách chuyên nghiệp." />
+      <meta property="og:title" content="All One Ads – AI analyzes and suggests fanpage content" />
+      <meta property="og:description" content="Automatically analyze fanpage and suggest content development plans and communication strategies in a professional style." />
       <meta property="og:image" content="https://alloneads.com/og-image.png" />
       <meta property="og:url" content="https://alloneads.com/" />
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content="All One Ads" />
 
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content="All One Ads – Phân tích & đề xuất kênh fanpage bằng AI" />
-      <meta name="twitter:description" content="Tối ưu fanpage dễ dàng với AI: phân tích - chiến lược - lịch đăng - ý tưởng viral." />
+      <meta name="twitter:title" content="All One Ads – Analyze & recommend fanpage channels using AI" />
+      <meta name="twitter:description" content="Optimize fanpage easily with AI: analysis - strategy - posting schedule - viral ideas." />
       <meta name="twitter:image" content="https://alloneads.com/og-image.png" />
     </Helmet><Layout style={{ minHeight: "100vh", background: "#fff" }}>
         <Content style={styles.container}>
