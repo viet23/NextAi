@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Layout, Input, Button, Typography, Card, message } from "antd";
 import { useCreateAnalysisMutation, useGetAnalysisQuery } from "src/store/api/ticketApi";
+import { Helmet } from "react-helmet";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -222,87 +223,95 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
   };
 
   return (
-    <Layout style={{ minHeight: "100vh", background: "#fff" }}>
-      <Content style={styles.container}>
-        <div style={styles.inputSection}>
-          <Input
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="Enter the Facebook Page link"
-            style={{ marginBottom: 16 }}
-          />
+      <><Helmet>
+      <title>All One Ads – Phân tích fanpage & đề xuất phát triển kênh</title>
+      <meta property="og:title" content="All One Ads – AI phân tích và gợi ý nội dung fanpage" />
+      <meta property="og:description" content="Tự động phân tích fanpage và đề xuất kế hoạch phát triển nội dung, chiến lược truyền thông theo phong cách chuyên nghiệp." />
+      <meta property="og:image" content="https://alloneads.com/og-image.png" />
+      <meta property="og:url" content="https://alloneads.com/" />
+      <meta property="og:type" content="website" />
+      <meta property="og:site_name" content="All One Ads" />
 
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-            <Button
-              style={{
-                backgroundColor: "#D2E3FC",
-                color: "#000",
-                border: "1px solid #D2E3FC",
-                borderRadius: 6,
-                height: 40,
-                padding: "0 16px", // tạo khoảng đệm vừa đủ
-                whiteSpace: "nowrap", // không xuống dòng
-                width: "auto", // chiều ngang bám sát nội dung
-              }}
-              type="primary"
-              loading={loading}
-              onClick={analyzeFacebookPage}
-            >
-              Page Analysis & Channel Development Suggestions
-            </Button>
-          </div>
-        </div>
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content="All One Ads – Phân tích & đề xuất kênh fanpage bằng AI" />
+      <meta name="twitter:description" content="Tối ưu fanpage dễ dàng với AI: phân tích - chiến lược - lịch đăng - ý tưởng viral." />
+      <meta name="twitter:image" content="https://alloneads.com/og-image.png" />
+    </Helmet><Layout style={{ minHeight: "100vh", background: "#fff" }}>
+        <Content style={styles.container}>
+          <div style={styles.inputSection}>
+            <Input
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="Enter the Facebook Page link"
+              style={{ marginBottom: 16 }} />
 
-
-        <div style={styles.twoColumns}>
-          {/* Cột trái */}
-          <div style={styles.column}>
-            <Title level={4}>📊 Page Analysis</Title>
-            <Card>
-              <Title level={5}>GENERAL INFORMATION</Title>
-              <TextArea
-                value={analysis.overview}
-                readOnly
-                autoSize
-                style={{ marginBottom: 12, whiteSpace: "pre-wrap" }}
-              />
-
-              <Title level={5}>PRODUCTS / SERVICES</Title>
-              <TextArea
-                value={analysis.products}
-                readOnly
-                autoSize
-                style={{ marginBottom: 12, whiteSpace: "pre-wrap" }}
-              />
-
-              <Title level={5}>CUSTOMER INTERACTION</Title>
-              <TextArea
-                value={analysis.engagement}
-                readOnly
-                autoSize
-                style={{ marginBottom: 12, whiteSpace: "pre-wrap" }}
-              />
-
-              <Title level={5}>COMMUNICATIONS STRATEGY</Title>
-              <TextArea
-                value={analysis.strategy}
-                readOnly
-                autoSize
-                style={{ whiteSpace: "pre-wrap" }}
-              />
-            </Card>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+              <Button
+                style={{
+                  backgroundColor: "#D2E3FC",
+                  color: "#000",
+                  border: "1px solid #D2E3FC",
+                  borderRadius: 6,
+                  height: 40,
+                  padding: "0 16px", // tạo khoảng đệm vừa đủ
+                  whiteSpace: "nowrap", // không xuống dòng
+                  width: "auto", // chiều ngang bám sát nội dung
+                }}
+                type="primary"
+                loading={loading}
+                onClick={analyzeFacebookPage}
+              >
+                Page Analysis & Channel Development Suggestions
+              </Button>
+            </div>
           </div>
 
-          {/* Cột phải */}
-          <div style={styles.column}>
-            <Title level={4}>🚀 Suggested Facebook Page Channel</Title>
-            <Card>
-              <TextArea value={channelPlan} rows={28} readOnly />
-            </Card>
+
+          <div style={styles.twoColumns}>
+            {/* Cột trái */}
+            <div style={styles.column}>
+              <Title level={4}>📊 Page Analysis</Title>
+              <Card>
+                <Title level={5}>GENERAL INFORMATION</Title>
+                <TextArea
+                  value={analysis.overview}
+                  readOnly
+                  autoSize
+                  style={{ marginBottom: 12, whiteSpace: "pre-wrap" }} />
+
+                <Title level={5}>PRODUCTS / SERVICES</Title>
+                <TextArea
+                  value={analysis.products}
+                  readOnly
+                  autoSize
+                  style={{ marginBottom: 12, whiteSpace: "pre-wrap" }} />
+
+                <Title level={5}>CUSTOMER INTERACTION</Title>
+                <TextArea
+                  value={analysis.engagement}
+                  readOnly
+                  autoSize
+                  style={{ marginBottom: 12, whiteSpace: "pre-wrap" }} />
+
+                <Title level={5}>COMMUNICATIONS STRATEGY</Title>
+                <TextArea
+                  value={analysis.strategy}
+                  readOnly
+                  autoSize
+                  style={{ whiteSpace: "pre-wrap" }} />
+              </Card>
+            </div>
+
+            {/* Cột phải */}
+            <div style={styles.column}>
+              <Title level={4}>🚀 Suggested Facebook Page Channel</Title>
+              <Card>
+                <TextArea value={channelPlan} rows={28} readOnly />
+              </Card>
+            </div>
           </div>
-        </div>
-      </Content>
-    </Layout>
+        </Content>
+      </Layout></>
   );
 };
 
