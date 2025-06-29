@@ -1,5 +1,6 @@
 import { Button, Col, List, Row, Typography } from "antd";
 import { Dispatch, SetStateAction, memo } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ActionAuthorize } from "src/components/ActionAuthorize";
 import { PlusIcon } from "src/components/MenuItemIcon";
@@ -16,6 +17,7 @@ interface IProps {
 
 export const AuthorizationsGroupRoles = memo(
   ({ roleGroups, roleGroupActive, setRoleGroupActive }: IProps) => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     const navigateToCreate = () => {
@@ -35,7 +37,7 @@ export const AuthorizationsGroupRoles = memo(
               level={4}
               color="#1B1B1B"
             >
-             Set up user rights groups
+              {t("auth_groups.title")}
             </Typography.Title>
           </Col>
         </Row>
@@ -44,9 +46,8 @@ export const AuthorizationsGroupRoles = memo(
             <List>
               {roleGroups?.map((group) => (
                 <List.Item
-                  className={`list-item ${
-                    roleGroupActive === group.id ? "active" : ""
-                  }`}
+                  className={`list-item ${roleGroupActive === group.id ? "active" : ""
+                    }`}
                   key={group.name}
                   onClick={() => handleSelect(group.id)}
                 >

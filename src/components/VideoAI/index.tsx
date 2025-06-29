@@ -10,6 +10,7 @@ import { useGetAccountQuery } from "src/store/api/accountApi";
 import AutoPostModal from "../AutoPostModal";
 import FullscreenLoader from "../FullscreenLoader";
 import { contentFetchOpportunityScore, contentGenerateCaption } from "src/utils/facebook-utild";
+import { useTranslation } from "react-i18next";
 const genres = [
   "Ambient", "Piano", "Orchestra", "Lofi", "Chill", "Hiphop", "Electronic",
   "Pop", "Rock", "Jazz", "Blues", "Acoustic", "Guitar", "Drums", "Trap",
@@ -50,6 +51,7 @@ const durationSceneMap: any = {
 };
 
 const VideoGenerator = () => {
+  const { t } = useTranslation();
   const [caption, setCaption] = useState("");
   const [promptTexts, setPromptTexts] = useState([""]);
   const [videoSrc, setVideoSrc] = useState("");
@@ -675,8 +677,17 @@ Please contact Admin`);
         <Row gutter={[24, 24]} justify="center" wrap>
           {/* Cột trái: nhập mô tả và upload */}
           <Col xs={24} md={12}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <label style={{ fontWeight: 500, whiteSpace: "nowrap" }}>Video duration:</label>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 16,
+              }}
+            >
+              <label style={{ fontWeight: 500, whiteSpace: "nowrap" }}>
+                {t("video.duration_label")}:
+              </label>
               <Select
                 value={videoDuration}
                 onChange={(value) => {
@@ -687,31 +698,32 @@ Please contact Admin`);
                 }}
                 style={{ width: 150, marginLeft: 12 }}
               >
-                <Option value={5}>5 seconds</Option>
-                <Option value={10}>10 seconds</Option>
-                <Option value={30}>30 seconds</Option>
-                <Option value={60}>60 seconds</Option>
+                <Option value={5}>{t("video.seconds", { count: 5 })}</Option>
+                <Option value={10}>{t("video.seconds", { count: 10 })}</Option>
+                <Option value={30}>{t("video.seconds", { count: 30 })}</Option>
+                <Option value={60}>{t("video.seconds", { count: 60 })}</Option>
               </Select>
               <Button
                 size="small"
                 style={{ backgroundColor: "#D2E3FC", color: "#000" }}
                 onClick={() => setScriptModalOpen(true)}
               >
-                Generate Script
+                {t("video.generate_script")}
               </Button>
             </div>
             {Array.from({ length: activeScenes }).map((_, index) => (
               <div key={index} style={{ marginBottom: 24 }}>
                 <TextArea
-                  autoSize={{ minRows: 2, maxRows: 10 }} // ✅ tự co giãn chiều cao
-                  placeholder={`Scene ${index + 1} description`}
+                  autoSize={{ minRows: 2, maxRows: 10 }}
+                  placeholder={t("video.scene_description", { index: index + 1 })}
                   value={promptTexts[index] || ""}
                   onChange={(e) => {
                     const newPrompts = [...promptTexts];
                     newPrompts[index] = e.target.value;
                     setPromptTexts(newPrompts);
                   }}
-                  style={{ marginBottom: 8 }} />
+                  style={{ marginBottom: 8 }}
+                />
 
                 <Row gutter={[8, 8]} justify="center" wrap style={{ marginBottom: 8 }}>
                   <Col xs={24} sm={10}>
@@ -740,9 +752,8 @@ Please contact Admin`);
                         }
                       }}
                     >
-                      Upload Image
+                      {t("video.upload_image")}
                     </Button>
-
                   </Col>
 
                   <Col xs={24} sm={10}>
@@ -753,7 +764,7 @@ Please contact Admin`);
                       onClick={() => generateSingleSceneVideo(index)}
                       style={{ backgroundColor: "#D2E3FC", color: "#000" }}
                     >
-                      Generate Scene {index + 1}
+                      {t("video.generate_scene", { index: index + 1 })}
                     </Button>
                   </Col>
                 </Row>
@@ -817,20 +828,28 @@ Please contact Admin`);
                   style={{ backgroundColor: "#D2E3FC", color: "#000" }}
                   onClick={generateAllScenesVideos}
                 >
-                  Generate All
+                  {t("video.generate_all")}
                 </Button>
               </Col>
               <Col>
-                <Button type="primary" style={{ backgroundColor: "#D2E3FC", color: "#000" }} onClick={mergeSelectedVideos}>
-                  Merge Selected
+                <Button
+                  type="primary"
+                  style={{ backgroundColor: "#D2E3FC", color: "#000" }}
+                  onClick={mergeSelectedVideos}
+                >
+                  {t("video.merge_selected")}
                 </Button>
               </Col>
               <Col>
-                <Button style={{ backgroundColor: "#D2E3FC", color: "#000" }} onClick={openMusicModal}>
-                  {selectedMusic ? `🎵 ${selectedMusic.name}` : "Choose music"}
+                <Button
+                  style={{ backgroundColor: "#D2E3FC", color: "#000" }}
+                  onClick={openMusicModal}
+                >
+                  {selectedMusic
+                    ? t("video.selected_music", { name: selectedMusic.name })
+                    : t("video.choose_music")}
                 </Button>
               </Col>
-
               <Col>
                 <Button
                   style={{
@@ -840,28 +859,29 @@ Please contact Admin`);
                   }}
                   onClick={handleMergeMusic}
                 >
-                  🎬 Music pairing
+                  {t("video.music_pairing")}
                 </Button>
               </Col>
             </Row>
             <Modal
-              title="Choose background music"
+              title={t("video.choose_music_title")}
               open={modalOpen}
               onOk={confirmSelect}
               onCancel={closeModal}
-              okText="Confirm"
-              cancelText="Cancel"
+              okText={t("video.confirm")}
+              cancelText={t("video.cancel")}
             >
               <Select
                 showSearch
-                placeholder="Choose music genre"
+                placeholder={t("video.choose_music_genre")}
                 style={{ width: '100%', marginBottom: 16 }}
                 value={selectedGenre}
                 onChange={(value) => {
                   setSelectedGenre(value);
                   fetchMusic(value);
                 }}
-                options={genres.map((g) => ({ label: g, value: g.toLowerCase() }))} />
+                options={genres.map((g) => ({ label: g, value: g.toLowerCase() }))}
+              />
 
               {loadingMusic ? (
                 <Spin />
@@ -888,7 +908,9 @@ Please contact Admin`);
                       >
                         {playingId === track.id ? '⏸' : '▶'}
                       </Button>
-                      <Text>{track.name || `Track ${track.id}`}</Text>
+                      <Text>
+                        {track.name || t("video.track", { id: track.id })}
+                      </Text>
                     </Radio>
                   ))}
                 </Radio.Group>
@@ -898,14 +920,13 @@ Please contact Admin`);
 
           {/* Cột phải: kết quả và caption */}
           <Col xs={24} md={12}>
-            {/* Modal hiển thị khi click */}
             <AutoPostModal visible={showModal} onClose={() => setShowModal(false)} />
 
             <div
               style={{
                 display: "flex",
-                justifyContent: "flex-end", // ✅ đẩy nút sang phải
-                padding: "6px 0", // ✅ khoảng trống trên dưới (có thể tăng/giảm)
+                justifyContent: "flex-end",
+                padding: "6px 0",
               }}
             >
               <button
@@ -915,15 +936,16 @@ Please contact Admin`);
                   color: "#000",
                   border: "1px solid #D2E3FC",
                   borderRadius: 6,
-                  padding: "6px 12px", // ✅ padding cho nút đẹp hơn
+                  padding: "6px 12px",
                   fontSize: 11,
                   cursor: "pointer",
-                  marginRight: 16, // ✅ nếu cần cách xa mép phải
+                  marginRight: 16,
                 }}
               >
-                Thiết lập đăng bài tự động
+                {t("video.auto_post_setting")}
               </button>
             </div>
+
             <div
               style={{
                 background: "#fafafa",
@@ -947,7 +969,7 @@ Please contact Admin`);
                   <source src={videoSrc} type="video/mp4" />
                 </video>
               ) : (
-                <span style={{ color: "#999", fontSize: 16 }}>No videos yet</span>
+                <span style={{ color: "#999", fontSize: 16 }}>{t("video.no_video")}</span>
               )}
             </div>
 
@@ -956,7 +978,7 @@ Please contact Admin`);
                 rows={2}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Enter video content description..."
+                placeholder={t("video.enter_description")}
                 style={{
                   width: "100%",
                   fontSize: 15,
@@ -964,8 +986,8 @@ Please contact Admin`);
                   padding: 10,
                   backgroundColor: "#ffffff",
                   boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
-                }} />
-
+                }}
+              />
               <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
                 <Button
                   loading={loadingCaption}
@@ -973,19 +995,20 @@ Please contact Admin`);
                     backgroundColor: "#D2E3FC",
                     color: "#000",
                     borderRadius: 8,
-                    whiteSpace: "nowrap"
+                    whiteSpace: "nowrap",
                   }}
                   onClick={generateCaption}
                 >
-                  Generate Caption
+                  {t("video.generate_caption")}
                 </Button>
               </div>
             </div>
+
             <TextArea
               rows={4}
               value={caption}
               onChange={handleCaptionChange}
-              placeholder="The caption content will appear here..."
+              placeholder={t("video.caption_placeholder")}
               style={{
                 fontSize: 15,
                 borderRadius: 8,
@@ -993,9 +1016,9 @@ Please contact Admin`);
                 marginBottom: 16,
                 backgroundColor: "#ffffff",
                 boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
-              }} />
+              }}
+            />
 
-            {/* Chỉ hiển thị nếu có điểm */}
             {score !== null && (
               <div
                 style={{
@@ -1020,7 +1043,7 @@ Please contact Admin`);
                     format={() => (
                       <div style={{ fontSize: 16, color: "#000" }}>
                         <div style={{ fontWeight: 500 }}>{score}</div>
-                        <div style={{ fontSize: 12, color: "#999" }}>points</div>
+                        <div style={{ fontSize: 12, color: "#999" }}>{t("video.points")}</div>
                       </div>
                     )}
                   />
@@ -1028,11 +1051,9 @@ Please contact Admin`);
 
                 <div>
                   <Title level={5} style={{ margin: 0 }}>
-                    {scoreLabel} <span style={{ color: '#999' }}>ℹ️</span>
+                    {scoreLabel} <span style={{ color: "#999" }}>ℹ️</span>
                   </Title>
-                  <Text type="secondary">
-                    {suggestion}
-                  </Text>
+                  <Text type="secondary">{suggestion}</Text>
                 </div>
               </div>
             )}
@@ -1048,32 +1069,33 @@ Please contact Admin`);
                 fontWeight: 600,
               }}
             >
-              Post Facebook
+              {t("video.post_facebook")}
             </Button>
           </Col>
         </Row>
       </Content>
 
       <Modal
-        title="Generate Video Script"
+        title={t("video.script_modal_title")}
         open={scriptModalOpen}
         onCancel={() => setScriptModalOpen(false)}
-        okText="Generate"
-        cancelText="Cancel"
+        okText={t("video.generate")}
+        cancelText={t("video.cancel")}
         confirmLoading={loadingScript}
-        onOk={generateScriptByGPT} // ✅ tách logic ra hàm
+        onOk={generateScriptByGPT}
       >
         <TextArea
           rows={4}
           value={scriptPrompt}
           onChange={(e) => setScriptPrompt(e.target.value)}
-          placeholder="Ví dụ: Cho tôi 3 cảnh video quảng cáo quán lẩu..."
+          placeholder={t("video.script_prompt_placeholder")}
           onPressEnter={(e) => {
             if (!e.shiftKey) {
               e.preventDefault();
-              generateScriptByGPT(); // ✅ nhấn Enter cũng chạy như click
+              generateScriptByGPT();
             }
-          }} />
+          }}
+        />
       </Modal>
     </Layout></>
   );

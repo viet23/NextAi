@@ -6,6 +6,7 @@ import { useGetAccountQuery } from "src/store/api/accountApi";
 import { useCreateCaseMutation } from "src/store/api/ticketApi";
 import AutoPostModal from "../AutoPostModal";
 import FullscreenLoader from "../FullscreenLoader"; import { contentFetchOpportunityScore, contentGenerateCaption } from "src/utils/facebook-utild";
+import { useTranslation } from "react-i18next";
 ;
 const { Title, Text } = Typography;
 
@@ -13,6 +14,7 @@ const { Content } = Layout;
 const { TextArea } = Input;
 
 const FullscreenSplitCard = () => {
+  const { t } = useTranslation();
   const [caption, setCaption] = useState("");
   const [prompt, setPrompt] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -166,7 +168,7 @@ const FullscreenSplitCard = () => {
 
   const generateImage = async () => {
     if (!prompt) {
-      message.warning("Please enter a prompt.");
+     message.warning(t("image.enter_prompt")); // "Please enter a prompt."
       return;
     }
 
@@ -176,7 +178,7 @@ const FullscreenSplitCard = () => {
     try {
       const translatedPrompt = await translatePromptToEnglish(prompt);
       if (!translatedPrompt) {
-        message.error("Failed to translate prompt. Your budget run out! Please contact Admin");
+       message.error(t("image.generate_error"));
         return;
       }
 
@@ -195,11 +197,11 @@ const FullscreenSplitCard = () => {
       if (data?.imageUrl) {
         setImageUrl(data.imageUrl);
       } else {
-        message.error("Image generation failed. Your budget run out! Please contact Admin");
+        message.error(t("image.generate_error"));
       }
     } catch (err) {
       console.error("Image error:", err);
-      message.error("Image generation error. Your budget run out! Please contact Admin");
+      message.error(t("image.generate_error"));
     } finally {
       setLoadingImage(false);
     }
@@ -292,7 +294,7 @@ const FullscreenSplitCard = () => {
             <TextArea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Describe your image"
+             placeholder={t("image.describe_prompt")} // "Describe your image"
               rows={5}
               style={{ marginBottom: 16, fontSize: 16 }}
             />
@@ -328,7 +330,7 @@ const FullscreenSplitCard = () => {
                 onClick={() => document.getElementById("upload-image")?.click()}
                 style={{ backgroundColor: "#D2E3FC", color: "#000", border: "1px solid #D2E3FC", borderRadius: 6 }}
               >
-                Upload product Image
+                {t("image.upload_image")}
               </Button>
               <input
                 id="upload-image"
@@ -347,10 +349,10 @@ const FullscreenSplitCard = () => {
             </div>
             <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
               <Button style={{ backgroundColor: "#D2E3FC", color: "#000", border: "1px solid #D2E3FC", borderRadius: 6 }} type="primary" size="large" onClick={generateImage} loading={loadingImage}>
-                Generate Image
+                {t("image.generate_image")}
               </Button>
               <Button style={{ backgroundColor: "#D2E3FC", color: "#000", border: "1px solid #D2E3FC", borderRadius: 6 }} type="primary" size="large" onClick={generateCaption} loading={loadingCaption}>
-                Generate Caption
+                {t("image.generate_caption")}
               </Button>
             </div>
           </div>
@@ -399,7 +401,7 @@ const FullscreenSplitCard = () => {
               rows={4}
               value={caption}
               onChange={handleCaptionChange}
-              placeholder="Caption"
+             placeholder={t("image.caption_placeholder")} // "Caption"
               style={{ fontSize: 15, marginBottom: 16 }}
             />
 
@@ -447,7 +449,7 @@ const FullscreenSplitCard = () => {
             )}
 
             <Button onClick={handlePostFacebook} type="primary" style={{ backgroundColor: "#D2E3FC", color: "#000", border: "1px solid #D2E3FC", borderRadius: 6 }} block size="large">
-              Post Facebook
+              {t("image.post_facebook")}
             </Button>
           </div>
         </div>

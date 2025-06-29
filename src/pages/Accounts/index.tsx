@@ -31,6 +31,7 @@ import {
 import dayjs from "dayjs";
 import { PageTitleHOC } from "src/components/PageTitleHOC";
 import CreateUser from "src/components/DetailUser";
+import { useTranslation } from "react-i18next";
 
 interface IForm {
   search: string;
@@ -38,6 +39,17 @@ interface IForm {
 }
 
 const AccountsPage = () => {
+  const { t, i18n } = useTranslation();
+
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'vi' ? 'en' : 'vi';
+    i18n.changeLanguage(newLang);
+  };
+
+ const currentFlag = i18n.language === 'vi'
+    ? '/VN.png' // icon cờ Việt Nam
+    : '/EN.png'; // icon cờ Anh
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [form] = useForm<IForm>();
   const [isOpen, setIsOpen] = useState(false);
@@ -93,47 +105,50 @@ const AccountsPage = () => {
   const columns = useMemo<ColumnsType<any>>(
     () => [
       {
-        title: "NO",
+        title: t("accounts.columns.no"),
         key: "index",
         width: 90,
-        render: (_value, _record, index) => index + 1,
+        render: (_v, _r, index) => index + 1,
       },
       {
-        title: "Login name",
+        title: t("accounts.columns.username"),
         key: "username",
         dataIndex: "username",
       },
       {
-        title: "Full Name",
+        title: t("accounts.columns.full_name"),
         key: "fullName",
         dataIndex: "fullName",
       },
       {
-        title: "Creation date",
+        title: t("accounts.columns.created"),
         key: "createdAt",
         dataIndex: "createdAt",
         render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
       },
       {
-        title: "Status",
+        title: t("accounts.columns.status"),
         key: "status",
         dataIndex: "isActive",
         render: (value) =>
-          value ? ACCOUNT_STATUS_ACTIVE_LABEL : ACCOUNT_STATUS_INACTIVE_LABEL,
+          value
+            ? t("accounts.status.active")
+            : t("accounts.status.inactive"),
       },
       {
-        title: "Actions",
+        title: t("accounts.columns.actions"),
         key: "actions",
         dataIndex: "id",
         render: (id) => (
           <Link className="edit" to={`/tai-khoan/${id}`}>
-           edit
+            {t("accounts.edit")}
           </Link>
         ),
       },
     ],
-    []
+    [t]
   );
+
 
   const dataSource = useMemo(() => data?.data || [], [data]);
 
@@ -186,10 +201,25 @@ const AccountsPage = () => {
   };
 
   return (
-    <PageTitleHOC title="List of accounts">
+    <PageTitleHOC title={t("accounts.page_title")}>
+      {/* Nút đổi ngôn ngữ bằng emoji */}
+      <div style={{ textAlign: "right", marginBottom: 12 }}>
+        <Button
+          onClick={toggleLanguage}
+          shape="circle"
+          style={{ width: 32, height: 32, padding: 0 }}
+        >
+          <img
+            src={currentFlag}
+            alt="flag"
+            style={{ width: 20, height: 20, borderRadius: "50%" }}
+          />
+        </Button>
+      </div>
+
       <Card className="accounts">
         <Typography.Title className="title" level={4} color="#1B1B1B">
-          List of user accounts
+          {t("accounts.user_list")}
         </Typography.Title>
 
         <Form
@@ -207,7 +237,7 @@ const AccountsPage = () => {
                   allowClear
                   size="large"
                   prefix={<SearchOutlined />}
-                  placeholder="Search"
+                  placeholder={t("accounts.search_placeholder")}
                 />
               </Form.Item>
             </Col>
@@ -216,11 +246,11 @@ const AccountsPage = () => {
                 <Select
                   allowClear
                   size="large"
-                  placeholder="Account status"
+                  placeholder={t("accounts.status_placeholder")}
                 >
                   {ACCOUNT_STATUS.map((status) => (
                     <Select.Option key={status.value}>
-                      {status.label}
+                      {t(`accounts.status.${status.label}`)}
                     </Select.Option>
                   ))}
                 </Select>
@@ -229,7 +259,7 @@ const AccountsPage = () => {
             <Col xs={24} lg={8}>
               <Flex justify="end">
                 <Button size="large" type="primary" onClick={handleAddNew}>
-                  Add new
+                  {t("accounts.add_button")}
                 </Button>
               </Flex>
             </Col>
@@ -243,7 +273,7 @@ const AccountsPage = () => {
           dataSource={dataSource}
           pagination={false}
           locale={{
-            emptyText: <Empty description="No Data"></Empty>,
+            emptyText: <Empty description={t("accounts.no_data")} />,
           }}
           scroll={{ x: 800 }}
         />

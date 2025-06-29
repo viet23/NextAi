@@ -5,7 +5,6 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import "./assets/scss/style.scss";
 import { Provider } from 'react-redux';
-// import store from './store/store';
 import { AppProvider } from './context/AppContext';
 import './i18n';
 import { persistor, store } from './store/store';

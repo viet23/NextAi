@@ -14,6 +14,7 @@ import {
 
 import { TicketManageIcon } from "src/components/MenuItemIcon/TicketIcon";
 import { GET_BLACK_LIST, GET_GROUP, GET_ROLE, GET_USER } from "src/constants/roles.constants";
+import { TFunction } from "i18next";
 
 
 export interface IMenuItem {
@@ -25,63 +26,47 @@ export interface IMenuItem {
   children?: IMenuItem[];
 }
 
-export const menuItems: IMenuItem[] = [
+export const getMenuItems = (t: TFunction): IMenuItem[] => [
   {
     key: FB_ANALYSIS_ROUTE,
-    label: "AI Facebook Analysis ",
+    label: t("menu.facebook_analysis"),
     icon: createElement(FacebookOutlined),
   },
   {
     key: IMAGE_ROUTE,
-    label: "AI Image generation ",
+    label: t("menu.image_generation"),
     icon: createElement(PictureOutlined),
   },
   {
     key: VIDEO_ROUTE,
-    label: "AI Video generation ",
+    label: t("menu.video_generation"),
     icon: createElement(VideoCameraOutlined),
   },
   {
     key: MEDIA_ROUTE,
-    label: "AI media list",
+    label: t("menu.media_list"),
     icon: createElement(TicketManageIcon),
   },
   {
     key: DASHBOARD_ROUTE,
-    label: "AI ADS",
+    label: t("menu.ads_dashboard"),
     icon: createElement(TicketManageIcon),
   },
-
-
-  // {
-  //   key: "customer",
-  //   label: "Khách hàng",
-  //   icon: createElement(UserOutlined, { style: { fontSize: 22 } }),
-  //   children: [
-  //     {
-  //       key: CUSTOMER_ROUTE,
-  //       label: "Khách hàng",
-  //       icon: createElement(DotIcon),
-  //       rolenames: [GET_BLACK_LIST],
-  //     },
-  //   ],
-  // },
-
   {
     key: "accounts",
     icon: createElement(SettingIcon),
-    label: "Accounts",
+    label: t("menu.accounts"),
     children: [
       {
         key: ACCOUNT_ROUTE,
         icon: createElement(DotIcon),
-        label: "User account",
+        label: t("menu.user_account"),
         rolenames: [GET_USER],
       },
       {
         key: AUTHORIZATION_ROUTE,
         icon: createElement(DotIcon),
-        label: "User authorization",
+        label: t("menu.user_authorization"),
         rolenames: [GET_GROUP, GET_ROLE],
         allRoleRequired: true,
       },

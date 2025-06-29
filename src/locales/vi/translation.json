@@ -1,10 +1,104 @@
 {
   "common": {
-    "all": "Tất cả"
+    "all": "Tất cả",
+    "save": "Lưu"
   },
   "home": {
-    "title": "Hệ thống merchant site !",
-    "account_info": "Thông tin tài khoản"
+    "title": "Phân tích trang Facebook"
+  },
+  "facebook_analysis": {
+    "enter_page_link": "Nhập liên kết Trang Facebook",
+    "button_analyze": "Phân tích Trang & Gợi ý phát triển kênh",
+    "section_page_analysis": "Phân tích Trang",
+    "section_channel_plan": "Gợi ý kênh Facebook",
+    "general_info": "THÔNG TIN CHUNG",
+    "products_services": "SẢN PHẨM / DỊCH VỤ",
+    "customer_engagement": "TƯƠNG TÁC KHÁCH HÀNG",
+    "strategy": "CHIẾN LƯỢC TRUYỀN THÔNG"
+  },
+  "dashboard": {
+    "title": "Quảng cáo AI",
+    "posts": "Bài viết",
+    "post_list": "Danh sách bài viết",
+    "no": "STT",
+    "media": "Hình ảnh",
+    "caption": "Nội dung",
+    "action": "Hành động",
+    "ads_button": "Quảng cáo",
+    "created_time": "Thời gian tạo",
+    "reach": "Lượt tiếp cận",
+    "react": "Lượt thích",
+    "comment": "Bình luận",
+    "share": "Chia sẻ",
+    "ads": "AI Quảng cáo",
+    "ads_new": "Tạo mới AI Quảng cáo",
+    "chart": {
+      "x_axis": "Tháng",
+      "y_axis": "Số bài viết"
+    }
+  },
+  "image": {
+    "title": "Tạo ảnh AI",
+    "describe_prompt": "Mô tả hình ảnh sản phẩm",
+    "caption_placeholder": "Nhập caption",
+    "generate_image": "Tạo ảnh",
+    "generate_caption": "Tạo caption",
+    "upload_image": "Tải ảnh sản phẩm",
+    "post_facebook": "Đăng Facebook",
+    "enter_prompt": "Vui lòng nhập prompt.",
+    "generate_error": "Lỗi khi tạo ảnh. Hết ngân sách? Liên hệ Admin.",
+    "points": "điểm",
+    "suggestion": "Gợi ý"
+  },
+  "media_ls": {
+    "title": "Danh sách media AI",
+    "card_title": "Danh sách media",
+    "empty": "Không có dữ liệu",
+    "video": {
+      "unsupported": "Trình duyệt không hỗ trợ video."
+    },
+    "table": {
+      "no": "STT",
+      "media": "Media",
+      "caption": "Mô tả",
+      "actions": "Hành động",
+      "tooltip_detail": "Xem chi tiết"
+    },
+    "drawer": {
+      "title_detail": "Chi tiết Media",
+      "title_new": "Tạo mới Media"
+    }
+  },
+  "video": {
+    "title": "Tạo video AI",
+    "duration_label": "Thời lượng video",
+    "generate_script": "Tạo kịch bản",
+    "seconds": "{{count}} giây",
+    "scene_description": "Mô tả cảnh {{index}}",
+    "upload_image": "Tải ảnh lên",
+    "generate_scene": "Tạo cảnh {{index}}",
+    "generate_all": "Tạo tất cả cảnh",
+    "merge_selected": "Ghép các cảnh đã chọn",
+    "choose_music": "Chọn nhạc nền",
+    "music_pairing": "🎬 Phối nhạc",
+    "selected_music": "🎵 {{name}}",
+    "no_video": "Chưa có video nào",
+    "enter_description": "Nhập mô tả nội dung video...",
+    "generate_caption_btn": "Tạo caption",
+    "caption_result": "Caption sẽ hiển thị tại đây...",
+    "post_facebook": "Đăng lên Facebook",
+    "auto_post_setting": "Thiết lập đăng bài tự động",
+    "script_modal_title": "Tạo kịch bản video",
+    "script_prompt_placeholder": "Ví dụ: Cho tôi 3 cảnh video quảng cáo quán lẩu...",
+    "generate": "Tạo kịch bản",
+    "choose_music_title": "Chọn nhạc nền",
+    "choose_music_genre": "Chọn thể loại nhạc",
+    "confirm": "Xác nhận",
+    "cancel": "Hủy",
+    "track": "Bản nhạc {{id}}",
+    "generate_caption": "Tạo Caption",
+    "caption_placeholder": "Nội dung caption sẽ hiển thị ở đây...",
+    "points": "điểm"
   },
   "signin": {
     "title": "Đăng nhập"
@@ -56,5 +150,47 @@
         }
       }
     }
+  },
+  "menu": {
+    "facebook_analysis": "Phân tích Facebook AI",
+    "image_generation": "Tạo ảnh AI",
+    "video_generation": "Tạo video AI",
+    "media_list": "Danh sách media",
+    "ads_dashboard": "Quảng cáo AI",
+    "accounts": "Tài khoản",
+    "user_account": "Tài khoản người dùng",
+    "user_authorization": "Phân quyền người dùng"
+  },
+  "accounts": {
+    "page_title": "Danh sách tài khoản",
+    "user_list": "Danh sách người dùng",
+    "search_placeholder": "Tìm kiếm",
+    "status_placeholder": "Trạng thái tài khoản",
+    "add_button": "Thêm mới",
+    "edit": "Chỉnh sửa",
+    "no_data": "Không có dữ liệu",
+    "status": {
+      "active": "Đang hoạt động",
+      "inactive": "Ngừng hoạt động"
+    },
+    "columns": {
+      "no": "STT",
+      "username": "Tên đăng nhập",
+      "full_name": "Họ và tên",
+      "created": "Ngày tạo",
+      "status": "Trạng thái",
+      "actions": "Hành động"
+    }
+  },
+  "auth_groups": {
+    "title": "Thiết lập nhóm quyền người dùng"
+  },
+  "roles": {
+    "title": "Thiết lập quyền",
+    "no": "STT",
+    "permission_name": "Tên quyền",
+    "description": "Mô tả",
+    "access": "Truy cập",
+    "empty": "Vui lòng chọn nhóm quyền"
   }
 }

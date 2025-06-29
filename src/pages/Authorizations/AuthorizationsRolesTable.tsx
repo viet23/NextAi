@@ -1,6 +1,7 @@
 import { Button, Checkbox, Empty, Flex, Table, Typography } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { Dispatch, SetStateAction, memo, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { ActionAuthorize } from "src/components/ActionAuthorize";
 import { CREATE_ROLE } from "src/constants/roles.constants";
 import { IRole, IRoleGroup, IRoleRow } from "src/interfaces/roles.interface";
@@ -15,6 +16,7 @@ interface IProps {
 
 export const AuthorizationsRolesTable = memo(
   ({ rolesUpdate, setRolesUpdate, isLoading, roles, handleSave }: IProps) => {
+    const { t } = useTranslation();
     const handleChangeRole = useCallback(
       (role: IRole) => {
         if (!rolesUpdate) return;
@@ -29,23 +31,23 @@ export const AuthorizationsRolesTable = memo(
     const columns = useMemo<ColumnsType<IRole>>(
       () => [
         {
-          title: "NO",
+          title: t("roles.no"),
           key: "index",
           width: 90,
           render: (_v, _r, index) => index + 1,
         },
         {
-          title: "Permission name",
+          title: t("roles.permission_name"),
           dataIndex: "name",
           key: "name",
         },
         {
-          title: "Describe",
+          title: t("roles.description"),
           dataIndex: "description",
           key: "description",
         },
         {
-          title: "Access",
+          title: t("roles.access"),
           key: "id",
           dataIndex: "id",
           align: "center",
@@ -58,8 +60,9 @@ export const AuthorizationsRolesTable = memo(
           ),
         },
       ],
-      [handleChangeRole, rolesUpdate]
+      [handleChangeRole, rolesUpdate, t]
     );
+
 
     const dataSource = useMemo(
       () => (!rolesUpdate || !roles ? [] : roles),
@@ -70,7 +73,7 @@ export const AuthorizationsRolesTable = memo(
       <>
         <Flex align="center" justify="space-between">
           <Typography.Title className="title" level={4} color="#1B1B1B">
-            Set permissions
+            {t("roles.title")}
           </Typography.Title>
           <ActionAuthorize roleNames={[CREATE_ROLE]}>
             <Button
@@ -79,8 +82,9 @@ export const AuthorizationsRolesTable = memo(
               type="primary"
               onClick={handleSave}
             >
-              Save
+              {t("common.save")}
             </Button>
+
           </ActionAuthorize>
         </Flex>
         <Table
@@ -91,7 +95,7 @@ export const AuthorizationsRolesTable = memo(
           dataSource={dataSource}
           pagination={false}
           locale={{
-            emptyText: <Empty description="Please select permission group"></Empty>,
+            emptyText: <Empty description={t("roles.empty")} />
           }}
           scroll={{ x: 600, y: 500 }}
         />

@@ -13,15 +13,16 @@ import { Layout, Skeleton } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { Header } from "./Header";
 import { Drawer } from "./Drawer";
-import { IMenuItem, menuItems } from "src/routes/menu-item";
+import { IMenuItem, getMenuItems } from "src/routes/menu-item"; // ✅ sửa ở đây
 import { useDispatch, useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
 import { useGetAuthRolesQuery } from "src/store/api/authApi";
 import { setGroups, setRoles } from "src/store/slice/auth.slice";
+import { useTranslation } from "react-i18next"; // ✅ thêm dòng này
 
 export const MainLayout = () => {
+  const { t } = useTranslation(); // ✅ dùng t để truyền vào getMenuItems
   const location = useLocation();
-
   const dispatch = useDispatch();
   const { isLogin } = useSelector((state: IRootState) => state.auth);
 
@@ -30,6 +31,8 @@ export const MainLayout = () => {
   const mounted = useRef(false);
   const [collapsed, setCollapsed] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
+
+  const menuItems = useMemo(() => getMenuItems(t), [t]); // ✅ tạo menu theo ngôn ngữ hiện tại
 
   const findOpenKeys = useCallback((item: IMenuItem, target: string) => {
     if (item.key === target) return [item.key];
@@ -43,7 +46,6 @@ export const MainLayout = () => {
         }
       }
     }
-
     return [];
   }, []);
 
@@ -57,13 +59,14 @@ export const MainLayout = () => {
       }
     }
     return [];
-  }, [findOpenKeys, location.pathname]);
+  }, [findOpenKeys, location.pathname, menuItems]);
 
   const defaultSelectedKeys = useMemo(() => [location.pathname], [
     location.pathname,
   ]);
+
   const roles = useMemo(() => {
-    dispatch(setGroups(data || []))
+    dispatch(setGroups(data || []));
     return data
       ? Array.from(
           new Map(
@@ -72,14 +75,15 @@ export const MainLayout = () => {
         )
       : [];
   }, [data]);
+
   const menuItemsAuthorize = useMemo(() => {
     const getChildrenAuthorize = (item: IMenuItem): IMenuItem | null => {
       if (!item.children) {
-        const { allRoleRequired: _allRoleRequired, ...otherProps } = item; // remove warning allRoleRequired props must be allrolerequired
+        const { allRoleRequired: _allRoleRequired, ...otherProps } = item;
         const operator = item.allRoleRequired ? "every" : "some";
         return !item.rolenames ||
           item.rolenames?.[operator]((roleName) =>
-          roles.find((x) => x.name === roleName)
+            roles.find((x) => x.name === roleName)
           )
           ? otherProps
           : null;
@@ -87,28 +91,27 @@ export const MainLayout = () => {
 
       const children: IMenuItem[] = [];
       for (let i = 0; i < item.children.length; i++) {
-        if (getChildrenAuthorize(item.children[i]))
-          children.push(getChildrenAuthorize(item.children[i])!);
+        const childAuthorized = getChildrenAuthorize(item.children[i]);
+        if (childAuthorized) children.push(childAuthorized);
       }
 
       return children.length ? { ...item, children } : null;
     };
 
-    return menuItems.reduce<IMenuItem[]>((acc, item) => {
+    return menuItems.reduce<IMenuItem[]>((acc: IMenuItem[], item: IMenuItem) => {
       const menuItem = getChildrenAuthorize(item);
       if (menuItem) {
         return [...acc, menuItem];
       }
-
       return acc;
     }, []);
-  }, [data]);
+  }, [data, roles, menuItems]);
 
   useLayoutEffect(() => {
     if (isLogin && data) {
       dispatch(setRoles(roles));
     }
-  }, [isLogin, data, dispatch]);
+  }, [isLogin, data, dispatch, roles]);
 
   return (
     <Layout>

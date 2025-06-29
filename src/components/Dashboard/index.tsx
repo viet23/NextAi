@@ -17,13 +17,12 @@ import { useGetAccountQuery } from "src/store/api/accountApi";
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import DetailAds from "../DetailAds";
+import { useTranslation } from "react-i18next";
 
 const { Title } = Typography;
 
-
-
-
 const Dashboard = () => {
+  const { t } = useTranslation();
   const { user } = useSelector((state: IRootState) => state.auth);
   const { data: accountDetailData } = useGetAccountQuery(user.id || "0", {
     skip: !user.id,
@@ -144,45 +143,47 @@ const Dashboard = () => {
     label: {
       position: "top",
       style: { fill: "#000", fontSize: 12 },
-      formatter: (datum: any) => (datum.quantity > 0 ? datum.quantity.toString() : ""),
+      formatter: (datum: any) =>
+        datum.quantity > 0 ? datum.quantity.toString() : "",
     },
     xAxis: {
-      title: { text: "Date" },
+      title: { text: t("dashboard.chart.x_axis") },
       label: { autoRotate: false },
     },
     yAxis: {
-      title: { text: "Quantity" },
+      title: { text: t("dashboard.chart.y_axis") },
       label: {
-        formatter: (value: number) => (value > 0 ? value.toString() : ""),
+        formatter: (value: number) =>
+          value > 0 ? value.toString() : "",
       },
     },
     height: 300,
     responsive: true,
   };
-
+  
   const columns: ColumnsType<any> = [
     {
-      title: "NO",
+      title: t("dashboard.no"),
       dataIndex: "key",
       key: "key",
       width: 60,
       responsive: ["md"],
     },
     {
-      title: "Media",
+      title: t("dashboard.media"),
       dataIndex: "media",
       key: "media",
       width: 70,
       align: "center",
     },
     {
-      title: "Caption",
+      title: t("dashboard.caption"),
       dataIndex: "caption",
       key: "caption",
       width: 250,
     },
     {
-      title: "Action",
+      title: t("dashboard.action"),
       key: "action",
       width: 60,
       align: "center",
@@ -198,47 +199,47 @@ const Dashboard = () => {
           }}
           onClick={() => handleOnClickDetail(record)}
         >
-          Advertisement
+          {t("dashboard.ads_button")}
         </button>
       ),
-
     },
     {
-      title: "Created time",
+      title: t("dashboard.created_time"),
       dataIndex: "createdTime",
       key: "createdTime",
       width: 120,
       align: "center",
     },
     {
-      title: "Reach",
+      title: t("dashboard.reach"),
       dataIndex: "reach",
       key: "reach",
       width: 90,
       align: "center",
     },
     {
-      title: "React",
+      title: t("dashboard.react"),
       dataIndex: "react",
       key: "react",
       width: 80,
       align: "center",
     },
     {
-      title: "Comment",
+      title: t("dashboard.comment"),
       dataIndex: "comment",
       key: "comment",
       width: 90,
       align: "center",
     },
     {
-      title: "Share",
+      title: t("dashboard.share"),
       dataIndex: "share",
       key: "share",
       width: 70,
       align: "center",
     },
   ];
+
 
   return (
     <Layout
@@ -252,7 +253,7 @@ const Dashboard = () => {
       <Row gutter={[16, 16]}>
         <Col xs={24}>
           <Title level={3} style={{ fontSize: "1.5rem" }}>
-            Posts
+            {t("dashboard.posts")}
           </Title>
         </Col>
 
@@ -264,7 +265,7 @@ const Dashboard = () => {
 
         <Col xs={24}>
           <Title level={4} style={{ marginBottom: 16, fontSize: "1.2rem" }}>
-            Post list
+            {t("dashboard.post_list")}
           </Title>
           <div style={{ overflowX: "auto" }}>
             <Spin spinning={loading}>
@@ -284,12 +285,9 @@ const Dashboard = () => {
         onClose={handleOnCloseDrawer}
         width={"70%"}
         maskClosable={false}
-        title={detailId ? "AI ADS" : "AI ADS NEW"}
+        title={detailId ? t("dashboard.ads") : t("dashboard.ads_new")}
       >
-        <DetailAds
-          id={detailId}
-          pageId={pageId ?? null}
-        />
+        <DetailAds id={detailId} pageId={pageId ?? null} />
       </Drawer>
     </Layout>
   );

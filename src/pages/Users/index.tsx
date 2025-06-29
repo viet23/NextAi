@@ -1,6 +1,8 @@
 import { Card, Col, Empty, Radio, Row, Table } from "antd"
+import { useTranslation } from "react-i18next";
 
 const Users = () => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="tabled">

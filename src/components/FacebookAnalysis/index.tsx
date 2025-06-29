@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Layout, Input, Button, Typography, Card, message } from "antd";
 import { useCreateAnalysisMutation, useGetAnalysisQuery } from "src/store/api/ticketApi";
 import { Helmet } from "react-helmet";
+import { useTranslation } from "react-i18next";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -34,6 +35,7 @@ const styles = {
 };
 
 const FacebookPageAnalysis = () => {
+  const { t } = useTranslation();
   const [url, setUrl] = useState("");
   const [analysis, setAnalysis] = useState({
     overview: "",
@@ -223,7 +225,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
   };
 
   return (
-      <><Helmet>
+    <><Helmet>
       <title>All One Ads – Phân tích fanpage & đề xuất phát triển kênh</title>
       <meta property="og:title" content="All One Ads – AI analyzes and suggests fanpage content" />
       <meta property="og:description" content="Automatically analyze fanpage and suggest content development plans and communication strategies in a professional style." />
@@ -236,16 +238,25 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
       <meta name="twitter:title" content="All One Ads – Analyze & recommend fanpage channels using AI" />
       <meta name="twitter:description" content="Optimize fanpage easily with AI: analysis - strategy - posting schedule - viral ideas." />
       <meta name="twitter:image" content="https://alloneads.com/og-image.png" />
-    </Helmet><Layout style={{ minHeight: "100vh", background: "#fff" }}>
+    </Helmet>
+      <Layout style={{ minHeight: "100vh", background: "#fff" }}>
         <Content style={styles.container}>
           <div style={styles.inputSection}>
             <Input
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="Enter the Facebook Page link"
-              style={{ marginBottom: 16 }} />
+              placeholder={t("facebook_analysis.enter_page_link")}
+              style={{ marginBottom: 16 }}
+            />
 
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: 16,
+              }}
+            >
               <Button
                 style={{
                   backgroundColor: "#D2E3FC",
@@ -253,65 +264,69 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
                   border: "1px solid #D2E3FC",
                   borderRadius: 6,
                   height: 40,
-                  padding: "0 16px", // tạo khoảng đệm vừa đủ
-                  whiteSpace: "nowrap", // không xuống dòng
-                  width: "auto", // chiều ngang bám sát nội dung
+                  padding: "0 16px",
+                  whiteSpace: "nowrap",
+                  width: "auto",
                 }}
                 type="primary"
                 loading={loading}
                 onClick={analyzeFacebookPage}
               >
-                Page Analysis & Channel Development Suggestions
+                {t("facebook_analysis.button_analyze")}
               </Button>
             </div>
           </div>
 
-
           <div style={styles.twoColumns}>
             {/* Cột trái */}
             <div style={styles.column}>
-              <Title level={4}>📊 Page Analysis</Title>
+              <Title level={4}>📊 {t("facebook_analysis.section_page_analysis")}</Title>
               <Card>
-                <Title level={5}>GENERAL INFORMATION</Title>
+                <Title level={5}>{t("facebook_analysis.general_info")}</Title>
                 <TextArea
                   value={analysis.overview}
                   readOnly
                   autoSize
-                  style={{ marginBottom: 12, whiteSpace: "pre-wrap" }} />
+                  style={{ marginBottom: 12, whiteSpace: "pre-wrap" }}
+                />
 
-                <Title level={5}>PRODUCTS / SERVICES</Title>
+                <Title level={5}>{t("facebook_analysis.products_services")}</Title>
                 <TextArea
                   value={analysis.products}
                   readOnly
                   autoSize
-                  style={{ marginBottom: 12, whiteSpace: "pre-wrap" }} />
+                  style={{ marginBottom: 12, whiteSpace: "pre-wrap" }}
+                />
 
-                <Title level={5}>CUSTOMER INTERACTION</Title>
+                <Title level={5}>{t("facebook_analysis.customer_engagement")}</Title>
                 <TextArea
                   value={analysis.engagement}
                   readOnly
                   autoSize
-                  style={{ marginBottom: 12, whiteSpace: "pre-wrap" }} />
+                  style={{ marginBottom: 12, whiteSpace: "pre-wrap" }}
+                />
 
-                <Title level={5}>COMMUNICATIONS STRATEGY</Title>
+                <Title level={5}>{t("facebook_analysis.strategy")}</Title>
                 <TextArea
                   value={analysis.strategy}
                   readOnly
                   autoSize
-                  style={{ whiteSpace: "pre-wrap" }} />
+                  style={{ whiteSpace: "pre-wrap" }}
+                />
               </Card>
             </div>
 
             {/* Cột phải */}
             <div style={styles.column}>
-              <Title level={4}>🚀 Suggested Facebook Page Channel</Title>
+              <Title level={4}>🚀 {t("facebook_analysis.section_channel_plan")}</Title>
               <Card>
                 <TextArea value={channelPlan} rows={28} readOnly />
               </Card>
             </div>
           </div>
         </Content>
-      </Layout></>
+      </Layout>
+    </>
   );
 };
 

@@ -1,0 +1,196 @@
+{
+    "common": {
+        "all": "All",
+        "save": "Save"
+    },
+    "home": {
+        "title": "Facebook Page Analysis"
+    },
+    "facebook_analysis": {
+        "enter_page_link": "Enter the Facebook Page link",
+        "button_analyze": "Page Analysis & Channel Development Suggestions",
+        "section_page_analysis": "Page Analysis",
+        "section_channel_plan": "Suggested Facebook Page Channel",
+        "general_info": "GENERAL INFORMATION",
+        "products_services": "PRODUCTS / SERVICES",
+        "customer_engagement": "CUSTOMER INTERACTION",
+        "strategy": "COMMUNICATIONS STRATEGY"
+    },
+    "dashboard": {
+        "title": "AI ADS",
+        "posts": "Posts",
+        "post_list": "Post list",
+        "no": "No.",
+        "media": "Media",
+        "caption": "Caption",
+        "action": "Action",
+        "ads_button": "Advertisement",
+        "created_time": "Created time",
+        "reach": "Reach",
+        "react": "React",
+        "comment": "Comment",
+        "share": "Share",
+        "ads": "AI ADS",
+        "ads_new": "AI ADS NEW",
+        "chart": {
+            "x_axis": "Month",
+            "y_axis": "Post count"
+        }
+    },
+    "image": {
+        "title": "AI Image Generator",
+        "describe_prompt": "Describe your image",
+        "caption_placeholder": "Caption",
+        "generate_image": "Generate Image",
+        "generate_caption": "Generate Caption",
+        "upload_image": "Upload product image",
+        "post_facebook": "Post Facebook",
+        "enter_prompt": "Please enter a prompt.",
+        "generate_error": "Image generation error. Your budget may be out. Contact Admin.",
+        "points": "points",
+        "suggestion": "Suggestion"
+    },
+    "media_ls": {
+        "title": "List of AI videos",
+        "card_title": "AI MEDIA LIST",
+        "empty": "No Data",
+        "video": {
+            "unsupported": "Browser does not support video."
+        },
+        "table": {
+            "no": "No",
+            "media": "Media",
+            "caption": "Caption",
+            "actions": "Actions",
+            "tooltip_detail": "See details"
+        },
+        "drawer": {
+            "title_detail": "Media Details",
+            "title_new": "New Media"
+        }
+    },
+    "video": {
+        "title": "AI Video Generator",
+        "duration_label": "Video duration",
+        "generate_script": "Generate Script",
+        "seconds": "{{count}} seconds",
+        "scene_description": "Scene {{index}} description",
+        "upload_image": "Upload Image",
+        "generate_scene": "Generate Scene {{index}}",
+        "generate_all": "Generate All",
+        "merge_selected": "Merge Selected",
+        "choose_music": "Choose music",
+        "music_pairing": "🎬 Music pairing",
+        "selected_music": "🎵 {{name}}",
+        "no_video": "No videos yet",
+        "enter_description": "Enter video content description...",
+        "generate_caption_btn": "Generate Caption",
+        "caption_result": "The caption content will appear here...",
+        "post_facebook": "Post Facebook",
+        "auto_post_setting": "Auto-post settings",
+        "script_modal_title": "Generate Video Script",
+        "script_prompt_placeholder": "Example: Give me 3 video scenes promoting a hotpot restaurant...",
+        "generate": "Generate",
+        "cancel": "Cancel",
+        "choose_music_title": "Choose background music",
+        "choose_music_genre": "Choose music genre",
+        "confirm": "Confirm",
+        "track": "Track {{id}}",
+        "generate_caption": "Generate Caption",
+        "caption_placeholder": "The caption content will appear here...",
+        "points": "points"
+    },
+    "signin": {
+        "title": "Sign In"
+    },
+    "vitual_accounts": {
+        "form_search": {
+            "title": "Search",
+            "date_ranger": "From - To",
+            "va_account_number": "VA Account Number",
+            "bank": "Bank",
+            "status": "Status",
+            "button": {
+                "reset": "Reset",
+                "search": "Search",
+                "create_account": "Create New Account"
+            }
+        },
+        "list": {
+            "title": "VA Account List",
+            "table": {
+                "columns": {
+                    "va_account_number": "VA Account Number",
+                    "va_account_name": "VA Account Name",
+                    "status": "Status",
+                    "va_account_bank": "Bank",
+                    "bank": "Bank",
+                    "created_at": "Created At",
+                    "updated_by": "Updated By",
+                    "detail": "View Detail"
+                }
+            }
+        },
+        "detail": {
+            "title": "VA Account Detail",
+            "table": {
+                "columns": {
+                    "va_trans_code": "Transaction Code"
+                }
+            }
+        },
+        "create": {
+            "modal_otp": {
+                "title": "Do you want to request a VA account change?",
+                "description": "A verification code has been sent to {{email}}. Please check your email and enter the 6-digit code to continue.",
+                "cancel_text": "Exit",
+                "button": {
+                    "cancel": "Cancel",
+                    "confirm": "Confirm"
+                }
+            }
+        }
+    },
+    "menu": {
+        "facebook_analysis": "AI Facebook Analysis",
+        "image_generation": "AI Image Generation",
+        "video_generation": "AI Video Generation",
+        "media_list": "Media List",
+        "ads_dashboard": "AI ADS",
+        "accounts": "Accounts",
+        "user_account": "User Account",
+        "user_authorization": "User Authorization"
+    },
+    "accounts": {
+        "page_title": "List of accounts",
+        "user_list": "List of user accounts",
+        "search_placeholder": "Search",
+        "status_placeholder": "Account status",
+        "add_button": "Add new",
+        "edit": "Edit",
+        "no_data": "No Data",
+        "status": {
+            "active": "Active",
+            "inactive": "Inactive"
+        },
+        "columns": {
+            "no": "NO",
+            "username": "Login name",
+            "full_name": "Full Name",
+            "created": "Creation date",
+            "status": "Status",
+            "actions": "Actions"
+        }
+    },
+    "auth_groups": {
+        "title": "Set up user rights groups"
+    },
+    "roles": {
+        "title": "Set permissions",
+        "no": "NO",
+        "permission_name": "Permission name",
+        "description": "Describe",
+        "access": "Access",
+        "empty": "Please select permission group"
+    }
+}

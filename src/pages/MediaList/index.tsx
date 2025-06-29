@@ -1,103 +1,50 @@
-import { CloseOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
+import { EyeOutlined } from "@ant-design/icons";
 import {
-  Button, Card, Col, DatePicker, Drawer, Empty, Flex, Form, Input, Pagination, Radio, RadioChangeEvent, Row, Space, Table, Tooltip,
+  Button, Card, Col, Drawer, Empty, Flex, Pagination, Radio, RadioChangeEvent, Row, Table, Tooltip,
 } from "antd";
-import { useForm } from "antd/es/form/Form";
-import dayjs, { Dayjs } from "dayjs";
 import React, { useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import DetailTicket from "src/components/DetailTicket";
 import { PageTitleHOC } from "src/components/PageTitleHOC";
-import { useGetCasesQuery, useLazyGetCaseStaffQuery } from "src/store/api/ticketApi";
+import { useGetCasesQuery } from "src/store/api/ticketApi";
 import { ReactComponent as RefetchIcon } from "src/assets/images/icon/ic-refetch.svg";
-import { FULL_DATE_FORMAT_PARAM } from "src/constants/common.constants";
+import { useTranslation } from "react-i18next";
 
-
-const { RangePicker } = DatePicker;
 const MediaList: React.FC<any> = () => {
-  const [form] = useForm();
   const [detailId, setDetailId] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isSuspect, setIsSuspect] = useState(false);
-  const [filter, setFilter] = useState<any>({
-    page: 1,
-    pageSize: 10,
-  });
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [getStaffTicket] = useLazyGetCaseStaffQuery();
+  const [filter, setFilter] = useState<any>({ page: 1, pageSize: 10 });
+
   const { data, refetch } = useGetCasesQuery(filter);
+
+  const { t, i18n } = useTranslation();
+
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'vi' ? 'en' : 'vi';
+    i18n.changeLanguage(newLang);
+  };
+
+   const currentFlag = i18n.language === 'vi'
+    ? '/VN.png' // icon cờ Việt Nam
+    : '/EN.png'; // icon cờ Anh
+
   const onChangePagination = (pageNumber: number, pageSize: number) => {
-    setFilter((prevFilter: any) => ({
-      ...prevFilter,
-      page: pageNumber,
-      pageSize: pageSize,
-    }));
-  };
-  const handleOnFinish = (values: any) => {
-    const object = cleanObject(values);
-    if (Object.keys(object).length > 0) {
-      setFilter((prevFilter: any) => ({
-        ...prevFilter,
-        where: object,
-      }));
-    } else {
-      setFilter({ page: 1, pageSize: 20 });
-    }
+    setFilter((prev: any) => ({ ...prev, page: pageNumber, pageSize }));
   };
 
-  const handleResetField = () => {
-    setSearchParams(undefined);
-    form.resetFields();
-  };
+  const handleReset = () => refetch();
 
-  const handleReset = () => {
-    refetch();
-  };
-  const cleanObject = (object: any) => {
-    return Object.entries(object).reduce((acc: any, [key, value]: any) => {
-      if (isSuspect) {
-        acc["isSuspect"] = 1;
-      } else {
-        delete acc["isSuspect"];
-      }
-      if (!value) return acc;
-      switch (key) {
-        case "dateOfBirth": {
-          acc[key] = value.format(FULL_DATE_FORMAT_PARAM);
-          break;
-        }
-        case "dateTime": {
-          const [startDate, endDate] = value.map((v: Dayjs) =>
-            v.format(FULL_DATE_FORMAT_PARAM)
-          );
-          acc["startDate"] = startDate;
-          acc["endDate"] = endDate;
-          break;
-        }
-        default: {
-          acc[key] = value;
-          break;
-        }
-      }
-      return acc;
-    }, {});
-  };
   const handleOnChangeRadio = (e: RadioChangeEvent) => {
-    if (e.target.value == "all") {
+    if (e.target.value === "all") {
       setIsSuspect(false);
       setFilter({ page: 1, pageSize: 20 });
     } else {
       setIsSuspect(true);
       setFilter((prev: any) => {
         const where = prev?.where
-          ? { ...prev?.where, ...{ isSuspect: 1 } }
+          ? { ...prev.where, isSuspect: 1 }
           : { isSuspect: 1 };
-        return {
-          ...prev,
-          page: 1,
-          pageSize: 20,
-          where,
-        };
+        return { ...prev, page: 1, pageSize: 20, where };
       });
     }
   };
@@ -106,130 +53,116 @@ const MediaList: React.FC<any> = () => {
     setDetailId(record?.id);
     setIsOpen(true);
   };
+
   const handleOnCloseDrawer = () => {
     setDetailId(null);
     setIsOpen(false);
   };
+
   return (
-    <PageTitleHOC title="AI MEDIA">
+    <PageTitleHOC title={t("media_ls.title")}>
+      <div style={{ textAlign: "right", marginBottom: 12 }}>
+        <Button
+          onClick={toggleLanguage}
+          shape="circle"
+          style={{ width: 32, height: 32, padding: 0 }}
+        >
+          <img
+            src={currentFlag}
+            alt="flag"
+            style={{ width: 20, height: 20, borderRadius: "50%" }}
+          />
+        </Button>
+      </div>
+
       <div className="layout-content">
-        <Row gutter={[24, 0]} style={{ marginBottom: 24 }}>
-          <Col xs="24" xl={24}>
-            <Card className=" tablespace mb-24" title="Search" style={{ padding: 20 }} >
-              <Form form={form} onFinish={handleOnFinish} layout="vertical">
-                <Row gutter={[24, 0]}>
-
-                  <Col xl={6} md={12} sm={24}>
-                    <Form.Item name="caption" label="Caption">
-                      <Input placeholder="Enter Caption" />
-                    </Form.Item>
-                  </Col>
-                  <Col xl={6} md={12} sm={24}>
-                    <Form.Item name="dateTime" label="From date - To date">
-                      <RangePicker style={{ width: "100%" }} />
-                    </Form.Item>
-                  </Col>
-                  <Col xl={6} md={12} sm={24} style={{ display: 'flex', alignItems: 'end', textAlign: "right" }}>
-                    <Form.Item label=" " colon={false}>
-                      <Space>
-                        <Button
-                          danger
-                          type="primary"
-                          icon={<CloseOutlined />}
-                          onClick={handleResetField}
-                        >
-                          Unfilter
-                        </Button>
-                        <Button type="primary" htmlType="submit" icon={<SearchOutlined />}>
-                          Search
-                        </Button>
-                      </Space>
-                    </Form.Item>
-                  </Col>
-
-                </Row>
-              </Form>
-            </Card>
-          </Col>
-        </Row>
         <Row gutter={[24, 0]}>
           <Col xs="24" xl={24}>
-            <Card bordered={false} className="criclebox tablespace mb-24" title="AI MEDIA LIST"
+            <Card
+              bordered={false}
+              className="criclebox tablespace mb-24"
+              title={t("media_ls.card_title")}
               extra={
-                <>
-                  <Radio.Group onChange={handleOnChangeRadio} defaultValue="all" style={{ display: "flex", alignItems: "center" }}>
-
-                    <Button
-                      type="primary"
-                      style={{
-                        marginLeft: 8,
-                        backgroundColor: "#1890ff",
-                        borderColor: "#1890ff",
-                        color: "#fff",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                      icon={<RefetchIcon />}
-                      onClick={handleReset}
-                    ></Button>
-                  </Radio.Group>
-                </>
+                <Radio.Group
+                  onChange={handleOnChangeRadio}
+                  defaultValue="all"
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <Button
+                    type="primary"
+                    style={{
+                      marginLeft: 8,
+                      backgroundColor: "#1890ff",
+                      borderColor: "#1890ff",
+                      color: "#fff",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                    icon={<RefetchIcon />}
+                    onClick={handleReset}
+                  />
+                </Radio.Group>
               }
             >
               <Table
                 columns={[
                   {
-                    title: "NO",
+                    title: t("media_ls.table.no"),
                     dataIndex: "no",
                     width: 20,
                     fixed: "left",
                     key: "no",
-                    render: (text, object, index) => index + 1,
+                    render: (_text, _obj, index) => index + 1,
                   },
                   {
-                    title: "Media",
+                    title: t("media_ls.table.media"),
                     fixed: "left",
                     dataIndex: "urlVideo",
                     key: "urlVideo",
-                    width: 200, // thêm chiều rộng hợp lý để video hiển thị tốt
+                    width: 200,
                     render: (url) => (
                       <video width="180" height="100" controls>
                         <source src={url} type="video/mp4" />
-                        Browser does not support video.
+                        {t("media_ls.video.unsupported")}
                       </video>
                     ),
                   },
                   {
-                    title: "Caption",
+                    title: t("media_ls.table.caption"),
                     fixed: "left",
                     dataIndex: "caption",
                     key: "caption",
                   },
-
                   {
-                    title: "Actions",
+                    title: t("media_ls.table.actions"),
                     key: "action",
                     dataIndex: "action",
                     fixed: "right",
-                    width: 40,
-                    render: (text, record, index) => (
-                      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-                        <Tooltip title="See details">
+                    width: 100,
+                    render: (record) => (
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          height: "100%",
+                        }}
+                      >
+                        <Tooltip title={t("media_ls.table.tooltip_detail")}>
                           <EyeOutlined onClick={() => handleOnClickDetail(record)} />
                         </Tooltip>
                       </div>
                     ),
-                  }
-
+                  },
                 ]}
-                rowClassName={(record: any, index) =>
+                rowClassName={(record: any) =>
                   record?.isSuspect ? "suspect-row" : ""
                 }
                 dataSource={data?.data || []}
                 pagination={false}
                 locale={{
-                  emptyText: <Empty description="No Data" />,
+                  emptyText: <Empty description={t("media_ls.empty")} />,
                 }}
                 className="ant-border-space"
                 scroll={{ x: "max-content" }}
@@ -242,29 +175,32 @@ const MediaList: React.FC<any> = () => {
                   onChange={onChangePagination}
                   showSizeChanger
                   pageSizeOptions={["10", "20", "50", "100"]}
-                  onShowSizeChange={(current, size) => {
-                    onChangePagination(current, size);
-                  }}
+                  onShowSizeChange={(current, size) =>
+                    onChangePagination(current, size)
+                  }
                 />
               </Flex>
-
             </Card>
           </Col>
         </Row>
+
         <Drawer
           open={isOpen}
           onClose={handleOnCloseDrawer}
           width={"70%"}
           maskClosable={false}
-          title={detailId ? "AI MEDIA" : "AI MEDIA NEW"}
+          title={detailId ? t("media_ls.drawer.title_detail") : t("media_ls.drawer.title_new")}
         >
           <DetailTicket
             id={detailId}
-            onRefetch={() => { refetch() }}
+            onRefetch={() => {
+              refetch();
+            }}
           />
         </Drawer>
       </div>
     </PageTitleHOC>
   );
 };
+
 export default MediaList;
