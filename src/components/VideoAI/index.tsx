@@ -4,6 +4,7 @@ import { useCreateCaseMutation } from "src/store/api/ticketApi";
 import { UploadOutlined } from "@ant-design/icons";
 // import { Row, Col, Button, Modal, Radio, Typography, Spin, message } from 'antd';
 import axios from 'axios';
+import { CloseCircleOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
 import { useGetAccountQuery } from "src/store/api/accountApi";
@@ -554,6 +555,13 @@ Ví dụ:
     }
   };
 
+  const handleRemoveImage = (indexToRemove: number) => {
+    const newUrls = [...uploadedImageUrls];
+    newUrls[indexToRemove] = "";
+    setUploadedImageUrls(newUrls);
+  };
+
+
   const handleImageUpload = async (index: any, file: any) => {
     const formData = new FormData();
     formData.append("image", file);
@@ -567,6 +575,11 @@ Ví dụ:
         }
       );
       const data = await response.json();
+      // ✅ Reset input sau upload thành công
+      if (uploadRefs.current[index]) {
+        uploadRefs.current[index]!.value = "";
+      }
+
       if (data?.data?.url) {
         const newUrls: any = [...uploadedImageUrls];
         newUrls[index] = data.data.url;
@@ -788,16 +801,35 @@ Please contact Admin`);
                 <Row gutter={[8, 8]} style={{ marginTop: 8 }}>
                   <Col span={12} style={{ textAlign: "center" }}>
                     {uploadedImageUrls[index] && (
-                      <img
-                        src={uploadedImageUrls[index]}
-                        alt={`Scene ${index + 1}`}
-                        style={{
-                          width: 150,
-                          height: 90,
-                          objectFit: "cover",
-                          borderRadius: 6,
-                          border: "1px solid #ccc",
-                        }} />
+                      <div style={{ position: "relative", display: "inline-block" }}>
+                        {/* Ảnh */}
+                        <img
+                          src={uploadedImageUrls[index]}
+                          alt={`Scene ${index + 1}`}
+                          style={{
+                            width: 150,
+                            height: 90,
+                            objectFit: "cover",
+                            borderRadius: 6,
+                            border: "1px solid #ccc",
+                          }}
+                        />
+
+                        {/* Nút Xoá */}
+                        <CloseCircleOutlined
+                          onClick={() => handleRemoveImage(index)}
+                          style={{
+                            position: "absolute",
+                            top: -8,
+                            right: -8,
+                            fontSize: 18,
+                            color: "red",
+                            backgroundColor: "#fff",
+                            borderRadius: "50%",
+                            cursor: "pointer",
+                          }}
+                        />
+                      </div>
                     )}
                   </Col>
 
