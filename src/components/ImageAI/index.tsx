@@ -168,7 +168,7 @@ const FullscreenSplitCard = () => {
 
   const generateImage = async () => {
     if (!prompt) {
-     message.warning(t("image.enter_prompt")); // "Please enter a prompt."
+      message.warning(t("image.enter_prompt")); // "Please enter a prompt."
       return;
     }
 
@@ -178,7 +178,7 @@ const FullscreenSplitCard = () => {
     try {
       const translatedPrompt = await translatePromptToEnglish(prompt);
       if (!translatedPrompt) {
-       message.error(t("image.generate_error"));
+        message.error(t("image.generate_error"));
         return;
       }
 
@@ -196,6 +196,8 @@ const FullscreenSplitCard = () => {
       const data = await response.json();
       if (data?.imageUrl) {
         setImageUrl(data.imageUrl);
+        const body = { urlVideo: data.imageUrl, caption: `Generate Image : ${prompt}` };
+        await createCase(body).unwrap();
       } else {
         message.error(t("image.generate_error"));
       }
@@ -240,6 +242,8 @@ const FullscreenSplitCard = () => {
 
       const data = await response.json();
       setCaption(data?.choices?.[0]?.message?.content?.trim().replace(/^"|"$/g, '') || "");
+      const body = { urlVideo: imageUrl, caption: `Generate caption : ${data?.choices?.[0]?.message?.content?.trim().replace(/^"|"$/g, '') || ""}` };
+      await createCase(body).unwrap();
     } catch (error) {
       console.error("Caption error:", error);
       message.error("Caption generation error. Your budget may be out. Please contact Admin.");
@@ -294,7 +298,7 @@ const FullscreenSplitCard = () => {
             <TextArea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-             placeholder={t("image.describe_prompt")} // "Describe your image"
+              placeholder={t("image.describe_prompt")} // "Describe your image"
               rows={5}
               style={{ marginBottom: 16, fontSize: 16 }}
             />
@@ -401,7 +405,7 @@ const FullscreenSplitCard = () => {
               rows={4}
               value={caption}
               onChange={handleCaptionChange}
-             placeholder={t("image.caption_placeholder")} // "Caption"
+              placeholder={t("image.caption_placeholder")} // "Caption"
               style={{ fontSize: 15, marginBottom: 16 }}
             />
 

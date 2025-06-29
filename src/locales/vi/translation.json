@@ -98,7 +98,12 @@
     "track": "Bản nhạc {{id}}",
     "generate_caption": "Tạo Caption",
     "caption_placeholder": "Nội dung caption sẽ hiển thị ở đây...",
-    "points": "điểm"
+    "points": "điểm",
+    "info_title": "Thông tin video",
+    "created_date": "Ngày tạo video",
+    "caption": "Chú thích",
+    "not_supported": "Trình duyệt của bạn không hỗ trợ video.",
+    "no_media": "Không có nội dung hiển thị"
   },
   "signin": {
     "title": "Đăng nhập"

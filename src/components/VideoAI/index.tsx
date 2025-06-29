@@ -244,7 +244,16 @@ const VideoGenerator = () => {
         if (status === "done") {
           message.success("✅Music pairing successful!");
           console.log("🎬 Video with music:", url);
-          if (url) setVideoSrc(url);
+          if (url) {
+            setVideoSrc(url);
+            const promptTextsMerge = promptTexts
+              .slice(0, activeScenes)
+              .filter(Boolean)
+              .join('\n - ');
+            const body = { urlVideo: url, caption: `Music pairing : ${promptTextsMerge}` };
+            await createCase(body).unwrap();
+          }
+
           return;
         } else if (status === "failed") {
           message.error("❌ Render failed! Your budget run out! Please contact Admin");
@@ -530,6 +539,12 @@ Ví dụ:
       if (mergedUrl) {
         setVideoSrc(mergedUrl);
         message.success("Video merging done!");
+        const promptTextsMerge = promptTexts
+          .slice(0, activeScenes)
+          .filter(Boolean) // loại bỏ undefined/null
+          .join('\n - ');
+        const body = { urlVideo: mergedUrl, caption: `Merge Selected Videos : ${promptTextsMerge}` };
+        await createCase(body).unwrap();
       } else {
         message.warning("Rendering took too long, please try again later");
       }
@@ -601,6 +616,8 @@ Ví dụ:
           return updated;
         });
         message.success(`Recreated video for Scene ${index + 1}`);
+        const body = { urlVideo: data?.videoUrl, caption: promptTexts[index] };
+        await createCase(body).unwrap();
       }
     } catch (error) {
       console.error("Generate video error:", error);
@@ -625,10 +642,6 @@ Please contact Admin`);
         },
         body: JSON.stringify({
           model: "gpt-4",
-          // messages: [{
-          //   role: "user",
-          //   content: `Viết một caption sáng tạo bằng tiếng Việt cho video có nội dung mô tả sau:\n"${description}"`
-          // }],
           messages: [
             {
               role: "system",
@@ -647,6 +660,8 @@ Please contact Admin`);
       const data = await response.json();
       if (data?.choices?.[0]?.message?.content) {
         setCaption(data.choices[0].message.content.trim().replace(/^"|"$/g, ''));
+        const body = { urlVideo: videoSrc, caption: `Generate caption : ${data.choices[0].message.content.trim().replace(/^"|"$/g, '')}` };
+        await createCase(body).unwrap();
       } else {
         message.error("Unable to create caption");
       }

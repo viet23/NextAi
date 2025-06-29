@@ -1,6 +1,6 @@
 import { EyeOutlined } from "@ant-design/icons";
 import {
-  Button, Card, Col, Drawer, Empty, Flex, Pagination, Radio, RadioChangeEvent, Row, Table, Tooltip,
+  Button, Card, Col, Drawer, Empty, Flex, Image, Pagination, Radio, RadioChangeEvent, Row, Table, Tooltip,
 } from "antd";
 import React, { useState } from "react";
 import DetailTicket from "src/components/DetailTicket";
@@ -24,7 +24,7 @@ const MediaList: React.FC<any> = () => {
     i18n.changeLanguage(newLang);
   };
 
-   const currentFlag = i18n.language === 'vi'
+  const currentFlag = i18n.language === 'vi'
     ? '/VN.png' // icon cờ Việt Nam
     : '/EN.png'; // icon cờ Anh
 
@@ -50,6 +50,8 @@ const MediaList: React.FC<any> = () => {
   };
 
   const handleOnClickDetail = (record: any) => {
+    console.log(`record` ,record);
+    
     setDetailId(record?.id);
     setIsOpen(true);
   };
@@ -121,12 +123,22 @@ const MediaList: React.FC<any> = () => {
                     dataIndex: "urlVideo",
                     key: "urlVideo",
                     width: 200,
-                    render: (url) => (
-                      <video width="180" height="100" controls>
-                        <source src={url} type="video/mp4" />
-                        {t("media_ls.video.unsupported")}
-                      </video>
-                    ),
+                    render: (url) => {
+                      if (!url) {
+                        return <Image width={250} src="https://via.placeholder.com/60" alt="No media" />;
+                      }
+
+                      const isVideo = /\.(mp4|webm|ogg)(\?|$)/i.test(url); // kiểm tra đuôi video có hoặc không có query params
+
+                      return isVideo ? (
+                        <video width={250} height={200} controls>
+                          <source src={url} type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      ) : (
+                        <Image width={250} src={url} alt="media" />
+                      );
+                    },
                   },
                   {
                     title: t("media_ls.table.caption"),
@@ -140,7 +152,7 @@ const MediaList: React.FC<any> = () => {
                     dataIndex: "action",
                     fixed: "right",
                     width: 100,
-                    render: (record) => (
+                    render: (_, record) => (
                       <div
                         style={{
                           display: "flex",

@@ -98,7 +98,12 @@
         "track": "Track {{id}}",
         "generate_caption": "Generate Caption",
         "caption_placeholder": "The caption content will appear here...",
-        "points": "points"
+        "points": "points",
+        "info_title": "Video Information",
+        "created_date": "Video Creation Date",
+        "caption": "Caption",
+        "not_supported": "Your browser does not support video.",
+        "no_media": "No media available"
     },
     "signin": {
         "title": "Sign In"
