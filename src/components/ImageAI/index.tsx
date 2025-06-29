@@ -17,6 +17,7 @@ const FullscreenSplitCard = () => {
   const { t } = useTranslation();
   const [caption, setCaption] = useState("");
   const [prompt, setPrompt] = useState("");
+  const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [loadingImage, setLoadingImage] = useState(false);
   const [loadingCaption, setLoadingCaption] = useState(false);
@@ -210,8 +211,8 @@ const FullscreenSplitCard = () => {
   };
 
   const generateCaption = async () => {
-    if (!prompt) {
-      message.warning("Please enter a prompt first.");
+    if (!description) {
+      message.warning("Please enter a description first.");
       return;
     }
 
@@ -232,7 +233,7 @@ const FullscreenSplitCard = () => {
             },
             {
               role: "user",
-              content: `Mô tả hình ảnh sản phẩm: "${prompt}". Hãy viết một caption quảng cáo theo đúng 10 tiêu chí trên.`,
+              content: `Mô tả hình ảnh sản phẩm: "${description}". Hãy viết một caption quảng cáo theo đúng 10 tiêu chí trên.`,
             },
           ],
           temperature: 0.7,
@@ -327,15 +328,22 @@ const FullscreenSplitCard = () => {
               </select>
             </div>
             <br />
-            <div style={{ textAlign: "center", marginBottom: 16 }}>
+            <div style={{ display: "flex", justifyContent: "center", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
               <Button
                 type="primary"
                 size="large"
                 onClick={() => document.getElementById("upload-image")?.click()}
-                style={{ backgroundColor: "#D2E3FC", color: "#000", border: "1px solid #D2E3FC", borderRadius: 6 }}
+                style={{
+                  backgroundColor: "#D2E3FC",
+                  color: "#000",
+                  border: "1px solid #D2E3FC",
+                  borderRadius: 6,
+                  minWidth: 150,
+                }}
               >
                 {t("image.upload_image")}
               </Button>
+
               <input
                 id="upload-image"
                 type="file"
@@ -343,22 +351,39 @@ const FullscreenSplitCard = () => {
                 style={{ display: "none" }}
                 onChange={handleImageUpload}
               />
+
+              <Button
+                type="primary"
+                size="large"
+                onClick={generateImage}
+                loading={loadingImage}
+                style={{
+                  backgroundColor: "#D2E3FC",
+                  color: "#000",
+                  border: "1px solid #D2E3FC",
+                  borderRadius: 6,
+                  minWidth: 150,
+                }}
+              >
+                {t("image.generate_image")}
+              </Button>
             </div>
+
             <div style={{ textAlign: "center", marginBottom: 16 }}>
               <img
                 src={uploadedImage || "https://via.placeholder.com/300x200?text=Upload"}
                 alt="Uploaded"
-                style={{ maxWidth: "100%", height: "auto", objectFit: "contain", opacity: uploadedImage ? 1 : 0.6, borderRadius: 6, border: "1px solid #ccc" }}
+                style={{
+                  maxWidth: "100%",
+                  height: "auto",
+                  objectFit: "contain",
+                  opacity: uploadedImage ? 1 : 0.6,
+                  borderRadius: 6,
+                  border: "1px solid #ccc",
+                }}
               />
             </div>
-            <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
-              <Button style={{ backgroundColor: "#D2E3FC", color: "#000", border: "1px solid #D2E3FC", borderRadius: 6 }} type="primary" size="large" onClick={generateImage} loading={loadingImage}>
-                {t("image.generate_image")}
-              </Button>
-              <Button style={{ backgroundColor: "#D2E3FC", color: "#000", border: "1px solid #D2E3FC", borderRadius: 6 }} type="primary" size="large" onClick={generateCaption} loading={loadingCaption}>
-                {t("image.generate_caption")}
-              </Button>
-            </div>
+
           </div>
 
           <div style={{ flex: 1, minWidth: 320, maxWidth: 600 }}>
@@ -400,6 +425,36 @@ const FullscreenSplitCard = () => {
               ) : (
                 <span style={{ color: "#999" }}>No Image</span>
               )}
+            </div>
+            <div style={{ marginBottom: 16 }}>
+              <TextArea
+                rows={2}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder={t("video.enter_description")}
+                style={{
+                  width: "100%",
+                  fontSize: 15,
+                  borderRadius: 8,
+                  padding: 10,
+                  backgroundColor: "#ffffff",
+                  boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+                }}
+              />
+              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
+                <Button
+                  loading={loadingCaption}
+                  style={{
+                    backgroundColor: "#D2E3FC",
+                    color: "#000",
+                    borderRadius: 8,
+                    whiteSpace: "nowrap",
+                  }}
+                  onClick={generateCaption}
+                >
+                  {t("image.generate_caption")}
+                </Button>
+              </div>
             </div>
             <TextArea
               rows={4}
