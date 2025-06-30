@@ -303,22 +303,22 @@ const FullscreenSplitCard = () => {
               rows={5}
               style={{ marginBottom: 16, fontSize: 16 }}
             />
-            <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
+            <div style={{ display: "flex", justifyContent: "center", gap: 6, marginBottom: 16 }}>
               <select
-                style={{ flex: 1, padding: 8, fontSize: 14 }}
+                style={{ width: 110, padding: "4px 6px", fontSize: 13 }}
                 value={resolution}
                 onChange={(e) => setResolution(e.target.value)}
               >
-                <option value="" disabled>Image Resolution</option>
+                <option value="" disabled>Resolution</option>
                 <option value="720p">720p</option>
                 <option value="1080p">1080p</option>
               </select>
               <select
-                style={{ flex: 1, padding: 8, fontSize: 14 }}
+                style={{ width: 110, padding: "4px 6px", fontSize: 13 }}
                 value={ratio}
                 onChange={(e) => setRatio(e.target.value)}
               >
-                <option value="" disabled>Image Size</option>
+                <option value="" disabled>Size</option>
                 <option value="16:9">16:9</option>
                 <option value="9:16">9:16</option>
                 <option value="1:1">1:1</option>
@@ -327,18 +327,29 @@ const FullscreenSplitCard = () => {
                 <option value="21:9">21:9</option>
               </select>
             </div>
+
             <br />
-            <div style={{ display: "flex", justifyContent: "center", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: 8,
+                marginBottom: 16,
+                flexWrap: "wrap",
+              }}
+            >
               <Button
                 type="primary"
-                size="large"
+                size="middle" // 👈 nhỏ hơn "large"
                 onClick={() => document.getElementById("upload-image")?.click()}
                 style={{
                   backgroundColor: "#D2E3FC",
                   color: "#000",
                   border: "1px solid #D2E3FC",
                   borderRadius: 6,
-                  minWidth: 150,
+                  minWidth: 120, // 👈 giảm chiều rộng
+                  padding: "4px 12px", // 👈 giảm padding
+                  fontSize: 13, // 👈 thu nhỏ chữ
                 }}
               >
                 {t("image.upload_image")}
@@ -354,7 +365,7 @@ const FullscreenSplitCard = () => {
 
               <Button
                 type="primary"
-                size="large"
+                size="middle"
                 onClick={generateImage}
                 loading={loadingImage}
                 style={{
@@ -362,27 +373,33 @@ const FullscreenSplitCard = () => {
                   color: "#000",
                   border: "1px solid #D2E3FC",
                   borderRadius: 6,
-                  minWidth: 150,
+                  minWidth: 120,
+                  padding: "4px 12px",
+                  fontSize: 13,
                 }}
               >
                 {t("image.generate_image")}
               </Button>
             </div>
 
+
             <div style={{ textAlign: "center", marginBottom: 16 }}>
-              <img
-                src={uploadedImage || "https://via.placeholder.com/300x200?text=Upload"}
-                alt="Uploaded"
-                style={{
-                  maxWidth: "100%",
-                  height: "auto",
-                  objectFit: "contain",
-                  opacity: uploadedImage ? 1 : 0.6,
-                  borderRadius: 6,
-                  border: "1px solid #ccc",
-                }}
-              />
+              {uploadedImage && (
+                <img
+                  src={uploadedImage}
+                  alt="Uploaded"
+                  style={{
+                    maxWidth: "100%",
+                    height: "auto",
+                    objectFit: "contain",
+                    opacity: 1,
+                    borderRadius: 6,
+                    border: "1px solid #ccc",
+                  }}
+                />
+              )}
             </div>
+
 
           </div>
 
@@ -410,7 +427,7 @@ const FullscreenSplitCard = () => {
                   marginRight: 16,           // ✅ nếu cần cách xa mép phải
                 }}
               >
-                Thiết lập đăng bài tự động
+                {t("image.auto_post_setting")}
               </button>
             </div>
 

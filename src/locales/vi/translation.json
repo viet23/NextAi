@@ -48,7 +48,8 @@
     "enter_prompt": "Vui lòng nhập prompt.",
     "generate_error": "Lỗi khi tạo ảnh. Hết ngân sách? Liên hệ Admin.",
     "points": "điểm",
-    "suggestion": "Gợi ý"
+    "suggestion": "Gợi ý",
+    "auto_post_setting": "Thiết lập đăng bài tự động"
   },
   "media_ls": {
     "title": "Danh sách media AI",
@@ -197,5 +198,37 @@
     "description": "Mô tả",
     "access": "Truy cập",
     "empty": "Vui lòng chọn nhóm quyền"
+  },
+  "ads": {
+    "create_ads": "Tạo quảng cáo",
+    "campaign_name": "Tên chiến dịch",
+    "campaign_name_placeholder": "Nhập tên chiến dịch",
+    "ads_goal": "Mục tiêu quảng cáo",
+    "goal": {
+      "message": "Tăng tin nhắn",
+      "engagement": "Tăng tương tác",
+      "leads": "Thu thập khách hàng tiềm năng",
+      "traffic": "Tăng lượt truy cập website"
+    },
+    "form_language": "Ngôn ngữ biểu mẫu thu thập thông tin",
+    "website_link": "Liên kết website",
+    "website_link_placeholder": "Nhập liên kết website...",
+    "audience": "Đối tượng",
+    "ai_targeting": "Nhắm mục tiêu bằng AI",
+    "ai_targeting_note": "AI sẽ tự động hiển thị quảng cáo tới những người có khả năng quan tâm",
+    "gender": "Giới tính",
+    "gender_all": "Tất cả",
+    "gender_male": "Nam",
+    "gender_female": "Nữ",
+    "age": "Độ tuổi",
+    "detailed_targeting": "Nhắm mục tiêu chi tiết",
+    "detailed_targeting_placeholder": "Chọn nhóm mục tiêu",
+    "duration": "Thời gian chạy",
+    "daily_budget": "Ngân sách hàng ngày ($)",
+    "publish": "Đăng quảng cáo",
+    "success": "Tạo quảng cáo thành công!",
+    "error_empty_website": "Vui lòng nhập liên kết website khi chọn mục tiêu là 'Tăng lượt truy cập website'",
+    "error_generic": "Tạo quảng cáo thất bại.",
+    "preview": "Xem trước"
   }
 }

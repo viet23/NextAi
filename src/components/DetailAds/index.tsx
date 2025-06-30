@@ -12,13 +12,12 @@ import {
   InputNumber,
   message,
   Card,
-  Image,
 } from "antd";
 import axios from "axios";
 import dayjs from "dayjs";
-import { useLazyDetailCaseQuery } from "src/store/api/ticketApi";
 import { useCreateAdsMutation } from "src/store/api/facebookApi";
 import LocationPicker from "./location";
+import { useTranslation } from "react-i18next";
 const { Option, OptGroup } = Select;
 
 const { Title, Paragraph } = Typography;
@@ -79,8 +78,8 @@ interface AdsFormProps {
 }
 
 const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
-
   // Form state
+  const { t } = useTranslation();
   const [goal, setGoal] = useState("message");
   const [caption, setCaption] = useState("");
   const [urlWebsite, setUrleWbsite] = useState<string | undefined>(undefined);
@@ -133,13 +132,13 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
       }
 
       const res = await createAds(body).unwrap();
-      message.success("Ad created successfully!");
+      message.success(t("ads.success"));
       console.log("Ad Created:", res.data);
       window.location.reload();
     } catch (err: any) {
       // ✅ Nếu có message cụ thể từ backend thì hiện ra
       const errorMessage =
-        err?.data?.message || err?.message || "Failed to create ad.";
+        err?.data?.message || err?.message || t("ads.error.generic");
       message.error(errorMessage);
       console.error("🛑 Create Ads Error:", err);
     }
@@ -151,30 +150,29 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
     <Card style={{ backgroundColor: "#f9f9f9", borderRadius: 12 }}>
       <Row gutter={32}>
         <Col xs={24} md={14}>
-          <Title level={4}>Create Ads</Title>
+          <Title level={4}>{t("ads.create_ads")}</Title>
           <div style={{ marginBottom: 12 }}>
-            <label>📛 Campaign Name</label>
+            <label>📛 {t("ads.campaign_name")}</label>
             <Input
               value={campaignName}
               onChange={(e) => setCampaignName(e.target.value)}
-              placeholder="Enter campaign name"
+              placeholder={t("ads.placeholder.campaign_name")}
             />
           </div>
 
-
           <div style={{ marginBottom: 12 }}>
-            <label>🎯 Ads Goal</label>
+            <label>🎯 {t("ads.ads_goal")}</label>
             <Select value={goal} onChange={setGoal} style={{ width: "100%" }}>
-              <Select.Option value="message">Get more message</Select.Option>
-              <Select.Option value="engagement">Get more engagement</Select.Option>
-              <Select.Option value="leads">Get more leads</Select.Option>
-              <Select.Option value="traffic">Get more website visitor</Select.Option>
+              <Select.Option value="message">{t("ads.goal.message")}</Select.Option>
+              <Select.Option value="engagement">{t("ads.goal.engagement")}</Select.Option>
+              <Select.Option value="leads">{t("ads.goal.leads")}</Select.Option>
+              <Select.Option value="traffic">{t("ads.goal.traffic")}</Select.Option>
             </Select>
           </div>
 
           {goal === "leads" && (
             <div style={{ marginBottom: 12 }}>
-              <label>🌐 Choose language of form collecting customer information</label>
+              <label>🌐 {t("ads.form_language")}</label>
               <Select
                 value={language}
                 onChange={setLanguage}
@@ -193,37 +191,40 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
 
           {goal === "traffic" && (
             <div style={{ marginBottom: 12 }}>
-              <label>📝 Link website <span style={{ color: "red" }}>*</span></label>
+              <label>📝 {t("ads.website_link")}</label>
               <Input.TextArea
                 rows={1}
                 value={urlWebsite}
                 onChange={(e) => setUrleWbsite(e.target.value)}
-                placeholder="link website..."
+                placeholder={t("ads.placeholder.website")}
               />
             </div>
           )}
 
           <div style={{ marginBottom: 12 }}>
-            <label>👥 Audience</label>
+            <label>{t("ads.audience")}</label>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span>AI targeting</span>
+              <span>👥 {t("ads.ai_targeting")}</span>
               <Switch checked={aiTargeting} onChange={setAiTargeting} />
             </div>
           </div>
+          <Paragraph type="secondary" style={{ margin: "4px 0 12px" }}>
+            {t("ads.ai_targeting_note")}
+          </Paragraph>
 
           {!aiTargeting && (
             <>
               <Row gutter={12} style={{ marginBottom: 12 }}>
                 <Col span={12}>
-                  <label>Gender</label>
+                  <label>{t("ads.gender")}</label>
                   <Select value={gender} onChange={setGender} style={{ width: "100%" }}>
-                    <Select.Option value="all">All</Select.Option>
-                    <Select.Option value="male">Men</Select.Option>
-                    <Select.Option value="female">Women</Select.Option>
+                    <Select.Option value="all">{t("ads.gender_all")}</Select.Option>
+                    <Select.Option value="male">{t("ads.gender_male")}</Select.Option>
+                    <Select.Option value="female">{t("ads.gender_female")}</Select.Option>
                   </Select>
                 </Col>
                 <Col span={12}>
-                  <label>Age</label>
+                  <label>{t("ads.age")}</label>
                   <Slider
                     range
                     value={age}
@@ -244,20 +245,20 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
               </div>
 
               <div style={{ marginBottom: 12 }}>
-                <label>🎯 Detailed Targeting</label>
+                <label>🎯 {t("ads.detailed_targeting")}</label>
                 <Select
                   mode="multiple"
                   style={{ width: "100%" }}
-                  placeholder="Chọn nhóm mục tiêu"
+                  placeholder={t("ads.select_targeting_group")}
                   value={interests}
                   onChange={setInterests}
                   optionLabelProp="label"
                 >
                   {DETAILED_TARGETING_OPTIONS.map((group) => (
-                    <OptGroup key={group.category} label={group.category}>
+                    <OptGroup key={group.category} label={t(group.category)}>
                       {group.values.map((value) => (
-                        <Option key={value} value={value} label={value}>
-                          {value}
+                        <Option key={value} value={value} label={t(value)}>
+                          {t(value)}
                         </Option>
                       ))}
                     </OptGroup>
@@ -269,7 +270,7 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
 
           <Row gutter={12} style={{ marginBottom: 12 }}>
             <Col span={12}>
-              <label>📆 Duration</label>
+              <label>📆 {t("ads.duration")}</label>
               <RangePicker
                 value={range}
                 onChange={(val) => setRange(val as [dayjs.Dayjs, dayjs.Dayjs])}
@@ -277,7 +278,7 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
               />
             </Col>
             <Col span={12}>
-              <label>💰 Daily Budget ($)</label>
+              <label>💰 {t("ads.daily_budget")}</label>
               <InputNumber
                 value={budget}
                 onChange={(val) => setBudget(val!)}
@@ -288,13 +289,13 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
             </Col>
           </Row>
 
-          <Button type="primary" block onClick={handlePublish}>
-            Publish
+          <Button type="primary" block onClick={handlePublish} loading={creatingCase}>
+            {t("ads.publish")}
           </Button>
         </Col>
 
         <Col xs={24} md={10}>
-          <Card title="Preview" bordered>
+          <Card title={t("ads.preview")} bordered>
             <div style={{ border: "1px solid #eee", padding: 10 }}>
               <iframe
                 src={iframeSrc}
@@ -309,8 +310,6 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
             </div>
           </Card>
         </Col>
-
-
       </Row>
     </Card>
   );

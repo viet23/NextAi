@@ -3,6 +3,7 @@ import { Layout, Input, Button, Typography, Card, message } from "antd";
 import { useCreateAnalysisMutation, useGetAnalysisQuery } from "src/store/api/ticketApi";
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
+import AutoPostModal from "../AutoPostModal";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -45,7 +46,7 @@ const FacebookPageAnalysis = () => {
   });
 
   const [createAnalysis, { isLoading: createAnaly }] = useCreateAnalysisMutation();
-
+  const [showModal, setShowModal] = useState(false);
   const [channelPlan, setChannelPlan] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -241,6 +242,32 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
     </Helmet>
       <Layout style={{ minHeight: "100vh", background: "#fff" }}>
         <Content style={styles.container}>
+          {/* Modal hiển thị khi click */}
+          <AutoPostModal visible={showModal} onClose={() => setShowModal(false)} />
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end", // ✅ đẩy nút sang phải
+              padding: "6px 0",           // ✅ khoảng trống trên dưới (có thể tăng/giảm)
+            }}
+          >
+            <button
+              onClick={() => setShowModal(true)}
+              style={{
+                backgroundColor: "#D2E3FC",
+                color: "#000",
+                border: "1px solid #D2E3FC",
+                borderRadius: 6,
+                padding: "6px 12px",       // ✅ padding cho nút đẹp hơn
+                fontSize: 11,
+                cursor: "pointer",
+                marginRight: 16,           // ✅ nếu cần cách xa mép phải
+              }}
+            >
+              {t("image.auto_post_setting")}
+            </button>
+          </div>
           <div style={styles.inputSection}>
             <Input
               value={url}

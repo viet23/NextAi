@@ -85,6 +85,8 @@ const VideoGenerator = () => {
   const [score, setScore] = useState<number | null>(null);
   const [scoreLabel, setScoreLabel] = useState<string | null>(null);
   const [suggestion, setSuggestion] = useState<string | null>(null);
+  const [resolution, setResolution] = useState("720p");
+  const [ratio, setRatio] = useState("16:9");
 
   const fetchOpportunityScore = async (captionText: string) => {
     try {
@@ -612,7 +614,7 @@ Ví dụ:
         body: JSON.stringify({
           promptText: promptTexts[index],
           promptImage: uploadedImageUrls[index],
-          ratio: "16:9",
+          ratio: ratio,
           duration: time,
         }),
       });
@@ -866,18 +868,43 @@ Please contact Admin`);
 
               </div>
             ))}
-
-            <Row gutter={[12, 12]} justify="center">
-              <Col>
-                <Button
+            <div style={{ marginBottom: 24 }}>
+              <Row gutter={[12, 12]} justify="center">
+                <Col> <select
+                  style={{ width: 110, padding: "4px 6px", fontSize: 13 }}
+                  value={resolution}
+                  onChange={(e) => setResolution(e.target.value)}
+                >
+                  <option value="" disabled>Resolution</option>
+                  <option value="720p">720p</option>
+                  <option value="1080p">1080p</option>
+                </select></Col>
+                <Col> <select
+                  style={{ width: 110, padding: "4px 6px", fontSize: 13 }}
+                  value={ratio}
+                  onChange={(e) => setRatio(e.target.value)}
+                >
+                  <option value="" disabled>Size</option>
+                  <option value="16:9">16:9</option>
+                  <option value="9:16">9:16</option>
+                  <option value="1:1">1:1</option>
+                  <option value="4:3">4:3</option>
+                  <option value="3:4">3:4</option>
+                  <option value="21:9">21:9</option>
+                </select></Col>
+                <Col> <Button
                   type="primary"
                   loading={loading}
                   style={{ backgroundColor: "#D2E3FC", color: "#000" }}
                   onClick={generateAllScenesVideos}
                 >
                   {t("video.generate_all")}
-                </Button>
-              </Col>
+                </Button></Col>
+
+              </Row>
+            </div>
+
+            <Row gutter={[12, 12]} justify="center">
               <Col>
                 <Button
                   type="primary"

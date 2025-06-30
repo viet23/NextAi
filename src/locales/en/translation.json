@@ -48,7 +48,8 @@
         "enter_prompt": "Please enter a prompt.",
         "generate_error": "Image generation error. Your budget may be out. Contact Admin.",
         "points": "points",
-        "suggestion": "Suggestion"
+        "suggestion": "Suggestion",
+        "auto_post_setting": "Set up auto post Facebook page"
     },
     "media_ls": {
         "title": "List of AI videos",
@@ -87,7 +88,7 @@
         "generate_caption_btn": "Generate Caption",
         "caption_result": "The caption content will appear here...",
         "post_facebook": "Post Facebook",
-        "auto_post_setting": "Auto-post settings",
+        "auto_post_setting": "Set up auto post Facebook page",
         "script_modal_title": "Generate Video Script",
         "script_prompt_placeholder": "Example: Give me 3 video scenes promoting a hotpot restaurant...",
         "generate": "Generate",
@@ -197,5 +198,37 @@
         "description": "Describe",
         "access": "Access",
         "empty": "Please select permission group"
+    },
+    "ads": {
+        "create_ads": "Create Ads",
+        "campaign_name": "Campaign Name",
+        "campaign_name_placeholder": "Enter campaign name",
+        "ads_goal": "Ads Goal",
+        "goal": {
+            "message": "Get more message",
+            "engagement": "Get more engagement",
+            "leads": "Get more leads",
+            "traffic": "Get more website visitor"
+        },
+        "form_language": "Form language for collecting customer information",
+        "website_link": "Website link",
+        "website_link_placeholder": "Enter website link...",
+        "audience": "Audience",
+        "ai_targeting": "AI targeting",
+        "ai_targeting_note": "AI automatically shows this ad to people who are interested in your content",
+        "gender": "Gender",
+        "gender_all": "All",
+        "gender_male": "Men",
+        "gender_female": "Women",
+        "age": "Age",
+        "detailed_targeting": "Detailed Targeting",
+        "detailed_targeting_placeholder": "Select targeting group",
+        "duration": "Duration",
+        "daily_budget": "Daily Budget ($)",
+        "publish": "Publish",
+        "success": "Ad created successfully!",
+        "error_empty_website": "Please enter website link when selecting goal as 'Get more website visitors'",
+        "error_generic": "Failed to create ad.",
+        "preview": "Preview"
     }
 }
