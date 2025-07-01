@@ -157,7 +157,7 @@ const VideoGenerator = () => {
 
 
   const handleMergeMusic = async () => {
-
+    setLoading(true);
     if (!selectedMusic || !videoSrc) {
       message.warning("Please select music and make sure you have a video before adding music.");
       return;
@@ -177,6 +177,7 @@ const VideoGenerator = () => {
       const audioUrl = res.data.previews['preview-lq-mp3'];
       if (!audioUrl) {
         message.error("Cannot get music link from Freesound.");
+        setLoading(false);
         return;
       }
 
@@ -222,10 +223,12 @@ const VideoGenerator = () => {
       message.success("Music merge request sent. Processing...");
 
       await pollRenderStatus(renderId)
+      setLoading(false);
 
     } catch (error) {
       console.error("Error when merging music:", error);
       message.error("Music pairing failed. Your budget run out! Please contact Admin");
+      setLoading(false);
     }
   };
 
@@ -506,7 +509,12 @@ Yêu cầu:
 
   const mergeSelectedVideos = async () => {
     setLoading(true);
-    const selectedUrls = generatedVideos.filter((v) => v.selected).map((v) => v.url);
+    
+    const selectedUrls = generatedVideos
+      .filter(v => v.selected)
+      .sort((a, b) => a.index - b.index)
+      .map(v => v.url);
+
     if (selectedUrls.length < 2) return message.warning("Select at least 2 videos to merge.");
 
     message.loading("Sending video merge request...");
