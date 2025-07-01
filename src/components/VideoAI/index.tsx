@@ -508,15 +508,15 @@ Yêu cầu:
   };
 
   const mergeSelectedVideos = async () => {
-    setLoading(true);
-    
+
+
     const selectedUrls = generatedVideos
       .filter(v => v.selected)
       .sort((a, b) => a.index - b.index)
       .map(v => v.url);
 
     if (selectedUrls.length < 2) return message.warning("Select at least 2 videos to merge.");
-
+    setLoading(true);
     message.loading("Sending video merge request...");
     try {
       const res = await fetch(`${process.env.REACT_APP_URL}/merge-videos`, {
