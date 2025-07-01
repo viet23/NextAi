@@ -630,6 +630,7 @@ Yêu cầu:
     setLoading(true);
     if (!promptTexts[index] || !uploadedImageUrls[index]) {
       message.warning(`Please enter a description and photo for the Scene ${index + 1}`);
+      setLoading(false)
       return;
     }
 
