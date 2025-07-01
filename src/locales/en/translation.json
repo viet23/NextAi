@@ -43,6 +43,7 @@
         "caption_placeholder": "Caption",
         "generate_image": "Generate Image",
         "generate_caption": "Generate Caption",
+         "enter_description": "Enter Image content description...",
         "upload_image": "Upload product image",
         "post_facebook": "Post Facebook",
         "enter_prompt": "Please enter a prompt.",

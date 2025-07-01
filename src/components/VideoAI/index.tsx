@@ -300,9 +300,19 @@ const VideoGenerator = () => {
               role: "user",
               content: `${scriptPrompt}
 
-Trả về kết quả dưới dạng JSON mảng các chuỗi, mỗi chuỗi là một cảnh. Mỗi cảnh mô tả chi tiết bằng 2–4 câu. Và đúng số lượng cảnh theo yêu cầu, không được thêm hoặc bớt cảnh.
+. Mỗi cảnh dài khoảng 10 giây, mô tả chi tiết cảnh quay với nhiều hoạt động và chuyển động sống động trong khung hình. Kết quả trả về dưới dạng JSON mảng các chuỗi, mỗi chuỗi là một cảnh.
 
-Ví dụ:
+Yêu cầu:
+- KHÔNG mô tả bất kỳ con người nào (không khách hàng, không nhân viên, không bàn tay...).
+- Mỗi cảnh dài khoảng 10 giây, nhưng phải có **nhiều hoạt động và hiệu ứng liên tục, lồng ghép hoặc chuyển tiếp mượt mà**.
+- Mỗi cảnh cần có ít nhất **5 hoạt động hoặc hiệu ứng**, ví dụ:
+  + Nguyên liệu rơi, xoay, lăn, va đập
+  + Hiệu ứng nước sôi, khói, tia sáng, tia ớt cay bắn ra
+  + Chuyển động camera (zoom cận topping → xoay quanh nồi → cắt cảnh nhanh)
+  + Kỹ thuật dựng hình ảnh: slow-motion, fast cut, lặp nhịp
+- Cảnh phải sinh động, mạnh mẽ, đầy năng lượng — giúp truyền tải cảm giác hấp dẫn của món ăn và kích thích người xem muốn đặt mua hoặc đến trải nghiệm ngay lập tức.
+- Trả về đúng 3 cảnh, dạng JSON, mỗi cảnh là 1 chuỗi mô tả sinh động. Không được thêm hoặc bớt cảnh.
+Định dạng kết quả:
 [
   "Cảnh 1: ...",
   "Cảnh 2: ...",
@@ -495,6 +505,7 @@ Ví dụ:
   };
 
   const mergeSelectedVideos = async () => {
+    setLoading(true);
     const selectedUrls = generatedVideos.filter((v) => v.selected).map((v) => v.url);
     if (selectedUrls.length < 2) return message.warning("Select at least 2 videos to merge.");
 
@@ -510,6 +521,7 @@ Ví dụ:
 
       if (!initData.renderId) {
         message.error("Send render failed , Your budget run out! Please contact Admin");
+        setLoading(false);
         return;
       }
 
@@ -532,6 +544,7 @@ Ví dụ:
 
         if (statusData?.response?.status === "failed") {
           message.error("Render thất bại , Your budget run out! Please contact Admin");
+          setLoading(false);
           return;
         }
 
@@ -548,13 +561,18 @@ Ví dụ:
           .join('\n - ');
         const body = { urlVideo: mergedUrl, caption: `Merge Selected Videos : ${promptTextsMerge}` };
         await createCase(body).unwrap();
+        setLoading(false);
       } else {
         message.warning("Rendering took too long, please try again later");
+        setLoading(false);
       }
+
     } catch (err) {
       console.error(err);
       message.error("Server error when merging video , Your budget run out! Please contact Admin");
+      setLoading(false);
     }
+
   };
 
   const handleRemoveImage = (indexToRemove: number) => {
@@ -565,6 +583,7 @@ Ví dụ:
 
 
   const handleImageUpload = async (index: any, file: any) => {
+    setLoading(true);
     const formData = new FormData();
     formData.append("image", file);
 
@@ -590,13 +609,17 @@ Ví dụ:
       } else {
         message.error("Image upload failed");
       }
+      setLoading(false);
     } catch (error) {
       console.error("Upload error:", error);
       message.error("Error when uploading photos");
+      setLoading(false);
     }
+
   };
 
   const generateSingleSceneVideo = async (index: any) => {
+    setLoading(true);
     if (!promptTexts[index] || !uploadedImageUrls[index]) {
       message.warning(`Please enter a description and photo for the Scene ${index + 1}`);
       return;
@@ -634,7 +657,9 @@ Ví dụ:
         const body = { urlVideo: data?.videoUrl, caption: promptTexts[index] };
         await createCase(body).unwrap();
       }
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error("Generate video error:", error);
       message.error(`Error creating video for Scene ${index + 1} Your budget run out!
 Please contact Admin`);
@@ -680,9 +705,11 @@ Please contact Admin`);
       } else {
         message.error("Unable to create caption");
       }
+      setLoadingCaption(false);
     } catch (err) {
       console.error("Caption error:", err);
       message.error("Error creating caption");
+      setLoadingCaption(false);
     } finally {
       setLoadingCaption(false);
     }

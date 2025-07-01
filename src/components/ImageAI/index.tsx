@@ -448,7 +448,7 @@ const FullscreenSplitCard = () => {
                 rows={2}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder={t("video.enter_description")}
+                placeholder={t("image.enter_description")}
                 style={{
                   width: "100%",
                   fontSize: 15,
