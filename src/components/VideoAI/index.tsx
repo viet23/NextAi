@@ -74,7 +74,7 @@ const VideoGenerator = () => {
   const { data: accountDetailData } = useGetAccountQuery(user.id || "0", {
     skip: !user.id,
   });
-  const SHOTSTACK_API_KEY = "fHK6q16tBau8galfuCqHp7d1K98zOqnluqIZZQAQ";
+  const SHOTSTACK_API_KEY = "A6urmAlot4I2VNzJEiRVFFqeVQwcrk4zfpQJRvSE";
   const [description, setDescription] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [activeScenes, setActiveScenes] = useState(1);
