@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Layout, Input, Button, message, Checkbox, Select, Row, Col, Modal, Radio, Spin, Typography, Progress } from "antd";
 import { useCreateCaseMutation } from "src/store/api/ticketApi";
-import { UploadOutlined } from "@ant-design/icons";
+import { DownloadOutlined, UploadOutlined } from "@ant-design/icons";
 // import { Row, Col, Button, Modal, Radio, Typography, Spin, message } from 'antd';
 import axios from 'axios';
 import { CloseCircleOutlined } from "@ant-design/icons";
@@ -88,6 +88,13 @@ const VideoGenerator = () => {
   const [resolution, setResolution] = useState("720p");
   const [ratio, setRatio] = useState("16:9");
 
+  const [sceneCount, setSceneCount] = useState(3);
+  const [productName, setProductName] = useState("");
+  const [productDescription, setProductDescription] = useState("");
+  const [productSurrounding, setProductSurrounding] = useState("");
+  const [specialEffects, setSpecialEffects] = useState("");
+
+
   const fetchOpportunityScore = async (captionText: string) => {
     try {
       const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -157,12 +164,12 @@ const VideoGenerator = () => {
 
 
   const handleMergeMusic = async () => {
-    setLoading(true);
+
     if (!selectedMusic || !videoSrc) {
       message.warning("Please select music and make sure you have a video before adding music.");
       return;
     }
-
+    setLoading(true);
     try {
       // 1. Lấy URL nhạc từ Freesound
       const res = await axios.get<FreesoundDetail>(
@@ -223,7 +230,7 @@ const VideoGenerator = () => {
       message.success("Music merge request sent. Processing...");
 
       await pollRenderStatus(renderId)
-      setLoading(false);
+
 
     } catch (error) {
       console.error("Error when merging music:", error);
@@ -258,6 +265,7 @@ const VideoGenerator = () => {
               .join('\n - ');
             const body = { urlVideo: url, caption: `Music pairing : ${promptTextsMerge}` };
             await createCase(body).unwrap();
+            setLoading(false);
           }
 
           return;
@@ -281,11 +289,26 @@ const VideoGenerator = () => {
     checkStatus();
   };
 
+  const generateScriptPrompt = () => {
+    const sceneText = `${sceneCount} ${t("video.scenes")}`;
+    const productText = productName ? `${t("video.about_product")} ${productName}` : "";
+    const descriptionText = productDescription ? `${t("video.description")}: ${productDescription}` : "";
+    const surroundingText = productSurrounding ? `${t("video.around")}: ${productSurrounding}` : "";
+    const effectsText = specialEffects ? `${t("video.effects")}: ${specialEffects}` : "";
+
+    return `${t("video.generate_instruction")} ${sceneText}. ${productText}. ${descriptionText}. ${surroundingText}. ${effectsText}.`.trim();
+  };
+
+
   const generateScriptByGPT = async () => {
+    setScriptPrompt(generateScriptPrompt())
     if (!scriptPrompt) {
       message.warning("Please enter your request");
       return;
     }
+
+    console.log(`scriptPrompt`, scriptPrompt);
+
 
     setLoadingScript(true);
 
@@ -306,6 +329,7 @@ const VideoGenerator = () => {
 . Mỗi cảnh dài khoảng 10 giây, mô tả chi tiết cảnh quay với nhiều hoạt động và chuyển động sống động trong khung hình. Kết quả trả về dưới dạng JSON mảng các chuỗi, mỗi chuỗi là một cảnh.
 
 Yêu cầu:
+- Quảng cáo chỉ tạo cảnh bao quanh sản phẩm thôi .
 - KHÔNG mô tả bất kỳ con người nào (không khách hàng, không nhân viên, không bàn tay...).
 - Mỗi cảnh dài khoảng 10 giây, nhưng phải có **nhiều hoạt động và hiệu ứng liên tục, lồng ghép hoặc chuyển tiếp mượt mà**.
 - Mỗi cảnh cần có ít nhất **5 hoạt động hoặc hiệu ứng**, ví dụ:
@@ -884,7 +908,10 @@ Please contact Admin`);
                             border: "1px solid #ccc",
                           }}
                           controls
-                          muted />
+                          muted
+                        />
+
+                        {/* Checkbox chọn video */}
                         <Checkbox
                           checked={generatedVideos.find((v) => v.index === index)?.selected}
                           onChange={() => handleCheckboxChange(index)}
@@ -896,7 +923,58 @@ Please contact Admin`);
                             padding: 2,
                             borderRadius: 4,
                             zIndex: 2,
-                          }} />
+                          }}
+                        />
+
+                        {/* Icon tải xuống */}
+                        <DownloadOutlined
+                          onClick={() => {
+                            const url = generatedVideos.find((v) => v.index === index)?.url;
+
+                            if (!url) {
+                              message.error("Không tìm thấy video để tải");
+                              return;
+                            }
+
+                            Modal.confirm({
+                              title: "Tải video?",
+                              content: "Bạn có chắc muốn tải video này xuống thiết bị của mình?",
+                              okText: "Tải xuống",
+                              cancelText: "Hủy",
+                              onOk: async () => {
+                                try {
+                                  const response = await fetch(url);
+                                  const blob = await response.blob();
+                                  const blobUrl = window.URL.createObjectURL(blob);
+                                  const a = document.createElement("a");
+                                  a.href = blobUrl;
+                                  a.download = `video-${index}.mp4`;
+                                  document.body.appendChild(a);
+                                  a.click();
+                                  a.remove();
+                                  window.URL.revokeObjectURL(blobUrl);
+                                  message.success("Đã bắt đầu tải video");
+                                } catch (err) {
+                                  console.error("Tải video thất bại:", err);
+                                  message.error("Tải video thất bại");
+                                }
+                              },
+                            });
+                          }}
+                          style={{
+                            position: "absolute",
+                            bottom: 8,
+                            right: 12,
+                            fontSize: 12,
+                            background: "#fff",
+                            padding: 6,
+                            borderRadius: "50%",
+                            cursor: "pointer",
+                            zIndex: 2,
+                            boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+                          }}
+                          title="Tải video"
+                        />
                       </>
                     )}
                   </Col>
@@ -1068,16 +1146,62 @@ Please contact Admin`);
                 overflow: "hidden",
                 marginBottom: 24,
                 boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
+                position: "relative", // để icon tải định vị tuyệt đối
               }}
             >
               {videoSrc ? (
-                <video
-                  key={videoSrc}
-                  controls
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                >
-                  <source src={videoSrc} type="video/mp4" />
-                </video>
+                <>
+                  <video
+                    key={videoSrc}
+                    controls
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  >
+                    <source src={videoSrc} type="video/mp4" />
+                  </video>
+
+                  {/* Nút tải video */}
+                  <DownloadOutlined
+                    onClick={() => {
+                      Modal.confirm({
+                        title: "Tải video?",
+                        content: "Bạn có chắc muốn tải video này xuống thiết bị của mình?",
+                        okText: "Tải xuống",
+                        cancelText: "Hủy",
+                        onOk: async () => {
+                          try {
+                            const response = await fetch(videoSrc);
+                            const blob = await response.blob();
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.href = url;
+                            a.download = "downloaded-video.mp4";
+                            document.body.appendChild(a);
+                            a.click();
+                            a.remove();
+                            window.URL.revokeObjectURL(url);
+                            message.success("Đã bắt đầu tải video");
+                          } catch (err) {
+                            console.error("Lỗi tải video:", err);
+                            message.error("Tải video thất bại");
+                          }
+                        },
+                      });
+                    }}
+                    style={{
+                      position: "absolute",
+                      top: 12,
+                      right: 12,
+                      fontSize: 20,
+                      background: "#fff",
+                      padding: 8,
+                      borderRadius: "50%",
+                      cursor: "pointer",
+                      zIndex: 10,
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+                    }}
+                    title="Tải video"
+                  />
+                </>
               ) : (
                 <span style={{ color: "#999", fontSize: 16 }}>{t("video.no_video")}</span>
               )}
@@ -1186,27 +1310,77 @@ Please contact Admin`);
       </Content>
 
       <Modal
-        title={t("video.script_modal_title")}
+        title={
+          <div style={{ textAlign: "center", width: "100%" }}>
+            {t("video.script_modal_title")}
+          </div>
+        }
         open={scriptModalOpen}
         onCancel={() => setScriptModalOpen(false)}
         okText={t("video.generate")}
         cancelText={t("video.cancel")}
         confirmLoading={loadingScript}
-        onOk={generateScriptByGPT}
+        onOk={() => {
+          if (
+            !sceneCount ||
+            !productName.trim() ||
+            !productDescription.trim() ||
+            !productSurrounding.trim() ||
+            !specialEffects.trim()
+          ) {
+            message.warning(t("video.required_fields_warning"));
+            return;
+          }
+
+          generateScriptByGPT();
+        }}
       >
-        <TextArea
-          rows={4}
-          value={scriptPrompt}
-          onChange={(e) => setScriptPrompt(e.target.value)}
-          placeholder={t("video.script_prompt_placeholder")}
-          onPressEnter={(e) => {
-            if (!e.shiftKey) {
-              e.preventDefault();
-              generateScriptByGPT();
-            }
-          }}
-        />
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+
+          <label>{t("video.scene_count_label")}</label>
+          <Select
+            value={sceneCount}
+            onChange={setSceneCount}
+            placeholder={t("video.scene_count_placeholder")}
+          >
+            {[3, 4, 5, 6].map((num) => (
+              <Select.Option key={num} value={num}>
+                {num} {t("video.scenes")}
+              </Select.Option>
+            ))}
+          </Select>
+
+          <label>{t("video.product_name_label")}</label>
+          <Input
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
+            placeholder={t("video.product_name_placeholder")}
+          />
+
+          <label>{t("video.product_description_label")}</label>
+          <Input
+            value={productDescription}
+            onChange={(e) => setProductDescription(e.target.value)}
+            placeholder={t("video.product_description_placeholder")}
+          />
+
+          <label>{t("video.product_surrounding_label")}</label>
+          <Input
+            value={productSurrounding}
+            onChange={(e) => setProductSurrounding(e.target.value)}
+            placeholder={t("video.product_surrounding_placeholder")}
+          />
+
+          <label>{t("video.special_effects_label")}</label>
+          <Input
+            value={specialEffects}
+            onChange={(e) => setSpecialEffects(e.target.value)}
+            placeholder={t("video.special_effects_placeholder")}
+          />
+        </div>
       </Modal>
+
+
     </Layout></>
   );
 };

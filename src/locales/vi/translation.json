@@ -105,7 +105,24 @@
     "created_date": "Ngày tạo video",
     "caption": "Chú thích",
     "not_supported": "Trình duyệt của bạn không hỗ trợ video.",
-    "no_media": "Không có nội dung hiển thị"
+    "no_media": "Không có nội dung hiển thị",
+    "scene_count_label": "Số cảnh",
+    "scene_count_placeholder": "Chọn số cảnh (3–6)",
+    "scenes": "cảnh",
+    "product_name_label": "Tên sản phẩm",
+    "product_name_placeholder": "Nhập tên sản phẩm",
+    "product_description_label": "Mô tả sản phẩm",
+    "product_description_placeholder": "Nhập mô tả sản phẩm",
+    "product_surrounding_label": "Vật thể xung quanh sản phẩm",
+    "product_surrounding_placeholder": "Nhập các vật thể xung quanh sản phẩm",
+    "special_effects_label": "Hiệu ứng",
+    "special_effects_placeholder": "Nhập hiệu ứng mong muốn (xoay, rơi, sáng...)",
+    "generate_instruction": "Hãy tạo cho tôi",
+    "about_product": "Về sản phẩm",
+    "description": "Mô tả",
+    "around": "Bao quanh quanh sản phẩm là",
+    "effects": "Hiệu ứng",
+    "required_fields_warning": "Vui lòng điền đầy đủ tất cả các trường thông tin."
   },
   "signin": {
     "title": "Đăng nhập"

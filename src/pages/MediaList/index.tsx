@@ -1,6 +1,6 @@
-import { EyeOutlined } from "@ant-design/icons";
+import { DownloadOutlined, EyeOutlined } from "@ant-design/icons";
 import {
-  Button, Card, Col, Drawer, Empty, Flex, Image, Pagination, Radio, RadioChangeEvent, Row, Table, Tooltip,
+  Button, Card, Col, Drawer, Empty, Flex, Image, message, Modal, Pagination, Radio, RadioChangeEvent, Row, Table, Tooltip,
 } from "antd";
 import React, { useState } from "react";
 import DetailTicket from "src/components/DetailTicket";
@@ -50,8 +50,8 @@ const MediaList: React.FC<any> = () => {
   };
 
   const handleOnClickDetail = (record: any) => {
-    console.log(`record` ,record);
-    
+    console.log(`record`, record);
+
     setDetailId(record?.id);
     setIsOpen(true);
   };
@@ -125,18 +125,99 @@ const MediaList: React.FC<any> = () => {
                     width: 200,
                     render: (url) => {
                       if (!url) {
-                        return <Image width={250} src="https://via.placeholder.com/60" alt="No media" />;
+                        return (
+                          <Image
+                            width={250}
+                            src="https://via.placeholder.com/60"
+                            alt="No media"
+                          />
+                        );
                       }
 
-                      const isVideo = /\.(mp4|webm|ogg)(\?|$)/i.test(url); // kiểm tra đuôi video có hoặc không có query params
+                      const isVideo = /\.(mp4|webm|ogg)(\?|$)/i.test(url);
 
-                      return isVideo ? (
-                        <video width={250} height={200} controls>
-                          <source src={url} type="video/mp4" />
-                          Your browser does not support the video tag.
-                        </video>
-                      ) : (
-                        <Image width={250} src={url} alt="media" />
+                      const handleDownload = async () => {
+                        Modal.confirm({
+                          title: "Tải xuống?",
+                          content: "Bạn có chắc muốn tải file này xuống thiết bị của mình?",
+                          okText: "Tải xuống",
+                          cancelText: "Hủy",
+                          onOk: async () => {
+                            try {
+                              const response = await fetch(url);
+                              const blob = await response.blob();
+                              const blobUrl = window.URL.createObjectURL(blob);
+                              const a = document.createElement("a");
+                              a.href = blobUrl;
+                              a.download = isVideo ? "video.mp4" : "image.jpg";
+                              document.body.appendChild(a);
+                              a.click();
+                              a.remove();
+                              window.URL.revokeObjectURL(blobUrl);
+                              message.success("Đã bắt đầu tải xuống");
+                            } catch (err) {
+                              console.error("Tải thất bại:", err);
+                              message.error("Tải xuống thất bại");
+                            }
+                          },
+                        });
+                      };
+
+                      return (
+                        <div
+                          style={{
+                            position: "relative",
+                            width: 250,
+                            height: 200,
+                            overflow: "hidden",
+                            borderRadius: 6,
+                          }}
+                        >
+                          {/* Media */}
+                          {isVideo ? (
+                            <video
+                              src={url}
+                              width="100%"
+                              height="80%"
+                              controls
+                              style={{
+                                objectFit: "cover",
+                                borderRadius: 6,
+                                display: "block",
+                              }}
+                            />
+                          ) : (
+                            <img
+                              src={url}
+                              alt="media"
+                              style={{
+                                width: "100%",
+                                height: "80%",
+                                objectFit: "cover",
+                                borderRadius: 6,
+                                display: "block",
+                              }}
+                            />
+                          )}
+
+                          {/* Icon tải xuống */}
+                          <DownloadOutlined
+                            onClick={handleDownload}
+                            style={{
+                              position: "absolute",
+                              top: 8,
+                              right: 8,
+                              fontSize: 18,
+                              background: "#fff",
+                              padding: 6,
+                              borderRadius: "50%",
+                              cursor: "pointer",
+                              boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                              zIndex: 2,
+                            }}
+                            title="Tải xuống"
+                          />
+                        </div>
                       );
                     },
                   },

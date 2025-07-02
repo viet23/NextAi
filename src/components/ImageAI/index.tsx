@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Layout, Input, Button, message, Progress, Typography } from "antd";
+import { Layout, Input, Button, message, Progress, Typography, Modal } from "antd";
 import { useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
 import { useGetAccountQuery } from "src/store/api/accountApi";
@@ -7,6 +7,7 @@ import { useCreateCaseMutation } from "src/store/api/ticketApi";
 import AutoPostModal from "../AutoPostModal";
 import FullscreenLoader from "../FullscreenLoader"; import { contentFetchOpportunityScore, contentGenerateCaption } from "src/utils/facebook-utild";
 import { useTranslation } from "react-i18next";
+import { DownloadOutlined } from "@ant-design/icons";
 ;
 const { Title, Text } = Typography;
 
@@ -433,12 +434,63 @@ const FullscreenSplitCard = () => {
 
             <div style={{ background: "#f0f0f0", height: 350, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 10, marginBottom: 16, overflow: "hidden" }}>
               {!imgError && imageUrl ? (
-                <img
-                  src={imageUrl}
-                  alt="Generated"
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  onError={() => setImgError(true)}
-                />
+                <div style={{ position: "relative", width: "100%", height: "100%" }}>
+                  {/* Hình ảnh */}
+                  <img
+                    src={imageUrl}
+                    alt="Generated"
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    onError={() => setImgError(true)}
+                  />
+
+                  {/* Icon tải ảnh */}
+                  <DownloadOutlined
+                    onClick={() => {
+                      if (!imageUrl) {
+                        message.error("Không tìm thấy ảnh để tải");
+                        return;
+                      }
+
+                      Modal.confirm({
+                        title: "Tải ảnh?",
+                        content: "Bạn có chắc muốn tải ảnh này xuống thiết bị của mình?",
+                        okText: "Tải xuống",
+                        cancelText: "Hủy",
+                        onOk: async () => {
+                          try {
+                            const response = await fetch(imageUrl);
+                            const blob = await response.blob();
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.href = url;
+                            a.download = "generated-image.jpg";
+                            document.body.appendChild(a);
+                            a.click();
+                            a.remove();
+                            window.URL.revokeObjectURL(url);
+                            message.success("Đã bắt đầu tải ảnh");
+                          } catch (err) {
+                            console.error("Tải ảnh thất bại:", err);
+                            message.error("Tải ảnh thất bại");
+                          }
+                        },
+                      });
+                    }}
+                    style={{
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      fontSize: 20,
+                      background: "#fff",
+                      padding: 6,
+                      borderRadius: "50%",
+                      cursor: "pointer",
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+                      zIndex: 2,
+                    }}
+                    title="Tải ảnh"
+                  />
+                </div>
               ) : (
                 <span style={{ color: "#999" }}>No Image</span>
               )}
