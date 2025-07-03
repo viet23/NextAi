@@ -103,9 +103,9 @@ const AccountDetailPage = () => {
         fullName: accountDetailData?.fullName,
         extension: accountDetailData?.extension,
         idPage: accountDetailData.idPage,
-        accessToken: accountDetailData.accessToken,
-        accessTokenUser: accountDetailData.accessTokenUser,
-        accountAdsId: accountDetailData.accountAdsId,
+        accessToken: accountDetailData.accessToken.trim(),
+        accessTokenUser: accountDetailData.accessTokenUser.trim(),
+        accountAdsId: accountDetailData.accountAdsId.trim(),
 
       });
     } else {
@@ -136,9 +136,9 @@ const AccountDetailPage = () => {
           fullName: values.fullName,
           extension: values.extension,
           idPage: values.idPage,
-          accessToken: values.accessToken,
-          accessTokenUser: values.accessTokenUser,
-          accountAdsId: values.accountAdsId,
+          accessToken: values.accessToken.trim(),
+          accessTokenUser: values.accessTokenUser.trim(),
+          accountAdsId: values.accountAdsId.trim(),
         };
 
         updateAccountGroup({
@@ -219,7 +219,7 @@ const AccountDetailPage = () => {
           <Row gutter={[0, 16]} style={{ width: '100%' }}>
             <Col span={24}>
               <Form.Item
-                label="Access Token"
+                label="Access Token page"
                 name="accessToken"
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
@@ -228,7 +228,7 @@ const AccountDetailPage = () => {
               >
                 <Input
                   size="middle"
-                  placeholder="Access Token"
+                  placeholder="Access Token page"
                   style={{
                     width: '100%',
                     fontSize: 16,
