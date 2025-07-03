@@ -47,7 +47,10 @@ type FreesoundDetail = {
 const durationSceneMap: any = {
   5: 1,
   10: 1,
+  20: 2,
   30: 3,
+  40: 4,
+  50: 5,
   60: 6,
 };
 
@@ -88,7 +91,7 @@ const VideoGenerator = () => {
   const [resolution, setResolution] = useState("720p");
   const [ratio, setRatio] = useState("16:9");
 
-  const [sceneCount, setSceneCount] = useState(3);
+  const [sceneCount, setSceneCount] = useState(30);
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [productSurrounding, setProductSurrounding] = useState("");
@@ -290,7 +293,12 @@ const VideoGenerator = () => {
   };
 
   const generateScriptPrompt = () => {
-    const sceneText = `${sceneCount} ${t("video.scenes")}`;
+
+    const sceneCountGPT = durationSceneMap[sceneCount]
+    console.log(`sceneCountGPT` , sceneCountGPT);
+    
+
+    const sceneText = `${sceneCountGPT} ${t("video.scenesGpt")}`;
     const productText = productName ? `${t("video.about_product")} ${productName}` : "";
     const descriptionText = productDescription ? `${t("video.description")}: ${productDescription}` : "";
     const surroundingText = productSurrounding ? `${t("video.around")}: ${productSurrounding}` : "";
@@ -338,8 +346,8 @@ Yêu cầu:
   + Chuyển động camera (zoom cận topping → xoay quanh nồi → cắt cảnh nhanh)
   + Kỹ thuật dựng hình ảnh: slow-motion, fast cut, lặp nhịp
 - Cảnh phải sinh động, mạnh mẽ, đầy năng lượng — giúp truyền tải cảm giác hấp dẫn của món ăn và kích thích người xem muốn đặt mua hoặc đến trải nghiệm ngay lập tức.
-- Trả về đúng 3 cảnh, dạng JSON, mỗi cảnh là 1 chuỗi mô tả sinh động. Không được thêm hoặc bớt cảnh.
-Định dạng kết quả:
+- Trả về đúng ${durationSceneMap[sceneCount]} cảnh, dạng JSON, mỗi cảnh là 1 chuỗi mô tả sinh động. Không được thêm hoặc bớt cảnh.
+Ví dụ định dạng kết quả:
 [
   "Cảnh 1: ...",
   "Cảnh 2: ...",
@@ -383,12 +391,23 @@ Yêu cầu:
       // Đồng bộ videoDuration tương ứng
       const reverseSceneMap: Record<number, number> = {
         1: 5,
+        2: 20,
         3: 30,
+        4: 40,
+        5: 50,
         6: 60,
+
       };
       const matchedDuration = reverseSceneMap[scenes.length];
       if (matchedDuration) {
-        setVideoDuration(matchedDuration);
+        console.log(`matchedDuration`, matchedDuration);
+
+        if (matchedDuration == 5) {
+          setVideoDuration(sceneCount)
+        } else {
+          setVideoDuration(matchedDuration);
+        }
+
       } else {
         message.warning("Số lượng cảnh không khớp với thời lượng video được hỗ trợ. Hãy yêu cầu GPT trả về đúng 1, 3 hoặc 6 cảnh.");
         return;
@@ -790,7 +809,10 @@ Please contact Admin`);
               >
                 <Option value={5}>{t("video.seconds", { count: 5 })}</Option>
                 <Option value={10}>{t("video.seconds", { count: 10 })}</Option>
+                <Option value={20}>{t("video.seconds", { count: 20 })}</Option>
                 <Option value={30}>{t("video.seconds", { count: 30 })}</Option>
+                <Option value={40}>{t("video.seconds", { count: 40 })}</Option>
+                <Option value={50}>{t("video.seconds", { count: 50 })}</Option>
                 <Option value={60}>{t("video.seconds", { count: 60 })}</Option>
               </Select>
               <Button
@@ -1343,7 +1365,7 @@ Please contact Admin`);
             onChange={setSceneCount}
             placeholder={t("video.scene_count_placeholder")}
           >
-            {[3, 4, 5, 6].map((num) => (
+            {[5, 10, 20, 30, 40, 50, 60].map((num) => (
               <Select.Option key={num} value={num}>
                 {num} {t("video.scenes")}
               </Select.Option>
