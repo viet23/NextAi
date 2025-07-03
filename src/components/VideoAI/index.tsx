@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Layout, Input, Button, message, Checkbox, Select, Row, Col, Modal, Radio, Spin, Typography, Progress } from "antd";
+import { Layout, Input, Button, message, Checkbox, Select, Row, Col, Modal, Radio, Spin, Typography, Progress, Form } from "antd";
 import { useCreateCaseMutation } from "src/store/api/ticketApi";
 import { DownloadOutlined, UploadOutlined } from "@ant-design/icons";
 // import { Row, Col, Button, Modal, Radio, Typography, Spin, message } from 'antd';
@@ -56,6 +56,7 @@ const durationSceneMap: any = {
 
 const VideoGenerator = () => {
   const { t } = useTranslation();
+  const [form] = Form.useForm();
   const [caption, setCaption] = useState("");
   const [promptTexts, setPromptTexts] = useState([""]);
   const [videoSrc, setVideoSrc] = useState("");
@@ -295,8 +296,8 @@ const VideoGenerator = () => {
   const generateScriptPrompt = () => {
 
     const sceneCountGPT = durationSceneMap[sceneCount]
-    console.log(`sceneCountGPT` , sceneCountGPT);
-    
+    console.log(`sceneCountGPT`, sceneCountGPT);
+
 
     const sceneText = `${sceneCountGPT} ${t("video.scenesGpt")}`;
     const productText = productName ? `${t("video.about_product")} ${productName}` : "";
@@ -1342,65 +1343,86 @@ Please contact Admin`);
         okText={t("video.generate")}
         cancelText={t("video.cancel")}
         confirmLoading={loadingScript}
-        onOk={() => {
-          if (
-            !sceneCount ||
-            !productName.trim() ||
-            !productDescription.trim() ||
-            !productSurrounding.trim() ||
-            !specialEffects.trim()
-          ) {
-            message.warning(t("video.required_fields_warning"));
-            return;
-          }
-
-          generateScriptByGPT();
-        }}
+        onOk={() => form.submit()} // Gọi submit form khi ấn nút OK
       >
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={() => {
+            if (
+              !sceneCount ||
+              !productName.trim() ||
+              !productDescription.trim() ||
+              !productSurrounding.trim() ||
+              !specialEffects.trim()
+            ) {
+              message.warning(t("video.required_fields_warning"));
+              return;
+            }
+            generateScriptByGPT();
+          }}
+        >
+          <Form.Item label={t("video.scene_count_label")} required>
+            <Select
+              value={sceneCount}
+              onChange={setSceneCount}
+              placeholder={t("video.scene_count_placeholder")}
+            >
+              {[5, 10, 20, 30, 40, 50, 60].map((num) => (
+                <Select.Option key={num} value={num}>
+                  {num} {t("video.scenes")}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
 
-          <label>{t("video.scene_count_label")}</label>
-          <Select
-            value={sceneCount}
-            onChange={setSceneCount}
-            placeholder={t("video.scene_count_placeholder")}
+          <Form.Item
+            label={t("video.product_name_label")}
+            required
+            rules={[{ required: true, message: t("video.required_fields_warning") }]}
           >
-            {[5, 10, 20, 30, 40, 50, 60].map((num) => (
-              <Select.Option key={num} value={num}>
-                {num} {t("video.scenes")}
-              </Select.Option>
-            ))}
-          </Select>
+            <Input
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
+              placeholder={t("video.product_name_placeholder")}
+            />
+          </Form.Item>
 
-          <label>{t("video.product_name_label")}</label>
-          <Input
-            value={productName}
-            onChange={(e) => setProductName(e.target.value)}
-            placeholder={t("video.product_name_placeholder")}
-          />
+          <Form.Item
+            label={t("video.product_description_label")}
+            required
+          >
+            <Input
+              value={productDescription}
+              onChange={(e) => setProductDescription(e.target.value)}
+              placeholder={t("video.product_description_placeholder")}
+            />
+          </Form.Item>
 
-          <label>{t("video.product_description_label")}</label>
-          <Input
-            value={productDescription}
-            onChange={(e) => setProductDescription(e.target.value)}
-            placeholder={t("video.product_description_placeholder")}
-          />
+          <Form.Item
+            label={t("video.product_surrounding_label")}
+            required
+          >
+            <Input
+              value={productSurrounding}
+              onChange={(e) => setProductSurrounding(e.target.value)}
+              placeholder={t("video.product_surrounding_placeholder")}
+            />
+          </Form.Item>
 
-          <label>{t("video.product_surrounding_label")}</label>
-          <Input
-            value={productSurrounding}
-            onChange={(e) => setProductSurrounding(e.target.value)}
-            placeholder={t("video.product_surrounding_placeholder")}
-          />
-
-          <label>{t("video.special_effects_label")}</label>
-          <Input
-            value={specialEffects}
-            onChange={(e) => setSpecialEffects(e.target.value)}
-            placeholder={t("video.special_effects_placeholder")}
-          />
-        </div>
+          <Form.Item
+            label={t("video.special_effects_label")}
+            required
+          >
+            <Input
+              value={specialEffects}
+              onChange={(e) => setSpecialEffects(e.target.value)}
+              placeholder={t("video.special_effects_placeholder")}
+            />
+          </Form.Item>
+        </Form>
       </Modal>
+
 
 
     </Layout></>
