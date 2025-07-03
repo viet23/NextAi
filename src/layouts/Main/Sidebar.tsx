@@ -1,6 +1,6 @@
 // Sidebar.tsx
 import Logo from "src/assets/images/next-logo.jpg";
-import { ReactComponent as NavbarIcon } from "src/assets/images/icon/ic-navbar.svg"; 
+import { ReactComponent as NavbarIcon } from "src/assets/images/icon/icon-4-gach-den.svg"; 
 import { Flex, Menu } from "antd";
 import { MenuInfo } from "rc-menu/lib/interface";
 import { Link, useNavigate } from "react-router-dom";
@@ -61,10 +61,10 @@ export const Sidebar = ({
               <img className="logo" src={Logo} alt="logo" />
             </div>
           )}
-          <NavbarIcon
+          {/* <NavbarIcon
             style={{ color: '#1a73e8', width: 24, height: 24 }}
             onClick={handleToggleCollapsed}
-          />
+          /> */}
         </Flex>
 
         {!isFetching && (
