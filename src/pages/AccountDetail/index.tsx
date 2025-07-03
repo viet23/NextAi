@@ -102,10 +102,10 @@ const AccountDetailPage = () => {
         email: accountDetailData?.email,
         fullName: accountDetailData?.fullName,
         extension: accountDetailData?.extension,
-        idPage: accountDetailData.idPage,
-        accessToken: accountDetailData.accessToken.trim(),
-        accessTokenUser: accountDetailData.accessTokenUser.trim(),
-        accountAdsId: accountDetailData.accountAdsId.trim(),
+        idPage: accountDetailData?.idPage,
+        accessToken: accountDetailData?.accessToken?.trim(),
+        accessTokenUser: accountDetailData?.accessTokenUser?.trim(),
+        accountAdsId: accountDetailData?.accountAdsId?.trim(),
 
       });
     } else {
@@ -136,9 +136,9 @@ const AccountDetailPage = () => {
           fullName: values.fullName,
           extension: values.extension,
           idPage: values.idPage,
-          accessToken: values.accessToken.trim(),
-          accessTokenUser: values.accessTokenUser.trim(),
-          accountAdsId: values.accountAdsId.trim(),
+          accessToken: values?.accessToken?.trim(),
+          accessTokenUser: values?.accessTokenUser?.trim(),
+          accountAdsId: values?.accountAdsId?.trim(),
         };
 
         updateAccountGroup({
