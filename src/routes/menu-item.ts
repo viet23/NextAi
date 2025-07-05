@@ -1,6 +1,6 @@
 import { ReactNode, createElement } from "react";
 import { FacebookOutlined, PictureOutlined, VideoCameraOutlined } from "@ant-design/icons";
-import { DotIcon, } from "src/components/MenuItemIcon";
+import { DotIcon } from "src/components/MenuItemIcon";
 import { SettingIcon } from "src/components/MenuItemIcon/SettingIcon";
 import {
   ACCOUNT_ROUTE,
@@ -15,7 +15,6 @@ import {
 import { TicketManageIcon } from "src/components/MenuItemIcon/TicketIcon";
 import { GET_BLACK_LIST, GET_GROUP, GET_ROLE, GET_USER } from "src/constants/roles.constants";
 import { TFunction } from "i18next";
-
 
 export interface IMenuItem {
   key: string;

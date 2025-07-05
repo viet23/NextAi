@@ -1,6 +1,6 @@
 // Sidebar.tsx
 import Logo from "src/assets/images/next-logo.jpg";
-import { ReactComponent as NavbarIcon } from "src/assets/images/icon/icon-4-gach-den.svg"; 
+import { ReactComponent as NavbarIcon } from "src/assets/images/icon/icon-4-gach-den.svg";
 import { Flex, Menu } from "antd";
 import { MenuInfo } from "rc-menu/lib/interface";
 import { Link, useNavigate } from "react-router-dom";
@@ -44,15 +44,9 @@ export const Sidebar = ({
 
   return (
     <>
-      {!collapsed && (
-        <div className="sidebar-overlay" onClick={handleToggleCollapsed} />
-      )}
-      <Sider
-        className="sider"
-        width="17.5rem"
-        collapsed={collapsed}
-        collapsedWidth="0"
-      ><Flex justify="space-between" align="center" className="head">
+      {!collapsed && <div className="sidebar-overlay" onClick={handleToggleCollapsed} />}
+      <Sider className="sider" width="17.5rem" collapsed={collapsed} collapsedWidth="0">
+        <Flex justify="space-between" align="center" className="head">
           {!collapsed && (
             <div
               onClick={handleToggleCollapsed}
@@ -75,10 +69,8 @@ export const Sidebar = ({
             rootClassName="nav-submenu-popup"
             mode="inline"
             theme="light"
-            style={{ backgroundColor: '#ffffff' }}
-            expandIcon={({ isOpen }) =>
-              isOpen ? <DownOutlined /> : <RightOutlined />
-            }
+            style={{ backgroundColor: "#ffffff" }}
+            expandIcon={({ isOpen }) => (isOpen ? <DownOutlined /> : <RightOutlined />)}
             inlineIndent={0}
             items={menuItemsAuthorize}
             onClick={handleClick}
@@ -88,5 +80,3 @@ export const Sidebar = ({
     </>
   );
 };
-
-

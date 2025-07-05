@@ -10,7 +10,7 @@ import { store } from "../store";
 import { api } from "./base";
 
 const AuthApi = api.injectEndpoints({
-  endpoints: (build) => ({
+  endpoints: build => ({
     samlSignin: build.mutation<any, any>({
       query: () => ({
         url: "api/v1/auth/saml/login",
@@ -24,7 +24,7 @@ const AuthApi = api.injectEndpoints({
       },
     }),
     signIn: build.mutation<any, any>({
-      query: (body) => ({
+      query: body => ({
         url: "api/v1/auth/signin",
         method: "POST",
         body,
@@ -52,7 +52,7 @@ const AuthApi = api.injectEndpoints({
       },
     }),
     resetPassword: build.mutation<any, any>({
-      query: (body) => ({
+      query: body => ({
         url: "api/v1/authentication/password/reset",
         method: "POST",
         body,
@@ -62,7 +62,7 @@ const AuthApi = api.injectEndpoints({
       },
     }),
     createPassword: build.mutation<any, any>({
-      query: (body) => ({
+      query: body => ({
         url: "/api/v1/authentication/password",
         method: "POST",
         body,
@@ -75,7 +75,7 @@ const AuthApi = api.injectEndpoints({
       },
     }),
     checkToken: build.mutation<any, any>({
-      query: (body) => ({
+      query: body => ({
         url: "/api/v1/authentication/check-token",
         method: "POST",
         body,

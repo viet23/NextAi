@@ -1,15 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  Layout,
-  Typography,
-  Card,
-  Table,
-  Image,
-  Row,
-  Col,
-  Spin,
-  Drawer,
-} from "antd";
+import { Layout, Typography, Card, Table, Image, Row, Col, Spin, Drawer } from "antd";
 import { Column } from "@ant-design/plots";
 import { useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
@@ -29,9 +19,7 @@ const Dashboard = () => {
   });
 
   const [postData, setPostData] = useState<any[]>([]);
-  const [barData, setBarData] = useState<{ date: string; quantity: number }[]>(
-    []
-  );
+  const [barData, setBarData] = useState<{ date: string; quantity: number }[]>([]);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [detailId, setDetailId] = useState(null);
@@ -70,9 +58,7 @@ const Dashboard = () => {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(
-          data.error?.message || "Unknown error from Facebook API"
-        );
+        throw new Error(data.error?.message || "Unknown error from Facebook API");
       }
 
       const posts = data?.data || [];
@@ -107,7 +93,7 @@ const Dashboard = () => {
         share: post.shares?.count || 0,
         createdTime: dayjs(post.created_time).format("YYYY-MM-DD HH:mm:ss") || "",
         reach: post.reach || 0,
-        url: post.full_picture
+        url: post.full_picture,
       }));
 
       setPostData(formattedPosts);
@@ -133,7 +119,6 @@ const Dashboard = () => {
     fetchFacebookPosts();
   }, [fetchFacebookPosts]);
 
-
   const chartConfig = {
     data: barData,
     xField: "date",
@@ -143,8 +128,7 @@ const Dashboard = () => {
     label: {
       position: "top",
       style: { fill: "#000", fontSize: 12 },
-      formatter: (datum: any) =>
-        datum.quantity > 0 ? datum.quantity.toString() : "",
+      formatter: (datum: any) => (datum.quantity > 0 ? datum.quantity.toString() : ""),
     },
     xAxis: {
       title: { text: t("dashboard.chart.x_axis") },
@@ -153,14 +137,13 @@ const Dashboard = () => {
     yAxis: {
       title: { text: t("dashboard.chart.y_axis") },
       label: {
-        formatter: (value: number) =>
-          value > 0 ? value.toString() : "",
+        formatter: (value: number) => (value > 0 ? value.toString() : ""),
       },
     },
     height: 300,
     responsive: true,
   };
-  
+
   const columns: ColumnsType<any> = [
     {
       title: t("dashboard.no"),
@@ -239,7 +222,6 @@ const Dashboard = () => {
       align: "center",
     },
   ];
-
 
   return (
     <Layout

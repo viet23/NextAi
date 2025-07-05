@@ -21,11 +21,11 @@ function App() {
     >
       <Router>
         <Routes>
-          {routes.map((item) => {
+          {routes.map(item => {
             if (!!item) {
               return (
                 <Route element={<item.layout />} path="/" key={item.key}>
-                  {item.routes.map((i) => {
+                  {item.routes.map(i => {
                     return (
                       <Route
                         index={i.path == "/" || false}

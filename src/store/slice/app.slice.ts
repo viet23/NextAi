@@ -22,6 +22,5 @@ const appSlice = createSlice({
     },
   },
 });
-export const { setActiveMenu, setNavbarCollapsed, setPageTitle } =
-  appSlice.actions;
+export const { setActiveMenu, setNavbarCollapsed, setPageTitle } = appSlice.actions;
 export default appSlice.reducer;

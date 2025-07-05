@@ -15,10 +15,7 @@ import {
 import { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "antd/es/form/Form";
 import Table, { ColumnsType } from "antd/es/table";
-import {
-  useCreateOrUpdateRoleGroupMutation,
-  useGetRolesQuery,
-} from "src/store/api/roleApi";
+import { useCreateOrUpdateRoleGroupMutation, useGetRolesQuery } from "src/store/api/roleApi";
 import { IRole, IRoleGroupCreateForm } from "src/interfaces/roles.interface";
 import { useNavigate } from "react-router-dom";
 import { AUTHORIZATION_ROUTE } from "src/constants/routes.constants";
@@ -32,8 +29,7 @@ const RoleGroupCreatePage = () => {
   const [form] = useForm<IRoleGroupCreateForm>();
 
   const { data: rolesData, isLoading: isRolesLoading } = useGetRolesQuery({});
-  const [createRoleGroup, { isLoading, isSuccess }] =
-    useCreateOrUpdateRoleGroupMutation();
+  const [createRoleGroup, { isLoading, isSuccess }] = useCreateOrUpdateRoleGroupMutation();
 
   const initialValues = useMemo<IRoleGroupCreateForm>(
     () => ({
@@ -47,7 +43,7 @@ const RoleGroupCreatePage = () => {
   const handleChangeRoles = useCallback(
     (role: IRole) => {
       const formRoles: IRole[] = form.getFieldValue("roles");
-      if (formRoles?.find((x) => x.id === role.id))
+      if (formRoles?.find(x => x.id === role.id))
         form.setFieldValue(
           "roles",
           formRoles.filter((x: IRole) => x.id === role.id)
@@ -83,9 +79,7 @@ const RoleGroupCreatePage = () => {
         width: 100,
         render: (id, record) => (
           <Checkbox
-            checked={
-              !!form.getFieldValue("roles")?.find((x: IRole) => x.id === id)
-            }
+            checked={!!form.getFieldValue("roles")?.find((x: IRole) => x.id === id)}
             onChange={() => handleChangeRoles(record)}
           />
         ),
@@ -143,10 +137,7 @@ const RoleGroupCreatePage = () => {
             </Form.Item>
           </Col>
           <Col xs={24} xl={12}>
-            <Form.Item<IRoleGroupCreateForm>
-              name="roles"
-              dependencies={["roles"]}
-            >
+            <Form.Item<IRoleGroupCreateForm> name="roles" dependencies={["roles"]}>
               <Table
                 className="table-scroll table"
                 rowKey="id"

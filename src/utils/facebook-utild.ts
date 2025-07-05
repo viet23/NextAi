@@ -34,4 +34,4 @@ export const contentFetchOpportunityScore = `Bạn là chuyên gia quảng cáo 
 Trả lời đúng định dạng:
 Điểm: [số nguyên từ 0–100]
 Đánh giá: [Kém / Khá / Tốt]
-Gợi ý: [nội dung nếu có]` ;
+Gợi ý: [nội dung nếu có]`;

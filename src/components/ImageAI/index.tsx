@@ -5,10 +5,10 @@ import { IRootState } from "src/interfaces/app.interface";
 import { useGetAccountQuery } from "src/store/api/accountApi";
 import { useCreateCaseMutation } from "src/store/api/ticketApi";
 import AutoPostModal from "../AutoPostModal";
-import FullscreenLoader from "../FullscreenLoader"; import { contentFetchOpportunityScore, contentGenerateCaption } from "src/utils/facebook-utild";
+import FullscreenLoader from "../FullscreenLoader";
+import { contentFetchOpportunityScore, contentGenerateCaption } from "src/utils/facebook-utild";
 import { useTranslation } from "react-i18next";
 import { DownloadOutlined } from "@ant-design/icons";
-;
 const { Title, Text } = Typography;
 
 const { Content } = Layout;
@@ -37,7 +37,6 @@ const FullscreenSplitCard = () => {
   const [scoreLabel, setScoreLabel] = useState<string | null>(null);
   const [suggestion, setSuggestion] = useState<string | null>(null);
 
-
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -52,10 +51,13 @@ const FullscreenSplitCard = () => {
     formData.append("image", file);
 
     try {
-      const res = await fetch("https://api.imgbb.com/1/upload?key=8c9e574f76ebba8ad136a2715581c81c&expiration=1800", {
-        method: "POST",
-        body: formData,
-      });
+      const res = await fetch(
+        "https://api.imgbb.com/1/upload?key=8c9e574f76ebba8ad136a2715581c81c&expiration=1800",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
       const data = await res.json();
       if (data?.data?.url) {
         setUploadedImageUrl(data.data.url);
@@ -107,12 +109,12 @@ const FullscreenSplitCard = () => {
 
       // ✅ Cập nhật UI nếu dùng trong React
       if (scoreValue !== null && !isNaN(scoreValue)) {
-        setScore(scoreValue);         // ví dụ: 84
+        setScore(scoreValue); // ví dụ: 84
       } else {
         setScore(null);
       }
 
-      setScoreLabel(rating || null);  // ví dụ: "Tốt"
+      setScoreLabel(rating || null); // ví dụ: "Tốt"
       setSuggestion(suggestion || null); // ví dụ: "Nên thêm icon mở đầu..."
     } catch (error) {
       console.error("❌ Error fetching score:", error);
@@ -135,9 +137,6 @@ const FullscreenSplitCard = () => {
       setScore(null);
     }
   };
-
-
-
 
   const translatePromptToEnglish = async (text: string) => {
     try {
@@ -243,8 +242,11 @@ const FullscreenSplitCard = () => {
       });
 
       const data = await response.json();
-      setCaption(data?.choices?.[0]?.message?.content?.trim().replace(/^"|"$/g, '') || "");
-      const body = { urlVideo: imageUrl, caption: `Generate caption : ${data?.choices?.[0]?.message?.content?.trim().replace(/^"|"$/g, '') || ""}` };
+      setCaption(data?.choices?.[0]?.message?.content?.trim().replace(/^"|"$/g, "") || "");
+      const body = {
+        urlVideo: imageUrl,
+        caption: `Generate caption : ${data?.choices?.[0]?.message?.content?.trim().replace(/^"|"$/g, "") || ""}`,
+      };
       await createCase(body).unwrap();
     } catch (error) {
       console.error("Caption error:", error);
@@ -253,7 +255,6 @@ const FullscreenSplitCard = () => {
       setLoadingCaption(false);
     }
   };
-
 
   const handlePostFacebook = async () => {
     if (!imageUrl) {
@@ -296,10 +297,9 @@ const FullscreenSplitCard = () => {
       <Content style={{ padding: 24 }}>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 24, justifyContent: "center" }}>
           <div style={{ flex: 1, minWidth: 320, maxWidth: 600 }}>
-
             <TextArea
               value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
+              onChange={e => setPrompt(e.target.value)}
               placeholder={t("image.describe_prompt")} // "Describe your image"
               rows={5}
               style={{ marginBottom: 16, fontSize: 16 }}
@@ -308,18 +308,22 @@ const FullscreenSplitCard = () => {
               <select
                 style={{ width: 110, padding: "4px 6px", fontSize: 13 }}
                 value={resolution}
-                onChange={(e) => setResolution(e.target.value)}
+                onChange={e => setResolution(e.target.value)}
               >
-                <option value="" disabled>Resolution</option>
+                <option value="" disabled>
+                  Resolution
+                </option>
                 <option value="720p">720p</option>
                 <option value="1080p">1080p</option>
               </select>
               <select
                 style={{ width: 110, padding: "4px 6px", fontSize: 13 }}
                 value={ratio}
-                onChange={(e) => setRatio(e.target.value)}
+                onChange={e => setRatio(e.target.value)}
               >
-                <option value="" disabled>Size</option>
+                <option value="" disabled>
+                  Size
+                </option>
                 <option value="16:9">16:9</option>
                 <option value="9:16">9:16</option>
                 <option value="1:1">1:1</option>
@@ -383,7 +387,6 @@ const FullscreenSplitCard = () => {
               </Button>
             </div>
 
-
             <div style={{ textAlign: "center", marginBottom: 16 }}>
               {uploadedImage && (
                 <img
@@ -400,8 +403,6 @@ const FullscreenSplitCard = () => {
                 />
               )}
             </div>
-
-
           </div>
 
           <div style={{ flex: 1, minWidth: 320, maxWidth: 600 }}>
@@ -412,7 +413,7 @@ const FullscreenSplitCard = () => {
               style={{
                 display: "flex",
                 justifyContent: "flex-end", // ✅ đẩy nút sang phải
-                padding: "6px 0",           // ✅ khoảng trống trên dưới (có thể tăng/giảm)
+                padding: "6px 0", // ✅ khoảng trống trên dưới (có thể tăng/giảm)
               }}
             >
               <button
@@ -422,17 +423,28 @@ const FullscreenSplitCard = () => {
                   color: "#000",
                   border: "1px solid #D2E3FC",
                   borderRadius: 6,
-                  padding: "6px 12px",       // ✅ padding cho nút đẹp hơn
+                  padding: "6px 12px", // ✅ padding cho nút đẹp hơn
                   fontSize: 11,
                   cursor: "pointer",
-                  marginRight: 16,           // ✅ nếu cần cách xa mép phải
+                  marginRight: 16, // ✅ nếu cần cách xa mép phải
                 }}
               >
                 {t("image.auto_post_setting")}
               </button>
             </div>
 
-            <div style={{ background: "#f0f0f0", height: 350, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 10, marginBottom: 16, overflow: "hidden" }}>
+            <div
+              style={{
+                background: "#f0f0f0",
+                height: 350,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 10,
+                marginBottom: 16,
+                overflow: "hidden",
+              }}
+            >
               {!imgError && imageUrl ? (
                 <div style={{ position: "relative", width: "100%", height: "100%" }}>
                   {/* Hình ảnh */}
@@ -499,7 +511,7 @@ const FullscreenSplitCard = () => {
               <TextArea
                 rows={2}
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={e => setDescription(e.target.value)}
                 placeholder={t("image.enter_description")}
                 style={{
                   width: "100%",
@@ -533,7 +545,6 @@ const FullscreenSplitCard = () => {
               style={{ fontSize: 15, marginBottom: 16 }}
             />
 
-
             {/* Chỉ hiển thị nếu có điểm */}
             {score !== null && (
               <div
@@ -553,9 +564,7 @@ const FullscreenSplitCard = () => {
                     type="circle"
                     percent={score}
                     width={80}
-                    strokeColor={
-                      score >= 80 ? "#52c41a" : score >= 50 ? "#faad14" : "#f5222d"
-                    }
+                    strokeColor={score >= 80 ? "#52c41a" : score >= 50 ? "#faad14" : "#f5222d"}
                     format={() => (
                       <div style={{ fontSize: 16, color: "#000" }}>
                         <div style={{ fontWeight: 500 }}>{score}</div>
@@ -567,16 +576,25 @@ const FullscreenSplitCard = () => {
 
                 <div>
                   <Title level={5} style={{ margin: 0 }}>
-                    {scoreLabel} <span style={{ color: '#999' }}>ℹ️</span>
+                    {scoreLabel} <span style={{ color: "#999" }}>ℹ️</span>
                   </Title>
-                  <Text type="secondary">
-                    {suggestion}
-                  </Text>
+                  <Text type="secondary">{suggestion}</Text>
                 </div>
               </div>
             )}
 
-            <Button onClick={handlePostFacebook} type="primary" style={{ backgroundColor: "#D2E3FC", color: "#000", border: "1px solid #D2E3FC", borderRadius: 6 }} block size="large">
+            <Button
+              onClick={handlePostFacebook}
+              type="primary"
+              style={{
+                backgroundColor: "#D2E3FC",
+                color: "#000",
+                border: "1px solid #D2E3FC",
+                borderRadius: 6,
+              }}
+              block
+              size="large"
+            >
               {t("image.post_facebook")}
             </Button>
           </div>

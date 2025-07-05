@@ -22,9 +22,7 @@ import Dashboard from "src/pages/Dashboard";
 const AccountDetailPage = React.lazy(() => import("src/pages/AccountDetail"));
 const AccountsPage = React.lazy(() => import("src/pages/Accounts"));
 const AuthorizationsPage = React.lazy(() => import("src/pages/Authorizations"));
-const RoleGroupCreatePage = React.lazy(
-  () => import("src/pages/RoleGroupCreate")
-);
+const RoleGroupCreatePage = React.lazy(() => import("src/pages/RoleGroupCreate"));
 const FacebookAnalysis = React.lazy(() => import("../pages/FacebookAnalysis"));
 const ImageAI = React.lazy(() => import("../pages/ImageAI"));
 const Video = React.lazy(() => import("../pages/VideoAI"));
@@ -82,7 +80,7 @@ export const routes = [
         name: "MediaList",
         component: MediaList,
       },
-       {
+      {
         path: DASHBOARD_ROUTE,
         isProtect: true,
         key: "dashboard",

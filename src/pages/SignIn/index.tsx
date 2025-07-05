@@ -35,7 +35,6 @@ const SignIn = () => {
     );
 
     const handleMessage = (event: MessageEvent) => {
-
       // if (event.origin !== "http://localhost:3001") return;
 
       const { token, user } = event.data;
@@ -43,10 +42,8 @@ const SignIn = () => {
       store.dispatch(setCurrentUser(user));
       store.dispatch(setIsLogin(true));
       if (token && user?.email) {
-
         message.success(`Hello, ${user.name || user.email}!`);
         navigate("/");
-
       }
 
       // Gỡ listener & đóng popup
@@ -57,7 +54,6 @@ const SignIn = () => {
     // ✅ KHÔNG console.log(popup) – sẽ gây lỗi CORS internal
     window.addEventListener("message", handleMessage);
   };
-
 
   return (
     <div className="auth-wrapper">
@@ -78,13 +74,13 @@ const SignIn = () => {
         <Input
           placeholder="User name"
           value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={e => setUsername(e.target.value)}
           style={{ marginBottom: 10 }}
         />
         <Input.Password
           placeholder="Password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={e => setPassword(e.target.value)}
           style={{ marginBottom: 20 }}
         />
         <Button type="primary" onClick={handleLogin} block size="large">

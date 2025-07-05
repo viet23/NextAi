@@ -6,11 +6,7 @@ type Props = ParagraphProps & {
   children: ReactNode;
 };
 
-export const TooltipParagraph = ({
-  children,
-  ellipsis,
-  ...otherProps
-}: Props) => {
+export const TooltipParagraph = ({ children, ellipsis, ...otherProps }: Props) => {
   const [truncated, setTruncated] = useState(false);
 
   return (

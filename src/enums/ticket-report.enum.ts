@@ -1,4 +1,4 @@
 export enum ReportTypeTicketEnum {
-    YEAR = 'YEAR',
-    MONTH = 'MONTH',
-  }
+  YEAR = "YEAR",
+  MONTH = "MONTH",
+}

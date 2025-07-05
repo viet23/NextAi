@@ -9,12 +9,12 @@ import {
 } from "src/interfaces/financial-transaction-reports.interface";
 
 const FinancialTransactionReportApi = api.injectEndpoints({
-  endpoints: (build) => ({
+  endpoints: build => ({
     getFinancialTransactions: build.query<
       IFinancialTransactionReportTotal,
       IFinancialTransactionReportFilter | null
     >({
-      query: (filter) => ({
+      query: filter => ({
         url: `/api/v1/reports/transactions?${buildQueryString(filter || {})}`,
         method: "GET",
       }),
@@ -23,10 +23,8 @@ const FinancialTransactionReportApi = api.injectEndpoints({
       IFinancialTransactionReportSuccess,
       IFinancialTransactionReportFilter | null
     >({
-      query: (filter) => ({
-        url: `/api/v1/reports/transactions/success?${buildQueryString(
-          filter || {}
-        )}`,
+      query: filter => ({
+        url: `/api/v1/reports/transactions/success?${buildQueryString(filter || {})}`,
         method: "GET",
       }),
     }),
@@ -34,10 +32,8 @@ const FinancialTransactionReportApi = api.injectEndpoints({
       IFinancialTransactionReportSuccessChart,
       IFinancialTransactionReportFilter | null
     >({
-      query: (filter) => ({
-        url: `/api/v1/reports/transactions/chart?${buildQueryString(
-          filter || {}
-        )}`,
+      query: filter => ({
+        url: `/api/v1/reports/transactions/chart?${buildQueryString(filter || {})}`,
         method: "GET",
       }),
     }),
@@ -45,18 +41,13 @@ const FinancialTransactionReportApi = api.injectEndpoints({
       IFinancialTransactionReportFailed,
       IFinancialTransactionReportFilter | null
     >({
-      query: (filter) => ({
-        url: `/api/v1/reports/transactions/fail?${buildQueryString(
-          filter || {}
-        )}`,
+      query: filter => ({
+        url: `/api/v1/reports/transactions/fail?${buildQueryString(filter || {})}`,
         method: "GET",
       }),
     }),
-    exportFinancialTransactionReportExcel: build.query<
-      any,
-      IFinancialTransactionReportFilter
-    >({
-      query: (filter) => ({
+    exportFinancialTransactionReportExcel: build.query<any, IFinancialTransactionReportFilter>({
+      query: filter => ({
         url: `/api/v1/reports/export?${buildQueryString(filter || {})}`,
         method: "GET",
       }),

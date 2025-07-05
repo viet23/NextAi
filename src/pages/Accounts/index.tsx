@@ -42,26 +42,23 @@ const AccountsPage = () => {
   const { t, i18n } = useTranslation();
 
   const toggleLanguage = () => {
-    const newLang = i18n.language === 'vi' ? 'en' : 'vi';
+    const newLang = i18n.language === "vi" ? "en" : "vi";
     i18n.changeLanguage(newLang);
   };
 
- const currentFlag = i18n.language === 'vi'
-    ? '/VN.png' // icon cờ Việt Nam
-    : '/EN.png'; // icon cờ Anh
+  const currentFlag =
+    i18n.language === "vi"
+      ? "/VN.png" // icon cờ Việt Nam
+      : "/EN.png"; // icon cờ Anh
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [form] = useForm<IForm>();
   const [isOpen, setIsOpen] = useState(false);
-  const searchWatch =
-    useWatch("search", form) ?? (searchParams.get("search") || "");
-  const statusWatch =
-    useWatch("status", form) ?? (searchParams.get("status") || undefined);
+  const searchWatch = useWatch("search", form) ?? (searchParams.get("search") || "");
+  const statusWatch = useWatch("status", form) ?? (searchParams.get("status") || undefined);
 
   const [pagination, setPagination] = useState({
-    page: searchParams.get("page")
-      ? Math.max(Number(searchParams.get("page")), 1)
-      : 1,
+    page: searchParams.get("page") ? Math.max(Number(searchParams.get("page")), 1) : 1,
     pageSize: searchParams.get("pageSize")
       ? Math.max(Number(searchParams.get("pageSize")), 1)
       : DEFAULT_PAGE_SIZE,
@@ -75,8 +72,6 @@ const AccountsPage = () => {
     setIsOpen(false);
   };
 
-
-
   const searchDebounce = useDebounce<string>({
     value: searchWatch,
     delay: 700,
@@ -86,10 +81,7 @@ const AccountsPage = () => {
     page: pagination.page,
     pageSize: pagination.pageSize,
     where: {
-      status:
-        statusWatch !== undefined
-          ? statusWatch === ACCOUNT_STATUS_ACTIVE
-          : undefined,
+      status: statusWatch !== undefined ? statusWatch === ACCOUNT_STATUS_ACTIVE : undefined,
       keyword: searchDebounce,
     },
   });
@@ -124,22 +116,19 @@ const AccountsPage = () => {
         title: t("accounts.columns.created"),
         key: "createdAt",
         dataIndex: "createdAt",
-        render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
+        render: value => dayjs(value).format("DD/MM/YYYY HH:mm"),
       },
       {
         title: t("accounts.columns.status"),
         key: "status",
         dataIndex: "isActive",
-        render: (value) =>
-          value
-            ? t("accounts.status.active")
-            : t("accounts.status.inactive"),
+        render: value => (value ? t("accounts.status.active") : t("accounts.status.inactive")),
       },
       {
         title: t("accounts.columns.actions"),
         key: "actions",
         dataIndex: "id",
-        render: (id) => (
+        render: id => (
           <Link className="edit" to={`/tai-khoan/${id}`}>
             {t("accounts.edit")}
           </Link>
@@ -148,7 +137,6 @@ const AccountsPage = () => {
     ],
     [t]
   );
-
 
   const dataSource = useMemo(() => data?.data || [], [data]);
 
@@ -174,8 +162,7 @@ const AccountsPage = () => {
     if (newPage > 1) currentSearchParams.page = newPage.toString();
     else delete currentSearchParams.page;
 
-    if (newPageSize !== DEFAULT_PAGE_SIZE)
-      currentSearchParams.pageSize = newPageSize.toString();
+    if (newPageSize !== DEFAULT_PAGE_SIZE) currentSearchParams.pageSize = newPageSize.toString();
     else delete currentSearchParams.pageSize;
 
     setSearchParams(currentSearchParams, {
@@ -186,8 +173,7 @@ const AccountsPage = () => {
   const handleChange = (_v: unknown, values: IForm) => {
     const currentSearchParams = getCurrentSearchParams();
 
-    if (values.search?.trim())
-      currentSearchParams.search = values.search?.trim();
+    if (values.search?.trim()) currentSearchParams.search = values.search?.trim();
     else delete currentSearchParams.search;
 
     if (values.status) currentSearchParams.status = values.status;
@@ -243,12 +229,8 @@ const AccountsPage = () => {
             </Col>
             <Col xs={24} lg={8}>
               <Form.Item name="status">
-                <Select
-                  allowClear
-                  size="large"
-                  placeholder={t("accounts.status_placeholder")}
-                >
-                  {ACCOUNT_STATUS.map((status) => (
+                <Select allowClear size="large" placeholder={t("accounts.status_placeholder")}>
+                  {ACCOUNT_STATUS.map(status => (
                     <Select.Option key={status.value}>
                       {t(`accounts.status.${status.label}`)}
                     </Select.Option>
@@ -288,15 +270,8 @@ const AccountsPage = () => {
           </Flex>
         )}
       </Card>
-      <Drawer
-        open={isOpen}
-        onClose={handleOnCloseDrawer}
-        width={"30%"}
-        maskClosable={false}
-      >
-        <CreateUser
-          onRefetch={() => { }}
-        />
+      <Drawer open={isOpen} onClose={handleOnCloseDrawer} width={"30%"} maskClosable={false}>
+        <CreateUser onRefetch={() => {}} />
       </Drawer>
     </PageTitleHOC>
   );

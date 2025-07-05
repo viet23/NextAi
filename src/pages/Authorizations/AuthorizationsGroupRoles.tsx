@@ -32,11 +32,7 @@ export const AuthorizationsGroupRoles = memo(
       <>
         <Row gutter={[24, 0]}>
           <Col xs={18} md={12} lg={21}>
-            <Typography.Title
-              className="title border-b"
-              level={4}
-              color="#1B1B1B"
-            >
+            <Typography.Title className="title border-b" level={4} color="#1B1B1B">
               {t("auth_groups.title")}
             </Typography.Title>
           </Col>
@@ -44,10 +40,9 @@ export const AuthorizationsGroupRoles = memo(
         <Row gutter={[24, 0]}>
           <Col xs={18} md={12} lg={21}>
             <List>
-              {roleGroups?.map((group) => (
+              {roleGroups?.map(group => (
                 <List.Item
-                  className={`list-item ${roleGroupActive === group.id ? "active" : ""
-                    }`}
+                  className={`list-item ${roleGroupActive === group.id ? "active" : ""}`}
                   key={group.name}
                   onClick={() => handleSelect(group.id)}
                 >
@@ -58,11 +53,7 @@ export const AuthorizationsGroupRoles = memo(
           </Col>
           <ActionAuthorize roleNames={[CREATE_GROUP]}>
             <Col xs={6} md={12} lg={3}>
-              <Button
-                className="add-btn"
-                type="primary"
-                onClick={navigateToCreate}
-              >
+              <Button className="add-btn" type="primary" onClick={navigateToCreate}>
                 <PlusIcon />
               </Button>
             </Col>

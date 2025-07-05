@@ -18,7 +18,7 @@ export interface IAccount {
   email: string;
   roles: IRole[];
   groups: IRoleGroup[];
-  isActive: boolean,
+  isActive: boolean;
 }
 
 export interface IAccountFilter {

@@ -9,13 +9,7 @@ interface IProps {
 }
 
 export const ActionAuthorize = memo(({ roleNames = [], children }: IProps) => {
-  const authRoles = useSelector<IRootState>(
-    (state) => state.auth.roles
-  ) as IRole[];
+  const authRoles = useSelector<IRootState>(state => state.auth.roles) as IRole[];
 
-  return !roleNames.every((name) =>
-    authRoles.find((x) => x.name === name)
-  ) ? null : (
-    <>{children}</>
-  );
+  return !roleNames.every(name => authRoles.find(x => x.name === name)) ? null : <>{children}</>;
 });

@@ -15,7 +15,7 @@ export const REPORT_TYPES = [
     value: REPORT_TYPE_FAILED,
   },
 ];
-export const REPORT_TYPE_VALUES = REPORT_TYPES.map((x) => x.value);
+export const REPORT_TYPE_VALUES = REPORT_TYPES.map(x => x.value);
 
 export const CHART_FILTER_WEEK = "week";
 export const CHART_FILTER_MONTH = "month";
@@ -34,9 +34,7 @@ export const CHART_FILTERS = [
     value: CHART_FILTER_CUMULATIVE,
   },
 ] as const;
-export const CHART_FILTER_VALUES = [
-  ...CHART_FILTERS.map((x) => x.value),
-] as const;
+export const CHART_FILTER_VALUES = [...CHART_FILTERS.map(x => x.value)] as const;
 
 export const EXPORT_FILE_NAME = "Báo cáo giao dịch tài chính.xlsx";
 export const EXPORT_FILE_NAME_STATE = "Báo cáo ngân hàng nhà nước.xlsx";

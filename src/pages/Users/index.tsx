@@ -1,4 +1,4 @@
-import { Card, Col, Empty, Radio, Row, Table } from "antd"
+import { Card, Col, Empty, Radio, Row, Table } from "antd";
 import { useTranslation } from "react-i18next";
 
 const Users = () => {
@@ -14,7 +14,7 @@ const Users = () => {
               title="User management"
               extra={
                 <>
-                  <Radio.Group onChange={() => { }} defaultValue="a">
+                  <Radio.Group onChange={() => {}} defaultValue="a">
                     <Radio.Button value="a">All</Radio.Button>
                     <Radio.Button value="b">ONLINE</Radio.Button>
                   </Radio.Group>
@@ -50,7 +50,7 @@ const Users = () => {
                   dataSource={[]}
                   pagination={false}
                   locale={{
-                    emptyText: <Empty description="No Data" ></Empty>,
+                    emptyText: <Empty description="No Data"></Empty>,
                   }}
                   className="ant-border-space"
                 />
@@ -60,6 +60,6 @@ const Users = () => {
         </Row>
       </div>
     </>
-  )
-}
-export default Users
+  );
+};
+export default Users;

@@ -1,8 +1,8 @@
-import * as React from 'react';
+import * as React from "react";
 
 import NavCollapse from "./../NavCollapse";
 import NavItem from "./../NavItem";
-import { MenuItemType } from '../../../../routes/menu-item';
+import { MenuItemType } from "../../../../routes/menu-item";
 interface NavGroupProps {
   group: MenuItemType;
   layout: string;

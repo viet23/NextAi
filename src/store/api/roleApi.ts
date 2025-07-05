@@ -1,12 +1,8 @@
 import { api } from "./base";
-import {
-  IRole,
-  IRoleGroup,
-  IRoleGroupCreateForm,
-} from "src/interfaces/roles.interface";
+import { IRole, IRoleGroup, IRoleGroupCreateForm } from "src/interfaces/roles.interface";
 
 const RoleApi = api.injectEndpoints({
-  endpoints: (build) => ({
+  endpoints: build => ({
     getRoles: build.query<IRole[], any>({
       query: () => ({
         url: "/api/v1/roles",
@@ -20,16 +16,13 @@ const RoleApi = api.injectEndpoints({
       }),
     }),
     getRoleGroupDetail: build.query<IRoleGroup, string>({
-      query: (roleGroupId) => ({
+      query: roleGroupId => ({
         url: `/api/v1/roles/group/${roleGroupId}`,
         method: "GET",
       }),
     }),
-    createOrUpdateRoleGroup: build.mutation<
-      IRoleGroup,
-      IRoleGroupCreateForm | IRoleGroup
-    >({
-      query: (body) => ({
+    createOrUpdateRoleGroup: build.mutation<IRoleGroup, IRoleGroupCreateForm | IRoleGroup>({
+      query: body => ({
         url: "/api/v1/roles/group",
         method: "POST",
         body,

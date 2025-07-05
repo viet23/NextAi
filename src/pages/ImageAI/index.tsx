@@ -8,13 +8,14 @@ const Image = () => {
   const { t, i18n } = useTranslation();
 
   const toggleLanguage = () => {
-    const newLang = i18n.language === 'vi' ? 'en' : 'vi';
+    const newLang = i18n.language === "vi" ? "en" : "vi";
     i18n.changeLanguage(newLang);
   };
 
-  const currentFlag = i18n.language === 'vi'
-    ? '/VN.png' // icon cờ Việt Nam
-    : '/EN.png'; // icon cờ Anh
+  const currentFlag =
+    i18n.language === "vi"
+      ? "/VN.png" // icon cờ Việt Nam
+      : "/EN.png"; // icon cờ Anh
 
   useEffect(() => {
     // Optional logic when component mounts
@@ -38,7 +39,7 @@ const Image = () => {
       </div>
 
       <ImageAI />
-    </PageTitleHOC >
+    </PageTitleHOC>
   );
 };
 

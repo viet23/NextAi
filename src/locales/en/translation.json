@@ -1,253 +1,253 @@
 {
-    "common": {
-        "all": "All",
-        "save": "Save"
-    },
-    "home": {
-        "title": "Facebook Page Analysis"
-    },
-    "facebook_analysis": {
-        "enter_page_link": "Enter the Facebook Page link",
-        "button_analyze": "Page Analysis & Channel Development Suggestions",
-        "section_page_analysis": "Page Analysis",
-        "section_channel_plan": "Suggested Facebook Page Channel",
-        "general_info": "GENERAL INFORMATION",
-        "products_services": "PRODUCTS / SERVICES",
-        "customer_engagement": "CUSTOMER INTERACTION",
-        "strategy": "COMMUNICATIONS STRATEGY"
-    },
-    "dashboard": {
-        "title": "AI ADS",
-        "posts": "Posts",
-        "post_list": "Post list",
-        "no": "No.",
-        "media": "Media",
-        "caption": "Caption",
-        "action": "Action",
-        "ads_button": "Advertisement",
-        "created_time": "Created time",
-        "reach": "Reach",
-        "react": "React",
-        "comment": "Comment",
-        "share": "Share",
-        "ads": "AI ADS",
-        "ads_new": "AI ADS NEW",
-        "chart": {
-            "x_axis": "Month",
-            "y_axis": "Post count"
-        }
-    },
-    "image": {
-        "title": "AI Image Generator",
-        "describe_prompt": "Describe your image",
-        "caption_placeholder": "Caption",
-        "generate_image": "Generate Image",
-        "generate_caption": "Generate Caption",
-        "enter_description": "Enter Image content description...",
-        "upload_image": "Upload product image",
-        "post_facebook": "Post Facebook",
-        "enter_prompt": "Please enter a prompt.",
-        "generate_error": "Image generation error. Your budget may be out. Contact Admin.",
-        "points": "points",
-        "suggestion": "Suggestion",
-        "auto_post_setting": "Set up auto post Facebook page"
-    },
-    "media_ls": {
-        "title": "List of AI videos",
-        "card_title": "AI MEDIA LIST",
-        "empty": "No Data",
-        "video": {
-            "unsupported": "Browser does not support video."
-        },
-        "table": {
-            "no": "No",
-            "media": "Media",
-            "caption": "Caption",
-            "actions": "Actions",
-            "tooltip_detail": "See details"
-        },
-        "drawer": {
-            "title_detail": "Media Details",
-            "title_new": "New Media"
-        }
-    },
-    "video": {
-        "title": "AI Video Generator",
-        "duration_label": "Video duration",
-        "generate_script": "Generate Script",
-        "seconds": "{{count}} seconds",
-        "scene_description": "Scene {{index}} description",
-        "upload_image": "Upload Image",
-        "generate_scene": "Generate Scene {{index}}",
-        "generate_all": "Generate All",
-        "merge_selected": "Merge Selected",
-        "choose_music": "Choose music",
-        "music_pairing": "🎬 Music pairing",
-        "selected_music": "🎵 {{name}}",
-        "no_video": "No videos yet",
-        "enter_description": "Enter video content description...",
-        "generate_caption_btn": "Generate Caption",
-        "caption_result": "The caption content will appear here...",
-        "post_facebook": "Post Facebook",
-        "auto_post_setting": "Set up auto post Facebook page",
-        "script_modal_title": "Generate Video Script",
-        "script_prompt_placeholder": "Example: Give me 3 video scenes promoting a hotpot restaurant...",
-        "generate": "Generate",
-        "cancel": "Cancel",
-        "choose_music_title": "Choose background music",
-        "choose_music_genre": "Choose music genre",
-        "confirm": "Confirm",
-        "track": "Track {{id}}",
-        "generate_caption": "Generate Caption",
-        "caption_placeholder": "The caption content will appear here...",
-        "points": "points",
-        "info_title": "Video Information",
-        "created_date": "Video Creation Date",
-        "caption": "Caption",
-        "not_supported": "Your browser does not support video.",
-        "no_media": "No media available",
-        "scene_count_label": "Video duration",
-        "scene_count_placeholder": "Select video duration (5–60)",
-        "scenes": "seconds",
-        "scenesGpt": "scenes",
-        "product_name_label": "Product name",
-        "product_name_placeholder": "Enter product name",
-        "product_description_label": "Product description",
-        "product_description_placeholder": "Enter product description",
-        "product_surrounding_label": "Surrounding objects",
-        "product_surrounding_placeholder": "Enter objects around the product",
-        "special_effects_label": "Special effects",
-        "special_effects_placeholder": "Enter desired effects (spin, drop, glow...)",
-        "generate_instruction": "Please create for me",
-        "about_product": "About the product",
-        "description": "Description",
-        "around": "Surrounding the product is",
-        "effects": "Effects",
-        "required_fields_warning": "Please fill in all required fields."
-    },
-    "signin": {
-        "title": "Sign In"
-    },
-    "vitual_accounts": {
-        "form_search": {
-            "title": "Search",
-            "date_ranger": "From - To",
-            "va_account_number": "VA Account Number",
-            "bank": "Bank",
-            "status": "Status",
-            "button": {
-                "reset": "Reset",
-                "search": "Search",
-                "create_account": "Create New Account"
-            }
-        },
-        "list": {
-            "title": "VA Account List",
-            "table": {
-                "columns": {
-                    "va_account_number": "VA Account Number",
-                    "va_account_name": "VA Account Name",
-                    "status": "Status",
-                    "va_account_bank": "Bank",
-                    "bank": "Bank",
-                    "created_at": "Created At",
-                    "updated_by": "Updated By",
-                    "detail": "View Detail"
-                }
-            }
-        },
-        "detail": {
-            "title": "VA Account Detail",
-            "table": {
-                "columns": {
-                    "va_trans_code": "Transaction Code"
-                }
-            }
-        },
-        "create": {
-            "modal_otp": {
-                "title": "Do you want to request a VA account change?",
-                "description": "A verification code has been sent to {{email}}. Please check your email and enter the 6-digit code to continue.",
-                "cancel_text": "Exit",
-                "button": {
-                    "cancel": "Cancel",
-                    "confirm": "Confirm"
-                }
-            }
-        }
-    },
-    "menu": {
-        "facebook_analysis": "AI Facebook Analysis",
-        "image_generation": "AI Image Generation",
-        "video_generation": "AI Video Generation",
-        "media_list": "Media List",
-        "ads_dashboard": "AI ADS",
-        "accounts": "Accounts",
-        "user_account": "User Account",
-        "user_authorization": "User Authorization"
-    },
-    "accounts": {
-        "page_title": "List of accounts",
-        "user_list": "List of user accounts",
-        "search_placeholder": "Search",
-        "status_placeholder": "Account status",
-        "add_button": "Add new",
-        "edit": "Edit",
-        "no_data": "No Data",
-        "status": {
-            "active": "Active",
-            "inactive": "Inactive"
-        },
-        "columns": {
-            "no": "NO",
-            "username": "Login name",
-            "full_name": "Full Name",
-            "created": "Creation date",
-            "status": "Status",
-            "actions": "Actions"
-        }
-    },
-    "auth_groups": {
-        "title": "Set up user rights groups"
-    },
-    "roles": {
-        "title": "Set permissions",
-        "no": "NO",
-        "permission_name": "Permission name",
-        "description": "Describe",
-        "access": "Access",
-        "empty": "Please select permission group"
-    },
-    "ads": {
-        "create_ads": "Create Ads",
-        "campaign_name": "Campaign Name",
-        "campaign_name_placeholder": "Enter campaign name",
-        "ads_goal": "Ads Goal",
-        "goal": {
-            "message": "Get more message",
-            "engagement": "Get more engagement",
-            "leads": "Get more leads",
-            "traffic": "Get more website visitor"
-        },
-        "form_language": "Form language for collecting customer information",
-        "website_link": "Website link",
-        "website_link_placeholder": "Enter website link...",
-        "audience": "Audience",
-        "ai_targeting": "AI targeting",
-        "ai_targeting_note": "AI automatically shows this ad to people who are interested in your content",
-        "gender": "Gender",
-        "gender_all": "All",
-        "gender_male": "Men",
-        "gender_female": "Women",
-        "age": "Age",
-        "detailed_targeting": "Detailed Targeting",
-        "detailed_targeting_placeholder": "Select targeting group",
-        "duration": "Duration",
-        "daily_budget": "Daily Budget ($)",
-        "publish": "Publish",
-        "success": "Ad created successfully!",
-        "error_empty_website": "Please enter website link when selecting goal as 'Get more website visitors'",
-        "error_generic": "Failed to create ad.",
-        "preview": "Preview"
+  "common": {
+    "all": "All",
+    "save": "Save"
+  },
+  "home": {
+    "title": "Facebook Page Analysis"
+  },
+  "facebook_analysis": {
+    "enter_page_link": "Enter the Facebook Page link",
+    "button_analyze": "Page Analysis & Channel Development Suggestions",
+    "section_page_analysis": "Page Analysis",
+    "section_channel_plan": "Suggested Facebook Page Channel",
+    "general_info": "GENERAL INFORMATION",
+    "products_services": "PRODUCTS / SERVICES",
+    "customer_engagement": "CUSTOMER INTERACTION",
+    "strategy": "COMMUNICATIONS STRATEGY"
+  },
+  "dashboard": {
+    "title": "AI ADS",
+    "posts": "Posts",
+    "post_list": "Post list",
+    "no": "No.",
+    "media": "Media",
+    "caption": "Caption",
+    "action": "Action",
+    "ads_button": "Advertisement",
+    "created_time": "Created time",
+    "reach": "Reach",
+    "react": "React",
+    "comment": "Comment",
+    "share": "Share",
+    "ads": "AI ADS",
+    "ads_new": "AI ADS NEW",
+    "chart": {
+      "x_axis": "Month",
+      "y_axis": "Post count"
     }
+  },
+  "image": {
+    "title": "AI Image Generator",
+    "describe_prompt": "Describe your image",
+    "caption_placeholder": "Caption",
+    "generate_image": "Generate Image",
+    "generate_caption": "Generate Caption",
+    "enter_description": "Enter Image content description...",
+    "upload_image": "Upload product image",
+    "post_facebook": "Post Facebook",
+    "enter_prompt": "Please enter a prompt.",
+    "generate_error": "Image generation error. Your budget may be out. Contact Admin.",
+    "points": "points",
+    "suggestion": "Suggestion",
+    "auto_post_setting": "Set up auto post Facebook page"
+  },
+  "media_ls": {
+    "title": "List of AI videos",
+    "card_title": "AI MEDIA LIST",
+    "empty": "No Data",
+    "video": {
+      "unsupported": "Browser does not support video."
+    },
+    "table": {
+      "no": "No",
+      "media": "Media",
+      "caption": "Caption",
+      "actions": "Actions",
+      "tooltip_detail": "See details"
+    },
+    "drawer": {
+      "title_detail": "Media Details",
+      "title_new": "New Media"
+    }
+  },
+  "video": {
+    "title": "AI Video Generator",
+    "duration_label": "Video duration",
+    "generate_script": "Generate Script",
+    "seconds": "{{count}} seconds",
+    "scene_description": "Scene {{index}} description",
+    "upload_image": "Upload Image",
+    "generate_scene": "Generate Scene {{index}}",
+    "generate_all": "Generate All",
+    "merge_selected": "Merge Selected",
+    "choose_music": "Choose music",
+    "music_pairing": "🎬 Music pairing",
+    "selected_music": "🎵 {{name}}",
+    "no_video": "No videos yet",
+    "enter_description": "Enter video content description...",
+    "generate_caption_btn": "Generate Caption",
+    "caption_result": "The caption content will appear here...",
+    "post_facebook": "Post Facebook",
+    "auto_post_setting": "Set up auto post Facebook page",
+    "script_modal_title": "Generate Video Script",
+    "script_prompt_placeholder": "Example: Give me 3 video scenes promoting a hotpot restaurant...",
+    "generate": "Generate",
+    "cancel": "Cancel",
+    "choose_music_title": "Choose background music",
+    "choose_music_genre": "Choose music genre",
+    "confirm": "Confirm",
+    "track": "Track {{id}}",
+    "generate_caption": "Generate Caption",
+    "caption_placeholder": "The caption content will appear here...",
+    "points": "points",
+    "info_title": "Video Information",
+    "created_date": "Video Creation Date",
+    "caption": "Caption",
+    "not_supported": "Your browser does not support video.",
+    "no_media": "No media available",
+    "scene_count_label": "Video duration",
+    "scene_count_placeholder": "Select video duration (5–60)",
+    "scenes": "seconds",
+    "scenesGpt": "scenes",
+    "product_name_label": "Product name",
+    "product_name_placeholder": "Enter product name",
+    "product_description_label": "Product description",
+    "product_description_placeholder": "Enter product description",
+    "product_surrounding_label": "Surrounding objects",
+    "product_surrounding_placeholder": "Enter objects around the product",
+    "special_effects_label": "Special effects",
+    "special_effects_placeholder": "Enter desired effects (spin, drop, glow...)",
+    "generate_instruction": "Please create for me",
+    "about_product": "About the product",
+    "description": "Description",
+    "around": "Surrounding the product is",
+    "effects": "Effects",
+    "required_fields_warning": "Please fill in all required fields."
+  },
+  "signin": {
+    "title": "Sign In"
+  },
+  "vitual_accounts": {
+    "form_search": {
+      "title": "Search",
+      "date_ranger": "From - To",
+      "va_account_number": "VA Account Number",
+      "bank": "Bank",
+      "status": "Status",
+      "button": {
+        "reset": "Reset",
+        "search": "Search",
+        "create_account": "Create New Account"
+      }
+    },
+    "list": {
+      "title": "VA Account List",
+      "table": {
+        "columns": {
+          "va_account_number": "VA Account Number",
+          "va_account_name": "VA Account Name",
+          "status": "Status",
+          "va_account_bank": "Bank",
+          "bank": "Bank",
+          "created_at": "Created At",
+          "updated_by": "Updated By",
+          "detail": "View Detail"
+        }
+      }
+    },
+    "detail": {
+      "title": "VA Account Detail",
+      "table": {
+        "columns": {
+          "va_trans_code": "Transaction Code"
+        }
+      }
+    },
+    "create": {
+      "modal_otp": {
+        "title": "Do you want to request a VA account change?",
+        "description": "A verification code has been sent to {{email}}. Please check your email and enter the 6-digit code to continue.",
+        "cancel_text": "Exit",
+        "button": {
+          "cancel": "Cancel",
+          "confirm": "Confirm"
+        }
+      }
+    }
+  },
+  "menu": {
+    "facebook_analysis": "AI Facebook Analysis",
+    "image_generation": "AI Image Generation",
+    "video_generation": "AI Video Generation",
+    "media_list": "Media List",
+    "ads_dashboard": "AI ADS",
+    "accounts": "Accounts",
+    "user_account": "User Account",
+    "user_authorization": "User Authorization"
+  },
+  "accounts": {
+    "page_title": "List of accounts",
+    "user_list": "List of user accounts",
+    "search_placeholder": "Search",
+    "status_placeholder": "Account status",
+    "add_button": "Add new",
+    "edit": "Edit",
+    "no_data": "No Data",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "columns": {
+      "no": "NO",
+      "username": "Login name",
+      "full_name": "Full Name",
+      "created": "Creation date",
+      "status": "Status",
+      "actions": "Actions"
+    }
+  },
+  "auth_groups": {
+    "title": "Set up user rights groups"
+  },
+  "roles": {
+    "title": "Set permissions",
+    "no": "NO",
+    "permission_name": "Permission name",
+    "description": "Describe",
+    "access": "Access",
+    "empty": "Please select permission group"
+  },
+  "ads": {
+    "create_ads": "Create Ads",
+    "campaign_name": "Campaign Name",
+    "campaign_name_placeholder": "Enter campaign name",
+    "ads_goal": "Ads Goal",
+    "goal": {
+      "message": "Get more message",
+      "engagement": "Get more engagement",
+      "leads": "Get more leads",
+      "traffic": "Get more website visitor"
+    },
+    "form_language": "Form language for collecting customer information",
+    "website_link": "Website link",
+    "website_link_placeholder": "Enter website link...",
+    "audience": "Audience",
+    "ai_targeting": "AI targeting",
+    "ai_targeting_note": "AI automatically shows this ad to people who are interested in your content",
+    "gender": "Gender",
+    "gender_all": "All",
+    "gender_male": "Men",
+    "gender_female": "Women",
+    "age": "Age",
+    "detailed_targeting": "Detailed Targeting",
+    "detailed_targeting_placeholder": "Select targeting group",
+    "duration": "Duration",
+    "daily_budget": "Daily Budget ($)",
+    "publish": "Publish",
+    "success": "Ad created successfully!",
+    "error_empty_website": "Please enter website link when selecting goal as 'Get more website visitors'",
+    "error_generic": "Failed to create ad.",
+    "preview": "Preview"
+  }
 }

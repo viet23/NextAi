@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 interface IOutsideClickProps extends React.HTMLAttributes<Element> {
   collapseMenu?: any;
   windowWidth?: any;
@@ -39,4 +39,4 @@ class OutsideClick extends Component<IOutsideClickProps, {}> {
     );
   }
 }
-export default OutsideClick
+export default OutsideClick;

@@ -12,6 +12,6 @@ export const TIME_FILTER_TYPES = [
   { label: "Tuần", value: TIME_FILTER_TYPE_WEEK },
   { label: "Tháng", value: TIME_FILTER_TYPE_MONTH },
 ];
-export const TIME_FILTER_TYPE_VALUES = TIME_FILTER_TYPES.map((x) => x.value);
+export const TIME_FILTER_TYPE_VALUES = TIME_FILTER_TYPES.map(x => x.value);
 
 export const ZERO_VALUES = ["0", "0.00"];

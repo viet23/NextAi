@@ -21,8 +21,8 @@ export const AuthorizationsRolesTable = memo(
       (role: IRole) => {
         if (!rolesUpdate) return;
 
-        if (rolesUpdate.find((x) => x.id === role.id))
-          setRolesUpdate(rolesUpdate.filter((x) => x.id !== role.id));
+        if (rolesUpdate.find(x => x.id === role.id))
+          setRolesUpdate(rolesUpdate.filter(x => x.id !== role.id));
         else setRolesUpdate([...rolesUpdate, role]);
       },
       [rolesUpdate, setRolesUpdate]
@@ -54,7 +54,7 @@ export const AuthorizationsRolesTable = memo(
           width: 100,
           render: (value, record) => (
             <Checkbox
-              checked={!!rolesUpdate?.find((x) => x.id === value)}
+              checked={!!rolesUpdate?.find(x => x.id === value)}
               onChange={() => handleChangeRole(record)}
             />
           ),
@@ -63,11 +63,7 @@ export const AuthorizationsRolesTable = memo(
       [handleChangeRole, rolesUpdate, t]
     );
 
-
-    const dataSource = useMemo(
-      () => (!rolesUpdate || !roles ? [] : roles),
-      [roles, rolesUpdate]
-    );
+    const dataSource = useMemo(() => (!rolesUpdate || !roles ? [] : roles), [roles, rolesUpdate]);
 
     return (
       <>
@@ -76,15 +72,9 @@ export const AuthorizationsRolesTable = memo(
             {t("roles.title")}
           </Typography.Title>
           <ActionAuthorize roleNames={[CREATE_ROLE]}>
-            <Button
-              className="save-btn"
-              size="large"
-              type="primary"
-              onClick={handleSave}
-            >
+            <Button className="save-btn" size="large" type="primary" onClick={handleSave}>
               {t("common.save")}
             </Button>
-
           </ActionAuthorize>
         </Flex>
         <Table
@@ -95,7 +85,7 @@ export const AuthorizationsRolesTable = memo(
           dataSource={dataSource}
           pagination={false}
           locale={{
-            emptyText: <Empty description={t("roles.empty")} />
+            emptyText: <Empty description={t("roles.empty")} />,
           }}
           scroll={{ x: 600, y: 500 }}
         />

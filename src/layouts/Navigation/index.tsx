@@ -16,25 +16,23 @@ interface INavigationProps extends React.HTMLAttributes<Element> {
   onChangeLayout?: any;
   layoutType: string;
 }
-const Navigation:React.FC<INavigationProps> = (props) =>{
-  const {navbarCollapsed} = useSelector((state: IRootState) => state.app)
-  const scroll = () => {
-   
-  };
-  const [navClass, setNavClass] = useState<string[]>(["pcoded-navbar ", "x"])
-  const [navBarClass, setNavBarClass] = useState(["navbar-wrapper", "content-main"])
+const Navigation: React.FC<INavigationProps> = props => {
+  const { navbarCollapsed } = useSelector((state: IRootState) => state.app);
+  const scroll = () => {};
+  const [navClass, setNavClass] = useState<string[]>(["pcoded-navbar ", "x"]);
+  const [navBarClass, setNavBarClass] = useState(["navbar-wrapper", "content-main"]);
   useEffect(() => {
-    if(navbarCollapsed){
-      setNavClass([...navClass, 'navbar-collapsed'])
-    }else{
-      setNavClass((prev) => {
-        return prev.filter((i) => i != 'navbar-collapsed')
-      })
+    if (navbarCollapsed) {
+      setNavClass([...navClass, "navbar-collapsed"]);
+    } else {
+      setNavClass(prev => {
+        return prev.filter(i => i != "navbar-collapsed");
+      });
     }
-  }, [navbarCollapsed])
-  
+  }, [navbarCollapsed]);
+
   useEffect(() => {
-    setNavClass( [...navClass, props.layoutType])
+    setNavClass([...navClass, props.layoutType]);
     if (props.layout === "horizontal") {
       setNavClass([...navClass, "theme-horizontal"]);
     } else {
@@ -48,14 +46,14 @@ const Navigation:React.FC<INavigationProps> = (props) =>{
         window.removeEventListener("scroll", scroll, false);
       }
     }
-  }, [props.layoutType, props.layout])
+  }, [props.layoutType, props.layout]);
   useEffect(() => {
     if (props.fullWidthLayout) {
       setNavBarClass([...navBarClass, "container-fluid"]);
     } else {
       setNavBarClass([...navBarClass, "container"]);
     }
-  }, [props.fullWidthLayout])
+  }, [props.fullWidthLayout]);
   const navContent = () => {
     return props.windowWidth < 992 ? (
       <OutsideClick>
@@ -63,16 +61,16 @@ const Navigation:React.FC<INavigationProps> = (props) =>{
           <NavContent navigation={navigation.items} />
         </div>
       </OutsideClick>
-    ) :  (
+    ) : (
       <div className={navBarClass.join(" ")}>
         <NavContent navigation={navigation.items} />
       </div>
-    )
-  }
+    );
+  };
   return (
     <>
       <nav className={navClass.join(" ")}>{navContent()}</nav>
     </>
   );
-}
-export default Navigation
+};
+export default Navigation;

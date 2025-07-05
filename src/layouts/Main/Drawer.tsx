@@ -1,21 +1,11 @@
-import {
-  CloseOutlined,
-  DownOutlined,
-  LogoutOutlined,
-  RightOutlined,
-} from "@ant-design/icons";
+import { CloseOutlined, DownOutlined, LogoutOutlined, RightOutlined } from "@ant-design/icons";
 import Logo from "src/assets/images/next-logo.jpg";
 import { Avatar, Drawer as AntdDrawer, Flex, Menu } from "antd";
 import { MenuInfo } from "rc-menu/lib/interface";
 import { Dispatch, SetStateAction } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  setCurrentUser,
-  setIsLogin,
-  setRefreshToken,
-  setToken,
-} from "src/store/slice/auth.slice";
+import { setCurrentUser, setIsLogin, setRefreshToken, setToken } from "src/store/slice/auth.slice";
 import { IMenuItem } from "src/routes/menu-item";
 
 interface IProps {
@@ -35,7 +25,7 @@ export const Drawer = ({
 }: IProps) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user }: any = useSelector<any>((state) => state.auth)
+  const { user }: any = useSelector<any>(state => state.auth);
   const handleClose = () => {
     setOpenDrawer(false);
   };
@@ -76,9 +66,7 @@ export const Drawer = ({
         inlineCollapsed={false}
         defaultSelectedKeys={defaultSelectedKeys}
         defaultOpenKeys={defaultOpenKeys}
-        expandIcon={({ isOpen }) =>
-          isOpen ? <DownOutlined /> : <RightOutlined />
-        }
+        expandIcon={({ isOpen }) => (isOpen ? <DownOutlined /> : <RightOutlined />)}
         items={menuItemsAuthorize}
         onClick={handleClick}
       />

@@ -119,9 +119,7 @@ table.dataTable thead .sorting_desc:after {
   }
 }
 
-.pcoded-navbar.menu-light.theme-horizontal
-  .pcoded-inner-navbar
-  > li.pcoded-hasmenu.active:before,
+.pcoded-navbar.menu-light.theme-horizontal .pcoded-inner-navbar > li.pcoded-hasmenu.active:before,
 .pcoded-navbar.menu-light.theme-horizontal
   .pcoded-inner-navbar
   > li.pcoded-hasmenu.pcoded-trigger:before {

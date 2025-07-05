@@ -1,12 +1,5 @@
 import "./Main.scss";
-import {
-  Suspense,
-  useCallback,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { Suspense, useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { Layout, Skeleton } from "antd";
@@ -61,18 +54,12 @@ export const MainLayout = () => {
     return [];
   }, [findOpenKeys, location.pathname, menuItems]);
 
-  const defaultSelectedKeys = useMemo(() => [location.pathname], [
-    location.pathname,
-  ]);
+  const defaultSelectedKeys = useMemo(() => [location.pathname], [location.pathname]);
 
   const roles = useMemo(() => {
     dispatch(setGroups(data || []));
     return data
-      ? Array.from(
-          new Map(
-            data.flatMap((user) => user.roles).map((role) => [role.id, role])
-          ).values()
-        )
+      ? Array.from(new Map(data.flatMap(user => user.roles).map(role => [role.id, role])).values())
       : [];
   }, [data]);
 
@@ -82,9 +69,7 @@ export const MainLayout = () => {
         const { allRoleRequired: _allRoleRequired, ...otherProps } = item;
         const operator = item.allRoleRequired ? "every" : "some";
         return !item.rolenames ||
-          item.rolenames?.[operator]((roleName) =>
-            roles.find((x) => x.name === roleName)
-          )
+          item.rolenames?.[operator](roleName => roles.find(x => x.name === roleName))
           ? otherProps
           : null;
       }

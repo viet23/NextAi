@@ -8,16 +8,16 @@ import Gender from "../Gender";
 import { UploadOutlined } from "@ant-design/icons";
 interface DetailCustomerProps {
   id: string | null;
-  onRefetch: () => {}
+  onRefetch: () => {};
 }
 const DetailCustomer: React.FC<DetailCustomerProps> = ({ id, onRefetch }) => {
   const [detailCustomer, { data }] = useLazyDetailCustomerQuery();
-  const [updateNotBlacklist, {isSuccess}] = useUpdateNotBlacklistMutation()
+  const [updateNotBlacklist, { isSuccess }] = useUpdateNotBlacklistMutation();
   useEffect(() => {
-    if(isSuccess){
-      onRefetch()
+    if (isSuccess) {
+      onRefetch();
     }
-  }, [isSuccess])
+  }, [isSuccess]);
   useEffect(() => {
     if (id) {
       detailCustomer(id);
@@ -65,8 +65,16 @@ const DetailCustomer: React.FC<DetailCustomerProps> = ({ id, onRefetch }) => {
           />
           <Flex vertical align="flex-end">
             <Space.Compact>
-              <Popconfirm title="Xác nhận cập nhật" description="Bạn có muốn thay đổi thông tin của khách hàng" okText="Đồng ý" cancelText="Không đồng ý" onConfirm={() => updateNotBlacklist(id)}>
-                <Button type="primary" icon={<UploadOutlined />}>KH Không nằm trong danh sách truy nã</Button>
+              <Popconfirm
+                title="Xác nhận cập nhật"
+                description="Bạn có muốn thay đổi thông tin của khách hàng"
+                okText="Đồng ý"
+                cancelText="Không đồng ý"
+                onConfirm={() => updateNotBlacklist(id)}
+              >
+                <Button type="primary" icon={<UploadOutlined />}>
+                  KH Không nằm trong danh sách truy nã
+                </Button>
               </Popconfirm>
             </Space.Compact>
           </Flex>

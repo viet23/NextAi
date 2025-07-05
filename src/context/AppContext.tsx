@@ -29,19 +29,13 @@ const AppProvider: React.FC<any> = ({ children }) => {
   const [isAppLoading, setIsAppLoading] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
   const errors = useSelector((state: any) =>
-    Object.values(state?.api.mutations).filter(
-      (query: any) => query.status === "rejected"
-    )
+    Object.values(state?.api.mutations).filter((query: any) => query.status === "rejected")
   );
   const isLoading = useSelector(
     (state: any) =>
       state?.api &&
-      (Object.values(state.api.queries || {}).some(
-        (query: any) => query?.status === "pending"
-      ) ||
-        Object.values(state.api.mutations || {}).some(
-          (query: any) => query?.status === "pending"
-        ))
+      (Object.values(state.api.queries || {}).some((query: any) => query?.status === "pending") ||
+        Object.values(state.api.mutations || {}).some((query: any) => query?.status === "pending"))
   );
   useEffect(() => {
     if (errors.length > 0) {
@@ -52,19 +46,15 @@ const AppProvider: React.FC<any> = ({ children }) => {
   }, []);
   return (
     <>
-      <AppContext.Provider
-        value={{ user, setUser, openDrawer, setOpenDrawer, setIsAppLoading }}
-      >
+      <AppContext.Provider value={{ user, setUser, openDrawer, setOpenDrawer, setIsAppLoading }}>
         <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          sx={{ color: "#fff", zIndex: theme => theme.zIndex.drawer + 1 }}
           open={isLoading || isAppLoading}
         >
           <ToastContainer />
           <div className="wrap-loading">
             <img src={Logo} />
-            <Spin
-              indicator={<LoadingOutlined style={{ fontSize: 60 }} spin />}
-            />
+            <Spin indicator={<LoadingOutlined style={{ fontSize: 60 }} spin />} />
           </div>
         </Backdrop>
         {contextHolder}

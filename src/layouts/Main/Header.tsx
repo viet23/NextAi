@@ -7,12 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Header as AntdHeader } from "antd/es/layout/layout";
 import { useDispatch, useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
-import {
-  setCurrentUser,
-  setIsLogin,
-  setRefreshToken,
-  setToken,
-} from "src/store/slice/auth.slice";
+import { setCurrentUser, setIsLogin, setRefreshToken, setToken } from "src/store/slice/auth.slice";
 
 interface IProps {
   setOpenDrawer: Dispatch<SetStateAction<boolean>>;
@@ -23,7 +18,7 @@ export const Header = ({ setOpenDrawer }: IProps) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   // const [signOut] = useLazySignOutQuery();
-  const { user }: any = useSelector<any>((state) => state.auth.user)
+  const { user }: any = useSelector<any>(state => state.auth.user);
   const handleLogout = useCallback(async () => {
     // await signOut({});
 

@@ -37,10 +37,7 @@ import Gender from "src/components/Gender";
 import { PageTitleHOC } from "src/components/PageTitleHOC";
 import { useGetAsterikCallQuery, useLazyGetAsterikCallQuery } from "src/store/api/asterikApi";
 
-import {
-  useGetCustomersQuery,
-  useLazyExportExcelQuery,
-} from "src/store/api/customerApi";
+import { useGetCustomersQuery, useLazyExportExcelQuery } from "src/store/api/customerApi";
 
 const { RangePicker } = DatePicker;
 const Customers: React.FC<any> = () => {
@@ -78,7 +75,7 @@ const Customers: React.FC<any> = () => {
       icon: <UserOutlined />,
     },
   ]);
-  const [getAsterikCall,  {isSuccess} ] = useLazyGetAsterikCallQuery();
+  const [getAsterikCall, { isSuccess }] = useLazyGetAsterikCallQuery();
 
   const { data, refetch } = useGetCustomersQuery(filter);
   const [exportExcel] = useLazyExportExcelQuery();
@@ -120,9 +117,7 @@ const Customers: React.FC<any> = () => {
           break;
         }
         case "dateTime": {
-          const [startDate, endDate] = value.map((v: Dayjs) =>
-            v.format("YYYY-MM-DD")
-          );
+          const [startDate, endDate] = value.map((v: Dayjs) => v.format("YYYY-MM-DD"));
           acc["startDate"] = startDate;
           acc["endDate"] = endDate;
           break;
@@ -145,9 +140,7 @@ const Customers: React.FC<any> = () => {
     } else {
       setIsSuspect(true);
       setFilter((prev: any) => {
-        const where = prev?.where
-          ? { ...prev?.where, ...{ isSuspect: 1 } }
-          : { isSuspect: 1 };
+        const where = prev?.where ? { ...prev?.where, ...{ isSuspect: 1 } } : { isSuspect: 1 };
         return {
           ...prev,
           page: 1,
@@ -167,8 +160,8 @@ const Customers: React.FC<any> = () => {
   };
 
   const handleConfirmAsterikCall = async (phone: string) => {
-    getAsterikCall(phone)
-  }
+    getAsterikCall(phone);
+  };
 
   return (
     <PageTitleHOC title="Thông tin danh sách khách hàng">
@@ -196,20 +189,12 @@ const Customers: React.FC<any> = () => {
       </Row> */}
         <Row gutter={[24, 0]} style={{ marginBottom: 24 }}>
           <Col xs="24" xl={24}>
-            <Card
-              className=" tablespace mb-24"
-              title="Tìm kiếm"
-              style={{ padding: 20 }}
-            >
+            <Card className=" tablespace mb-24" title="Tìm kiếm" style={{ padding: 20 }}>
               <Form form={form} onFinish={handleOnFinish}>
                 <Row gutter={[24, 0]}>
                   <Col xl={8}>
                     <Form.Item name="fullName">
-                      <Input
-                        name="fullName"
-                        size="middle"
-                        placeholder="Tên khách hàng"
-                      />
+                      <Input name="fullName" size="middle" placeholder="Tên khách hàng" />
                     </Form.Item>
                   </Col>
                   <Col xl={8}>
@@ -219,11 +204,7 @@ const Customers: React.FC<any> = () => {
                   </Col>
                   <Col xl={8}>
                     <Form.Item name="phone">
-                      <Input
-                        name="phone"
-                        size="middle"
-                        placeholder="Số điện thoại"
-                      />
+                      <Input name="phone" size="middle" placeholder="Số điện thoại" />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -251,28 +232,19 @@ const Customers: React.FC<any> = () => {
                   <Col xl={8}>
                     <Form.Item>
                       <Space>
-                        <Button
-                          type="primary"
-                          htmlType="submit"
-                          icon={<SearchOutlined />}
-                        >
+                        <Button type="primary" htmlType="submit" icon={<SearchOutlined />}>
                           Tìm kiếm
                         </Button>
                         <Button
                           type="primary"
                           icon={<DownloadOutlined />}
                           onClick={() => {
-                            exportExcel(filter).then(async (response: any) => {
-                            });
+                            exportExcel(filter).then(async (response: any) => {});
                           }}
                         >
                           Tải tệp
                         </Button>
-                        <Button
-                          type="default"
-                          icon={<ReloadOutlined />}
-                          onClick={handleReset}
-                        >
+                        <Button type="default" icon={<ReloadOutlined />} onClick={handleReset}>
                           Làm mới
                         </Button>
                       </Space>
@@ -291,14 +263,9 @@ const Customers: React.FC<any> = () => {
               title="Quản lý khách hàng"
               extra={
                 <>
-                  <Radio.Group
-                    onChange={handleOnChangeRadio}
-                    defaultValue="all"
-                  >
+                  <Radio.Group onChange={handleOnChangeRadio} defaultValue="all">
                     <Radio.Button value="all">Tất cả</Radio.Button>
-                    <Radio.Button value="suspect">
-                      Danh sach khả nghi
-                    </Radio.Button>
+                    <Radio.Button value="suspect">Danh sach khả nghi</Radio.Button>
                   </Radio.Group>
                 </>
               }
@@ -325,15 +292,23 @@ const Customers: React.FC<any> = () => {
                     title: "Năm Sinh",
                     dataIndex: "dateOfBirth",
                     key: "dateOfBirth",
-                    render: (text) => dayjs(text).format("YYYY-MM-DD"),
+                    render: text => dayjs(text).format("YYYY-MM-DD"),
                   },
                   {
                     title: "SĐT",
                     key: "phoneNo",
                     dataIndex: "phoneNo",
-                    render: (phone) => (
-                      <Popconfirm title="Xác nhận cuộc gọi" description="Gọi đến số điện thoại của khách hàng" onConfirm={() => handleConfirmAsterikCall(phone)} okText="Gọi" cancelText="Hủy">
-                        <a href="#" onClick={(e) => e.preventDefault()}>{phone}</a>
+                    render: phone => (
+                      <Popconfirm
+                        title="Xác nhận cuộc gọi"
+                        description="Gọi đến số điện thoại của khách hàng"
+                        onConfirm={() => handleConfirmAsterikCall(phone)}
+                        okText="Gọi"
+                        cancelText="Hủy"
+                      >
+                        <a href="#" onClick={e => e.preventDefault()}>
+                          {phone}
+                        </a>
                       </Popconfirm>
                     ),
                   },
@@ -346,13 +321,13 @@ const Customers: React.FC<any> = () => {
                     title: "Ngày đăng ký",
                     dataIndex: "createdDate",
                     key: "createdDate",
-                    render: (text) => dayjs(text).format("YYYY-MM-DD HH:mm:ss"),
+                    render: text => dayjs(text).format("YYYY-MM-DD HH:mm:ss"),
                   },
                   {
                     title: "Giới Tính",
                     key: "gender",
                     dataIndex: "gender",
-                    render: (text) => <Gender gender={text} />,
+                    render: text => <Gender gender={text} />,
                   },
                   {
                     title: "Hành động",
@@ -361,12 +336,7 @@ const Customers: React.FC<any> = () => {
                     fixed: "right",
                     width: 130,
                     render: (text, record, index) => (
-                      <Flex
-                        gap="small"
-                        vertical
-                        justify="center"
-                        align="center"
-                      >
+                      <Flex gap="small" vertical justify="center" align="center">
                         <Link onClick={() => handleOnClickDetail(record)}>
                           <Tooltip title="Xem chi tiết khách hàng">
                             <EyeOutlined />
@@ -376,9 +346,7 @@ const Customers: React.FC<any> = () => {
                     ),
                   },
                 ]}
-                rowClassName={(record: any, index) =>
-                  record?.isSuspect ? "suspect-row" : ""
-                }
+                rowClassName={(record: any, index) => (record?.isSuspect ? "suspect-row" : "")}
                 rowKey="id"
                 dataSource={data?.data || []}
                 pagination={false}

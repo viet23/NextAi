@@ -7,17 +7,18 @@ const Home = () => {
   const { t, i18n } = useTranslation();
 
   const toggleLanguage = () => {
-    const newLang = i18n.language === 'vi' ? 'en' : 'vi';
+    const newLang = i18n.language === "vi" ? "en" : "vi";
     i18n.changeLanguage(newLang);
   };
 
- const currentFlag = i18n.language === 'vi'
-    ? '/VN.png' // icon cờ Việt Nam
-    : '/EN.png'; // icon cờ Anh
+  const currentFlag =
+    i18n.language === "vi"
+      ? "/VN.png" // icon cờ Việt Nam
+      : "/EN.png"; // icon cờ Anh
 
   return (
     <PageTitleHOC title={`${t("home.title")}`}>
-     <div style={{ textAlign: "right", marginBottom: 12 }}>
+      <div style={{ textAlign: "right", marginBottom: 12 }}>
         <Button
           onClick={toggleLanguage}
           shape="circle"
@@ -30,7 +31,6 @@ const Home = () => {
           />
         </Button>
       </div>
-
 
       <FacebookAnalysis />
     </PageTitleHOC>

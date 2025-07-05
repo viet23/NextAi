@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 import PerfectScrollbar from "react-perfect-scrollbar";
 
 import NavGroup from "./NavGroup";
@@ -10,17 +10,17 @@ interface INavContentProps extends React.HTMLAttributes<Element> {
   navigation?: any;
 }
 type NavContentState = {
-  scrollWidth?: number,
-  prevDisable?: boolean,
-  nextDisable?: boolean
+  scrollWidth?: number;
+  prevDisable?: boolean;
+  nextDisable?: boolean;
 };
 class NavContent extends Component<INavContentProps, NavContentState> {
   state = {
     scrollWidth: 0,
     prevDisable: true,
-    nextDisable: false
+    nextDisable: false,
   };
-  
+
   scrollPrevHandler = () => {
     const wrapperWidth = document.getElementById("sidenav-wrapper")?.clientWidth || 0;
     let scrollWidth = this.state.scrollWidth - wrapperWidth;
@@ -39,7 +39,7 @@ class NavContent extends Component<INavContentProps, NavContentState> {
       this.setState({
         scrollWidth: scrollWidth,
         prevDisable: false,
-        nextDisable: true
+        nextDisable: true,
       });
     } else {
       this.setState({ scrollWidth: scrollWidth, prevDisable: false });
@@ -49,19 +49,17 @@ class NavContent extends Component<INavContentProps, NavContentState> {
     const navItems = this.props.navigation.map((item: any) => {
       switch (item.type) {
         case "group":
-          return (
-            <NavGroup layout={this.props.layout} key={item.id} group={item} />
-          );
+          return <NavGroup layout={this.props.layout} key={item.id} group={item} />;
         default:
           return false;
       }
     });
-    let scrollStyle: { marginLeft?: string; marginRight?: string }  = {
-      marginRight: "-" + this.state.scrollWidth + "px"
+    let scrollStyle: { marginLeft?: string; marginRight?: string } = {
+      marginRight: "-" + this.state.scrollWidth + "px",
     };
     if (this.props.layout === "horizontal") {
       scrollStyle = {
-        marginLeft: "-" + this.state.scrollWidth + "px"
+        marginLeft: "-" + this.state.scrollWidth + "px",
       };
     }
     let mainContent: React.ReactNode = "";
@@ -76,11 +74,7 @@ class NavContent extends Component<INavContentProps, NavContentState> {
       }
       mainContent = (
         <div className="navbar-content sidenav-horizontal" id="layout-sidenav">
-          <a
-            href={"#"}
-            className={prevClass.join(" ")}
-            onClick={this.scrollPrevHandler}
-          >
+          <a href={"#"} className={prevClass.join(" ")} onClick={this.scrollPrevHandler}>
             <span />
           </a>
           <div id="sidenav-wrapper" className="sidenav-horizontal-wrapper">
@@ -93,11 +87,7 @@ class NavContent extends Component<INavContentProps, NavContentState> {
               {navItems}
             </ul>
           </div>
-          <a
-            href={"#"}
-            className={nextClass.join(" ")}
-            onClick={this.scrollNextHandler}
-          >
+          <a href={"#"} className={nextClass.join(" ")} onClick={this.scrollNextHandler}>
             <span />
           </a>
         </div>
@@ -107,18 +97,14 @@ class NavContent extends Component<INavContentProps, NavContentState> {
         <div className="navbar-content next-scroll">
           <PerfectScrollbar>
             <ul className="nav pcoded-inner-navbar" id="nav-ps-next">
-              {
-                this.props.navigation.map((item: any) => {
-                  switch (item.type) {
-                    case "group":
-                      return (
-                        <NavGroup layout={this.props.layout} key={item.id} group={item} />
-                      );
-                    default:
-                      return false;
-                  }
-                })
-              }
+              {this.props.navigation.map((item: any) => {
+                switch (item.type) {
+                  case "group":
+                    return <NavGroup layout={this.props.layout} key={item.id} group={item} />;
+                  default:
+                    return false;
+                }
+              })}
             </ul>
           </PerfectScrollbar>
         </div>
@@ -127,4 +113,4 @@ class NavContent extends Component<INavContentProps, NavContentState> {
     return <>{mainContent}</>;
   }
 }
-export default NavContent
+export default NavContent;

@@ -1,3 +1,1 @@
-export const useDasboardFinance = () => {
-
-}
+export const useDasboardFinance = () => {};

@@ -1,9 +1,9 @@
 // src/i18n.ts
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
-import vi from './locales/vi/translation.json';
-import en from './locales/en/translation.json';
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
+import vi from "./locales/vi/translation.json";
+import en from "./locales/en/translation.json";
 
 const resources = {
   vi: { translation: vi },
@@ -15,7 +15,7 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'vi',
+    fallbackLng: "vi",
     debug: true,
     interpolation: {
       escapeValue: false,

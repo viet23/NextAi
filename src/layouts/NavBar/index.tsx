@@ -4,18 +4,14 @@ import logo from "../../assets/images/next-logo.jpg";
 import NavRight from "./NavRight";
 import NavLeft from "./NavLeft";
 import { useAppContext } from "../../context/AppContext";
-import { setNavbarCollapsed  } from "../../store/slice/app.slice";
+import { setNavbarCollapsed } from "../../store/slice/app.slice";
 import { useDispatch, useSelector } from "react-redux";
 import { IRootState } from "../../interfaces/app.interface";
 import Link from "antd/es/typography/Link";
 const NavBar = () => {
   const dispatch = useDispatch();
   const { navbarCollapsed } = useSelector((state: IRootState) => state.app);
-  const [headerClass, setHeaderClass] = useState([
-    "navbar",
-    "pcoded-header",
-    "navbar-expand-lg",
-  ]);
+  const [headerClass, setHeaderClass] = useState(["navbar", "pcoded-header", "navbar-expand-lg"]);
   const { openDrawer } = useAppContext();
   const [fullWidthLayout, setFullWidthLayout] = useState(true);
   const [mainHeaderClass, setMainHeaderClass] = useState(["content-main"]);
@@ -36,26 +32,24 @@ const NavBar = () => {
         setHeaderClass([...headerClass, "header-open-drawer"]);
       }
     } else {
-      setHeaderClass((prev) => prev.filter((i) => i !== "header-open-drawer"));
+      setHeaderClass(prev => prev.filter(i => i !== "header-open-drawer"));
     }
   }, [openDrawer]);
   return (
     <header className={headerClass.join(" ")}>
       <div className={mainHeaderClass.join(" ")}>
         <div className="m-header">
-          <Link className={toggleClass.join(" ")} id="mobile-collapse1"   onClick={() => {
+          <Link
+            className={toggleClass.join(" ")}
+            id="mobile-collapse1"
+            onClick={() => {
               dispatch(setNavbarCollapsed(!navbarCollapsed));
-            }}>
+            }}
+          >
             <span />
           </Link>
           <a href={"#"} className="b-brand">
-            <img
-              id="main-logo"
-              src={logo}
-              alt=""
-              width={120}
-              className="logo"
-            />
+            <img id="main-logo" src={logo} alt="" width={120} className="logo" />
           </a>
         </div>
         <Link

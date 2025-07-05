@@ -1,9 +1,9 @@
 import { api } from "./base";
 
 const facebookApi = api.injectEndpoints({
-  endpoints: (build) => ({
+  endpoints: build => ({
     createAds: build.mutation<any, any>({
-      query: (body) => ({
+      query: body => ({
         url: "/api/v1/facebook-ads/create",
         method: "POST",
         body,
@@ -12,10 +12,7 @@ const facebookApi = api.injectEndpoints({
         return res;
       },
     }),
-
   }),
 });
-export const {
-  useCreateAdsMutation
-} = facebookApi;
+export const { useCreateAdsMutation } = facebookApi;
 export default facebookApi;

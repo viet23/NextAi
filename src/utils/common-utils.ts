@@ -26,8 +26,7 @@ export const buildQueryString = (
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {
         const value = obj[key];
-        const newPrefix =
-          prefix === "filter" ? `${prefix}[${key}]` : `${prefix}[${key}]`;
+        const newPrefix = prefix === "filter" ? `${prefix}[${key}]` : `${prefix}[${key}]`;
 
         if (value === null || value === undefined) {
           continue;
@@ -42,9 +41,7 @@ export const buildQueryString = (
             buildQueryParams(`${prefix}[${key}][${index}]`, item);
           });
         } else {
-          queryParts.push(
-            `${encodeURIComponent(newPrefix)}=${encodeURIComponent(value)}`
-          );
+          queryParts.push(`${encodeURIComponent(newPrefix)}=${encodeURIComponent(value)}`);
         }
       }
     }
@@ -53,9 +50,7 @@ export const buildQueryString = (
   return queryParts.join("&");
 };
 
-export const getDatePickerType = (
-  type: (typeof TIME_FILTER_TYPE_VALUES)[number]
-) => {
+export const getDatePickerType = (type: (typeof TIME_FILTER_TYPE_VALUES)[number]) => {
   switch (type) {
     case TIME_FILTER_TYPE_DAY:
     case TIME_FILTER_TYPE_WEEK:
@@ -67,9 +62,7 @@ export const getDatePickerType = (
   }
 };
 
-export const getDateFormat = (
-  type: (typeof TIME_FILTER_TYPE_VALUES)[number]
-) => {
+export const getDateFormat = (type: (typeof TIME_FILTER_TYPE_VALUES)[number]) => {
   switch (type) {
     case TIME_FILTER_TYPE_DAY:
     case TIME_FILTER_TYPE_WEEK:
@@ -79,4 +72,48 @@ export const getDateFormat = (
     default:
       return "DD/MM/YYYY";
   }
+};
+
+export const headersMusic = {
+  Authorization: "Token iBAdDZZGpucb5MVWNUbeNTXiAbqux8zOu8T3skyf",
+};
+
+export const genres = [
+  "Ambient",
+  "Piano",
+  "Orchestra",
+  "Lofi",
+  "Chill",
+  "Hiphop",
+  "Electronic",
+  "Pop",
+  "Rock",
+  "Jazz",
+  "Blues",
+  "Acoustic",
+  "Guitar",
+  "Drums",
+  "Trap",
+  "Classical",
+  "Funk",
+  "Dubstep",
+  "House",
+  "Trance",
+  "Folk",
+  "Reggae",
+  "Metal",
+  "Synth",
+  "Vocals",
+  "Choir",
+  "Soundtrack",
+  "Score",
+];
+
+export const reverseSceneMap: Record<number, number> = {
+  1: 5,
+  2: 20,
+  3: 30,
+  4: 40,
+  5: 50,
+  6: 60,
 };

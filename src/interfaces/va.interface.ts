@@ -27,7 +27,7 @@ export interface IResVaDetail {
   cashins?: ICashin[];
   bank_name?: string;
   bank_logo?: string;
-  pageable: IPagination
+  pageable: IPagination;
 }
 
 interface ICashin {
@@ -47,4 +47,3 @@ interface ICashin {
   bank_code?: string;
   updated_by?: string;
 }
-

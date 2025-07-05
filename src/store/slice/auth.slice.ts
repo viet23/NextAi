@@ -8,7 +8,7 @@ const initialState: IAuthState = {
   refreshToken: null,
   merchant: null,
   roles: [],
-  groups: []
+  groups: [],
 };
 const authSlice = createSlice({
   name: "auth",
@@ -48,6 +48,6 @@ export const {
   setRefreshToken,
   setCurrentMerchant,
   setRoles,
-  setGroups
+  setGroups,
 } = authSlice.actions;
 export default authSlice.reducer;

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 import { NavLink } from "react-router-dom";
 
 import NavIcon from "./../NavIcon";
@@ -38,11 +38,7 @@ class NavItem extends Component<INavItemProps, {}> {
       );
     } else {
       subContent = (
-        <NavLink
-          to={this.props.item.url}
-          className="nav-link"
-          target={itemTarget}
-        >
+        <NavLink to={this.props.item.url} className="nav-link" target={itemTarget}>
           <NavIcon items={this.props.item} />
           {itemTitle}
           <NavBadge layout={this.props.layout} items={this.props.item} />
@@ -55,10 +51,7 @@ class NavItem extends Component<INavItemProps, {}> {
     } else {
       if (this.props.windowWidth < 992) {
         mainContent = (
-          <li
-            className={this.props.item.classes}
-            onClick={this.props.onItemClick}
-          >
+          <li className={this.props.item.classes} onClick={this.props.onItemClick}>
             {subContent}
           </li>
         );
@@ -69,5 +62,4 @@ class NavItem extends Component<INavItemProps, {}> {
     return <>{mainContent}</>;
   }
 }
-export default NavItem
-
+export default NavItem;

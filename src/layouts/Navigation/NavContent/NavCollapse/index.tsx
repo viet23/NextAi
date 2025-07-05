@@ -19,13 +19,10 @@ interface INavCollapseProps extends React.HTMLAttributes<Element> {
   icon?: any;
   title?: any;
 }
-const NavCollapse: React.FC<INavCollapseProps> = (props) => {
+const NavCollapse: React.FC<INavCollapseProps> = props => {
   const { isOpen, isTrigger } = props;
   const [navLinkClass, setNavLinkClass] = useState(["nav-link "]);
-  const [navItemClass, setNavItemClass] = useState([
-    "nav-item",
-    "pcoded-hasmenu",
-  ]);
+  const [navItemClass, setNavItemClass] = useState(["nav-item", "pcoded-hasmenu"]);
   const dispatch = useDispatch();
   const { menu } = useSelector((state: IRootState) => state.app);
   const onCollapseToggle = (id: string | any, type: any) => {
@@ -35,9 +32,7 @@ const NavCollapse: React.FC<INavCollapseProps> = (props) => {
       dispatch(setActiveMenu(menu.filter((key: string) => key != id)));
     }
   };
-  useEffect(() => {
-
-  }, []);
+  useEffect(() => {}, []);
 
   const itemTitle = () => {
     if (props.collapse?.icon) {
@@ -49,7 +44,7 @@ const NavCollapse: React.FC<INavCollapseProps> = (props) => {
   const navItems = () => {
     if (props.collapse?.children) {
       const collapses = props.collapse.children;
-      return Object.keys(collapses).map((key) => {
+      return Object.keys(collapses).map(key => {
         const item = collapses[parseInt(key)];
         switch (item.type) {
           case "collapse":
@@ -71,9 +66,7 @@ const NavCollapse: React.FC<INavCollapseProps> = (props) => {
           ? `${navItemClass.join(" ")}`
           : navItemClass.join(" ")
       }
-      onMouseLeave={() =>
-        props.onNavCollapseLeave(props.collapse?.id, props.type)
-      }
+      onMouseLeave={() => props.onNavCollapseLeave(props.collapse?.id, props.type)}
       onMouseEnter={() => onCollapseToggle(props.collapse?.id, props.type)}
     >
       <>

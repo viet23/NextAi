@@ -14,5 +14,5 @@ class NavLeft extends Component<{}, {}> {
     );
   }
 }
-export default NavLeft
+export default NavLeft;
 // export default windowSize(NavLeft as any);

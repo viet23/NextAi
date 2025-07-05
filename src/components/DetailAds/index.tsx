@@ -26,16 +26,16 @@ const usdToVndRate = 25000;
 
 const DETAILED_TARGETING_OPTIONS = [
   {
-    category: 'Nhân khẩu học',
-    values: ['Học vấn', 'Công việc', 'Mối quan hệ', 'Phụ huynh', 'Sự kiện trong đời'],
+    category: "Nhân khẩu học",
+    values: ["Học vấn", "Công việc", "Mối quan hệ", "Phụ huynh", "Sự kiện trong đời"],
   },
   {
-    category: 'Sở thích',
-    values: ['Thời trang', 'Công nghệ', 'Ẩm thực', 'Thể thao', 'Sức khỏe', 'Du lịch'],
+    category: "Sở thích",
+    values: ["Thời trang", "Công nghệ", "Ẩm thực", "Thể thao", "Sức khỏe", "Du lịch"],
   },
   {
-    category: 'Hành vi',
-    values: ['Mua hàng online', 'Dùng thiết bị iOS', 'Người hay di chuyển'],
+    category: "Hành vi",
+    values: ["Mua hàng online", "Dùng thiết bị iOS", "Người hay di chuyển"],
   },
 ];
 
@@ -71,7 +71,6 @@ const languages = [
   { label: "עברית (Hebrew)", value: "he" },
 ];
 
-
 interface AdsFormProps {
   id: string | null;
   pageId: string | null;
@@ -86,11 +85,8 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
   const [aiTargeting, setAiTargeting] = useState(true);
   const [gender, setGender] = useState("all");
   const [age, setAge] = useState<[number, number]>([18, 65]);
-  const [interests, setInterests] = useState(['Sức khỏe']);
-  const [range, setRange] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([
-    dayjs(),
-    dayjs().add(5, "day"),
-  ]);
+  const [interests, setInterests] = useState(["Sức khỏe"]);
+  const [range, setRange] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([dayjs(), dayjs().add(5, "day")]);
   const [language, setLanguage] = useState<string>("en");
   const [location, setLocation] = useState({ lat: 21.023556274318445, lng: 105.55110069580077 });
   const [radius, setRadius] = useState(16000); // 16km
@@ -103,9 +99,10 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
 
   const handlePublish = async () => {
     try {
-
       if (goal === "traffic" && (!urlWebsite || urlWebsite.trim() === "")) {
-        message.error("Please enter website link when selecting goal as 'Get more website visitors'");
+        message.error(
+          "Please enter website link when selecting goal as 'Get more website visitors'"
+        );
         return;
       }
 
@@ -122,7 +119,6 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
         postId: id?.toString(),
       };
 
-
       if (!aiTargeting) {
         body.gender = gender;
         body.ageRange = [age[0], age[1]];
@@ -137,14 +133,11 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
       window.location.reload();
     } catch (err: any) {
       // ✅ Nếu có message cụ thể từ backend thì hiện ra
-      const errorMessage =
-        err?.data?.message || err?.message || t("ads.error.generic");
+      const errorMessage = err?.data?.message || err?.message || t("ads.error.generic");
       message.error(errorMessage);
       console.error("🛑 Create Ads Error:", err);
     }
   };
-
-
 
   return (
     <Card style={{ backgroundColor: "#f9f9f9", borderRadius: 12 }}>
@@ -155,7 +148,7 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
             <label>📛 {t("ads.campaign_name")}</label>
             <Input
               value={campaignName}
-              onChange={(e) => setCampaignName(e.target.value)}
+              onChange={e => setCampaignName(e.target.value)}
               placeholder={t("ads.placeholder.campaign_name")}
             />
           </div>
@@ -180,7 +173,7 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
                 showSearch
                 optionFilterProp="label"
               >
-                {languages.map((lang) => (
+                {languages.map(lang => (
                   <Option key={lang.value} value={lang.value} label={lang.label}>
                     {lang.label}
                   </Option>
@@ -195,7 +188,7 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
               <Input.TextArea
                 rows={1}
                 value={urlWebsite}
-                onChange={(e) => setUrleWbsite(e.target.value)}
+                onChange={e => setUrleWbsite(e.target.value)}
                 placeholder={t("ads.placeholder.website")}
               />
             </div>
@@ -228,7 +221,7 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
                   <Slider
                     range
                     value={age}
-                    onChange={(val) => setAge(val as [number, number])}
+                    onChange={val => setAge(val as [number, number])}
                     min={13}
                     max={65}
                   />
@@ -254,9 +247,9 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
                   onChange={setInterests}
                   optionLabelProp="label"
                 >
-                  {DETAILED_TARGETING_OPTIONS.map((group) => (
+                  {DETAILED_TARGETING_OPTIONS.map(group => (
                     <OptGroup key={group.category} label={t(group.category)}>
-                      {group.values.map((value) => (
+                      {group.values.map(value => (
                         <Option key={value} value={value} label={t(value)}>
                           {t(value)}
                         </Option>
@@ -273,7 +266,7 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
               <label>📆 {t("ads.duration")}</label>
               <RangePicker
                 value={range}
-                onChange={(val) => setRange(val as [dayjs.Dayjs, dayjs.Dayjs])}
+                onChange={val => setRange(val as [dayjs.Dayjs, dayjs.Dayjs])}
                 style={{ width: "100%" }}
               />
             </Col>
@@ -281,9 +274,9 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
               <label>💰 {t("ads.daily_budget")}</label>
               <InputNumber
                 value={budget}
-                onChange={(val) => setBudget(val!)}
+                onChange={val => setBudget(val!)}
                 min={1}
-                formatter={(value) => `$ ${value}`}
+                formatter={value => `$ ${value}`}
                 style={{ width: "100%" }}
               />
             </Col>

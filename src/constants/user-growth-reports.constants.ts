@@ -10,6 +10,6 @@ export const REPORT_TYPES = [
     value: REPORT_TYPE_BY_UPDATED_DATE,
   },
 ];
-export const REPORT_TYPE_VALUES = REPORT_TYPES.map((x) => x.value);
+export const REPORT_TYPE_VALUES = REPORT_TYPES.map(x => x.value);
 
 export const EXPORT_FILE_NAME = "Báo cáo hoạt động ví.xlsx";

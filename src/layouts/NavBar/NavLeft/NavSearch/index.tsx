@@ -9,13 +9,13 @@ import React, { Component, useEffect, useState } from "react";
 //   isOpen?: boolean
 // };
 const NavSearch = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [mainSearchClass, setMainSearchClass] = useState(["position-relative"])
+  const [isOpen, setIsOpen] = useState(false);
+  const [mainSearchClass, setMainSearchClass] = useState(["position-relative"]);
   useEffect(() => {
     if (true) {
-      setMainSearchClass([...mainSearchClass, "container-fluid"])
+      setMainSearchClass([...mainSearchClass, "container-fluid"]);
     }
-  }, [])
+  }, []);
   // render() {
   //   let mainSearchClass = ["position-relative"];
   //   if (this.props.fullWidthLayout) {
@@ -33,31 +33,29 @@ const NavSearch = () => {
   // }
   return (
     <>
-      {
-        isOpen && (
-          <div className="search-bar open">
-            <div className={mainSearchClass.join(" ")}>
-              <input
-                type="text"
-                className="form-control border-0 shadow-none"
-                placeholder="Search here"
-              />
-              <button
-                type="button"
-                className="close"
-                aria-label="Close"
-                onClick={() => setIsOpen(false)}
-              >
-                <span aria-hidden="true">
-                  <i className="feather icon-x" />
-                </span>
-              </button>
-            </div>
+      {isOpen && (
+        <div className="search-bar open">
+          <div className={mainSearchClass.join(" ")}>
+            <input
+              type="text"
+              className="form-control border-0 shadow-none"
+              placeholder="Search here"
+            />
+            <button
+              type="button"
+              className="close"
+              aria-label="Close"
+              onClick={() => setIsOpen(false)}
+            >
+              <span aria-hidden="true">
+                <i className="feather icon-x" />
+              </span>
+            </button>
           </div>
-        )
-      }
+        </div>
+      )}
     </>
   );
-}
-export default NavSearch
+};
+export default NavSearch;
 // export default windowSize(NavSearch as any)

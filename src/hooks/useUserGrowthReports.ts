@@ -39,8 +39,7 @@ export const useUserGrowthReports = () => {
   const [form] = useForm<FormType>();
   const dateFilterTypeWatch = useWatch("dateFilterType", form);
 
-  const [currentFilters, setCurrentFilters] =
-    useState<IUserGrowthReportFilter | null>(null);
+  const [currentFilters, setCurrentFilters] = useState<IUserGrowthReportFilter | null>(null);
   const [isSkip, setIsSkip] = useState(true);
 
   const { data, refetch } = useGetUserGrowthReportsQuery(currentFilters, {
@@ -83,7 +82,7 @@ export const useUserGrowthReports = () => {
         title: "Chỉ số/Chỉ tiêu",
         dataIndex: "target",
         key: "target",
-        render: (value) => getTargetName(value),
+        render: value => getTargetName(value),
         width: 300,
       },
       {
@@ -91,24 +90,21 @@ export const useUserGrowthReports = () => {
         dataIndex: "week",
         key: "week",
         align: "end",
-        render: (value) =>
-          formatNumber(value) === "0" ? "-" : formatNumber(value),
+        render: value => (formatNumber(value) === "0" ? "-" : formatNumber(value)),
       },
       {
         title: "Luỹ kế tháng",
         dataIndex: "month",
         key: "month",
         align: "end",
-        render: (value) =>
-          formatNumber(value) === "0" ? "-" : formatNumber(value),
+        render: value => (formatNumber(value) === "0" ? "-" : formatNumber(value)),
       },
       {
         title: "Luỹ kế tổng",
         key: "cumulative",
         dataIndex: "cumulative",
         align: "end",
-        render: (value) =>
-          formatNumber(value) === "0" ? "-" : formatNumber(value),
+        render: value => (formatNumber(value) === "0" ? "-" : formatNumber(value)),
       },
     ],
     []
@@ -121,16 +117,11 @@ export const useUserGrowthReports = () => {
 
     if (
       searchParams.get("dateFilterType") &&
-      TIME_FILTER_TYPE_VALUES.includes(
-        Number(searchParams.get("dataFilterType"))
-      )
+      TIME_FILTER_TYPE_VALUES.includes(Number(searchParams.get("dataFilterType")))
     )
       init.dateFilterType = Number(searchParams.get("dateFilterType"));
 
-    if (
-      searchParams.get("type") &&
-      REPORT_TYPE_VALUES.includes(searchParams.get("type")!)
-    )
+    if (searchParams.get("type") && REPORT_TYPE_VALUES.includes(searchParams.get("type")!))
       init.type = searchParams.get("type")!;
 
     if (searchParams.get("startDate") && searchParams.get("endDate")) {
@@ -157,9 +148,7 @@ export const useUserGrowthReports = () => {
     return init;
   }, [searchParams]);
 
-  const convertResponseToRowTable = (
-    data: IUserGrowthReport
-  ): IUserGrowthReportRow[] => {
+  const convertResponseToRowTable = (data: IUserGrowthReport): IUserGrowthReportRow[] => {
     const createLookup = (arr: IPeriodValueType[]) =>
       arr.reduce<{
         [k: string]: number;
@@ -170,9 +159,7 @@ export const useUserGrowthReports = () => {
 
     const weekLookup = createLookup(data.week as IPeriodValueType[]);
     const monthLookup = createLookup(data.month as IPeriodValueType[]);
-    const cumulativeLookup = createLookup(
-      data.cumulative as IPeriodValueType[]
-    );
+    const cumulativeLookup = createLookup(data.cumulative as IPeriodValueType[]);
 
     const allStatusGroups = new Set([
       ...data.week.map(({ statusGroup }) => statusGroup),
@@ -180,29 +167,22 @@ export const useUserGrowthReports = () => {
       ...data.cumulative.map(({ statusGroup }) => statusGroup),
     ]);
 
-    const groups = Array.from(allStatusGroups).map<IUserGrowthReportRow>(
-      (statusGroup) => ({
-        target: statusGroup,
-        week: weekLookup[statusGroup] || 0,
-        month: monthLookup[statusGroup] || 0,
-        cumulative: cumulativeLookup[statusGroup] || 0,
-        children:
-          statusGroup === UserGrowthReportGroupEnum.OFFLINE ? [] : undefined,
-      })
-    );
+    const groups = Array.from(allStatusGroups).map<IUserGrowthReportRow>(statusGroup => ({
+      target: statusGroup,
+      week: weekLookup[statusGroup] || 0,
+      month: monthLookup[statusGroup] || 0,
+      cumulative: cumulativeLookup[statusGroup] || 0,
+      children: statusGroup === UserGrowthReportGroupEnum.OFFLINE ? [] : undefined,
+    }));
 
-    const offlineGroup = groups.find(
-      (x) => x.target === UserGrowthReportGroupEnum.OFFLINE
-    );
+    const offlineGroup = groups.find(x => x.target === UserGrowthReportGroupEnum.OFFLINE);
     if (offlineGroup) {
       offlineGroup.children = [
-        groups.find((x) => x.target === UserGrowthReportGroupEnum.CREATE_NEW),
-        groups.find((x) => x.target === UserGrowthReportGroupEnum.VERIFIED),
-        groups.find(
-          (x) => x.target === UserGrowthReportGroupEnum.AUTHEN_FAILED
-        ),
-        groups.find((x) => x.target === UserGrowthReportGroupEnum.LOCK),
-        groups.find((x) => x.target === UserGrowthReportGroupEnum.UNKNOWN),
+        groups.find(x => x.target === UserGrowthReportGroupEnum.CREATE_NEW),
+        groups.find(x => x.target === UserGrowthReportGroupEnum.VERIFIED),
+        groups.find(x => x.target === UserGrowthReportGroupEnum.AUTHEN_FAILED),
+        groups.find(x => x.target === UserGrowthReportGroupEnum.LOCK),
+        groups.find(x => x.target === UserGrowthReportGroupEnum.UNKNOWN),
       ]
         .filter(Boolean)
         .reduce<IUserGrowthReportRow[]>((acc, item, index) => {
@@ -213,15 +193,13 @@ export const useUserGrowthReports = () => {
     }
 
     return [
-      groups.find((x) => x.target === UserGrowthReportGroupEnum.ALL)!,
-      groups.find((x) => x.target === UserGrowthReportGroupEnum.ONLINE)!,
-      groups.find((x) => x.target === UserGrowthReportGroupEnum.OFFLINE)!,
+      groups.find(x => x.target === UserGrowthReportGroupEnum.ALL)!,
+      groups.find(x => x.target === UserGrowthReportGroupEnum.ONLINE)!,
+      groups.find(x => x.target === UserGrowthReportGroupEnum.OFFLINE)!,
     ].map((x, index) => ({ ...x, index: (index + 1).toString() }));
   };
 
-  const convertFormDataToFilters = (
-    values: FormType
-  ): IUserGrowthReportFilter => {
+  const convertFormDataToFilters = (values: FormType): IUserGrowthReportFilter => {
     let startDate = "";
     let endDate = "";
     if (values.dateRangeFilter) {
@@ -231,11 +209,8 @@ export const useUserGrowthReports = () => {
       startDate = sd;
       endDate = ed;
     } else if (values.dateFilter) {
-      const unit =
-        dateFilterTypeWatch === TIME_FILTER_TYPE_MONTH ? "year" : "month";
-      startDate = values.dateFilter
-        .startOf(unit)
-        .format(FULL_DATE_FORMAT_PARAM);
+      const unit = dateFilterTypeWatch === TIME_FILTER_TYPE_MONTH ? "year" : "month";
+      startDate = values.dateFilter.startOf(unit).format(FULL_DATE_FORMAT_PARAM);
       endDate = values.dateFilter.endOf(unit).format(FULL_DATE_FORMAT_PARAM);
     }
 
@@ -249,10 +224,7 @@ export const useUserGrowthReports = () => {
     };
   };
 
-  const dataSource = useMemo(
-    () => (data ? convertResponseToRowTable(data) : []),
-    [data]
-  );
+  const dataSource = useMemo(() => (data ? convertResponseToRowTable(data) : []), [data]);
 
   const handleChangeType = () => {
     form.setFieldValue("dateFilter", undefined);

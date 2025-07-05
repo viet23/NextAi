@@ -1,6 +1,20 @@
 import { DownloadOutlined, EyeOutlined } from "@ant-design/icons";
 import {
-  Button, Card, Col, Drawer, Empty, Flex, Image, message, Modal, Pagination, Radio, RadioChangeEvent, Row, Table, Tooltip,
+  Button,
+  Card,
+  Col,
+  Drawer,
+  Empty,
+  Flex,
+  Image,
+  message,
+  Modal,
+  Pagination,
+  Radio,
+  RadioChangeEvent,
+  Row,
+  Table,
+  Tooltip,
 } from "antd";
 import React, { useState } from "react";
 import DetailTicket from "src/components/DetailTicket";
@@ -20,13 +34,14 @@ const MediaList: React.FC<any> = () => {
   const { t, i18n } = useTranslation();
 
   const toggleLanguage = () => {
-    const newLang = i18n.language === 'vi' ? 'en' : 'vi';
+    const newLang = i18n.language === "vi" ? "en" : "vi";
     i18n.changeLanguage(newLang);
   };
 
-  const currentFlag = i18n.language === 'vi'
-    ? '/VN.png' // icon cờ Việt Nam
-    : '/EN.png'; // icon cờ Anh
+  const currentFlag =
+    i18n.language === "vi"
+      ? "/VN.png" // icon cờ Việt Nam
+      : "/EN.png"; // icon cờ Anh
 
   const onChangePagination = (pageNumber: number, pageSize: number) => {
     setFilter((prev: any) => ({ ...prev, page: pageNumber, pageSize }));
@@ -41,9 +56,7 @@ const MediaList: React.FC<any> = () => {
     } else {
       setIsSuspect(true);
       setFilter((prev: any) => {
-        const where = prev?.where
-          ? { ...prev.where, isSuspect: 1 }
-          : { isSuspect: 1 };
+        const where = prev?.where ? { ...prev.where, isSuspect: 1 } : { isSuspect: 1 };
         return { ...prev, page: 1, pageSize: 20, where };
       });
     }
@@ -123,14 +136,10 @@ const MediaList: React.FC<any> = () => {
                     dataIndex: "urlVideo",
                     key: "urlVideo",
                     width: 200,
-                    render: (url) => {
+                    render: url => {
                       if (!url) {
                         return (
-                          <Image
-                            width={250}
-                            src="https://via.placeholder.com/60"
-                            alt="No media"
-                          />
+                          <Image width={250} src="https://via.placeholder.com/60" alt="No media" />
                         );
                       }
 
@@ -249,9 +258,7 @@ const MediaList: React.FC<any> = () => {
                     ),
                   },
                 ]}
-                rowClassName={(record: any) =>
-                  record?.isSuspect ? "suspect-row" : ""
-                }
+                rowClassName={(record: any) => (record?.isSuspect ? "suspect-row" : "")}
                 dataSource={data?.data || []}
                 pagination={false}
                 locale={{
@@ -268,9 +275,7 @@ const MediaList: React.FC<any> = () => {
                   onChange={onChangePagination}
                   showSizeChanger
                   pageSizeOptions={["10", "20", "50", "100"]}
-                  onShowSizeChange={(current, size) =>
-                    onChangePagination(current, size)
-                  }
+                  onShowSizeChange={(current, size) => onChangePagination(current, size)}
                 />
               </Flex>
             </Card>

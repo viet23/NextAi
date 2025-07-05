@@ -2,9 +2,9 @@ import { buildQueryString } from "src/utils/common-utils";
 import { api } from "./base";
 
 const CustomerApi = api.injectEndpoints({
-  endpoints: (build) => ({
+  endpoints: build => ({
     getCustomers: build.query<any, any>({
-      query: (filter) => ({
+      query: filter => ({
         url: `/api/v1/customers?${buildQueryString(filter)}`,
         method: "GET",
       }),
@@ -13,7 +13,7 @@ const CustomerApi = api.injectEndpoints({
       },
     }),
     detailCustomer: build.query<any, any>({
-      query: (id) => ({
+      query: id => ({
         url: `/api/v1/customers/${id}`,
         method: "GET",
       }),
@@ -22,7 +22,7 @@ const CustomerApi = api.injectEndpoints({
       },
     }),
     updateNotBlacklist: build.mutation<any, any>({
-      query: (id) => ({
+      query: id => ({
         url: `/api/v1/customers/update-not-black-list/${id}`,
         method: "PUT",
       }),
@@ -31,7 +31,7 @@ const CustomerApi = api.injectEndpoints({
       },
     }),
     exportExcel: build.query<any, any>({
-      query: (filter) => ({
+      query: filter => ({
         url: `/api/v1/customers/export?${buildQueryString(filter)}`,
         method: "GET",
       }),

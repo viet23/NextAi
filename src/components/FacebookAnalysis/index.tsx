@@ -188,7 +188,7 @@ TƯƠNG TÁC KHÁCH HÀNG: ${result.engagement}
 CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
 `;
         await getChannelPlan(rawAnalysis);
-        saveAnalyzeFacebookPage()
+        saveAnalyzeFacebookPage();
       } else {
         message.error("GPT cannot parse the content.");
       }
@@ -226,20 +226,33 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
   };
 
   return (
-    <><Helmet>
-      <title>All One Ads – Phân tích fanpage & đề xuất phát triển kênh</title>
-      <meta property="og:title" content="All One Ads – AI analyzes and suggests fanpage content" />
-      <meta property="og:description" content="Automatically analyze fanpage and suggest content development plans and communication strategies in a professional style." />
-      <meta property="og:image" content="https://alloneads.com/og-image.png" />
-      <meta property="og:url" content="https://alloneads.com/" />
-      <meta property="og:type" content="website" />
-      <meta property="og:site_name" content="All One Ads" />
+    <>
+      <Helmet>
+        <title>All One Ads – Phân tích fanpage & đề xuất phát triển kênh</title>
+        <meta
+          property="og:title"
+          content="All One Ads – AI analyzes and suggests fanpage content"
+        />
+        <meta
+          property="og:description"
+          content="Automatically analyze fanpage and suggest content development plans and communication strategies in a professional style."
+        />
+        <meta property="og:image" content="https://alloneads.com/og-image.png" />
+        <meta property="og:url" content="https://alloneads.com/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="All One Ads" />
 
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content="All One Ads – Analyze & recommend fanpage channels using AI" />
-      <meta name="twitter:description" content="Optimize fanpage easily with AI: analysis - strategy - posting schedule - viral ideas." />
-      <meta name="twitter:image" content="https://alloneads.com/og-image.png" />
-    </Helmet>
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content="All One Ads – Analyze & recommend fanpage channels using AI"
+        />
+        <meta
+          name="twitter:description"
+          content="Optimize fanpage easily with AI: analysis - strategy - posting schedule - viral ideas."
+        />
+        <meta name="twitter:image" content="https://alloneads.com/og-image.png" />
+      </Helmet>
       <Layout style={{ minHeight: "100vh", background: "#fff" }}>
         <Content style={styles.container}>
           {/* Modal hiển thị khi click */}
@@ -249,7 +262,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
             style={{
               display: "flex",
               justifyContent: "flex-end", // ✅ đẩy nút sang phải
-              padding: "6px 0",           // ✅ khoảng trống trên dưới (có thể tăng/giảm)
+              padding: "6px 0", // ✅ khoảng trống trên dưới (có thể tăng/giảm)
             }}
           >
             <button
@@ -259,10 +272,10 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
                 color: "#000",
                 border: "1px solid #D2E3FC",
                 borderRadius: 6,
-                padding: "6px 12px",       // ✅ padding cho nút đẹp hơn
+                padding: "6px 12px", // ✅ padding cho nút đẹp hơn
                 fontSize: 11,
                 cursor: "pointer",
-                marginRight: 16,           // ✅ nếu cần cách xa mép phải
+                marginRight: 16, // ✅ nếu cần cách xa mép phải
               }}
             >
               {t("image.auto_post_setting")}
@@ -271,7 +284,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
           <div style={styles.inputSection}>
             <Input
               value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              onChange={e => setUrl(e.target.value)}
               placeholder={t("facebook_analysis.enter_page_link")}
               style={{ marginBottom: 16 }}
             />

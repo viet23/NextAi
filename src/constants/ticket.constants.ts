@@ -1,17 +1,17 @@
 export const ticketStatusStyles = {
-  "T0": { backgroundColor: "whitesmoke", color: "black" },
+  T0: { backgroundColor: "whitesmoke", color: "black" },
   "T0.2": { backgroundColor: "lightgray", color: "black" },
   "T0.3": { backgroundColor: "silver", color: "black" },
-  "T1": { backgroundColor: "gainsboro", color: "black" },
+  T1: { backgroundColor: "gainsboro", color: "black" },
   "T1.2": { backgroundColor: "powderblue", color: "black" },
   "T1.3": { backgroundColor: "lightslategray", color: "black" },
-  "T3": { backgroundColor: "lightsalmon", color: "black" },
-  "T5": { backgroundColor: "lightyellow", color: "black" },
-  "T6": { backgroundColor: "lemonchiffon", color: "black" },
-  "T7": { backgroundColor: "khaki", color: "black" },
-  "T8": { backgroundColor: "palegreen", color: "black" },
-  "T8A": { backgroundColor: "mediumaquamarine", color: "black" },
-  "T8B": { backgroundColor: "springgreen", color: "black" },
+  T3: { backgroundColor: "lightsalmon", color: "black" },
+  T5: { backgroundColor: "lightyellow", color: "black" },
+  T6: { backgroundColor: "lemonchiffon", color: "black" },
+  T7: { backgroundColor: "khaki", color: "black" },
+  T8: { backgroundColor: "palegreen", color: "black" },
+  T8A: { backgroundColor: "mediumaquamarine", color: "black" },
+  T8B: { backgroundColor: "springgreen", color: "black" },
 };
 
 export const nameTicketMapping: { [key: string]: string } = {
@@ -36,10 +36,17 @@ export const nameTicketMapping: { [key: string]: string } = {
   assignById: "Nhân viên giao",
 };
 
-
-export const excludedTicketKeys = ["customers", "assignedBy", "updatedAt", "solution", "description", "updatedById" ,"status"];
+export const excludedTicketKeys = [
+  "customers",
+  "assignedBy",
+  "updatedAt",
+  "solution",
+  "description",
+  "updatedById",
+  "status",
+];
 
 export const formatTicketDate = "DD/MM/YY";
 export const formatHistoryTime = "DD/MM/YY HH:mm:ss";
 
-export const keyTotal = 'totalReports';
+export const keyTotal = "totalReports";

@@ -46,10 +46,7 @@ export const processDataTicket = (
   // Thêm tổng số báo cáo theo tháng (1-12)
   for (let month = 1; month <= totalColumns; month++) {
     grandTotalRow[`${keyTotal}${month}`] =
-      apiData.reduce(
-        (sum, item) => sum + (item[`titleTotal${month}`] || 0),
-        0
-      ) || "-";
+      apiData.reduce((sum, item) => sum + (item[`titleTotal${month}`] || 0), 0) || "-";
   }
 
   processedList.push(grandTotalRow);

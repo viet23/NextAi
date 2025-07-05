@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {
-  message,
-  Modal,
-  Typography,
-} from "antd";
+import { message, Modal, Typography } from "antd";
 import dayjs from "dayjs";
-import {
-  useLazyDetailCaseQuery,
-} from "src/store/api/ticketApi";
+import { useLazyDetailCaseQuery } from "src/store/api/ticketApi";
 import { useTranslation } from "react-i18next";
 import { DownloadOutlined } from "@ant-design/icons";
 
@@ -27,8 +21,7 @@ const DetailTicket: React.FC<TicketFormProps> = ({ id }) => {
     if (id) {
       getDetailTicket(id)
         .unwrap()
-        .then((ticketData) => {
-
+        .then(ticketData => {
           // Lưu lại dữ liệu video nếu có
           if (ticketData?.urlVideo || ticketData?.caption) {
             setVideoData({
@@ -42,7 +35,6 @@ const DetailTicket: React.FC<TicketFormProps> = ({ id }) => {
           message.error("Error getting article information!");
         });
     } else {
-
       setVideoData(null);
     }
   }, [id, getDetailTicket]);

@@ -1,7 +1,7 @@
 import { api } from "./base";
 
 const MetabaseApi = api.injectEndpoints({
-  endpoints: (build) => ({
+  endpoints: build => ({
     getMetabase: build.query<any, any>({
       query: () => ({
         url: `/api/v1/metabase`,

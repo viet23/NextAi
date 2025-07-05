@@ -13,10 +13,10 @@ import { setCurrentUser, setIsLogin, setToken } from "../slice/auth.slice";
 
 const mutex = new Mutex();
 export const baseQuery = fetchBaseQuery({
-  baseUrl: `${process.env.REACT_APP_PUBLIC_URL}` || "http://localhost:3001",  // 👈 THÊM DÒNG NÀY
+  baseUrl: `${process.env.REACT_APP_PUBLIC_URL}` || "http://localhost:3001", // 👈 THÊM DÒNG NÀY
   cache: "no-cache",
   credentials: "include",
-  prepareHeaders: (headers) => {
+  prepareHeaders: headers => {
     const { auth } = store.getState();
     const token = auth.token || null;
     if (token) {
@@ -25,12 +25,11 @@ export const baseQuery = fetchBaseQuery({
   },
 });
 
-
-const baseQueryWithReauth: BaseQueryFn<
-  string | FetchArgs,
-  unknown,
-  FetchBaseQueryError
-> = async (args, api, extraOptions) => {
+const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
+  args,
+  api,
+  extraOptions
+) => {
   await mutex.waitForUnlock();
   let result = (await baseQuery(args, api, extraOptions)) as any;
   if (result.error) {

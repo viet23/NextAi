@@ -1,1 +1,1 @@
-import styld from 'styled-components'
+import styld from "styled-components";

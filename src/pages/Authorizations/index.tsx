@@ -11,11 +11,7 @@ import {
 } from "src/store/api/roleApi";
 import { IRole } from "src/interfaces/roles.interface";
 import { usePageAuthorize } from "src/hooks/usePageAuthorize";
-import {
-  GET_GROUP,
-  GET_GROUP_DETAIL,
-  GET_ROLE,
-} from "src/constants/roles.constants";
+import { GET_GROUP, GET_GROUP_DETAIL, GET_ROLE } from "src/constants/roles.constants";
 import { useTranslation } from "react-i18next";
 
 const AuthorizationsPage = () => {
@@ -23,13 +19,14 @@ const AuthorizationsPage = () => {
   const { t, i18n } = useTranslation();
 
   const toggleLanguage = () => {
-    const newLang = i18n.language === 'vi' ? 'en' : 'vi';
+    const newLang = i18n.language === "vi" ? "en" : "vi";
     i18n.changeLanguage(newLang);
   };
 
- const currentFlag = i18n.language === 'vi'
-    ? '/VN.png' // icon cờ Việt Nam
-    : '/EN.png'; // icon cờ Anh
+  const currentFlag =
+    i18n.language === "vi"
+      ? "/VN.png" // icon cờ Việt Nam
+      : "/EN.png"; // icon cờ Anh
 
   const [roleGroupActive, setRoleGroupActive] = useState<string | undefined>();
   const [rolesUpdate, setRolesUpdate] = useState<IRole[]>();
@@ -57,8 +54,9 @@ const AuthorizationsPage = () => {
   }, [isSuccess]);
 
   return (
-
-    <> {/* Nút đổi ngôn ngữ bằng emoji */}
+    <>
+      {" "}
+      {/* Nút đổi ngôn ngữ bằng emoji */}
       <div style={{ textAlign: "right", marginBottom: 12 }}>
         <Button
           onClick={toggleLanguage}
@@ -78,7 +76,8 @@ const AuthorizationsPage = () => {
             <AuthorizationsGroupRoles
               roleGroups={roleGroupsData}
               roleGroupActive={roleGroupActive}
-              setRoleGroupActive={setRoleGroupActive} />
+              setRoleGroupActive={setRoleGroupActive}
+            />
           </Col>
           <Col className="roles" xs={24} xl={12}>
             <AuthorizationsRolesTable
@@ -86,10 +85,12 @@ const AuthorizationsPage = () => {
               setRolesUpdate={setRolesUpdate}
               isLoading={isRoleGroupDetailFetching}
               roles={rolesData}
-              handleSave={handleSave} />
+              handleSave={handleSave}
+            />
           </Col>
         </Row>
-      </Card></>
+      </Card>
+    </>
   );
 };
 

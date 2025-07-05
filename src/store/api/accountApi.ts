@@ -8,21 +8,21 @@ import {
 } from "src/interfaces/accounts.interface";
 
 const AccountApi = api.injectEndpoints({
-  endpoints: (build) => ({
+  endpoints: build => ({
     getAccounts: build.query<IAccounts, IAccountFilter | null>({
-      query: (filter) => ({
+      query: filter => ({
         url: `/api/v1/users?${buildQueryString(filter || {})}`,
         method: "GET",
       }),
     }),
     getAccount: build.query<IAccount, string>({
-      query: (id) => ({
+      query: id => ({
         url: `/api/v1/users/${id}`,
         method: "GET",
       }),
     }),
     updateAccount: build.mutation<IUpdateAccountForm, any>({
-      query: (body) => ({
+      query: body => ({
         url: "/api/v1/users",
         method: "PUT",
         body,
@@ -37,7 +37,7 @@ const AccountApi = api.injectEndpoints({
     }),
 
     createAccount: build.mutation<any, any>({
-      query: (body) => ({
+      query: body => ({
         url: "/api/v1/users/register",
         method: "POST",
         body,

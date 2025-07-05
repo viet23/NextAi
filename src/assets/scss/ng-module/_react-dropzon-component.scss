@@ -20,7 +20,7 @@
     left: 0;
     width: 29px;
     height: 34px;
-    content: '';
+    content: "";
     border: solid 2px #646464;
     border-radius: 2px;
   }
@@ -31,7 +31,7 @@
     top: 9px;
     left: -4px;
     padding: 0 2px;
-    content: 'file';
+    content: "file";
     content: attr(data-filetype);
     text-align: right;
     letter-spacing: 1px;
@@ -60,7 +60,9 @@
       background: transparent;
     }
     &.dz-error {
-      .dz-error-message, .dz-error-mark, .dz-progress {
+      .dz-error-message,
+      .dz-error-mark,
+      .dz-progress {
         display: none;
       }
     }

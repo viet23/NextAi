@@ -8,5 +8,5 @@ export interface IAuthState {
   refreshToken: string | null;
   merchant: any;
   roles: IRole[];
-  groups: Partial<IRoleGroup[]> 
+  groups: Partial<IRoleGroup[]>;
 }

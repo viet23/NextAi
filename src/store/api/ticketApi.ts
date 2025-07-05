@@ -1,11 +1,14 @@
 import { buildQueryString } from "src/utils/common-utils";
 import { api } from "./base";
-import { EXPORT_FILE_NAME_REPORT_TICKET, EXPORT_FILE_NAME_TICKET } from "src/constants/financial-transaction-reports.constant";
+import {
+  EXPORT_FILE_NAME_REPORT_TICKET,
+  EXPORT_FILE_NAME_TICKET,
+} from "src/constants/financial-transaction-reports.constant";
 
 const TicketApi = api.injectEndpoints({
-  endpoints: (build) => ({
+  endpoints: build => ({
     getCases: build.query<any, any>({
-      query: (filter) => ({
+      query: filter => ({
         url: `/api/v1/case?${buildQueryString(filter)}`,
         method: "GET",
       }),
@@ -14,7 +17,7 @@ const TicketApi = api.injectEndpoints({
       },
     }),
     getAnalysis: build.query<any, any>({
-      query: (filter) => ({
+      query: filter => ({
         url: `/api/v1/case/analysis?${buildQueryString(filter)}`,
         method: "GET",
       }),
@@ -23,7 +26,7 @@ const TicketApi = api.injectEndpoints({
       },
     }),
     getReportCases: build.query<any, any>({
-      query: (filter) => ({
+      query: filter => ({
         url: `/api/v1/case/report?${buildQueryString(filter)}`,
         method: "GET",
       }),
@@ -32,7 +35,7 @@ const TicketApi = api.injectEndpoints({
       },
     }),
     detailCase: build.query<any, any>({
-      query: (id) => ({
+      query: id => ({
         url: `/api/v1/case/${id}`,
         method: "GET",
       }),
@@ -41,7 +44,7 @@ const TicketApi = api.injectEndpoints({
       },
     }),
     getCaseCustomers: build.query<any, any>({
-      query: (filter) => ({
+      query: filter => ({
         url: `/api/v1/case/customers?filter[where][fullName]=${filter}`,
         method: "GET",
       }),
@@ -50,7 +53,7 @@ const TicketApi = api.injectEndpoints({
       },
     }),
     getCaseStaff: build.query<any, any>({
-      query: (filter) => ({
+      query: filter => ({
         url: `/api/v1/case/users?filter[where][fullName]=${filter}`,
         method: "GET",
       }),
@@ -62,7 +65,7 @@ const TicketApi = api.injectEndpoints({
       query: ({ id, body }) => ({
         url: `/api/v1/case/${id}`,
         method: "PUT",
-        body
+        body,
       }),
       transformResponse: (res: any) => {
         return res;
@@ -70,7 +73,7 @@ const TicketApi = api.injectEndpoints({
     }),
 
     createCase: build.mutation<any, any>({
-      query: (body) => ({
+      query: body => ({
         url: "/api/v1/case",
         method: "POST",
         body,
@@ -81,7 +84,7 @@ const TicketApi = api.injectEndpoints({
     }),
 
     createAnalysis: build.mutation<any, any>({
-      query: (body) => ({
+      query: body => ({
         url: "/api/v1/case/analysis",
         method: "POST",
         body,
@@ -92,10 +95,10 @@ const TicketApi = api.injectEndpoints({
     }),
 
     exportCaseExcel: build.query<any, any>({
-      query: (filter) => ({
+      query: filter => ({
         url: `/api/v1/case/export?${buildQueryString(filter)}`,
         method: "GET",
-        responseHandler: (response) => response.blob(),
+        responseHandler: response => response.blob(),
       }),
       transformResponse: (response: Blob) => {
         const fileName = EXPORT_FILE_NAME_TICKET;
@@ -109,10 +112,10 @@ const TicketApi = api.injectEndpoints({
     }),
 
     exportReportCaseExcel: build.query<any, any>({
-      query: (filter) => ({
+      query: filter => ({
         url: `/api/v1/case/report/export?${buildQueryString(filter)}`,
         method: "GET",
-        responseHandler: (response) => response.blob(),
+        responseHandler: response => response.blob(),
       }),
       transformResponse: (response: Blob) => {
         const fileName = EXPORT_FILE_NAME_REPORT_TICKET;
@@ -124,7 +127,6 @@ const TicketApi = api.injectEndpoints({
         link.click();
       },
     }),
-
   }),
 });
 export const {
@@ -139,7 +141,6 @@ export const {
   useLazyGetCaseCustomersQuery,
   useLazyGetCaseStaffQuery,
   useLazyExportCaseExcelQuery,
-  useLazyExportReportCaseExcelQuery
-
+  useLazyExportReportCaseExcelQuery,
 } = TicketApi;
 export default TicketApi;

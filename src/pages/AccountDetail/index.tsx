@@ -19,10 +19,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { PageTitleHOC } from "src/components/PageTitleHOC";
 import { ACCOUNT_ROUTE } from "src/constants/routes.constants";
-import {
-  useGetAccountQuery,
-  useUpdateAccountGroupMutation,
-} from "src/store/api/accountApi";
+import { useGetAccountQuery, useUpdateAccountGroupMutation } from "src/store/api/accountApi";
 import { useGetRoleGroupsQuery } from "src/store/api/roleApi";
 
 const AccountDetailPage = () => {
@@ -40,7 +37,7 @@ const AccountDetailPage = () => {
       return;
     }
     setUserGroups(
-      userGroups.map((item) => {
+      userGroups.map(item => {
         if (item.id === record.id) {
           item.checked = e.target.checked;
         }
@@ -75,7 +72,7 @@ const AccountDetailPage = () => {
         render: (value, _record) => (
           <Checkbox
             value={_record.id}
-            onChange={(e) => handleOnChangeCheckbox(e, _record)}
+            onChange={e => handleOnChangeCheckbox(e, _record)}
             checked={_record.checked}
           />
         ),
@@ -89,7 +86,7 @@ const AccountDetailPage = () => {
       setUserGroups(
         roleGroupsData?.map((group: any) => ({
           ...group,
-          checked: accountDetailData?.groups.some((i) => i?.id === group.id),
+          checked: accountDetailData?.groups.some(i => i?.id === group.id),
         }))
       );
     }
@@ -106,7 +103,6 @@ const AccountDetailPage = () => {
         accessToken: accountDetailData?.accessToken?.trim(),
         accessTokenUser: accountDetailData?.accessTokenUser?.trim(),
         accountAdsId: accountDetailData?.accountAdsId?.trim(),
-
       });
     } else {
       form.resetFields();
@@ -126,12 +122,10 @@ const AccountDetailPage = () => {
   const handleSubmit = () => {
     form
       .validateFields()
-      .then((values) => {
+      .then(values => {
         // Prepare data to submit
         const updatedData = {
-          groupIds: userGroups
-            ?.filter((i: any) => i.checked)
-            .map((group) => group.id),
+          groupIds: userGroups?.filter((i: any) => i.checked).map(group => group.id),
           email: values.email,
           fullName: values.fullName,
           extension: values.extension,
@@ -153,7 +147,7 @@ const AccountDetailPage = () => {
             message.error("Đã xảy ra lỗi khi cập nhật tài khoản!");
           });
       })
-      .catch((errorInfo) => {
+      .catch(errorInfo => {
         console.error("Validation Failed:", errorInfo);
         message.error("Vui lòng kiểm tra lại các trường nhập liệu!");
       });
@@ -209,77 +203,80 @@ const AccountDetailPage = () => {
                 wrapperCol={{ span: 24 }}
                 rules={[{ required: true, message: "Vui lòng nhập link đăng bài" }]}
               >
-                <Input style={{
-                  width: '100%',
-                  fontSize: 16,
-                }} size="middle" placeholder="Link đăng bài" />
+                <Input
+                  style={{
+                    width: "100%",
+                    fontSize: 16,
+                  }}
+                  size="middle"
+                  placeholder="Link đăng bài"
+                />
               </Form.Item>
             </Col>
           </Row>
-          <Row gutter={[0, 16]} style={{ width: '100%' }}>
+          <Row gutter={[0, 16]} style={{ width: "100%" }}>
             <Col span={24}>
               <Form.Item
                 label="Access Token page"
                 name="accessToken"
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
-                rules={[{ required: true, message: 'Vui lòng nhập Access Token' }]}
+                rules={[{ required: true, message: "Vui lòng nhập Access Token" }]}
                 style={{ marginBottom: 0 }}
               >
                 <Input
                   size="middle"
                   placeholder="Access Token page"
                   style={{
-                    width: '100%',
+                    width: "100%",
                     fontSize: 16,
                   }}
                 />
               </Form.Item>
             </Col>
           </Row>
-           <Row gutter={[0, 16]} style={{ width: '100%' }}>
+          <Row gutter={[0, 16]} style={{ width: "100%" }}>
             <Col span={16}>
               <Form.Item
                 label="Account Ads Id "
                 name="accountAdsId"
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
-                rules={[{ required: true, message: 'Vui lòng nhập Account Ads Id' }]}
+                rules={[{ required: true, message: "Vui lòng nhập Account Ads Id" }]}
                 style={{ marginBottom: 0 }}
               >
                 <Input
                   size="middle"
                   placeholder="Account Ads Id"
                   style={{
-                    width: '100%',
+                    width: "100%",
                     fontSize: 16,
                   }}
                 />
               </Form.Item>
             </Col>
           </Row>
-           <Row gutter={[0, 16]} style={{ width: '100%' }}>
+          <Row gutter={[0, 16]} style={{ width: "100%" }}>
             <Col span={24}>
               <Form.Item
                 label="Access Token User"
                 name="accessTokenUser"
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
-                rules={[{ required: true, message: 'Vui lòng nhập Access Token User' }]}
+                rules={[{ required: true, message: "Vui lòng nhập Access Token User" }]}
                 style={{ marginBottom: 0 }}
               >
                 <Input
                   size="middle"
                   placeholder="Access Token User"
                   style={{
-                    width: '100%',
+                    width: "100%",
                     fontSize: 16,
                   }}
                 />
               </Form.Item>
             </Col>
           </Row>
-
         </Form>
         <Flex className="w-full" align="center" justify="space-between">
           <Typography.Title className="mb-0" level={5} color="#4A4A4A">
