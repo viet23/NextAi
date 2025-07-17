@@ -118,9 +118,9 @@
   },
   "proxy": "http://31.97.67.219:3001",
   "scripts": {
-    "start": "cross-env HTTPS=true react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "cross-env HTTPS=true react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
