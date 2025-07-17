@@ -1,15 +1,110 @@
 .accounts {
+  background-color: #0f172a; // nền xanh đen
+  color: #e2e8f0; // chữ sáng nhẹ
+  border-radius: 12px;
+  padding: 24px;
+
   .title {
-    margin-bottom: 1.5rem;
+    color: #e2e8f0;
   }
 
-  .edit {
-    font-size: 1rem;
-    font-weight: 600;
-    text-decoration: underline;
+  .ant-input,
+  .ant-select-selector {
+    background-color: #1e293b !important;
+    color: #e2e8f0 !important;
+    border: 1px solid #334155;
+  }
+
+  .ant-input::placeholder,
+  .ant-select-selection-placeholder {
+    color: #94a3b8 !important;
+  }
+
+  .ant-btn-primary {
+    background-color: #2563eb;
+    border-color: #2563eb;
+  }
+
+  .ant-btn-primary:hover {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+  }
+
+  .ant-table {
+    background-color: #1e293b;
+    color: #e2e8f0;
+
+    .ant-table-thead>tr>th {
+      background-color: #2d3443; // Màu nền header
+      color: #c2c8d4; // Màu chữ tiêu đề
+      font-weight: 500;
+      border-bottom: 1px solid #3b4355;
+      font-size: 13px;
+    }
+
+    .ant-table-tbody>tr:hover>td {
+      background-color: #1e293b !important;
+      color: #e2e8f0 !important;
+      box-shadow: none !important;
+      transition: none !important;
+    }
   }
 
   .pagination-wrapper {
-    margin-top: 1.5rem;
+    margin-top: 16px;
+
+    .ant-pagination-item,
+    .ant-pagination-prev,
+    .ant-pagination-next {
+      background-color: #1e293b;
+      border-color: #334155;
+      color: #e2e8f0;
+
+      &:hover {
+        background-color: #334155;
+      }
+    }
+
+    .ant-pagination-item-active {
+      background-color: #2563eb;
+      border-color: #2563eb;
+      color: #fff;
+    }
   }
+
+  .ant-empty-description {
+    color: #94a3b8;
+  }
+}
+
+// Áp dụng cho tất cả Input chung
+.ant-input,
+.ant-input-affix-wrapper {
+  background-color: #1e293b !important; // nền xanh đen nhẹ
+  color: #e2e8f0 !important; // màu chữ sáng
+  border: 1px solid #334155 !important;
+  border-radius: 6px;
+  box-shadow: none;
+
+  &::placeholder {
+    color: #94a3b8 !important; // placeholder nhạt
+  }
+
+  // Icon search (prefix)
+  .anticon {
+    color: #94a3b8 !important;
+  }
+
+  // Icon clear (nút x)
+  .ant-input-clear-icon {
+    color: #94a3b8 !important;
+
+    &:hover {
+      color: #f87171 !important; // đỏ nhẹ khi hover (hoặc có thể giữ nguyên)
+    }
+  }
+}
+
+.ant-form-item-label>label {
+  color: #ffffff !important;
 }

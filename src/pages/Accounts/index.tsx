@@ -9,6 +9,7 @@ import {
   Flex,
   Form,
   Input,
+  Layout,
   Pagination,
   Row,
   Select,
@@ -32,6 +33,7 @@ import dayjs from "dayjs";
 import { PageTitleHOC } from "src/components/PageTitleHOC";
 import CreateUser from "src/components/DetailUser";
 import { useTranslation } from "react-i18next";
+import { Content } from "antd/es/layout/layout";
 
 interface IForm {
   search: string;
@@ -39,17 +41,7 @@ interface IForm {
 }
 
 const AccountsPage = () => {
-  const { t, i18n } = useTranslation();
-
-  const toggleLanguage = () => {
-    const newLang = i18n.language === "vi" ? "en" : "vi";
-    i18n.changeLanguage(newLang);
-  };
-
-  const currentFlag =
-    i18n.language === "vi"
-      ? "/VN.png" // icon cờ Việt Nam
-      : "/EN.png"; // icon cờ Anh
+  const { t } = useTranslation();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [form] = useForm<IForm>();
@@ -188,92 +180,102 @@ const AccountsPage = () => {
 
   return (
     <PageTitleHOC title={t("accounts.page_title")}>
-      {/* Nút đổi ngôn ngữ bằng emoji */}
-      <div style={{ textAlign: "right", marginBottom: 12 }}>
-        <Button
-          onClick={toggleLanguage}
-          shape="circle"
-          style={{ width: 32, height: 32, padding: 0 }}
-        >
-          <img
-            src={currentFlag}
-            alt="flag"
-            style={{ width: 20, height: 20, borderRadius: "50%" }}
-          />
-        </Button>
-      </div>
+      <Layout style={{ minHeight: "100vh", background: "#0D0F1A" }}>
+        <Content style={{ padding: 24 }}>
+          <Card className="accounts">
+            <Typography.Title className="title" level={4} color="#1B1B1B">
+              {t("accounts.user_list")}
+            </Typography.Title>
 
-      <Card className="accounts">
-        <Typography.Title className="title" level={4} color="#1B1B1B">
-          {t("accounts.user_list")}
-        </Typography.Title>
+            <Form
+              layout="vertical"
+              requiredMark={false}
+              initialValues={initFormValues}
+              form={form}
+              onFinish={handleFinish}
+              onValuesChange={handleChange}
+              style={{ marginBottom: 24 }}
+            >
+              <Row gutter={[16, 16]} align="bottom">
+                <Col xs={24} md={12} lg={10}>
+                  <Form.Item name="search" label={t("accounts.search_label")}>
+                    <Input
+                      allowClear
+                      size="large"
+                      prefix={<SearchOutlined />}
+                      placeholder={t("accounts.search_placeholder")}
+                    />
+                  </Form.Item>
+                </Col>
 
-        <Form
-          layout="vertical"
-          requiredMark={false}
-          initialValues={initFormValues}
-          form={form}
-          onFinish={handleFinish}
-          onValuesChange={handleChange}
-        >
-          <Row gutter={[24, 0]}>
-            <Col xs={24} lg={8}>
-              <Form.Item name="search">
-                <Input
-                  allowClear
-                  size="large"
-                  prefix={<SearchOutlined />}
-                  placeholder={t("accounts.search_placeholder")}
+                <Col xs={24} md={12} lg={8}>
+                  <Form.Item name="status" label={t("accounts.status_placeholder")}>
+                    <Select allowClear size="large" placeholder={t("accounts.status_placeholder")}>
+                      {ACCOUNT_STATUS.map((status) => (
+                        <Select.Option key={status.value}>
+                          {t(`accounts.status.${status.label}`)}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+
+                <Col xs={24} md={24} lg={6}>
+                  <Form.Item label=" ">
+                    <Button block size="large" type="primary" onClick={handleAddNew}>
+                      {t("accounts.add_button")}
+                    </Button>
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form>
+
+
+            <>
+              <Table
+                className="table-scroll dark-header-table"
+                rowKey="id"
+                columns={columns}
+                dataSource={dataSource}
+                pagination={false}
+                locale={{
+                  emptyText: <Empty description={t("accounts.no_data")} />,
+                }}
+                scroll={{ x: 800 }}
+              />
+
+              {/* 🎯 CSS ép màu header cột giống ảnh */}
+              <style>
+                {`
+      .dark-header-table .ant-table-thead > tr > th {
+        background-color: #1e293b !important;
+        color: #e2e8f0 !important;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 13px;
+      }
+    `}
+              </style>
+            </>
+
+            {!!data?.total && (
+              <Flex vertical className="pagination-wrapper">
+                <Pagination
+                  pageSize={pagination.pageSize}
+                  current={pagination.page}
+                  total={data?.total}
+                  onChange={handlePaginationChange}
                 />
-              </Form.Item>
-            </Col>
-            <Col xs={24} lg={8}>
-              <Form.Item name="status">
-                <Select allowClear size="large" placeholder={t("accounts.status_placeholder")}>
-                  {ACCOUNT_STATUS.map(status => (
-                    <Select.Option key={status.value}>
-                      {t(`accounts.status.${status.label}`)}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col xs={24} lg={8}>
-              <Flex justify="end">
-                <Button size="large" type="primary" onClick={handleAddNew}>
-                  {t("accounts.add_button")}
-                </Button>
               </Flex>
-            </Col>
-          </Row>
-        </Form>
+            )}
+          </Card>
+          <Drawer open={isOpen} onClose={handleOnCloseDrawer} width={"30%"} maskClosable={false}>
+            <CreateUser onRefetch={() => { }} />
+          </Drawer>
+        </Content>
+      </Layout>
 
-        <Table
-          className="table-scroll"
-          rowKey="id"
-          columns={columns}
-          dataSource={dataSource}
-          pagination={false}
-          locale={{
-            emptyText: <Empty description={t("accounts.no_data")} />,
-          }}
-          scroll={{ x: 800 }}
-        />
-        {!!data?.total && (
-          <Flex vertical className="pagination-wrapper">
-            <Pagination
-              pageSize={pagination.pageSize}
-              current={pagination.page}
-              total={data?.total}
-              onChange={handlePaginationChange}
-            />
-          </Flex>
-        )}
-      </Card>
-      <Drawer open={isOpen} onClose={handleOnCloseDrawer} width={"30%"} maskClosable={false}>
-        <CreateUser onRefetch={() => {}} />
-      </Drawer>
-    </PageTitleHOC>
+    </PageTitleHOC >
   );
 };
 

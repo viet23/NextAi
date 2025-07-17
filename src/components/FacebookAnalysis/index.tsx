@@ -253,62 +253,63 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
         />
         <meta name="twitter:image" content="https://alloneads.com/og-image.png" />
       </Helmet>
-      <Layout style={{ minHeight: "100vh", background: "#fff" }}>
-        <Content style={styles.container}>
+      <Layout style={{ minHeight: "100vh", background: "#0D0F1A" }}>
+        <Content style={{ padding: 24, color: "#F1F5F9" }}>
+
           {/* Modal hiển thị khi click */}
           <AutoPostModal visible={showModal} onClose={() => setShowModal(false)} />
 
+          <div style={{ textAlign: "center", marginBottom: 24 }}>
+            <h3 style={{ color: "#F8FAFC", marginBottom: 4 }}>
+              {t("facebook_analysis.title")} {/* Phân tích Facebook */}
+            </h3>
+            <p style={{ color: "#94A3B8", fontSize: 14 }}>
+              {t("facebook_analysis.subtitle")} {/* Khám phá trang Facebook của bạn */}
+            </p>
+          </div>
+
           <div
             style={{
+              width: "100%",
               display: "flex",
-              justifyContent: "flex-end", // ✅ đẩy nút sang phải
-              padding: "6px 0", // ✅ khoảng trống trên dưới (có thể tăng/giảm)
+              justifyContent: "center", // căn giữa toàn khối
+              marginBottom: 24,
             }}
           >
-            <button
-              onClick={() => setShowModal(true)}
-              style={{
-                backgroundColor: "#D2E3FC",
-                color: "#000",
-                border: "1px solid #D2E3FC",
-                borderRadius: 6,
-                padding: "6px 12px", // ✅ padding cho nút đẹp hơn
-                fontSize: 11,
-                cursor: "pointer",
-                marginRight: 16, // ✅ nếu cần cách xa mép phải
-              }}
-            >
-              {t("image.auto_post_setting")}
-            </button>
-          </div>
-          <div style={styles.inputSection}>
-            <Input
-              value={url}
-              onChange={e => setUrl(e.target.value)}
-              placeholder={t("facebook_analysis.enter_page_link")}
-              style={{ marginBottom: 16 }}
-            />
-
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "space-between",
-                marginBottom: 16,
+                gap: 12,
+                maxWidth: 800, // ✅ Thu gọn chiều ngang tại đây
+                width: "100%",
               }}
             >
+              <Input
+                value={url}
+                onChange={e => setUrl(e.target.value)}
+                placeholder={t("facebook_analysis.enter_page_link")}
+                style={{
+                  flex: 1,
+                  background: "#1E293B",
+                  border: "1px solid #334155",
+                  color: "#F1F5F9",
+                  height: 40,
+                }}
+              />
+
               <Button
                 style={{
-                  backgroundColor: "#D2E3FC",
-                  color: "#000",
-                  border: "1px solid #D2E3FC",
+                  background: "transparent",
+                  border: "1px solid #3B82F6",
+                  color: "#E0F2FE",
                   borderRadius: 6,
                   height: 40,
                   padding: "0 16px",
                   whiteSpace: "nowrap",
-                  width: "auto",
+                  boxShadow: "0 0 6px #3B82F6",
                 }}
-                type="primary"
+                type="default"
                 loading={loading}
                 onClick={analyzeFacebookPage}
               >
@@ -316,13 +317,19 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
               </Button>
             </div>
           </div>
+          <br />
 
           <div style={styles.twoColumns}>
             {/* Cột trái */}
             <div style={styles.column}>
-              <Title level={4}>📊 {t("facebook_analysis.section_page_analysis")}</Title>
-              <Card>
-                <Title level={5}>{t("facebook_analysis.general_info")}</Title>
+              <Title level={4} style={{ color: "#E2E8F0" }}>📊 {t("facebook_analysis.section_page_analysis")}</Title>
+              <Card style={{
+                background: "#1E293B",
+                border: "1px solid #334155",
+                color: "#F1F5F9",
+              }}
+                bodyStyle={{ padding: 16 }}>
+                <Title level={5} style={{ color: "#CBD5E1" }}>{t("facebook_analysis.general_info")}</Title>
                 <TextArea
                   value={analysis.overview}
                   readOnly
@@ -330,7 +337,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
                   style={{ marginBottom: 12, whiteSpace: "pre-wrap" }}
                 />
 
-                <Title level={5}>{t("facebook_analysis.products_services")}</Title>
+                <Title level={5} style={{ color: "#CBD5E1" }}>{t("facebook_analysis.products_services")}</Title>
                 <TextArea
                   value={analysis.products}
                   readOnly
@@ -338,7 +345,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
                   style={{ marginBottom: 12, whiteSpace: "pre-wrap" }}
                 />
 
-                <Title level={5}>{t("facebook_analysis.customer_engagement")}</Title>
+                <Title level={5} style={{ color: "#CBD5E1" }}>{t("facebook_analysis.customer_engagement")}</Title>
                 <TextArea
                   value={analysis.engagement}
                   readOnly
@@ -346,7 +353,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
                   style={{ marginBottom: 12, whiteSpace: "pre-wrap" }}
                 />
 
-                <Title level={5}>{t("facebook_analysis.strategy")}</Title>
+                <Title level={5} style={{ color: "#CBD5E1" }}>{t("facebook_analysis.strategy")}</Title>
                 <TextArea
                   value={analysis.strategy}
                   readOnly
@@ -358,11 +365,54 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
 
             {/* Cột phải */}
             <div style={styles.column}>
-              <Title level={4}>🚀 {t("facebook_analysis.section_channel_plan")}</Title>
-              <Card>
-                <TextArea value={channelPlan} rows={28} readOnly />
+              <Title level={4} style={{ color: "#E2E8F0" }}>
+                🚀 {t("facebook_analysis.section_channel_plan")}
+              </Title>
+              <Card
+                style={{
+                  background: "#1E293B",
+                  border: "1px solid #334155",
+                  color: "#F1F5F9",
+                }}
+                bodyStyle={{
+                  padding: 16,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 16,
+                }}
+              >
+                <TextArea
+                  value={channelPlan}
+                  rows={25}
+                  readOnly
+                  style={{
+                    background: "#0F172A",
+                    border: "1px solid #334155",
+                    color: "#F8FAFC",
+                  }}
+                />
+
+                <button
+                  onClick={() => setShowModal(true)}
+                  style={{
+                    background: "#0F172A",
+                    border: "1px solid #3B82F6",
+                    color: "#E0F2FE",
+                    borderRadius: 6,
+                    height: 30,
+                    padding: "0 16px",
+                    width: "100%", // ✅ full width như ảnh
+                    boxShadow: "0 0 6px #3B82F6", // ✅ viền phát sáng
+                    fontWeight: 500,
+                    fontSize: 14,
+                    cursor: "pointer",
+                  }}
+                >
+                  {t("image.auto_post_setting")}
+                </button>
               </Card>
             </div>
+
           </div>
         </Content>
       </Layout>

@@ -19,6 +19,7 @@ import { useCreateCaseMutation } from "src/store/api/ticketApi";
 import { DownloadOutlined, UploadOutlined } from "@ant-design/icons";
 // import { Row, Col, Button, Modal, Radio, Typography, Spin, message } from 'antd';
 import axios from "axios";
+import "./styles.scss";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
@@ -34,6 +35,18 @@ const { Content } = Layout;
 const { TextArea } = Input;
 const { Option } = Select;
 const { Title, Text } = Typography;
+
+const inputStyle = {
+  backgroundColor: "#0f172a",
+  border: "1px solid #334155",
+  color: "#e2e8f0",
+  borderRadius: 8,
+  height: 36,
+  padding: "4px 10px",
+  fontSize: 13,
+  lineHeight: 1.4,
+};
+
 
 type MusicItem = {
   id: number;
@@ -87,8 +100,8 @@ const VideoGenerator = () => {
   const [selectedMusic, setSelectedMusic] = useState<MusicItem | null>(null);
   const [playingId, setPlayingId] = useState<number | null>(null);
   const [selectedGenre, setSelectedGenre] = useState<string>("lofi");
-  const { data: accountDetailData } = useGetAccountQuery(user.id || "0", {
-    skip: !user.id,
+  const { data: accountDetailData } = useGetAccountQuery(user?.id || "0", {
+    skip: !user?.id,
   });
   const SHOTSTACK_API_KEY = "A6urmAlot4I2VNzJEiRVFFqeVQwcrk4zfpQJRvSE";
   const [description, setDescription] = useState("");
@@ -297,6 +310,8 @@ const VideoGenerator = () => {
   };
 
   const generateScriptPrompt = () => {
+    console.log(`sceneCount`, sceneCount);
+
     const sceneCountGPT = durationSceneMap[sceneCount];
     console.log(`sceneCountGPT`, sceneCountGPT);
     const sceneText = `${sceneCountGPT} ${t("video.scenesGpt")}`;
@@ -752,235 +767,174 @@ Please contact Admin`);
       <FullscreenLoader
         spinning={loading || loadingCaption || loadingScript || creatingCase || loadingMusic}
       />
-      <Layout style={{ minHeight: "100vh", background: "#fff" }}>
+      <Layout className="image-layout">
         <Content style={{ padding: 24 }}>
-          <Row gutter={[24, 24]} justify="center" wrap>
-            {/* Cột trái: nhập mô tả và upload */}
-            <Col xs={24} md={12}>
+          <h3 style={{ textAlign: "center", color: "#fff", marginBottom: 12 }}>
+            {t("video.title")}
+          </h3>
+          <p style={{ color: "#94A3B8", fontSize: 14 }}>
+            {t("video.subtitle")} {/* subtitle :Tạo hình ảnh và nội dung độc đáo chỉ trong vài giây. */}
+          </p>
+          <div className="image-page">
+            <div className="image-column">
+              {/* Cột trái: nhập mô tả và upload */}
+
               <div
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: 16,
+                  backgroundColor: "#0f172a",
+                  border: "1px solid #334155",
+                  borderRadius: 12,
+                  padding: 24,
+                  marginTop: 12,
+                  color: "#e2e8f0",
                 }}
               >
-                <label style={{ fontWeight: 500, whiteSpace: "nowrap" }}>
-                  {t("video.duration_label")}:
-                </label>
-                <Select
-                  value={videoDuration}
-                  onChange={value => {
-                    setVideoDuration(value);
-                    setPromptTexts(Array(durationSceneMap[value]).fill(""));
-                    setUploadedImageUrls(Array(durationSceneMap[value]).fill(""));
-                    setGeneratedVideos([]);
-                  }}
-                  style={{ width: 150, marginLeft: 12 }}
-                >
-                  <Option value={5}>{t("video.seconds", { count: 5 })}</Option>
-                  <Option value={10}>{t("video.seconds", { count: 10 })}</Option>
-                  <Option value={20}>{t("video.seconds", { count: 20 })}</Option>
-                  <Option value={30}>{t("video.seconds", { count: 30 })}</Option>
-                  <Option value={40}>{t("video.seconds", { count: 40 })}</Option>
-                  <Option value={50}>{t("video.seconds", { count: 50 })}</Option>
-                  <Option value={60}>{t("video.seconds", { count: 60 })}</Option>
-                </Select>
-                <Button
-                  size="small"
-                  style={{ backgroundColor: "#D2E3FC", color: "#000" }}
-                  onClick={() => setScriptModalOpen(true)}
-                >
-                  {t("video.generate_script")}
-                </Button>
-              </div>
-              {Array.from({ length: activeScenes }).map((_, index) => (
-                <div key={index} style={{ marginBottom: 24 }}>
-                  <TextArea
-                    autoSize={{ minRows: 2, maxRows: 10 }}
-                    placeholder={t("video.scene_description", { index: index + 1 })}
-                    value={promptTexts[index] || ""}
-                    onChange={e => {
-                      const newPrompts = [...promptTexts];
-                      newPrompts[index] = e.target.value;
-                      setPromptTexts(newPrompts);
-                    }}
-                    style={{ marginBottom: 8 }}
-                  />
+                <Row gutter={[16, 16]}>
+                  <Col xs={24} md={12}>
+                    <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 20 }}>
+                      Tạo kịch bản chi tiết
+                    </div>
 
-                  <Row gutter={[8, 8]} justify="center" wrap style={{ marginBottom: 8 }}>
-                    <Col xs={24} sm={10}>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        ref={el => (uploadRefs.current[index] = el)}
-                        style={{ display: "none" }}
-                        onChange={e => {
-                          if (e.target.files?.[0]) {
-                            handleImageUpload(index, e.target.files[0]);
-                          }
+                  </Col>
+
+                  <Col xs={24} md={12}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <label style={{ whiteSpace: "nowrap", fontSize: 13 }}>
+                        {t("video.scene_count_label")}:
+                      </label>
+                      <Select
+                        value={sceneCount}
+                        onChange={setSceneCount}
+                        placeholder={t("video.scene_count_placeholder")}
+                        style={{
+                          width: 110,
+                          height: 36,
+                          fontSize: 13,
+                          backgroundColor: "#1e293b", // Nền giống Ratio
+                          color: "#e2e8f0",           // Chữ trắng
+                          border: "1px solid #334155",
+                          borderRadius: 8,
+                          outline: "none",
                         }}
-                      />
+                        dropdownStyle={{
+                          backgroundColor: "#1e293b",
+                          color: "#e2e8f0",
+                          fontSize: 13,
+                        }}
+                        getPopupContainer={(trigger) => trigger.parentNode}
+                        popupMatchSelectWidth={false}
+                      >
+                        <Option value="" disabled   style={{ color: "#e2e8f0", backgroundColor: "#1e293b" }}>
+                          {t("video.scene_count_placeholder")}
+                        </Option>
+                        {[5, 10, 20, 30, 40, 50, 60].map(num => (
+                          <Option
+                            key={num}
+                            value={num}
+                            style={{ color: "#e2e8f0", backgroundColor: "#1e293b" }}
+                          >
+                            {num} {t("video.scenes")}
+                          </Option>
+                        ))}
+                      </Select>
 
+
+                    </div>
+                  </Col>
+
+                  <Col xs={24} md={12}>
+                    <label style={{ display: "block", marginBottom: 4 }}>Tên sản phẩm/ dịch vụ</label>
+                    <Input
+                      value={productName}
+                      onChange={e => setProductName(e.target.value)}
+                      placeholder="VD: Một cô gái tóc dài"
+                      style={inputStyle}
+                    />
+                  </Col>
+
+                  <Col xs={24} md={12}>
+                    <label style={{ display: "block", marginBottom: 4 }}>Mô tả sản phẩm</label>
+                    <Input
+                      value={productDescription}
+                      onChange={e => setProductDescription(e.target.value)}
+                      placeholder="VD: Cô gái bước đi dưới ánh hoàng hôn"
+                      style={inputStyle}
+                    />
+                  </Col>
+
+                  <Col xs={24} md={12}>
+                    <label style={{ display: "block", marginBottom: 4 }}>Hiệu ứng</label>
+                    <Input
+                      value={specialEffects}
+                      onChange={e => setSpecialEffects(e.target.value)}
+                      placeholder="VD: Ánh sáng lung linh"
+                      style={inputStyle}
+                    />
+                  </Col>
+
+                  <Col xs={24} md={12}>
+                    <label style={{ display: "block", marginBottom: 4 }}>Vật thể xung quanh</label>
+                    <Input
+                      value={productSurrounding}
+                      onChange={e => setProductSurrounding(e.target.value)}
+                      placeholder="VD: Cánh đồng, núi non, biển cả"
+                      style={inputStyle}
+                    />
+                  </Col>
+
+                  <Col span={24}>
+                    <div style={{ textAlign: "center", marginTop: 24 }}>
                       <Button
-                        type="dashed"
-                        block
-                        size="small"
-                        icon={<UploadOutlined />}
+                        icon={<span style={{ marginRight: 6 }}>✦</span>}
+                        style={{
+                          backgroundColor: "#0f172a",
+                          border: "1px solid #3b82f6",
+                          color: "#ffffff",
+                          borderRadius: 8,
+                          padding: "8px 24px",
+                          fontSize: 16,
+                          fontWeight: 600,
+                          boxShadow: "0 0 6px rgba(59,130,246,0.6)",
+                        }}
                         onClick={() => {
-                          if (uploadRefs.current[index]) {
-                            uploadRefs.current[index]?.click();
-                          } else {
-                            console.warn("❗Không tìm thấy input file tại index:", index);
+                          if (
+                            !sceneCount ||
+                            !productName.trim() ||
+                            !productDescription.trim() ||
+                            !productSurrounding.trim() ||
+                            !specialEffects.trim()
+                          ) {
+                            message.warning(t("video.required_fields_warning"));
+                            return;
                           }
+                          generateScriptByGPT();
                         }}
                       >
-                        {t("video.upload_image")}
+                        Tạo kịch bản
                       </Button>
-                    </Col>
+                    </div>
+                  </Col>
+                </Row>
+              </div>
 
-                    <Col xs={24} sm={10}>
-                      <Button
-                        type="primary"
-                        block
-                        size="small"
-                        onClick={() => generateSingleSceneVideo(index)}
-                        style={{ backgroundColor: "#D2E3FC", color: "#000" }}
-                      >
-                        {t("video.generate_scene", { index: index + 1 })}
-                      </Button>
-                    </Col>
-                  </Row>
 
-                  <Row gutter={[8, 8]} style={{ marginTop: 8 }}>
-                    <Col span={12} style={{ textAlign: "center" }}>
-                      {uploadedImageUrls[index] && (
-                        <div style={{ position: "relative", display: "inline-block" }}>
-                          {/* Ảnh */}
-                          <img
-                            src={uploadedImageUrls[index]}
-                            alt={`Scene ${index + 1}`}
-                            style={{
-                              width: 150,
-                              height: 90,
-                              objectFit: "cover",
-                              borderRadius: 6,
-                              border: "1px solid #ccc",
-                            }}
-                          />
-
-                          {/* Nút Xoá */}
-                          <CloseCircleOutlined
-                            onClick={() => handleRemoveImage(index)}
-                            style={{
-                              position: "absolute",
-                              top: -8,
-                              right: -8,
-                              fontSize: 18,
-                              color: "red",
-                              backgroundColor: "#fff",
-                              borderRadius: "50%",
-                              cursor: "pointer",
-                            }}
-                          />
-                        </div>
-                      )}
-                    </Col>
-
-                    <Col span={12} style={{ textAlign: "center", position: "relative" }}>
-                      {generatedVideos.find(v => v.index === index) && (
-                        <>
-                          <video
-                            src={generatedVideos.find(v => v.index === index)?.url}
-                            style={{
-                              width: 150,
-                              height: 90,
-                              objectFit: "cover",
-                              borderRadius: 6,
-                              border: "1px solid #ccc",
-                            }}
-                            controls
-                            muted
-                          />
-
-                          {/* Checkbox chọn video */}
-                          <Checkbox
-                            checked={generatedVideos.find(v => v.index === index)?.selected}
-                            onChange={() => handleCheckboxChange(index)}
-                            style={{
-                              position: "absolute",
-                              top: 4,
-                              right: 12,
-                              background: "white",
-                              padding: 2,
-                              borderRadius: 4,
-                              zIndex: 2,
-                            }}
-                          />
-
-                          {/* Icon tải xuống */}
-                          <DownloadOutlined
-                            onClick={() => {
-                              const url = generatedVideos.find(v => v.index === index)?.url;
-
-                              if (!url) {
-                                message.error("Không tìm thấy video để tải");
-                                return;
-                              }
-
-                              Modal.confirm({
-                                title: "Tải video?",
-                                content: "Bạn có chắc muốn tải video này xuống thiết bị của mình?",
-                                okText: "Tải xuống",
-                                cancelText: "Hủy",
-                                onOk: async () => {
-                                  try {
-                                    const response = await fetch(url);
-                                    const blob = await response.blob();
-                                    const blobUrl = window.URL.createObjectURL(blob);
-                                    const a = document.createElement("a");
-                                    a.href = blobUrl;
-                                    a.download = `video-${index}.mp4`;
-                                    document.body.appendChild(a);
-                                    a.click();
-                                    a.remove();
-                                    window.URL.revokeObjectURL(blobUrl);
-                                    message.success("Đã bắt đầu tải video");
-                                  } catch (err) {
-                                    console.error("Tải video thất bại:", err);
-                                    message.error("Tải video thất bại");
-                                  }
-                                },
-                              });
-                            }}
-                            style={{
-                              position: "absolute",
-                              bottom: 8,
-                              right: 12,
-                              fontSize: 12,
-                              background: "#fff",
-                              padding: 6,
-                              borderRadius: "50%",
-                              cursor: "pointer",
-                              zIndex: 2,
-                              boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-                            }}
-                            title="Tải video"
-                          />
-                        </>
-                      )}
-                    </Col>
-                  </Row>
-                </div>
-              ))}
-              <div style={{ marginBottom: 24 }}>
-                <Row gutter={[12, 12]} justify="center">
+              <div style={{ marginBottom: 24, marginTop: 32 }}>
+                <Row gutter={[12, 12]} justify="center" align="middle">
+                  {/* Resolution */}
                   <Col>
-                    {" "}
                     <select
-                      style={{ width: 110, padding: "4px 6px", fontSize: 13 }}
+                      style={{
+                        width: 110,
+                        padding: "4px 8px",
+                        fontSize: 13,
+                        backgroundColor: "#1e293b",
+                        color: "#e2e8f0",
+                        border: "1px solid #334155",
+                        borderRadius: 8,
+                        outline: "none",
+                      }}
                       value={resolution}
-                      onChange={e => setResolution(e.target.value)}
+                      onChange={(e) => setResolution(e.target.value)}
                     >
                       <option value="" disabled>
                         Resolution
@@ -989,12 +943,22 @@ Please contact Admin`);
                       <option value="1080p">1080p</option>
                     </select>
                   </Col>
+
+                  {/* Ratio */}
                   <Col>
-                    {" "}
                     <select
-                      style={{ width: 110, padding: "4px 6px", fontSize: 13 }}
+                      style={{
+                        width: 110,
+                        padding: "4px 8px",
+                        fontSize: 13,
+                        backgroundColor: "#1e293b",
+                        color: "#e2e8f0",
+                        border: "1px solid #334155",
+                        borderRadius: 8,
+                        outline: "none",
+                      }}
                       value={ratio}
-                      onChange={e => setRatio(e.target.value)}
+                      onChange={(e) => setRatio(e.target.value)}
                     >
                       <option value="" disabled>
                         Size
@@ -1007,53 +971,364 @@ Please contact Admin`);
                       <option value="21:9">21:9</option>
                     </select>
                   </Col>
+
+                  {/* Duration – dùng Antd Select */}
                   <Col>
-                    {" "}
-                    <Button
-                      type="primary"
-                      loading={loading}
-                      style={{ backgroundColor: "#D2E3FC", color: "#000" }}
-                      onClick={generateAllScenesVideos}
+                    <Select
+                      value={videoDuration}
+                      onChange={(value) => {
+                        setVideoDuration(value);
+                        setPromptTexts(Array(durationSceneMap[value]).fill(""));
+                        setUploadedImageUrls(Array(durationSceneMap[value]).fill(""));
+                        setGeneratedVideos([]);
+                      }}
+                      style={{
+                        width: 110,
+                        padding: "4px 8px", // không thật sự dùng trong Antd nhưng cho consistency
+                        fontSize: 13,
+                        backgroundColor: "#1e293b",
+                        color: "#e2e8f0",
+                        border: "1px solid #334155",
+                        borderRadius: 8,
+                        outline: "none",
+                      }}
+                      dropdownStyle={{
+                        backgroundColor: "#1e293b",
+                        color: "#e2e8f0",
+                        fontSize: 13,
+                      }}
+                      getPopupContainer={(trigger) => trigger.parentNode} // tránh lệch dropdown
+                      popupMatchSelectWidth={false}
                     >
-                      {t("video.generate_all")}
+                      <Option value="" disabled   style={{ color: "#e2e8f0", backgroundColor: "#1e293b" }}>
+                        Duration
+                      </Option> 
+                      {[5, 10, 20, 30, 40, 50, 60].map((val) => (
+                        <Option key={val} value={val}   style={{ color: "#e2e8f0", backgroundColor: "#1e293b" }}>
+                          {t("video.seconds", { count: val })}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Col>
+
+
+                  {/* Button chọn nhạc */}
+                  <Col>
+                    <Button
+                      style={{
+                        backgroundColor: "#1e293b",
+                        color: "#e2e8f0",
+                        border: "1px solid #334155",
+                        borderRadius: 8,
+                        fontWeight: 500,
+                        padding: "4px 16px",
+                      }}
+                      onClick={openMusicModal}
+                    >
+                      {selectedMusic
+                        ? t("video.selected_music", { name: selectedMusic.name })
+                        : t("video.choose_music")}
                     </Button>
                   </Col>
                 </Row>
               </div>
 
-              <Row gutter={[12, 12]} justify="center">
-                <Col>
-                  <Button
-                    type="primary"
-                    style={{ backgroundColor: "#D2E3FC", color: "#000" }}
-                    onClick={mergeSelectedVideos}
-                  >
-                    {t("video.merge_selected")}
-                  </Button>
-                </Col>
-                <Col>
-                  <Button
-                    style={{ backgroundColor: "#D2E3FC", color: "#000" }}
-                    onClick={openMusicModal}
-                  >
-                    {selectedMusic
-                      ? t("video.selected_music", { name: selectedMusic.name })
-                      : t("video.choose_music")}
-                  </Button>
-                </Col>
-                <Col>
-                  <Button
-                    style={{
-                      backgroundColor: "#D2E3FC",
-                      color: "#000",
-                      fontWeight: 500,
-                    }}
-                    onClick={handleMergeMusic}
-                  >
-                    {t("video.music_pairing")}
-                  </Button>
-                </Col>
+              {Array.from({ length: activeScenes }).map((_, index) => (
+                <div
+                  style={{
+                    backgroundColor: "#0f172a",
+                    padding: "24px 16px", // bỏ maxWidth
+                    borderRadius: 12,
+                    width: "100%", // chiếm toàn bộ khung
+                  }}
+                >
+                  <Row gutter={16} justify="space-between" align="top">
+                    {/* Khối giữa: Nhập mô tả + Nút */}
+                    <Col xs={24} md={14}>
+                      <TextArea
+                        autoSize={false}
+                        value={promptTexts[index] || ""}
+                        placeholder="Nhập mô tả cảnh quay"
+                        onChange={(e) => {
+                          const newPrompts = [...promptTexts];
+                          newPrompts[index] = e.target.value;
+                          setPromptTexts(newPrompts);
+                        }}
+                        style={{
+                          height: 160,
+                          resize: "none",
+                          backgroundColor: "#0f172a",
+                          color: "#e2e8f0",
+                          border: "1px solid #475569",
+                          borderRadius: 8,
+                          padding: 12,
+                          fontSize: 14,
+                          lineHeight: 1.6,
+                          overflowY: "auto",
+                        }}
+                      />
+
+                      {/* Nút Tạo video – full chiều ngang */}
+                      <div style={{ marginTop: 10 }}>
+                        <Button
+                          onClick={() => generateSingleSceneVideo(index)}
+                          style={{
+                            width: "100%",
+                            backgroundColor: "#0f172a",
+                            color: "#ffffff",
+                            fontSize: 16,
+                            fontWeight: 600,
+                            padding: "10px 0",
+                            border: "1px solid #3b82f6",
+                            borderRadius: 8,
+                            boxShadow: "0 0 8px rgba(59,130,246,0.6)",
+                          }}
+                        >
+                          Tạo video
+                        </Button>
+                      </div>
+                    </Col>
+
+                    <Col xs={24} md={10}>
+                      {/* Khối Chọn Media (trên) */}
+                      <div
+                        style={{
+                          height: 90,
+                          borderRadius: 8,
+                          fontSize: 13,
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          position: "relative",
+                          marginBottom: 8,
+                        }}
+                      >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          ref={(el) => (uploadRefs.current[index] = el)}
+                          style={{ display: "none" }}
+                          onChange={(e) => {
+                            if (e.target.files?.[0]) {
+                              handleImageUpload(index, e.target.files[0]);
+                            }
+                          }}
+                        />
+
+                        {!uploadedImageUrls[index] ? (
+                          <div
+                            onClick={() => uploadRefs.current[index]?.click()}
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              cursor: "pointer",
+                              color: "#94a3b8",
+                              userSelect: "none",
+                            }}
+                          >
+                            <img
+                              src="https://img.icons8.com/ios/50/94a3b8/picture.png"
+                              alt="upload"
+                              style={{ width: 24, height: 24, marginBottom: 2 }}
+                            />
+                            <div style={{ fontSize: 13 }}>Media</div>
+                          </div>
+                        ) : (
+                          <div style={{ position: "relative", display: "inline-block" }}>
+                            <img
+                              src={uploadedImageUrls[index]}
+                              alt={`Scene ${index + 1}`}
+                              style={{
+                                width: 100,
+                                height: 60,
+                                objectFit: "cover",
+                                borderRadius: 6,
+                                border: "1px solid #ccc",
+                              }}
+                            />
+                            <CloseCircleOutlined
+                              onClick={() => handleRemoveImage(index)}
+                              style={{
+                                position: "absolute",
+                                top: -6,
+                                right: -6,
+                                fontSize: 14,
+                                color: "red",
+                                backgroundColor: "#fff",
+                                borderRadius: "50%",
+                                cursor: "pointer",
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Khối Kết quả (dưới) */}
+                      <div
+                        style={{
+                          height: 90,
+                          borderRadius: 8,
+                          fontSize: 13,
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          position: "relative",
+                        }}
+                      >
+                        {generatedVideos.some((v) => v.index === index) ? (
+                          <div style={{ position: "relative", display: "inline-block" }}>
+                            <video
+                              src={generatedVideos.find((v) => v.index === index)?.url}
+                              style={{
+                                width: 250,
+                                height: 120,
+                                objectFit: "cover",
+                                borderRadius: 6,
+                                border: "1px solid #ccc",
+                              }}
+                              controls
+                              muted
+                            />
+                            <div
+                              style={{
+                                position: "absolute",
+                                top: 2,
+                                right: 2,
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: 4,
+                                alignItems: "flex-end",
+                                zIndex: 2,
+                              }}
+                            >
+                              <Checkbox
+                                checked={generatedVideos.find((v) => v.index === index)?.selected}
+                                onChange={() => handleCheckboxChange(index)}
+                                style={{
+                                  background: "#ffffff",
+                                  padding: 2,
+                                  borderRadius: 4,
+                                  transform: "scale(0.8)",
+                                }}
+                              />
+                              {/* <DownloadOutlined
+                                onClick={() => {
+                                  const url = generatedVideos.find((v) => v.index === index)?.url;
+                                  if (!url) {
+                                    message.error("Không tìm thấy video để tải");
+                                    return;
+                                  }
+                                  Modal.confirm({
+                                    title: "Tải video?",
+                                    content: "Bạn có chắc muốn tải video này xuống thiết bị của mình?",
+                                    okText: "Tải xuống",
+                                    cancelText: "Hủy",
+                                    onOk: async () => {
+                                      try {
+                                        const response = await fetch(url);
+                                        const blob = await response.blob();
+                                        const blobUrl = window.URL.createObjectURL(blob);
+                                        const a = document.createElement("a");
+                                        a.href = blobUrl;
+                                        a.download = `video-${index}.mp4`;
+                                        document.body.appendChild(a);
+                                        a.click();
+                                        a.remove();
+                                        window.URL.revokeObjectURL(blobUrl);
+                                        message.success("Đã bắt đầu tải video");
+                                      } catch (err) {
+                                        console.error("Tải video thất bại:", err);
+                                        message.error("Tải video thất bại");
+                                      }
+                                    },
+                                  });
+                                }}
+                                style={{
+                                  fontSize: 12,
+                                  background: "#ffffff",
+                                  padding: 5,
+                                  borderRadius: "50%",
+                                  cursor: "pointer",
+                                  boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+                                }}
+                                title="Tải video"
+                              /> */}
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <img
+                              src="https://img.icons8.com/ios/50/94a3b8/picture.png"
+                              alt="kết quả"
+                              style={{ width: 24, marginBottom: 2 }}
+                            />
+                            <div>Kết quả</div>
+                          </>
+                        )}
+                      </div>
+                    </Col>
+
+                  </Row>
+                </div>
+
+              ))}
+
+              <Row
+                gutter={[16, 16]}
+                justify="space-between"
+                style={{ marginTop: 24 }}
+              >
+                {[  // Dàn hàng bằng map để code gọn hơn
+                  {
+                    key: "merge",
+                    text: t("video.merge_selected"),
+                    onClick: mergeSelectedVideos,
+                  },
+                  {
+                    key: "music",
+                    text: t("video.music_pairing"),
+                    onClick: handleMergeMusic,
+                  },
+                  {
+                    key: "generate",
+                    text: t("video.generate_all"),
+                    onClick: generateAllScenesVideos,
+                    loading: loading,
+                  },
+                ].map(({ key, text, onClick, loading }) => (
+                  <Col key={key} xs={24} sm={12} md={8}>
+                    <Button
+                      type="primary"
+                      loading={loading}
+                      style={{
+                        width: "100%",
+                        whiteSpace: "normal",
+                        wordBreak: "break-word",
+                        backgroundColor: "#0f172a",
+                        color: "#ffffff",
+                        fontSize: 13,
+                        fontWeight: 600,
+                        padding: "10px 16px",
+                        border: "1px solid #3b82f6",
+                        borderRadius: 8,
+                        boxShadow: "0 0 8px rgba(59,130,246,0.6)",
+                        lineHeight: 1.4,
+                        minHeight: 36,
+                        textAlign: "center",
+                      }}
+                      onClick={onClick}
+                    >
+                      {text}
+                    </Button>
+                  </Col>
+                ))}
               </Row>
+
+
               <Modal
                 title={t("video.choose_music_title")}
                 open={modalOpen}
@@ -1091,7 +1366,12 @@ Please contact Admin`);
                         <Button
                           shape="circle"
                           size="small"
-                          style={{ marginRight: 8 }}
+                          style={{
+                            backgroundColor: "#06b6d4",
+                            color: "#0f172a",
+                            border: "none",
+                            fontWeight: 600,
+                          }}
                           onClick={e => {
                             e.stopPropagation();
                             playPreview(track.id);
@@ -1105,10 +1385,11 @@ Please contact Admin`);
                   </Radio.Group>
                 )}
               </Modal>
-            </Col>
+            </div>
 
             {/* Cột phải: kết quả và caption */}
-            <Col xs={24} md={12}>
+
+            <div className="image-column">
               <AutoPostModal visible={showModal} onClose={() => setShowModal(false)} />
 
               <div
@@ -1120,36 +1401,13 @@ Please contact Admin`);
               >
                 <button
                   onClick={() => setShowModal(true)}
-                  style={{
-                    backgroundColor: "#D2E3FC",
-                    color: "#000",
-                    border: "1px solid #D2E3FC",
-                    borderRadius: 6,
-                    padding: "6px 12px",
-                    fontSize: 11,
-                    cursor: "pointer",
-                    marginRight: 16,
-                  }}
+                  className="image-button image-button-small"
                 >
                   {t("video.auto_post_setting")}
                 </button>
               </div>
 
-              <div
-                style={{
-                  background: "#fafafa",
-                  border: "1px solid #e0e0e0",
-                  height: "40vh",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: 12,
-                  overflow: "hidden",
-                  marginBottom: 24,
-                  boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
-                  position: "relative", // để icon tải định vị tuyệt đối
-                }}
-              >
+              <div className="image-generated-block">
                 {videoSrc ? (
                   <>
                     <video
@@ -1214,24 +1472,12 @@ Please contact Admin`);
                   value={description}
                   onChange={e => setDescription(e.target.value)}
                   placeholder={t("video.enter_description")}
-                  style={{
-                    width: "100%",
-                    fontSize: 15,
-                    borderRadius: 8,
-                    padding: 10,
-                    backgroundColor: "#ffffff",
-                    boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
-                  }}
+                  className="image-textarea"
                 />
                 <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
                   <Button
                     loading={loadingCaption}
-                    style={{
-                      backgroundColor: "#D2E3FC",
-                      color: "#000",
-                      borderRadius: 8,
-                      whiteSpace: "nowrap",
-                    }}
+                    className="image-button image-button-large"
                     onClick={generateCaption}
                   >
                     {t("video.generate_caption")}
@@ -1240,53 +1486,36 @@ Please contact Admin`);
               </div>
 
               <TextArea
-                rows={4}
+                rows={8}
                 value={caption}
                 onChange={handleCaptionChange}
                 placeholder={t("video.caption_placeholder")}
-                style={{
-                  fontSize: 15,
-                  borderRadius: 8,
-                  padding: 10,
-                  marginBottom: 16,
-                  backgroundColor: "#ffffff",
-                  boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
-                }}
+                className="image-textarea"
               />
 
               {score !== null && (
                 <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    padding: 16,
-                    borderRadius: 12,
-                    backgroundColor: "#fff",
-                    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                    marginBottom: 24,
-                    maxWidth: 500,
-                  }}
+                  className="image-score-container"
                 >
-                  <div style={{ marginRight: 24 }}>
+                  <div className="image-score-right">
                     <Progress
                       type="circle"
                       percent={score}
                       width={80}
-                      strokeColor={score >= 80 ? "#52c41a" : score >= 50 ? "#faad14" : "#f5222d"}
+                      strokeColor={score >= 80 ? "#00ff99" : score >= 50 ? "#faad14" : "#f5222d"}
                       format={() => (
-                        <div style={{ fontSize: 16, color: "#000" }}>
-                          <div style={{ fontWeight: 500 }}>{score}</div>
-                          <div style={{ fontSize: 12, color: "#999" }}>{t("video.points")}</div>
+                        <div style={{ fontSize: 16, color: "#fff" }}>
+                          <div style={{ fontWeight: 600 }}>{score}%</div>
                         </div>
                       )}
                     />
                   </div>
 
                   <div>
-                    <Title level={5} style={{ margin: 0 }}>
-                      {scoreLabel} <span style={{ color: "#999" }}>ℹ️</span>
+                    <Title level={5} style={{ margin: 0, color: "#fff" }}>
+                      {scoreLabel}
                     </Title>
-                    <Text type="secondary">{suggestion}</Text>
+                    <Text className="image-score-subtext">{suggestion}</Text>
                   </div>
                 </div>
               )}
@@ -1297,98 +1526,13 @@ Please contact Admin`);
                 size="large"
                 onClick={handlePostFacebook}
                 loading={creatingCase}
-                style={{
-                  borderRadius: 8,
-                  fontWeight: 600,
-                }}
+                className="image-button image-button-large"
               >
                 {t("video.post_facebook")}
               </Button>
-            </Col>
-          </Row>
-        </Content>
-
-        <Modal
-          title={
-            <div style={{ textAlign: "center", width: "100%" }}>
-              {t("video.script_modal_title")}
             </div>
-          }
-          open={scriptModalOpen}
-          onCancel={() => setScriptModalOpen(false)}
-          okText={t("video.generate")}
-          cancelText={t("video.cancel")}
-          confirmLoading={loadingScript}
-          onOk={() => form.submit()} // Gọi submit form khi ấn nút OK
-        >
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={() => {
-              if (
-                !sceneCount ||
-                !productName.trim() ||
-                !productDescription.trim() ||
-                !productSurrounding.trim() ||
-                !specialEffects.trim()
-              ) {
-                message.warning(t("video.required_fields_warning"));
-                return;
-              }
-              generateScriptByGPT();
-            }}
-          >
-            <Form.Item label={t("video.scene_count_label")} required>
-              <Select
-                value={sceneCount}
-                onChange={setSceneCount}
-                placeholder={t("video.scene_count_placeholder")}
-              >
-                {[5, 10, 20, 30, 40, 50, 60].map(num => (
-                  <Select.Option key={num} value={num}>
-                    {num} {t("video.scenes")}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              label={t("video.product_name_label")}
-              required
-              rules={[{ required: true, message: t("video.required_fields_warning") }]}
-            >
-              <Input
-                value={productName}
-                onChange={e => setProductName(e.target.value)}
-                placeholder={t("video.product_name_placeholder")}
-              />
-            </Form.Item>
-
-            <Form.Item label={t("video.product_description_label")} required>
-              <Input
-                value={productDescription}
-                onChange={e => setProductDescription(e.target.value)}
-                placeholder={t("video.product_description_placeholder")}
-              />
-            </Form.Item>
-
-            <Form.Item label={t("video.product_surrounding_label")} required>
-              <Input
-                value={productSurrounding}
-                onChange={e => setProductSurrounding(e.target.value)}
-                placeholder={t("video.product_surrounding_placeholder")}
-              />
-            </Form.Item>
-
-            <Form.Item label={t("video.special_effects_label")} required>
-              <Input
-                value={specialEffects}
-                onChange={e => setSpecialEffects(e.target.value)}
-                placeholder={t("video.special_effects_placeholder")}
-              />
-            </Form.Item>
-          </Form>
-        </Modal>
+          </div>
+        </Content>
       </Layout>
     </>
   );

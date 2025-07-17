@@ -1,8 +1,8 @@
+import { Suspense } from "react";
 import { Row } from "antd";
 import { Outlet } from "react-router-dom";
-import { Suspense } from "react";
 
-const AuthenLayout = () => {
+const HomeLayout = () => {
   return (
     <Suspense fallback={<div>Đang tải...</div>}>
       <Row>
@@ -11,4 +11,5 @@ const AuthenLayout = () => {
     </Suspense>
   );
 };
-export default AuthenLayout;
+
+export default HomeLayout;

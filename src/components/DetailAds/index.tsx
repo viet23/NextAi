@@ -140,22 +140,47 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
   };
 
   return (
-    <Card style={{ backgroundColor: "#f9f9f9", borderRadius: 12 }}>
+    <Card
+      style={{
+        backgroundColor: "#0f172a",
+        borderRadius: 16,
+        padding: 24,
+        color: "#e2e8f0",
+        fontFamily: "Inter, sans-serif"
+      }}
+      bodyStyle={{ padding: 0 }}
+    >
       <Row gutter={32}>
-        <Col xs={24} md={14}>
-          <Title level={4}>{t("ads.create_ads")}</Title>
+        <Col xs={24} md={12}>
+          <Title level={4} style={{ color: "#e2e8f0" }}>{t("ads.create_ads")}</Title>
+
           <div style={{ marginBottom: 12 }}>
-            <label>📛 {t("ads.campaign_name")}</label>
+            <label style={{ color: "#e2e8f0" }}>📛 {t("ads.campaign_name")}</label>
             <Input
               value={campaignName}
               onChange={e => setCampaignName(e.target.value)}
               placeholder={t("ads.placeholder.campaign_name")}
+              style={{
+                backgroundColor: "#1e293b",
+                color: "#e2e8f0",
+                borderColor: "#334155"
+              }}
             />
           </div>
 
           <div style={{ marginBottom: 12 }}>
-            <label>🎯 {t("ads.ads_goal")}</label>
-            <Select value={goal} onChange={setGoal} style={{ width: "100%" }}>
+            <label style={{ color: "#e2e8f0" }}>🎯 {t("ads.ads_goal")}</label>
+            <Select
+              value={goal}
+              onChange={setGoal}
+              style={{
+                width: "100%",
+                backgroundColor: "#1e293b",
+                color: "#e2e8f0",
+                borderColor: "#334155"
+              }}
+              dropdownStyle={{ backgroundColor: "#1e293b", color: "#e2e8f0" }}
+            >
               <Select.Option value="message">{t("ads.goal.message")}</Select.Option>
               <Select.Option value="engagement">{t("ads.goal.engagement")}</Select.Option>
               <Select.Option value="leads">{t("ads.goal.leads")}</Select.Option>
@@ -165,13 +190,19 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
 
           {goal === "leads" && (
             <div style={{ marginBottom: 12 }}>
-              <label>🌐 {t("ads.form_language")}</label>
+              <label style={{ color: "#e2e8f0" }}>🌐 {t("ads.form_language")}</label>
               <Select
                 value={language}
                 onChange={setLanguage}
-                style={{ width: "100%" }}
+                style={{
+                  width: "100%",
+                  backgroundColor: "#1e293b",
+                  color: "#e2e8f0",
+                  borderColor: "#334155"
+                }}
                 showSearch
                 optionFilterProp="label"
+                dropdownStyle={{ backgroundColor: "#1e293b", color: "#e2e8f0" }}
               >
                 {languages.map(lang => (
                   <Option key={lang.value} value={lang.value} label={lang.label}>
@@ -184,24 +215,30 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
 
           {goal === "traffic" && (
             <div style={{ marginBottom: 12 }}>
-              <label>📝 {t("ads.website_link")}</label>
+              <label style={{ color: "#e2e8f0" }}>📝 {t("ads.website_link")}</label>
               <Input.TextArea
                 rows={1}
                 value={urlWebsite}
                 onChange={e => setUrleWbsite(e.target.value)}
                 placeholder={t("ads.placeholder.website")}
+                style={{
+                  backgroundColor: "#1e293b",
+                  color: "#e2e8f0",
+                  borderColor: "#334155"
+                }}
               />
             </div>
           )}
 
           <div style={{ marginBottom: 12 }}>
-            <label>{t("ads.audience")}</label>
+            <label style={{ color: "#e2e8f0" }}>{t("ads.audience")}</label>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span>👥 {t("ads.ai_targeting")}</span>
+              <span style={{ color: "#e2e8f0" }}>👥 {t("ads.ai_targeting")}</span>
               <Switch checked={aiTargeting} onChange={setAiTargeting} />
             </div>
           </div>
-          <Paragraph type="secondary" style={{ margin: "4px 0 12px" }}>
+
+          <Paragraph type="secondary" style={{ margin: "4px 0 12px", color: "#94a3b8" }}>
             {t("ads.ai_targeting_note")}
           </Paragraph>
 
@@ -209,15 +246,25 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
             <>
               <Row gutter={12} style={{ marginBottom: 12 }}>
                 <Col span={12}>
-                  <label>{t("ads.gender")}</label>
-                  <Select value={gender} onChange={setGender} style={{ width: "100%" }}>
+                  <label style={{ color: "#e2e8f0" }}>{t("ads.gender")}</label>
+                  <Select
+                    value={gender}
+                    onChange={setGender}
+                    style={{
+                      width: "100%",
+                      backgroundColor: "#e2e8f0",
+                      color: "#1e293b",
+                      borderColor: "#334155"
+                    }}
+                    dropdownStyle={{ backgroundColor: "#e2e8f0", color: "#1e293b" }}
+                  >
                     <Select.Option value="all">{t("ads.gender_all")}</Select.Option>
                     <Select.Option value="male">{t("ads.gender_male")}</Select.Option>
                     <Select.Option value="female">{t("ads.gender_female")}</Select.Option>
                   </Select>
                 </Col>
                 <Col span={12}>
-                  <label>{t("ads.age")}</label>
+                  <label style={{ color: "#e2e8f0" }}>{t("ads.age")}</label>
                   <Slider
                     range
                     value={age}
@@ -238,14 +285,20 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
               </div>
 
               <div style={{ marginBottom: 12 }}>
-                <label>🎯 {t("ads.detailed_targeting")}</label>
+                <label style={{ color: "#e2e8f0" }}>🎯 {t("ads.detailed_targeting")}</label>
                 <Select
                   mode="multiple"
-                  style={{ width: "100%" }}
+                  style={{
+                    width: "100%",
+                    backgroundColor: "#e2e8f0",
+                    color: "#1e293b",
+                    borderColor: "#334155"
+                  }}
                   placeholder={t("ads.select_targeting_group")}
                   value={interests}
                   onChange={setInterests}
                   optionLabelProp="label"
+                  dropdownStyle={{ backgroundColor: "#e2e8f0", color: "#1e293b" }}
                 >
                   {DETAILED_TARGETING_OPTIONS.map(group => (
                     <OptGroup key={group.category} label={t(group.category)}>
@@ -263,41 +316,75 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
 
           <Row gutter={12} style={{ marginBottom: 12 }}>
             <Col span={12}>
-              <label>📆 {t("ads.duration")}</label>
+              <label style={{ color: "#e2e8f0" }}>📆 {t("ads.duration")}</label>
               <RangePicker
                 value={range}
                 onChange={val => setRange(val as [dayjs.Dayjs, dayjs.Dayjs])}
-                style={{ width: "100%" }}
+                style={{
+                  width: "100%",
+                  backgroundColor: "#1e293b",
+                  color: "#e2e8f0",
+                  borderColor: "#334155"
+                }}
               />
             </Col>
             <Col span={12}>
-              <label>💰 {t("ads.daily_budget")}</label>
+              <label style={{ color: "#e2e8f0" }}>💰 {t("ads.daily_budget")}</label>
               <InputNumber
                 value={budget}
                 onChange={val => setBudget(val!)}
                 min={1}
                 formatter={value => `$ ${value}`}
-                style={{ width: "100%" }}
+                style={{
+                  width: "100%",
+                  backgroundColor: "#1e293b",
+                  color: "#e2e8f0",
+                  borderColor: "#334155"
+                }}
               />
             </Col>
           </Row>
 
-          <Button type="primary" block onClick={handlePublish} loading={creatingCase}>
+          <Button
+            type="primary"
+            block
+            onClick={handlePublish}
+            loading={creatingCase}
+            style={{
+              backgroundColor: "#2563eb",
+              borderColor: "#2563eb"
+            }}
+          >
             {t("ads.publish")}
           </Button>
         </Col>
 
-        <Col xs={24} md={10}>
-          <Card title={t("ads.preview")} bordered>
-            <div style={{ border: "1px solid #eee", padding: 10 }}>
+        <Col xs={24} md={12}>
+          <Card
+            title={t("ads.preview")}
+            bordered={false}
+            style={{
+              backgroundColor: "#1e293b",
+              borderRadius: 12,
+              marginTop: 0,
+              color: "#e2e8f0"
+            }}
+            headStyle={{ color: "#e2e8f0", borderBottom: "1px solid #334155" }}
+          >
+            <div style={{ padding: 10 }}>
               <iframe
                 src={iframeSrc}
                 width="100%"
                 height="570"
-                style={{ border: "none", overflow: "hidden", borderRadius: 8 }}
+                style={{
+                  border: "none",
+                  overflow: "hidden",
+                  borderRadius: 8,
+                  backgroundColor: "#e2e8f0"
+                }}
                 scrolling="no"
                 frameBorder="0"
-                allowFullScreen={true}
+                allowFullScreen
                 allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
               />
             </div>
@@ -305,6 +392,7 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
         </Col>
       </Row>
     </Card>
+
   );
 };
 

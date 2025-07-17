@@ -8,14 +8,16 @@ import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import DetailAds from "../DetailAds";
 import { useTranslation } from "react-i18next";
+import "./styles.scss";
+import { CloseOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
 const Dashboard = () => {
   const { t } = useTranslation();
   const { user } = useSelector((state: IRootState) => state.auth);
-  const { data: accountDetailData } = useGetAccountQuery(user.id || "0", {
-    skip: !user.id,
+  const { data: accountDetailData } = useGetAccountQuery(user?.id || "0", {
+    skip: !user?.id,
   });
 
   const [postData, setPostData] = useState<any[]>([]);
@@ -172,14 +174,7 @@ const Dashboard = () => {
       align: "center",
       render: (_, record) => (
         <button
-          style={{
-            backgroundColor: "#D2E3FC",
-            border: "1px solid #D2E3FC",
-            borderRadius: 6,
-            padding: "4px 10px",
-            fontSize: 12,
-            cursor: "pointer",
-          }}
+          className="ads-button-glow"
           onClick={() => handleOnClickDetail(record)}
         >
           {t("dashboard.ads_button")}
@@ -225,52 +220,83 @@ const Dashboard = () => {
 
   return (
     <Layout
-      style={{
-        padding: 16,
-        paddingTop: 24,
-        background: "#fff",
-        minHeight: "100vh",
-      }}
+      className="image-layout"
     >
-      <Row gutter={[16, 16]}>
-        <Col xs={24}>
-          <Title level={3} style={{ fontSize: "1.5rem" }}>
-            {t("dashboard.posts")}
-          </Title>
-        </Col>
+      <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        <h3 style={{ textAlign: "center", color: "#fff", marginBottom: 12 }}>
+          {t("dashboard.title")}
+        </h3>
+        <Row gutter={[16, 16]}>
+          <Col xs={24}>
+            <Title level={4} style={{ color: "#fff", marginBottom: 16, fontSize: "1.2rem" }}>
+              {t("dashboard.posts")}
+            </Title>
+            <Card style={{ marginBottom: 24 }}>
+              <Column {...chartConfig} />
+            </Card>
+          </Col>
 
-        <Col xs={24}>
-          <Card style={{ marginBottom: 24 }}>
-            <Column {...chartConfig} />
-          </Card>
-        </Col>
+          <Col xs={24}>
+            <Title level={4} style={{ color: "#fff", marginBottom: 16, fontSize: "1.2rem" }}>
+              {t("dashboard.post_list")}
+            </Title>
+            <div style={{ overflowX: "auto" }}>
+              <Spin spinning={loading}>
+                <Table
+                  columns={columns}
+                  dataSource={postData}
+                  pagination={{ pageSize: 5 }}
+                  bordered
+                  scroll={{ x: "max-content" }}
+                  className="dark-header-table"
+                />
+              </Spin>
 
-        <Col xs={24}>
-          <Title level={4} style={{ marginBottom: 16, fontSize: "1.2rem" }}>
-            {t("dashboard.post_list")}
-          </Title>
-          <div style={{ overflowX: "auto" }}>
-            <Spin spinning={loading}>
-              <Table
-                columns={columns}
-                dataSource={postData}
-                pagination={{ pageSize: 5 }}
-                bordered
-                scroll={{ x: "max-content" }}
-              />
-            </Spin>
-          </div>
-        </Col>
-      </Row>
-      <Drawer
-        open={isOpen}
-        onClose={handleOnCloseDrawer}
-        width={"70%"}
-        maskClosable={false}
-        title={detailId ? t("dashboard.ads") : t("dashboard.ads_new")}
-      >
-        <DetailAds id={detailId} pageId={pageId ?? null} />
-      </Drawer>
+              {/* ✅ CSS ép màu giống ảnh bạn gửi */}
+              <style>
+                {`
+      .dark-header-table .ant-table-thead > tr > th {
+        background-color: #1e293b !important; /* nền xanh đậm */
+        color: #e2e8f0 !important;            /* chữ xám nhạt */
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 13px;
+      }
+    `}
+              </style>
+            </div>
+
+
+          </Col>
+        </Row>
+
+        <Drawer
+          open={isOpen}
+          onClose={handleOnCloseDrawer}
+          width="70%"
+          maskClosable={false}
+          closeIcon={<CloseOutlined style={{ color: "#e2e8f0", fontSize: 18 }} />}
+          title={detailId ? t("dashboard.ads") : t("dashboard.ads_new")}
+          styles={{
+            header: {
+              backgroundColor: "#0f172a",
+              color: "#f8fafc",
+              borderBottom: "1px solid #334155"
+            },
+            body: {
+              backgroundColor: "#0f172a",
+              color: "#e2e8f0",
+              padding: 24,
+              maxHeight: "calc(100vh - 108px)",
+              overflowY: "auto"
+            }
+          }}
+        >
+          <DetailAds id={detailId} pageId={pageId ?? null} />
+        </Drawer>
+
+
+      </div>
     </Layout>
   );
 };

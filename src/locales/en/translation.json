@@ -8,13 +8,15 @@
   },
   "facebook_analysis": {
     "enter_page_link": "Enter the Facebook Page link",
-    "button_analyze": "Page Analysis & Channel Development Suggestions",
+    "button_analyze": "Page Analysis",
     "section_page_analysis": "Page Analysis",
     "section_channel_plan": "Suggested Facebook Page Channel",
     "general_info": "GENERAL INFORMATION",
     "products_services": "PRODUCTS / SERVICES",
     "customer_engagement": "CUSTOMER INTERACTION",
-    "strategy": "COMMUNICATIONS STRATEGY"
+    "strategy": "COMMUNICATIONS STRATEGY",
+    "title": "Facebook Analysis",
+    "subtitle": "Explore your Facebook page"
   },
   "dashboard": {
     "title": "AI ADS",
@@ -39,6 +41,7 @@
   },
   "image": {
     "title": "AI Image Generator",
+    "subtitle": "TCreate unique images and content in seconds",
     "describe_prompt": "Describe your image",
     "caption_placeholder": "Caption",
     "generate_image": "Generate Image",
@@ -49,8 +52,16 @@
     "enter_prompt": "Please enter a prompt.",
     "generate_error": "Image generation error. Your budget may be out. Contact Admin.",
     "points": "points",
+    "auto_post_setting": "Set up auto post Facebook page",
     "suggestion": "Suggestion",
-    "auto_post_setting": "Set up auto post Facebook page"
+    "label_name": "Product/Service Name",
+    "label_desc": "Product/Service Description",
+    "label_effect": "Visual Effect",
+    "label_object": "Surrounding Objects",
+    "placeholder_name": "E.g.: A long-haired girl",
+    "placeholder_desc": "E.g.: In a vintage coffee shop",
+    "placeholder_effect": "E.g.: Soft afternoon sunlight",
+    "placeholder_object": "E.g.: Sitting by the window"
   },
   "media_ls": {
     "title": "List of AI videos",
@@ -124,9 +135,6 @@
     "around": "Surrounding the product is",
     "effects": "Effects",
     "required_fields_warning": "Please fill in all required fields."
-  },
-  "signin": {
-    "title": "Sign In"
   },
   "vitual_accounts": {
     "form_search": {
@@ -249,5 +257,46 @@
     "error_empty_website": "Please enter website link when selecting goal as 'Get more website visitors'",
     "error_generic": "Failed to create ad.",
     "preview": "Preview"
+  },
+  "signin": {
+    "welcomeBack": "Welcome back",
+    "welcomeSub": "Welcome back to All One Ads",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "Example@youremail.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "remember": "Remember me",
+    "forgot": "Forgot password?",
+    "login": "Log in",
+    "or": "or",
+    "google": "Sign in with Google",
+    "facebook": "Sign in with Facebook",
+    "noAccount": "Don’t have any account yet?",
+    "signupNow": "Sign up today",
+    "success": "Login successful!",
+    "failed": "Login failed!",
+    "invalid": "Email/Password incorrect please re-enter"
+  },
+  "register": {
+    "title": "Register",
+    "subtitle1": "Welcome to our system!",
+    "subtitle2": "Create an account to start your smart and convenient journey.",
+    "fullname": "Full name",
+    "fullnamePlaceholder": "John Doe",
+    "fullnameRequired": "Please enter your full name",
+    "email": "Email address",
+    "emailPlaceholder": "johndoe123@email.com",
+    "emailRequired": "Please enter a valid email",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "passwordRequired": "Please enter a password with at least 6 characters",
+    "terms": "I confirm that I have read and agree to the Terms & Conditions and Privacy Policy of All One Ads.",
+    "termsRequired": "You must accept the terms & policy",
+    "submit": "Create Account",
+    "or": "Or",
+    "withGoogle": "Register with Google",
+    "withFacebook": "Register with Facebook",
+    "alreadyHaveAccount": "Already have an account?",
+    "loginNow": "Log in"
   }
 }

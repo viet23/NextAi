@@ -1,5 +1,6 @@
 import React from "react";
 import AuthenLayout from "../layouts/Authen";
+import HomeLayout from "../layouts/Home";
 import SignIn from "../pages/SignIn";
 import { MainLayout } from "../layouts/Main";
 import Customers from "../pages/Customers";
@@ -15,15 +16,18 @@ import {
   MEDIA_ROUTE,
   USER_ROUTE,
   VIDEO_ROUTE,
-  DASHBOARD_ROUTE,
+  DASHBOARD_ROUTE
 } from "src/constants/routes.constants";
 import MediaList from "src/pages/MediaList";
 import Dashboard from "src/pages/Dashboard";
+import RegisterForm from "src/pages/Register";
+import RegisterPage from "src/pages/Register";
 const AccountDetailPage = React.lazy(() => import("src/pages/AccountDetail"));
 const AccountsPage = React.lazy(() => import("src/pages/Accounts"));
 const AuthorizationsPage = React.lazy(() => import("src/pages/Authorizations"));
 const RoleGroupCreatePage = React.lazy(() => import("src/pages/RoleGroupCreate"));
 const FacebookAnalysis = React.lazy(() => import("../pages/FacebookAnalysis"));
+const Home = React.lazy(() => import("../pages/Home"));
 const ImageAI = React.lazy(() => import("../pages/ImageAI"));
 const Video = React.lazy(() => import("../pages/VideoAI"));
 export const routes = [
@@ -41,9 +45,36 @@ export const routes = [
     ],
   },
   {
+    key: "unauthen",
+    layout: AuthenLayout,
+    routes: [
+      {
+        path: "/register",
+        name: "Register",
+        key: "register",
+        isProtect: false,
+        component: RegisterPage,
+      },
+    ],
+  },
+  {
+    key: "home",
+    layout: HomeLayout,
+    routes: [
+      {
+        path: "/home",
+        isProtect: false,
+        key: "home",
+        name: "home",
+        component: Home,
+      },
+    ],
+  },
+  {
     key: "main",
     layout: MainLayout,
     routes: [
+
       {
         path: FB_ANALYSIS_ROUTE,
         isProtect: true,

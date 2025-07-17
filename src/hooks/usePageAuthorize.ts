@@ -11,7 +11,7 @@ interface IProps {
 export const usePageAuthorize = ({ redirect = IMAGE_ROUTE, roleNames = [] }: IProps) => {
   const authRoles = useSelector<IRootState>(state => state.auth.roles) as IRole[];
 
-  if (!roleNames.every(name => authRoles.find(x => x.name === name))) {
+  if (!roleNames.every(name => authRoles?.find(x => x.name === name))) {
     document.location = redirect;
   }
 };

@@ -4,8 +4,12 @@ import { Navigate } from "react-router-dom";
 import { IRootState } from "../../interfaces/app.interface";
 
 export default React.memo(({ children }: any) => {
-  const { isLogin, user } = useSelector((state: IRootState) => state.auth);
+  let { isLogin, user } = useSelector((state: IRootState) => state.auth || { user: undefined });
+  console.log(`user`, user);
+  if (user == null) {
+    user = undefined
+  }
 
-  if (!isLogin || !user?.id) return <Navigate to="/signin" />;
+  if (!isLogin || !user?.id) return <Navigate to="/home" />;
   return children;
 });

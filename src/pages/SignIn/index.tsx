@@ -1,29 +1,48 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Input, Button, Typography, Flex, message, Divider } from "antd";
-import EmailLogo from "../../assets/images/logo-gmail.png";
-import FaceBookLogo from "../../assets/images/logo-facebook.png";
-import "./styles.scss";
+import { Input, Button, Typography, message } from "antd";
+import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { useSignInMutation } from "src/store/api/authApi";
 import { store } from "src/store/store";
 import { setCurrentUser, setIsLogin, setToken } from "src/store/slice/auth.slice";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import EmailLogo from "../../assets/images/logo-gmail.png";
+import FaceBookLogo from "../../assets/images/logo-facebook.png";
+import Logo from "../../assets/images/next-logo.jpg";
+import "./styles.scss";
 
-const { Text, Title } = Typography;
+const { Title, Text } = Typography;
 
 const SignIn = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [signIn, { isLoading, isError, error }] = useSignInMutation();
+  const [signIn] = useSignInMutation();
+  const [showPassword, setShowPassword] = useState(false);
+  const [title, setTitle] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    setTitle(t("signin.welcomeBack"));
+  }, [t]);
 
   const handleLogin = async () => {
     try {
       const response = await signIn({ username, password }).unwrap();
-      message.success("Đăng nhập thành công!");
-      navigate("/");
-    } catch (error) {
-      message.error("Đăng nhập thất bại!");
+      const { token, user } = response;
+      if (token && user?.email) {
+        store.dispatch(setToken(token));
+        store.dispatch(setCurrentUser(user));
+        store.dispatch(setIsLogin(true));
+        message.success(`Hello, ${user.name || user.email}!`);
+        navigate("/");
+      }
+    } catch (error: any) {
+      message.error(t("signin.failed"));
+      setTitle(t("signin.welcomeBack")); // đảm bảo dùng ngôn ngữ hiện tại
+      setErrorMsg(t("signin.invalid"));
     }
   };
 
@@ -35,8 +54,6 @@ const SignIn = () => {
     );
 
     const handleMessage = (event: MessageEvent) => {
-      // if (event.origin !== "http://localhost:3001") return;
-
       const { token, user } = event.data;
       store.dispatch(setToken(token));
       store.dispatch(setCurrentUser(user));
@@ -45,79 +62,90 @@ const SignIn = () => {
         message.success(`Hello, ${user.name || user.email}!`);
         navigate("/");
       }
-
-      // Gỡ listener & đóng popup
       window.removeEventListener("message", handleMessage);
       popup?.close();
     };
 
-    // ✅ KHÔNG console.log(popup) – sẽ gây lỗi CORS internal
     window.addEventListener("message", handleMessage);
   };
 
   return (
-    <div className="auth-wrapper">
-      <div
-        className="auth-content"
-        style={{
-          maxWidth: 400,
-          margin: "auto",
-          padding: 24,
-          backgroundColor: "#fff",
-          borderRadius: 8,
-          boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
-          textAlign: "center",
-        }}
-      >
-        <Title level={3}>Log in</Title>
+    <div className="signin-wrapper">
+      <div className="signin-header">
+        <img className="signin-logo" src={Logo} alt="Logo" />
+        <Title level={2} className="signin-title">{title}</Title>
+        <Text className="signin-sub">{t("signin.welcomeSub")}</Text>
+      </div>
 
-        <Input
-          placeholder="User name"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-          style={{ marginBottom: 10 }}
-        />
-        <Input.Password
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          style={{ marginBottom: 20 }}
-        />
-        <Button type="primary" onClick={handleLogin} block size="large">
-          Log in
+      <div className="signin-box">
+        <div className="signin-input-group">
+          <label className="signin-input-label">{t("signin.emailLabel")}</label>
+          <Input
+            className="signin-input"
+            placeholder={t("signin.emailPlaceholder")}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </div>
+
+        <div className="signin-input-group">
+          <label className="signin-input-label">{t("signin.passwordLabel")}</label>
+          <Input
+            type={showPassword ? "text" : "password"}
+            className="signin-input"
+            placeholder={t("signin.passwordPlaceholder")}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="off"
+            suffix={
+              showPassword ? (
+                <EyeTwoTone onClick={() => setShowPassword(false)} style={{ cursor: "pointer" }} />
+              ) : (
+                <EyeInvisibleOutlined onClick={() => setShowPassword(true)} style={{ cursor: "pointer" }} />
+              )
+            }
+          />
+          {errorMsg && (
+            <Text type="danger" style={{ fontSize: 12, display: "block", marginTop: 4 }}>
+              {errorMsg}
+            </Text>
+          )}
+        </div>
+
+        <div className="signin-forgot">
+          <label>
+            <input type="checkbox" style={{ marginRight: 4 }} /> {t("signin.remember")}
+          </label>
+          <a href="#">{t("signin.forgot")}</a>
+        </div>
+
+        <Button className="signin-btn" onClick={handleLogin} block>
+          {t("signin.login")}
         </Button>
 
-        <Divider plain>Or log in with</Divider>
+        <div className="signin-divider">{t("signin.or")}</div>
 
-        <Flex vertical gap={12}>
-          {/* <Button
-            icon={<img src={FaceBookLogo} alt="fb" width={20} style={{ marginRight: 8 }} />}
-            onClick={() => handleSocialLogin("facebook")}
-            block
-            style={{
-              backgroundColor: "#1877f2",
-              color: "#fff",
-              border: "none",
-              fontWeight: 500,
-            }}
-          >
-            Facebook
-          </Button> */}
+        <Button
+          icon={<img src={EmailLogo} alt="gmail" width={20} />}
+          onClick={() => handleSocialLogin("google")}
+          className="signin-social-btn"
+          block
+        >
+          {t("signin.google")}
+        </Button>
 
-          <Button
-            icon={<img src={EmailLogo} alt="gmail" width={20} style={{ marginRight: 8 }} />}
-            onClick={() => handleSocialLogin("google")}
-            block
-            style={{
-              backgroundColor: "#fff",
-              color: "#000",
-              border: "1px solid #ddd",
-              fontWeight: 500,
-            }}
-          >
-            Google
-          </Button>
-        </Flex>
+        <Button
+          icon={<img src={FaceBookLogo} alt="fb" width={20} />}
+          onClick={() => handleSocialLogin("facebook")}
+          className="signin-social-btn facebook"
+          block
+        >
+          {t("signin.facebook")}
+        </Button>
+
+        <Text className="signin-footer">
+          {t("signin.noAccount")} <Link to="/register">{t("signin.signupNow")}</Link>
+        </Text>
       </div>
     </div>
   );

@@ -78,7 +78,7 @@ export const AuthorizationsRolesTable = memo(
           </ActionAuthorize>
         </Flex>
         <Table
-          className="table-scroll"
+          className="table-scroll dark-header-table"
           rowKey="id"
           loading={isLoading}
           columns={columns}
@@ -89,6 +89,19 @@ export const AuthorizationsRolesTable = memo(
           }}
           scroll={{ x: 600, y: 500 }}
         />
+
+        {/* 🎯 Style ép màu header bảng giống ảnh bạn gửi */}
+        <style>
+          {`
+      .dark-header-table .ant-table-thead > tr > th {
+        background-color: #1e293b !important; /* nền xanh đậm */
+        color: #e2e8f0 !important;            /* chữ xám nhạt */
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 13px;
+      }
+    `}
+        </style>
       </>
     );
   }

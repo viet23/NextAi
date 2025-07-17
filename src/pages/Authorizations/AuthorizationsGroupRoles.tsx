@@ -8,6 +8,7 @@ import { TooltipParagraph } from "src/components/TooltipParagraph";
 import { CREATE_GROUP } from "src/constants/roles.constants";
 import { ROLE_GROUPS_CREATE_ROUTE } from "src/constants/routes.constants";
 import { IRoleGroup } from "src/interfaces/roles.interface";
+import "./Authorizations.scss";
 
 interface IProps {
   roleGroups?: IRoleGroup[];

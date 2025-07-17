@@ -8,13 +8,15 @@
   },
   "facebook_analysis": {
     "enter_page_link": "Nhập liên kết Trang Facebook",
-    "button_analyze": "Phân tích Trang & Gợi ý phát triển kênh",
+    "button_analyze": "Phân tích",
     "section_page_analysis": "Phân tích Trang",
     "section_channel_plan": "Gợi ý kênh Facebook",
     "general_info": "THÔNG TIN CHUNG",
     "products_services": "SẢN PHẨM / DỊCH VỤ",
     "customer_engagement": "TƯƠNG TÁC KHÁCH HÀNG",
-    "strategy": "CHIẾN LƯỢC TRUYỀN THÔNG"
+    "strategy": "CHIẾN LƯỢC TRUYỀN THÔNG",
+    "title": "Phân tích Facebook",
+    "subtitle": "Khám phá trang Facebook của bạn"
   },
   "dashboard": {
     "title": "Quảng cáo AI",
@@ -39,6 +41,7 @@
   },
   "image": {
     "title": "Tạo ảnh AI",
+    "subtitle": "Tạo hình ảnh và nội dung độc đáo chỉ trong vài giây",
     "describe_prompt": "Mô tả hình ảnh sản phẩm",
     "caption_placeholder": "Nhập caption",
     "generate_image": "Tạo ảnh",
@@ -49,8 +52,20 @@
     "enter_prompt": "Vui lòng nhập prompt.",
     "generate_error": "Lỗi khi tạo ảnh. Hết ngân sách? Liên hệ Admin.",
     "points": "điểm",
+    "auto_post_setting": "Thiết lập đăng bài tự động",
     "suggestion": "Gợi ý",
-    "auto_post_setting": "Thiết lập đăng bài tự động"
+    "main_idea_title": "Ý tưởng chính",
+    "warning_required": "Vui lòng không để trống!",
+    "generate_detail_prompt": "Tạo mô tả chi tiết",
+    "enter_detail_prompt": "Nhập mô tả chi tiết",
+    "label_name": "Tên sản phẩm/ dịch vụ",
+    "label_desc": "Mô tả sản phẩm/ dịch vụ",
+    "label_effect": "Hiệu ứng",
+    "label_object": "Vật thể xung quanh",
+    "placeholder_name": "VD: Một cô gái tóc dài",
+    "placeholder_desc": "VD: Trong một quán cafe vintage",
+    "placeholder_effect": "VD: Ánh nắng chiều dịu nhẹ",
+    "placeholder_object": "VD: Ngồi cạnh cửa sổ"
   },
   "media_ls": {
     "title": "Danh sách media AI",
@@ -73,6 +88,7 @@
   },
   "video": {
     "title": "Tạo video AI",
+    "subtitle": "Tạo video AI và nội dung độc đáo chỉ trong vài giây",
     "duration_label": "Thời lượng video",
     "generate_script": "Tạo kịch bản",
     "seconds": "{{count}} giây",
@@ -126,7 +142,45 @@
     "required_fields_warning": "Vui lòng điền đầy đủ tất cả các trường thông tin."
   },
   "signin": {
-    "title": "Đăng nhập"
+    "welcomeBack": "Chào mừng bạn trở lại",
+    "welcomeSub": "Chào mừng bạn quay trở lại All One Ads",
+    "emailLabel": "Địa chỉ email",
+    "emailPlaceholder": "ví dụ: Example@youremail.com",
+    "passwordLabel": "Mật khẩu",
+    "passwordPlaceholder": "Nhập mật khẩu của bạn",
+    "remember": "Ghi nhớ đăng nhập",
+    "forgot": "Quên mật khẩu?",
+    "login": "Đăng nhập",
+    "or": "hoặc",
+    "google": "Đăng nhập với Google",
+    "facebook": "Đăng nhập với Facebook",
+    "noAccount": "Chưa có tài khoản?",
+    "signupNow": "Đăng ký ngay",
+    "success": "Đăng nhập thành công!",
+    "failed": "Đăng nhập thất bại!",
+    "invalid": "Email/Mật khẩu không đúng vui lòng nhập lại"
+  },
+  "register": {
+    "title": "Đăng ký",
+    "subtitle1": "Chào mừng bạn đến với hệ thống của chúng tôi!",
+    "subtitle2": "Hãy tạo tài khoản để bắt đầu hành trình trải nghiệm thông minh và tiện lợi.",
+    "fullname": "Họ và tên",
+    "fullnamePlaceholder": "Nguyễn Văn A",
+    "fullnameRequired": "Vui lòng viết họ tên đầy đủ",
+    "email": "Địa chỉ Email",
+    "emailPlaceholder": "nguyenvana123@email.com",
+    "emailRequired": "Vui lòng nhập đúng Email của bạn",
+    "password": "Mật khẩu",
+    "passwordPlaceholder": "Nhập mật khẩu của bạn",
+    "passwordRequired": "Vui lòng nhập mật khẩu từ 6 ký tự",
+    "terms": "Tôi xác nhận đã đọc và đồng ý với Điều khoản & Điều kiện và Chính sách quyền riêng tư của All One Ads.",
+    "termsRequired": "Bạn cần chấp nhận điều khoản & chính sách",
+    "submit": "Tạo Tài Khoản",
+    "or": "Hoặc",
+    "withGoogle": "Đăng ký với Google",
+    "withFacebook": "Đăng ký với Facebook",
+    "alreadyHaveAccount": "Bạn đã có tài khoản chưa?",
+    "loginNow": "Đăng nhập"
   },
   "vitual_accounts": {
     "form_search": {
@@ -189,6 +243,7 @@
   "accounts": {
     "page_title": "Danh sách tài khoản",
     "user_list": "Danh sách người dùng",
+    "search_label": "Tên Đăng nhập",
     "search_placeholder": "Tìm kiếm",
     "status_placeholder": "Trạng thái tài khoản",
     "add_button": "Thêm mới",

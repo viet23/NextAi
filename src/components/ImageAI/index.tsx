@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Layout, Input, Button, message, Progress, Typography, Modal } from "antd";
 import { useSelector } from "react-redux";
+import "./styles.scss";
 import { IRootState } from "src/interfaces/app.interface";
 import { useGetAccountQuery } from "src/store/api/accountApi";
 import { useCreateCaseMutation } from "src/store/api/ticketApi";
@@ -8,7 +9,7 @@ import AutoPostModal from "../AutoPostModal";
 import FullscreenLoader from "../FullscreenLoader";
 import { contentFetchOpportunityScore, contentGenerateCaption } from "src/utils/facebook-utild";
 import { useTranslation } from "react-i18next";
-import { DownloadOutlined } from "@ant-design/icons";
+import { CloseCircleOutlined, DownloadOutlined, UploadOutlined } from "@ant-design/icons";
 const { Title, Text } = Typography;
 
 const { Content } = Layout;
@@ -27,15 +28,17 @@ const FullscreenSplitCard = () => {
   const [resolution, setResolution] = useState("720p");
   const [ratio, setRatio] = useState("16:9");
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
-  const { user } = useSelector((state: IRootState) => state.auth);
-  const { data: accountDetailData } = useGetAccountQuery(user.id || "0", {
-    skip: !user.id,
+  const { user } = useSelector((state: IRootState) => state.auth || { user: undefined });
+  const { data: accountDetailData } = useGetAccountQuery(user?.id || "0", {
+    skip: !user?.id,
   });
   const [showModal, setShowModal] = useState(false);
   const [createCase, { isLoading: creatingCase }] = useCreateCaseMutation();
   const [score, setScore] = useState<number | null>(null);
   const [scoreLabel, setScoreLabel] = useState<string | null>(null);
   const [suggestion, setSuggestion] = useState<string | null>(null);
+  const [showDetailInputs, setShowDetailInputs] = useState(false);
+
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -292,293 +295,270 @@ const FullscreenSplitCard = () => {
     }
   };
 
+
+  const [subInputs, setSubInputs] = useState({
+    name: "",
+    desc: "",
+    effect: "",
+    object: ""
+  });
+
+  const handleInputChange = (key: "name" | "desc" | "effect" | "object", value: string) => {
+    setSubInputs(prev => ({ ...prev, [key]: value }));
+  };
+
   return (
-    <Layout style={{ minHeight: "100vh", background: "#fff" }}>
+    <Layout className="image-layout">
       <Content style={{ padding: 24 }}>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 24, justifyContent: "center" }}>
-          <div style={{ flex: 1, minWidth: 320, maxWidth: 600 }}>
-            <TextArea
-              value={prompt}
-              onChange={e => setPrompt(e.target.value)}
-              placeholder={t("image.describe_prompt")} // "Describe your image"
-              rows={5}
-              style={{ marginBottom: 16, fontSize: 16 }}
-            />
-            <div style={{ display: "flex", justifyContent: "center", gap: 6, marginBottom: 16 }}>
-              <select
-                style={{ width: 110, padding: "4px 6px", fontSize: 13 }}
-                value={resolution}
-                onChange={e => setResolution(e.target.value)}
+        <h3 style={{ textAlign: "center", color: "#fff", marginBottom: 12 }}>
+          {t("image.title")}
+        </h3>
+         <p style={{ color: "#94A3B8", fontSize: 14 }}>
+              {t("image.subtitle")} {/* subtitle :Tạo hình ảnh và nội dung độc đáo chỉ trong vài giây. */}
+            </p>
+
+        <div className="image-page">
+          {/* Cột trái */}
+          <div className="image-column">
+            <div style={{ marginBottom: 12 }}>
+              <h4 style={{ marginBottom: 4, color: "#fff", fontWeight: 600 }}>
+                {t("image.main_idea_title")}
+              </h4>
+              {/* <div className="image-warning">{t("image.warning_required")}</div> */}
+
+              {/* Bọc TextArea và ảnh vào 1 div tương đối */}
+              <div className="prompt-container">
+                <div className="textarea-wrapper">
+                  <TextArea
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    placeholder={t("image.describe_prompt")}
+                    rows={10}
+                    className="image-textarea image-prompt-textarea"
+                  />
+
+                  {/* Ảnh hoặc nút tải ảnh nằm bên trong vùng TextArea */}
+                  {!uploadedImage ? (
+                    <label htmlFor="upload-image" className="image-upload-inside">
+                      <UploadOutlined className="image-upload-icon" />
+                      <span>{t("image.upload_image")}</span>
+                      <input
+                        id="upload-image"
+                        type="file"
+                        accept="image/*"
+                        style={{ display: "none" }}
+                        onChange={handleImageUpload}
+                      />
+                    </label>
+                  ) : (
+                    <div className="image-preview-inside">
+                      <img src={uploadedImage} alt="Uploaded" />
+                      <CloseCircleOutlined
+                        className="image-remove-icon"
+                        onClick={() => setUploadedImage("")}
+                        title={t("image.remove_image")}
+                      />
+                    </div>
+
+                  )}
+                </div>
+              </div>
+
+            </div>
+
+            <div className="image-options-bar">
+              {/* Nút toggle mô tả chi tiết */}
+              <button
+                className={`detail-toggle-btn ${showDetailInputs ? "active" : ""}`}
+                onClick={() => setShowDetailInputs(prev => !prev)}
               >
-                <option value="" disabled>
-                  Resolution
-                </option>
-                <option value="720p">720p</option>
-                <option value="1080p">1080p</option>
-              </select>
-              <select
-                style={{ width: 110, padding: "4px 6px", fontSize: 13 }}
-                value={ratio}
-                onChange={e => setRatio(e.target.value)}
-              >
-                <option value="" disabled>
-                  Size
-                </option>
+                {t("image.generate_detail_prompt")}
+              </button>
+
+              {/* Dropdown: Ratio */}
+              <select className="image-dropdown" value={ratio} onChange={(e) => setRatio(e.target.value)}>
                 <option value="16:9">16:9</option>
                 <option value="9:16">9:16</option>
                 <option value="1:1">1:1</option>
-                <option value="4:3">4:3</option>
-                <option value="3:4">3:4</option>
-                <option value="21:9">21:9</option>
+              </select>
+
+              {/* Dropdown: Resolution */}
+              <select className="image-dropdown" value={resolution} onChange={(e) => setResolution(e.target.value)}>
+                <option value="1080p">1080p</option>
+                <option value="720p">720p</option>
               </select>
             </div>
 
-            <br />
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                gap: 8,
-                marginBottom: 16,
-                flexWrap: "wrap",
-              }}
-            >
-              <Button
-                type="primary"
-                size="middle" // 👈 nhỏ hơn "large"
-                onClick={() => document.getElementById("upload-image")?.click()}
-                style={{
-                  backgroundColor: "#D2E3FC",
-                  color: "#000",
-                  border: "1px solid #D2E3FC",
-                  borderRadius: 6,
-                  minWidth: 120, // 👈 giảm chiều rộng
-                  padding: "4px 12px", // 👈 giảm padding
-                  fontSize: 13, // 👈 thu nhỏ chữ
-                }}
-              >
-                {t("image.upload_image")}
-              </Button>
-
-              <input
-                id="upload-image"
-                type="file"
-                accept="image/*"
-                style={{ display: "none" }}
-                onChange={handleImageUpload}
-              />
-
+            {/* Các ô nhập chi tiết – hiển thị khi toggle bật */}
+            {showDetailInputs && (
+              <div className="image-subinputs bordered">
+                <div className="input-group">
+                  <label>{t("image.label_name")}</label>
+                  <input
+                    className="image-input"
+                    placeholder={t("image.placeholder_name")}
+                    value={subInputs.name}
+                    onChange={(e) => handleInputChange("name", e.target.value)}
+                  />
+                </div>
+                <div className="input-group">
+                  <label>{t("image.label_desc")}</label>
+                  <input
+                    className="image-input"
+                    placeholder={t("image.placeholder_desc")}
+                    value={subInputs.desc}
+                    onChange={(e) => handleInputChange("desc", e.target.value)}
+                  />
+                </div>
+                <div className="input-group">
+                  <label>{t("image.label_effect")}</label>
+                  <input
+                    className="image-input"
+                    placeholder={t("image.placeholder_effect")}
+                    value={subInputs.effect}
+                    onChange={(e) => handleInputChange("effect", e.target.value)}
+                  />
+                </div>
+                <div className="input-group">
+                  <label>{t("image.label_object")}</label>
+                  <input
+                    className="image-input"
+                    placeholder={t("image.placeholder_object")}
+                    value={subInputs.object}
+                    onChange={(e) => handleInputChange("object", e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+            {/* Nút upload và tạo ảnh */}
+            <div style={{ display: "flex", justifyContent: "center", gap: 8, flexWrap: "wrap" }}>
               <Button
                 type="primary"
                 size="middle"
                 onClick={generateImage}
                 loading={loadingImage}
-                style={{
-                  backgroundColor: "#D2E3FC",
-                  color: "#000",
-                  border: "1px solid #D2E3FC",
-                  borderRadius: 6,
-                  minWidth: 120,
-                  padding: "4px 12px",
-                  fontSize: 13,
-                }}
+                className="image-button image-button-large"
               >
                 {t("image.generate_image")}
               </Button>
             </div>
-
-            <div style={{ textAlign: "center", marginBottom: 16 }}>
-              {uploadedImage && (
-                <img
-                  src={uploadedImage}
-                  alt="Uploaded"
-                  style={{
-                    maxWidth: "100%",
-                    height: "auto",
-                    objectFit: "contain",
-                    opacity: 1,
-                    borderRadius: 6,
-                    border: "1px solid #ccc",
-                  }}
-                />
-              )}
-            </div>
           </div>
 
-          <div style={{ flex: 1, minWidth: 320, maxWidth: 600 }}>
-            {/* Modal hiển thị khi click */}
-            <AutoPostModal visible={showModal} onClose={() => setShowModal(false)} />
 
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end", // ✅ đẩy nút sang phải
-                padding: "6px 0", // ✅ khoảng trống trên dưới (có thể tăng/giảm)
-              }}
-            >
+          {/* Cột phải */}
+          <div className="image-column">
+            <AutoPostModal visible={showModal} onClose={() => setShowModal(false)} />
+            <div style={{ display: "flex", justifyContent: "flex-end", padding: "6px 0" }}>
               <button
                 onClick={() => setShowModal(true)}
-                style={{
-                  backgroundColor: "#D2E3FC",
-                  color: "#000",
-                  border: "1px solid #D2E3FC",
-                  borderRadius: 6,
-                  padding: "6px 12px", // ✅ padding cho nút đẹp hơn
-                  fontSize: 11,
-                  cursor: "pointer",
-                  marginRight: 16, // ✅ nếu cần cách xa mép phải
-                }}
+                className="image-button image-button-small"
               >
                 {t("image.auto_post_setting")}
               </button>
             </div>
 
-            <div
-              style={{
-                background: "#f0f0f0",
-                height: 350,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: 10,
-                marginBottom: 16,
-                overflow: "hidden",
-              }}
-            >
-              {!imgError && imageUrl ? (
-                <div style={{ position: "relative", width: "100%", height: "100%" }}>
-                  {/* Hình ảnh */}
+            <div className="image-generated-block">
+              {imageUrl ? (
+                <>
                   <img
                     src={imageUrl}
                     alt="Generated"
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    className="image-generated-img"
                     onError={() => setImgError(true)}
                   />
+                  {!imgError && (
+                    <DownloadOutlined
+                      onClick={() => {
+                        if (!imageUrl) {
+                          message.error("Không tìm thấy ảnh để tải");
+                          return;
+                        }
 
-                  {/* Icon tải ảnh */}
-                  <DownloadOutlined
-                    onClick={() => {
-                      if (!imageUrl) {
-                        message.error("Không tìm thấy ảnh để tải");
-                        return;
-                      }
-
-                      Modal.confirm({
-                        title: "Tải ảnh?",
-                        content: "Bạn có chắc muốn tải ảnh này xuống thiết bị của mình?",
-                        okText: "Tải xuống",
-                        cancelText: "Hủy",
-                        onOk: async () => {
-                          try {
-                            const response = await fetch(imageUrl);
-                            const blob = await response.blob();
-                            const url = window.URL.createObjectURL(blob);
-                            const a = document.createElement("a");
-                            a.href = url;
-                            a.download = "generated-image.jpg";
-                            document.body.appendChild(a);
-                            a.click();
-                            a.remove();
-                            window.URL.revokeObjectURL(url);
-                            message.success("Đã bắt đầu tải ảnh");
-                          } catch (err) {
-                            console.error("Tải ảnh thất bại:", err);
-                            message.error("Tải ảnh thất bại");
-                          }
-                        },
-                      });
-                    }}
-                    style={{
-                      position: "absolute",
-                      top: 8,
-                      right: 8,
-                      fontSize: 20,
-                      background: "#fff",
-                      padding: 6,
-                      borderRadius: "50%",
-                      cursor: "pointer",
-                      boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-                      zIndex: 2,
-                    }}
-                    title="Tải ảnh"
-                  />
-                </div>
+                        Modal.confirm({
+                          title: "Tải ảnh?",
+                          content: "Bạn có chắc muốn tải ảnh này xuống thiết bị của mình?",
+                          okText: "Tải xuống",
+                          cancelText: "Hủy",
+                          onOk: async () => {
+                            try {
+                              const response = await fetch(imageUrl);
+                              const blob = await response.blob();
+                              const url = window.URL.createObjectURL(blob);
+                              const a = document.createElement("a");
+                              a.href = url;
+                              a.download = "generated-image.jpg";
+                              document.body.appendChild(a);
+                              a.click();
+                              a.remove();
+                              window.URL.revokeObjectURL(url);
+                              message.success("Đã bắt đầu tải ảnh");
+                            } catch (err) {
+                              console.error("Tải ảnh thất bại:", err);
+                              message.error("Tải ảnh thất bại");
+                            }
+                          },
+                        });
+                      }}
+                      className="image-download-icon"
+                      title="Tải ảnh"
+                    />
+                  )}
+                </>
               ) : (
-                <span style={{ color: "#999" }}>No Image</span>
+                <span style={{ color: "#aaa" }}>No Image</span>
               )}
             </div>
+
             <div style={{ marginBottom: 16 }}>
               <TextArea
                 rows={2}
                 value={description}
                 onChange={e => setDescription(e.target.value)}
                 placeholder={t("image.enter_description")}
-                style={{
-                  width: "100%",
-                  fontSize: 15,
-                  borderRadius: 8,
-                  padding: 10,
-                  backgroundColor: "#ffffff",
-                  boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
-                }}
+                className="image-textarea image-description-textarea"
               />
               <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
                 <Button
                   loading={loadingCaption}
-                  style={{
-                    backgroundColor: "#D2E3FC",
-                    color: "#000",
-                    borderRadius: 8,
-                    whiteSpace: "nowrap",
-                  }}
                   onClick={generateCaption}
+                  className="image-button image-button-large"
                 >
                   {t("image.generate_caption")}
                 </Button>
               </div>
             </div>
+
             <TextArea
-              rows={4}
+              rows={8}
               value={caption}
               onChange={handleCaptionChange}
-              placeholder={t("image.caption_placeholder")} // "Caption"
-              style={{ fontSize: 15, marginBottom: 16 }}
+              placeholder={t("image.caption_placeholder")}
+              className="image-textarea image-caption-textarea"
             />
 
-            {/* Chỉ hiển thị nếu có điểm */}
             {score !== null && (
               <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  padding: 16,
-                  borderRadius: 12,
-                  backgroundColor: "#fff",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                  marginBottom: 24,
-                  maxWidth: 500,
-                }}
+                className="image-score-container"
               >
-                <div style={{ marginRight: 24 }}>
+                <div className="image-score-right">
                   <Progress
                     type="circle"
                     percent={score}
                     width={80}
-                    strokeColor={score >= 80 ? "#52c41a" : score >= 50 ? "#faad14" : "#f5222d"}
+                    strokeColor={score >= 80 ? "#00ff99" : score >= 50 ? "#faad14" : "#f5222d"}
                     format={() => (
-                      <div style={{ fontSize: 16, color: "#000" }}>
-                        <div style={{ fontWeight: 500 }}>{score}</div>
-                        <div style={{ fontSize: 12, color: "#999" }}>points</div>
+                      <div style={{ fontSize: 16, color: "#fff" }}>
+                        <div style={{ fontWeight: 600 }}>{score}%</div>
                       </div>
                     )}
                   />
                 </div>
 
                 <div>
-                  <Title level={5} style={{ margin: 0 }}>
-                    {scoreLabel} <span style={{ color: "#999" }}>ℹ️</span>
+                  <Title level={5} style={{ margin: 0, color: "#fff" }}>
+                    {scoreLabel}
                   </Title>
-                  <Text type="secondary">{suggestion}</Text>
+                  <Text className="image-score-subtext">{suggestion}</Text>
                 </div>
               </div>
             )}
@@ -586,12 +566,7 @@ const FullscreenSplitCard = () => {
             <Button
               onClick={handlePostFacebook}
               type="primary"
-              style={{
-                backgroundColor: "#D2E3FC",
-                color: "#000",
-                border: "1px solid #D2E3FC",
-                borderRadius: 6,
-              }}
+              className="image-button image-button-large"
               block
               size="large"
             >

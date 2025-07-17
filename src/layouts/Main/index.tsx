@@ -1,31 +1,26 @@
 import "./Main.scss";
-import { Suspense, useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useCallback, useLayoutEffect, useMemo, useRef } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { Sidebar } from "./Sidebar";
 import { Layout, Skeleton } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { Header } from "./Header";
-import { Drawer } from "./Drawer";
-import { IMenuItem, getMenuItems } from "src/routes/menu-item"; // ✅ sửa ở đây
+import { IMenuItem, getMenuItems } from "src/routes/menu-item";
 import { useDispatch, useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
 import { useGetAuthRolesQuery } from "src/store/api/authApi";
 import { setGroups, setRoles } from "src/store/slice/auth.slice";
-import { useTranslation } from "react-i18next"; // ✅ thêm dòng này
+import { useTranslation } from "react-i18next";
 
 export const MainLayout = () => {
-  const { t } = useTranslation(); // ✅ dùng t để truyền vào getMenuItems
+  const { t } = useTranslation();
   const location = useLocation();
   const dispatch = useDispatch();
   const { isLogin } = useSelector((state: IRootState) => state.auth);
 
-  const { data, isFetching } = useGetAuthRolesQuery({}, { skip: !isLogin });
+  const { data } = useGetAuthRolesQuery({}, { skip: !isLogin });
 
   const mounted = useRef(false);
-  const [collapsed, setCollapsed] = useState(false);
-  const [openDrawer, setOpenDrawer] = useState(false);
-
-  const menuItems = useMemo(() => getMenuItems(t), [t]); // ✅ tạo menu theo ngôn ngữ hiện tại
+  const menuItems = useMemo(() => getMenuItems(t), [t]);
 
   const findOpenKeys = useCallback((item: IMenuItem, target: string) => {
     if (item.key === target) return [item.key];
@@ -41,18 +36,6 @@ export const MainLayout = () => {
     }
     return [];
   }, []);
-
-  const defaultOpenKeys = useMemo(() => {
-    if (mounted.current) return;
-    mounted.current = true;
-    for (const menuItem of menuItems) {
-      const openKeys = findOpenKeys(menuItem, location.pathname);
-      if (openKeys.length) {
-        return openKeys;
-      }
-    }
-    return [];
-  }, [findOpenKeys, location.pathname, menuItems]);
 
   const defaultSelectedKeys = useMemo(() => [location.pathname], [location.pathname]);
 
@@ -100,28 +83,13 @@ export const MainLayout = () => {
 
   return (
     <Layout>
-      <Sidebar
-        menuItemsAuthorize={menuItemsAuthorize}
-        isFetching={isFetching}
-        collapsed={collapsed}
-        setCollapsed={setCollapsed}
-        defaultSelectedKeys={defaultSelectedKeys}
-        defaultOpenKeys={defaultOpenKeys}
-      />
-      <Drawer
-        menuItemsAuthorize={menuItemsAuthorize}
-        openDrawer={openDrawer}
-        setOpenDrawer={setOpenDrawer}
-        defaultSelectedKeys={defaultSelectedKeys}
-        defaultOpenKeys={defaultOpenKeys}
-      />
-      <Layout className={`main ${collapsed ? "main-collapsed" : ""}`}>
-        <Header setOpenDrawer={setOpenDrawer} />
-        <Content className="content">
+      <Layout className="main">
+        <Header menuItems={menuItemsAuthorize} />
+        {/* <Content className="content"> */}
           <Suspense fallback={<Skeleton />}>
             <Outlet />
           </Suspense>
-        </Content>
+        {/* </Content> */}
       </Layout>
     </Layout>
   );

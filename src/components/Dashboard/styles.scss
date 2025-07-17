@@ -1,0 +1,76 @@
+.image-layout {
+  min-height: 100vh;
+  background-color: #0b1220; /* Tông nền chính */
+  padding: 24px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Tiêu đề (h1, h2...) */
+.image-layout .ant-typography {
+  color: #e6edff !important;
+  font-weight: 600;
+}
+
+/* Card biểu đồ */
+.image-layout .ant-card {
+  background-color: #101828 !important;
+  border: 1px solid #233654;
+  border-radius: 16px;
+}
+
+/* Spinner loading */
+.image-layout .ant-spin-dot-item {
+  background-color: #4cc0ff !important;
+}
+
+/* Drawer chi tiết */
+.image-layout .ant-drawer-body {
+  background-color: #141b2e;
+  color: #e0e4ff;
+}
+
+/* Nút quảng cáo phát sáng */
+.image-layout .ads-button-glow {
+  background-color: #0f172a;
+  border: 1px solid #4cc0ff;
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: 14px;
+  color: #ffffff;
+  font-weight: 500;
+  box-shadow: 0 0 6px #4cc0ff;
+  cursor: pointer;
+}
+
+/* ======================== */
+/* BẢNG - GIAO DIỆN DARK */
+/* ======================== */
+
+/* Container bảng */
+.image-layout .ant-table {
+  background-color: #1b2230;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Header bảng */
+.image-layout .ant-table-thead > tr > th {
+  background-color: #2d3443;
+  color: #c2c8d4;
+  font-weight: 500;
+  font-size: 13px;
+  border-bottom: 1px solid #3b4355;
+}
+
+/* Body bảng */
+.image-layout .ant-table-tbody > tr > td {
+  background-color: #101828;
+  color: #c7d2f0;
+  border-bottom: 1px solid #1f2a44;
+  font-size: 13px;
+}
+
+/* Không đổi màu khi hover */
+.image-layout .ant-table-tbody > tr:hover > td {
+  background-color: #101828 !important;
+}

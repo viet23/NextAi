@@ -52,24 +52,17 @@ export const getMenuItems = (t: TFunction): IMenuItem[] => [
     icon: createElement(TicketManageIcon),
   },
   {
-    key: "accounts",
-    icon: createElement(SettingIcon),
-    label: t("menu.accounts"),
-    children: [
-      {
-        key: ACCOUNT_ROUTE,
-        icon: createElement(DotIcon),
-        label: t("menu.user_account"),
-        rolenames: [GET_USER],
-      },
-      {
-        key: AUTHORIZATION_ROUTE,
-        icon: createElement(DotIcon),
-        label: t("menu.user_authorization"),
-        rolenames: [GET_GROUP, GET_ROLE],
-        allRoleRequired: true,
-      },
-    ],
+    key: ACCOUNT_ROUTE,
+    icon: createElement(DotIcon),
+    label: t("menu.user_account"),
+    rolenames: [GET_USER],
+  },
+  {
+    key: AUTHORIZATION_ROUTE,
+    icon: createElement(DotIcon),
+    label: t("menu.user_authorization"),
+    rolenames: [GET_GROUP, GET_ROLE],
+    allRoleRequired: true,
   },
 ];
 

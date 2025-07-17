@@ -1,14 +1,173 @@
-.saml-sign-btn {
+.signin-wrapper {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(ellipse at bottom, #0a0a23 0%, #000 100%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  background: rgb(255, 255, 255);
-  border-radius: 10px;
-  padding: 10px;
-  cursor: pointer;
-  margin: 15px 0;
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+  color: white;
 }
-.saml-sign-btn .saml-sign-btn-title {
-  padding-left: 20px;
-  font-size: 16px;
+
+.signin-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.signin-logo {
+  width: 160px;
+  margin: 0 auto 8px auto;
+  display: block;
+}
+
+.signin-title {
+  font-size: 32px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #5c9eff, #b3cfff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 12px rgba(92, 158, 255, 0.5);
+  margin-bottom: 4px;
+}
+
+.signin-sub {
+  font-size: 13px;
+  color: #b3cfff;
+  margin-bottom: 20px;
+}
+
+.signin-box {
+  background-color: #0f0f1f;
+  padding: 28px 24px;
+  border-radius: 16px;
+  max-width: 340px;
+  width: 100%;
+  box-shadow: 0 0 20px rgba(92, 158, 255, 0.2);
+}
+
+.ant-input {
+  background-color: #1a1a2e !important;
+  color: white !important;
+  border: 1px solid #2c2c3b !important;
+  border-radius: 8px !important;
+  padding: 10px 12px !important;
+}
+
+.signin-input::placeholder,
+.signin-input input::placeholder {
+  color: #ffffff !important;
+  opacity: 0.6 !important;
+}
+
+.signin-input {
+  background-color: #0f172a !important;
+  border: 1px solid #334155 !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  height: 40px;
+
+  &::placeholder {
+    color: #64748b !important; // Màu xám xanh nhạt
+    opacity: 1;
+  }
+
+  .ant-input {
+    background-color: transparent !important;
+    color: #ffffff !important;
+  }
+
+  .ant-input-suffix {
+    color: #3b82f6 !important; // Icon mắt màu xanh
+    background: transparent;
+  }
+
+  &:hover,
+  &:focus-within {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  }
+}
+
+
+.signin-input-group {
+  text-align: left;
+  margin-bottom: 12px;
+}
+
+.signin-input-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #bbb;
+  margin-bottom: 6px;
+}
+
+.signin-forgot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  margin-bottom: 16px;
+  color: #777;
+}
+
+.signin-forgot a {
+  color: #5c9eff;
+}
+
+.signin-btn {
+  background: transparent;
+  color: white;
+  font-weight: 600;
+  border: 1px solid #5c9eff;
+  border-radius: 8px;
+  box-shadow: 0 0 8px #5c9eff;
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+}
+
+.signin-btn:hover {
+  background-color: #5c9eff;
+  color: black;
+}
+
+.signin-divider {
+  color: #666;
+  margin: 12px 0;
+  text-align: center;
+  font-size: 13px;
+}
+
+.signin-social-btn {
+  background: #1a1a2e !important;
+  color: white !important;
+  border: 1px solid #444 !important;
+  border-radius: 8px !important;
+  height: 34px;
+  margin-bottom: 10px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.signin-social-btn.facebook {
+  background: #1a1a2e !important;
+  color: white !important;
+}
+
+.signin-footer {
+  color: #888;
+  font-size: 12px;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.signin-footer a {
+  color: #5c9eff;
 }
