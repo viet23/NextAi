@@ -2,6 +2,19 @@ import React from "react";
 import "./styles.scss";
 import { Link } from "react-router-dom";
 import Container from "../../assets/images/Container.png";
+import Home_1 from "../../assets/images/home_1.png";
+import Home_2 from "../../assets/images/home_2.png";
+import Home_3 from "../../assets/images/home_3.png";
+import Home_4 from "../../assets/images/home_4.png";
+import Home_5 from "../../assets/images/home_5.png";
+import Home_icon_1 from "../../assets/images/home_icon_1.png";
+import Home_icon_2 from "../../assets/images/home_icon_2.png";
+import Home_icon_3 from "../../assets/images/home_icon_3.png";
+import Home_icon_4 from "../../assets/images/home_icon_4.png";
+import Home_icon_5 from "../../assets/images/home_icon_5.png";
+import Home_icon_6 from "../../assets/images/home_icon_6.png";
+
+
 
 const LandingPage: React.FC = () => {
     return (
@@ -16,10 +29,11 @@ const LandingPage: React.FC = () => {
                     <Link to="/signin">Contact</Link>
                 </div>
                 <div className="nav-right">
-                    <Link to="/signin" className="btn-text" style={{ marginRight: "12px" }}>Sign in</Link>
+                    <Link to="/signin" className="btn-text">Sign in</Link>
                     <Link to="/signin" className="btn-primary">Get started</Link>
                 </div>
             </div>
+
             <br />
             {/* Hero */}
             <div className="container hero">
@@ -56,51 +70,123 @@ const LandingPage: React.FC = () => {
             {/* Các khối nội dung */}
             {[
                 {
-                    img: "https://ocd.vn/wp-content/uploads/2024/08/AI.jpg",
+                    img: Home_1,
                     title: "Phân tích fanpage và quảng cáo",
-                    content: ["Phân tích trang web: dựa trên URL bạn cung cấp", "Phân tích hiệu quả quảng cáo: theo ngành hàng, nội dung, CTA"],
+                    content: [
+                        {
+                            heading: "Phân tích trang web",
+                            description: "Dựa trên URL bạn cung cấp",
+                            icon: Home_icon_1,
+                        },
+                        {
+                            heading: "Phân tích hiệu quả quảng cáo",
+                            description: "Theo ngành hàng, nội dung, CTA",
+                            icon: Home_icon_2,
+                        },
+                    ],
                 },
                 {
-                    img: "https://scitechdaily.com/images/Artificial-Intelligence-Robot-Thinking-Brain.jpg",
+                    img: Home_2,
                     title: "Quảng cáo tự động",
-                    content: ["Sử dụng AI phân tích quảng cáo hiệu quả", "Tự động gửi thông báo & tối ưu hoá nội dung"],
-                    reverse: true,
+                    content: [
+                        {
+                            heading: "Sử dụng AI phân tích quảng cáo",
+                            description: "Tối ưu hoá nội dung hiệu quả",
+                            icon: Home_icon_3,
+                        },
+                        {
+                            heading: "Tự động gửi thông báo",
+                            description: "Thông báo thông minh dựa trên dữ liệu AI",
+                            icon: Home_icon_4,
+                        },
+                    ],
                 },
                 {
-                    img: "https://cafefcdn.com/203337114487263232/2023/12/19/ai-technology-cpu-central-processor-unit-chipset-big-data-machine-learning-cyber-mind-domination-generative-ai-scaled-1-1500x1000-1702977700134-1702977700212539167120.jpg",
+                    img: Home_3,
                     title: "Tạo video AI theo kịch bản",
-                    content: ["Ghép nhạc, cảnh quay", "Tự động hoàn chỉnh video"],
+                    content: [
+                        {
+                            heading: "Ghép nhạc, cảnh quay",
+                            description: "Tạo video hoàn chỉnh trong vài phút",
+                            icon: Home_icon_1,
+                        },
+                        {
+                            heading: "Tự động hoàn chỉnh video",
+                            description: "Không cần kỹ thuật, chỉ cần nội dung",
+                            icon: Home_icon_2,
+                        },
+                    ],
                 },
                 {
-                    img: "https://vinuni.edu.vn/wp-content/uploads/2024/12/kham-pha-tri-tue-nhan-tao-ai-la-gi-va-tai-sao-no-quan-trong-hinh-1.jpg",
+                    img: Home_4,
                     title: "AI đánh giá hiệu quả quảng cáo",
-                    content: ["Sử dụng AI phân tích quảng cáo", "Tự động gửi thông báo"],
-                    reverse: true,
+                    content: [
+                        {
+                            heading: "Sử dụng AI phân tích quảng cáo",
+                            description: "Hiệu quả theo hành vi và phản hồi",
+                            icon: Home_icon_3,
+                        },
+                        {
+                            heading: "Tự động gửi thông báo",
+                            description: "Đánh giá và nhắc nhở tối ưu thời gian thực",
+                            icon: Home_icon_4,
+                        },
+                    ],
                 },
                 {
-                    img: "https://cdn.vietnambiz.vn/2019/9/24/w020190722589883245257-15692906256681976192157.jpg",
+                    img: Home_5,
                     title: "Tại sao chọn All One Ads",
-                    content: ["1. AI hỗ trợ dễ dùng, không cần kỹ thuật", "2. AI Tạo nội dung siêu nhanh – không đợi thiết kế", "3. Chạy quảng cáo thật – không chỉ tạo nội dung"],
+                    content: [
+                        {
+                            heading: "AI dễ dùng – không cần kỹ thuật",
+                            description: "Ai cũng dùng được – không cần học quảng cáo",
+                            icon: Home_icon_5,
+                        },
+                        {
+                            heading: "Tạo nội dung siêu nhanh",
+                            description: "Không cần designer – AI lo tất cả",
+                            icon: Home_icon_3,
+                        },
+                        {
+                            heading: "Chạy quảng cáo thật",
+                            description: "Không chỉ tạo nội dung mà còn thực thi hiệu quả",
+                            icon: Home_icon_6
+                        },
+                    ],
                 },
                 {
                     img: "https://fmit.vn/public/uploads/images/artificia-Intelligence.jpg",
                     title: "Video Demo",
-                    content: ["Xem thử demo video thật do AI tạo, ghép cảnh – lồng nhạc – xuất bản."],
-                    reverse: true,
+                    content: [
+                        {
+                            heading: "Xem thử video AI tạo thật",
+                            description: "Ghép cảnh – lồng nhạc – xuất bản nhanh chóng",
+                            icon: Home_icon_1,
+                        },
+                    ],
                 },
             ].map((block, i) => (
-                <div className={`feature-block ${block.reverse ? "reverse" : ""}`} key={i}>
+                <div className="feature-block" key={i}>
                     <img className="feature-image" src={block.img} alt={block.title} />
                     <div className="feature-content">
                         <h3>{block.title}</h3>
-                        {block.content.length > 1 ? (
-                            <ul>{block.content.map((line, j) => <li key={j}>{line}</li>)}</ul>
-                        ) : (
-                            <p>{block.content[0]}</p>
-                        )}
+                        <div className="feature-items">
+                            {block.content.map((item: any, j) => (
+                                <div className="feature-item" key={j}>
+                                    <div className="icon-wrapper">
+                                        <img src={item.icon} alt="icon" />
+                                    </div>
+                                    <div>
+                                        <div className="item-heading">{item.heading}</div>
+                                        <div className="item-description">{item.description}</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             ))}
+
 
             <div className="container tutorials-section">
                 <p className="container testimonial-label">TESTIMONIALS</p>

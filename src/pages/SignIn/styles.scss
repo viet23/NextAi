@@ -10,6 +10,7 @@
   justify-content: center;
   font-family: 'Inter', sans-serif;
   color: white;
+  padding: 24px;
 }
 
 .signin-header {
@@ -43,9 +44,10 @@
   background-color: #0f0f1f;
   padding: 28px 24px;
   border-radius: 16px;
-  max-width: 340px;
   width: 100%;
+  max-width: 340px;
   box-shadow: 0 0 20px rgba(92, 158, 255, 0.2);
+  box-sizing: border-box;
 }
 
 .ant-input {
@@ -70,7 +72,7 @@
   height: 40px;
 
   &::placeholder {
-    color: #64748b !important; // Màu xám xanh nhạt
+    color: #64748b !important;
     opacity: 1;
   }
 
@@ -80,7 +82,7 @@
   }
 
   .ant-input-suffix {
-    color: #3b82f6 !important; // Icon mắt màu xanh
+    color: #3b82f6 !important;
     background: transparent;
   }
 
@@ -90,7 +92,6 @@
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
   }
 }
-
 
 .signin-input-group {
   text-align: left;
@@ -127,6 +128,8 @@
   box-shadow: 0 0 8px #5c9eff;
   margin-bottom: 16px;
   transition: all 0.3s ease;
+  width: 100%;
+  padding: 10px 0;
 }
 
 .signin-btn:hover {
@@ -146,7 +149,7 @@
   color: white !important;
   border: 1px solid #444 !important;
   border-radius: 8px !important;
-  height: 34px;
+  height: 36px;
   margin-bottom: 10px;
   display: flex !important;
   align-items: center;
@@ -154,11 +157,7 @@
   gap: 10px;
   font-weight: 500;
   font-size: 13px;
-}
-
-.signin-social-btn.facebook {
-  background: #1a1a2e !important;
-  color: white !important;
+  width: 100%;
 }
 
 .signin-footer {
@@ -170,4 +169,57 @@
 
 .signin-footer a {
   color: #5c9eff;
+}
+
+/* ============================== */
+/* ✅ Responsive cho Điện thoại */
+/* ============================== */
+@media (max-width: 576px) {
+  .signin-wrapper {
+    padding: 16px;
+  }
+
+  .signin-title {
+    font-size: 24px;
+  }
+
+  .signin-box {
+    padding: 20px 16px;
+    border-radius: 12px;
+    max-width: 100%;
+  }
+
+  .signin-logo {
+    width: 120px;
+  }
+
+  .signin-btn,
+  .signin-social-btn {
+    font-size: 12px;
+    height: 36px;
+  }
+
+  .signin-sub {
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+
+  .signin-input-label {
+    font-size: 12px;
+  }
+
+  .signin-forgot {
+    font-size: 12px;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+  }
+
+  .signin-divider {
+    font-size: 12px;
+  }
+
+  .signin-footer {
+    font-size: 11px;
+  }
 }

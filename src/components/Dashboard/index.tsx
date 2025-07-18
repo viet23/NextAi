@@ -151,26 +151,13 @@ const Dashboard = () => {
       title: t("dashboard.no"),
       dataIndex: "key",
       key: "key",
-      width: 60,
+      width: 30,
       responsive: ["md"],
-    },
-    {
-      title: t("dashboard.media"),
-      dataIndex: "media",
-      key: "media",
-      width: 70,
-      align: "center",
-    },
-    {
-      title: t("dashboard.caption"),
-      dataIndex: "caption",
-      key: "caption",
-      width: 250,
     },
     {
       title: t("dashboard.action"),
       key: "action",
-      width: 60,
+      width: 30,
       align: "center",
       render: (_, record) => (
         <button
@@ -181,6 +168,31 @@ const Dashboard = () => {
         </button>
       ),
     },
+    {
+      title: t("dashboard.media"),
+      dataIndex: "media",
+      key: "media",
+      width: 70,
+      align: "center",
+    },
+
+    {
+      title: t("dashboard.caption"),
+      dataIndex: "caption",
+      key: "caption",
+      width: typeof window !== "undefined" && window.innerWidth < 768 ? 180 : 250,
+      render: (text: string) => {
+        const shortText = text?.length > 100 ? text.slice(0, 100) + "..." : text;
+        return (
+          <span title={text}>
+            {shortText}
+          </span>
+        );
+      },
+    }
+
+    ,
+
     {
       title: t("dashboard.created_time"),
       dataIndex: "createdTime",

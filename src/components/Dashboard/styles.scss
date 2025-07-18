@@ -1,11 +1,11 @@
 .image-layout {
   min-height: 100vh;
-  background-color: #0b1220; /* Tông nền chính */
+  background-color: #0b1220;
   padding: 24px;
   font-family: 'Inter', sans-serif;
 }
 
-/* Tiêu đề (h1, h2...) */
+/* Typography */
 .image-layout .ant-typography {
   color: #e6edff !important;
   font-weight: 600;
@@ -35,25 +35,20 @@
   border: 1px solid #4cc0ff;
   border-radius: 8px;
   padding: 6px 16px;
-  font-size: 14px;
+  font-size: 12px;
   color: #ffffff;
   font-weight: 500;
   box-shadow: 0 0 6px #4cc0ff;
   cursor: pointer;
 }
 
-/* ======================== */
-/* BẢNG - GIAO DIỆN DARK */
-/* ======================== */
-
-/* Container bảng */
+/* Bảng */
 .image-layout .ant-table {
   background-color: #1b2230;
   border-radius: 12px;
   overflow: hidden;
 }
 
-/* Header bảng */
 .image-layout .ant-table-thead > tr > th {
   background-color: #2d3443;
   color: #c2c8d4;
@@ -62,7 +57,6 @@
   border-bottom: 1px solid #3b4355;
 }
 
-/* Body bảng */
 .image-layout .ant-table-tbody > tr > td {
   background-color: #101828;
   color: #c7d2f0;
@@ -70,7 +64,55 @@
   font-size: 13px;
 }
 
-/* Không đổi màu khi hover */
 .image-layout .ant-table-tbody > tr:hover > td {
   background-color: #101828 !important;
+}
+
+/* ========================== */
+/* ✅ GIAO DIỆN ĐIỆN THOẠI */
+/* ========================== */
+@media (max-width: 768px) {
+  .image-layout {
+    padding: 12px;
+  }
+
+  .image-layout > div {
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* Biểu đồ */
+  .image-layout .ant-card {
+    padding: 12px !important;
+    overflow-x: auto;
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  .image-layout .ant-card > div {
+    min-width: 500px; /* Giữ kích thước biểu đồ đủ hiển thị */
+  }
+
+  /* Bảng */
+  .image-layout .ant-table-wrapper {
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  .image-layout .ant-table {
+    width: 100%;
+    min-width: 600px; /* Đảm bảo đủ cột không bị bóp méo */
+  }
+
+  .image-layout .ant-table-thead > tr > th,
+  .image-layout .ant-table-tbody > tr > td {
+    font-size: 12px;
+    padding: 6px;
+    white-space: nowrap;
+  }
+
+  .image-layout .ant-typography {
+    font-size: 15px !important;
+    text-align: center;
+  }
 }

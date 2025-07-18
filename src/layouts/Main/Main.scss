@@ -196,7 +196,7 @@ $highlight-blue: #00ccff;
   margin-left: 0; // ✅ sửa ở đây
 
   .content {
-    padding: 25px;
+    padding: 8px;
   }
 }
 
@@ -270,5 +270,13 @@ $highlight-blue: #00ccff;
 
   .drawer {
     display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .main {
+    .content {
+      padding: 0 !important;
+    }
   }
 }
