@@ -1,5 +1,8 @@
 /* Layout nền tối */
 .image-layout {
+  max-width: 1222;
+  margin: 0 auto;
+  width: 100%;
   min-height: 100vh;
   background-color: #050616;
   color: #e0e0e0;
@@ -25,4 +28,3 @@
   box-shadow: 0 0 12px rgba(0, 255, 255, 0.05);
   border: 1px solid #1f263e;
 }
-

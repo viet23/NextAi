@@ -52,6 +52,8 @@
     "enter_prompt": "Please enter a prompt.",
     "generate_error": "Image generation error. Your budget may be out. Contact Admin.",
     "points": "points",
+    "main_result": "Result",
+    "main_describe_title": " Describe your core idea. For example: A steaming hot pot restaurant in the evening.",
     "auto_post_setting": "Set up auto post Facebook page",
     "suggestion": "Suggestion",
     "label_name": "Product/Service Name",
@@ -66,6 +68,7 @@
   "media_ls": {
     "title": "List of AI videos",
     "card_title": "AI MEDIA LIST",
+    "card_history": "History",
     "empty": "No Data",
     "video": {
       "unsupported": "Browser does not support video."

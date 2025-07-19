@@ -285,7 +285,7 @@ const Dashboard = () => {
         <Drawer
           open={isOpen}
           onClose={handleOnCloseDrawer}
-          width="70%"
+          width="98%"
           maskClosable={false}
           closeIcon={<CloseOutlined style={{ color: "#e2e8f0", fontSize: 18 }} />}
           title={detailId ? t("dashboard.ads") : t("dashboard.ads_new")}

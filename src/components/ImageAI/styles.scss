@@ -103,20 +103,25 @@
 }
 
 .image-button {
-  background-color: transparent;
-  color: #29b6f6;
-  border: 1px solid #29b6f6;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0f172a;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border: 1px solid #3b82f6;
   border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 14px;
-  min-width: 120px;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+  white-space: nowrap;
   transition: all 0.3s;
 }
 
 .image-button:hover {
-  background-color: #29b6f6;
-  color: #000;
-  box-shadow: 0 0 10px #29b6f6;
+  background-color: #1e293b;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.9);
 }
 
 .image-button-large {
@@ -124,6 +129,7 @@
   padding: 12px;
   font-size: 15px;
 }
+
 
 .image-options-bar {
   display: flex;
@@ -270,7 +276,8 @@
   .image-page {
     flex-direction: column;
     align-items: center;
-    padding: 0 3px; /* ✅ giảm padding 2 bên */
+    padding: 0 3px;
+    /* ✅ giảm padding 2 bên */
   }
 
   .image-column {
@@ -364,6 +371,67 @@
     font-size: 18px;
     padding: 5px;
   }
+
+  .mobile-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0;
+    /* Không còn padding 2 bên */
+    margin: 0;
+  }
+
+  .mobile-card {
+    background: #1e293b;
+    color: #e2e8f0;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    width: 70%;
+    margin: 0;
+  }
+
+  .mobile-card-media {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 0;
+  }
+
+  .mobile-card-media img,
+  .mobile-card-media video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 0;
+  }
+
+  .mobile-card-media .anticon-download {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 18px;
+    background: #fff;
+    padding: 6px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    z-index: 2;
+  }
+
+  .mobile-card-content {
+    padding: 12px;
+  }
+
+  .mobile-card-caption {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .mobile-card-footer {
+    text-align: right;
+  }
+
 }
-
-

@@ -162,7 +162,7 @@ const AutoPostModal = ({ visible, onClose }: AutoPostModalProps) => {
               color: "#ffffff",
               border: "1px solid #3B82F6",
               borderRadius: 6,
-              height: 42,
+              height: 30,
               fontSize: 15,
               fontWeight: 500,
               boxShadow: "0 0 6px #3B82F6",

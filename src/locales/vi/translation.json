@@ -55,6 +55,8 @@
     "auto_post_setting": "Thiết lập đăng bài tự động",
     "suggestion": "Gợi ý",
     "main_idea_title": "Ý tưởng chính",
+    "main_describe_title": " Mô tả ý tưởng cốt lõi của bạn. Ví dụ: Một quán lẩu nghi ngút khói vào buổi tối.",
+    "main_result": "Kết quả",
     "warning_required": "Vui lòng không để trống!",
     "generate_detail_prompt": "Tạo mô tả chi tiết",
     "enter_detail_prompt": "Nhập mô tả chi tiết",
@@ -70,6 +72,7 @@
   "media_ls": {
     "title": "Danh sách media AI",
     "card_title": "Danh sách media",
+    "card_history": "Lịch sử",
     "empty": "Không có dữ liệu",
     "video": {
       "unsupported": "Trình duyệt không hỗ trợ video."
