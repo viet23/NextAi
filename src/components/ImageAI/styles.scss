@@ -141,7 +141,7 @@
 .detail-toggle-btn {
   background-color: transparent;
   border: 1px solid #29b6f6;
-  color: #29b6f6;
+  // color: #29b6f6;
   padding: 8px 16px;
   font-size: 14px;
   border-radius: 6px;
@@ -151,8 +151,8 @@
 
 .detail-toggle-btn:hover,
 .detail-toggle-btn.active {
-  background-color: #29b6f6;
-  color: #000;
+  background-color: transparent;
+  color: #ffffff;
   box-shadow: 0 0 8px #29b6f6;
 }
 
@@ -272,12 +272,116 @@
   color: #e03131;
 }
 
+.btn-text {
+     background: none;
+     border: 1px solid #5a6789;
+     color: #c5cbd8;
+     font-weight: 500;
+     font-size: 14px;
+     border-radius: 6px;
+     padding: 10px 24px;
+     cursor: pointer;
+     transition: all 0.3s ease;
+     border-color: #00bfff;
+ }
+
+ .btn-text:hover {
+     background-color: rgba(255, 255, 255, 0.06);
+     border-color: #00bfff;
+     color: white;
+ }
+
 @media (max-width: 768px) {
+  .ant-card-body {
+    padding: 12px !important;
+  }
+
+  .ant-card {
+    margin: 0 !important;
+    border-radius: 8px !important;
+  }
+
+  .mobile-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0;
+    margin: 0;
+  }
+
+  .criclebox {
+    padding: 12px !important;
+  }
+
+  .tablespace {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .mb-24 {
+    margin-bottom: 16px !important; /* hoặc 12px cho mobile */
+  }
+
+  .mobile-card {
+    background: #1e293b;
+    color: #e2e8f0;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    width: 60%;       /* ✅ Full bề ngang */
+    margin: 0;         /* ✅ Không margin ngang */
+    padding: 0;        /* ✅ Không padding bao ngoài */
+    max-width: unset;  /* ✅ Bỏ giới hạn chiều rộng */
+  }
+
+  .mobile-card-media {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 0;
+  }
+
+  .mobile-card-media img,
+  .mobile-card-media video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 0;
+  }
+
+  .mobile-card-media .anticon-download {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 18px;
+    background: #fff;
+    padding: 6px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    z-index: 2;
+  }
+
+  .mobile-card-content {
+    padding: 12px 16px; /* ✅ Khoảng cách bên trong nội dung */
+  }
+
+  .mobile-card-caption {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .mobile-card-footer {
+    text-align: right;
+  }
+
+  /* Giao diện phần tạo ảnh */
   .image-page {
     flex-direction: column;
     align-items: center;
     padding: 0 3px;
-    /* ✅ giảm padding 2 bên */
   }
 
   .image-column {
@@ -371,67 +475,5 @@
     font-size: 18px;
     padding: 5px;
   }
-
-  .mobile-card-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    padding: 0;
-    /* Không còn padding 2 bên */
-    margin: 0;
-  }
-
-  .mobile-card {
-    background: #1e293b;
-    color: #e2e8f0;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    overflow: hidden;
-    width: 70%;
-    margin: 0;
-  }
-
-  .mobile-card-media {
-    position: relative;
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
-    border-radius: 0;
-  }
-
-  .mobile-card-media img,
-  .mobile-card-media video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    border-radius: 0;
-  }
-
-  .mobile-card-media .anticon-download {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    font-size: 18px;
-    background: #fff;
-    padding: 6px;
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-    z-index: 2;
-  }
-
-  .mobile-card-content {
-    padding: 12px;
-  }
-
-  .mobile-card-caption {
-    font-size: 14px;
-    margin-bottom: 8px;
-  }
-
-  .mobile-card-footer {
-    text-align: right;
-  }
-
 }
+

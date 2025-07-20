@@ -1715,7 +1715,7 @@ Please contact Admin`);
                               <div className="mobile-card-content">
                                 <div className="mobile-card-caption">{item.caption}</div>
                                 <div className="mobile-card-footer">
-                                  <Button size="small" onClick={() => handleOnClickDetail(item)}>
+                                  <Button size="small" className="btn-text" onClick={() => handleOnClickDetail(item)}>
                                     Xem chi tiết
                                   </Button>
                                 </div>
