@@ -23,6 +23,7 @@ export interface IMenuItem {
   rolenames?: string[];
   allRoleRequired?: boolean;
   children?: IMenuItem[];
+  onClick?: () => void;
 }
 
 export const getMenuItems = (t: TFunction): IMenuItem[] => [

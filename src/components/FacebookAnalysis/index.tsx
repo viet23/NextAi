@@ -4,10 +4,16 @@ import { useCreateAnalysisMutation, useGetAnalysisQuery } from "src/store/api/ti
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
 import AutoPostModal from "../AutoPostModal";
+import { DatePicker, Progress, Row, Col } from "antd";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 const { Content } = Layout;
 const { Title } = Typography;
 const { TextArea } = Input;
+
+
 
 const styles = {
   container: {
@@ -225,6 +231,19 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
     }
   };
 
+  const dataChart = [
+    { name: "01/07", views: 0 },
+    { name: "02/07", views: 5 },
+    { name: "03/07", views: 10 },
+    { name: "04/07", views: 20 },
+    { name: "05/07", views: 25 },
+    { name: "06/07", views: 30 },
+    { name: "07/07", views: 40 },
+  ];
+
+  const percentageFollow = 0;
+  const percentageContact = 0;
+
   return (
     <>
       <Helmet>
@@ -318,6 +337,182 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
             </div>
           </div>
           <br />
+          {/* <div
+            style={styles.twoColumns}
+          >
+           
+            <Row gutter={16} justify="space-between" align="middle" style={{ marginBottom: 16 }}>
+              <Col>
+                <DatePicker.RangePicker
+                  style={{
+                    background: "#1e293b",
+                    border: "1px solid #334155",
+                    color: "#CBD5E1",
+                    borderRadius: 8,
+                  }}
+                />
+              </Col>
+              <Col>
+                <Button
+                  style={{
+                    background: "linear-gradient(to right, #3b82f6, #60a5fa)",
+                    border: "1px solid #3b82f6",
+                    boxShadow: "0 0 8px #3b82f6",
+                    color: "#fff",
+                    padding: "6px 16px",
+                    borderRadius: 6,
+                    fontWeight: 350,
+                  }}
+                >
+                  Kết nối page để xem thông tin
+                </Button>
+              </Col>
+            </Row>
+
+           
+            <Row gutter={16}>
+            
+              <Col span={16}>
+                <Card
+                  style={{
+                    background: "#1e293b",
+                    border: "1px solid #334155",
+                    borderRadius: 12,
+                    color: "#fff",
+                  }}
+                  bodyStyle={{ padding: 16 }}
+                >
+                  <div style={{ marginBottom: 16, fontWeight: 600, color: "#E2E8F0" }}>Lượt xem</div>
+                  <ResponsiveContainer width="100%" height={220}>
+                    <LineChart data={dataChart}>
+                      <XAxis dataKey="name" stroke="#94a3b8" />
+                      <YAxis stroke="#94a3b8" />
+                      <Tooltip contentStyle={{ background: "#0f172a", borderColor: "#334155" }} />
+                      <Line type="monotone" dataKey="views" stroke="#6cc3ff" strokeWidth={2} />
+                    </LineChart>
+                  </ResponsiveContainer>
+
+                  <Row gutter={12} style={{ marginTop: 16 }}>
+                    {[
+                      "Tổng lượt xem",
+                      "Trung bình",
+                      "Xem tối thiểu 3 giây",
+                      "Xem tối thiểu 1 giây",
+                    ].map((label, idx) => (
+                      <Col span={6} key={idx}>
+                        <div
+                          style={{
+                            background: "#0f172a",
+                            border: "1px solid #334155",
+                            borderRadius: 8,
+                            padding: "6px 10px",
+                            textAlign: "center",
+                            fontSize: 13,
+                            color: "#CBD5E1",
+                          }}
+                        >
+                          0<br />
+                          {label}
+                        </div>
+                      </Col>
+                    ))}
+                  </Row>
+                </Card>
+              </Col>
+
+            
+              <Col span={8}>
+                <Card
+                  style={{
+                    background: "#1e293b",
+                    border: "1px solid #334155",
+                    borderRadius: 12,
+                    color: "#fff",
+                  }}
+                  bodyStyle={{ padding: 16 }}
+                >
+                  <Row gutter={[8, 16]}>
+                    <Col span={12}>
+                      
+                      <div style={{ textAlign: "center" }}>
+                        <div style={{ width: 70, margin: "0 auto" }}>
+                          <CircularProgressbar
+                            value={percentageFollow}
+                            text={`${percentageFollow}%`}
+                            styles={buildStyles({
+                              textColor: "#fff",
+                              pathColor: "#00d084",
+                              trailColor: "#334155",
+                            })}
+                          />
+                        </div>
+                        <div style={{ fontSize: 13, marginTop: 8 }}>Tỉ lệ người theo dõi</div>
+                        <div style={{ fontSize: 11, color: "#94a3b8" }}>● Theo dõi<br />● Không theo dõi</div>
+                      </div>
+                    </Col>
+
+                    <Col span={12}>
+                     
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 8 }}>
+                          Tuổi và giới tính
+                        </div>
+                        {["35-44", "25-34", "45-54", "54+"].map((age) => (
+                          <div key={age} style={{ marginBottom: 6 }}>
+                            <span style={{ fontSize: 11 }}>{age}</span>
+                            <Progress percent={0} size="small" showInfo={false} />
+                          </div>
+                        ))}
+                      </div>
+                    </Col>
+
+                    <Col span={12}>
+                     
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 8 }}>Thành Phố</div>
+                        {["Hà Nội", "HCM", "Hải Phòng", "Đà Nẵng"].map((c) => (
+                          <div key={c} style={{ fontSize: 12, display: "flex", justifyContent: "space-between" }}>
+                            <span>{c}</span>
+                            <span>0%</span>
+                          </div>
+                        ))}
+                      </div>
+                    </Col>
+
+                    <Col span={12}>
+                   
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 8 }}>Tin nhắn</div>
+                        <div style={{ fontSize: 12 }}>Tổng cộng: 0 tin</div>
+                        <div style={{ fontSize: 12 }}>⏱ Trả lời TB: 0 giờ</div>
+                        <div style={{ fontSize: 12 }}>✅ % chốt đơn: 0%</div>
+                      </div>
+                    </Col>
+
+                    <Col span={24}>
+                     
+                      <div style={{ textAlign: "center" }}>
+                        <div style={{ width: 70, margin: "0 auto" }}>
+                          <CircularProgressbar
+                            value={percentageContact}
+                            text={`${percentageContact}%`}
+                            styles={buildStyles({
+                              textColor: "#fff",
+                              pathColor: "#ff8c00",
+                              trailColor: "#334155",
+                            })}
+                          />
+                        </div>
+                        <div style={{ fontSize: 13, marginTop: 8 }}>Liên hệ lại</div>
+                        <div style={{ fontSize: 11, color: "#94a3b8" }}>● Tự nhiên<br />● Trả phí</div>
+                      </div>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+            </Row>
+          </div> */}
+
 
           <div style={styles.twoColumns}>
             {/* Cột trái */}

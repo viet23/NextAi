@@ -1,0 +1,128 @@
+.dashboard {
+  background-color: #0b0f1a;
+  padding: 24px;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  border-radius: 12px;
+}
+
+/* Nút kết nối */
+.connect-btn {
+  background-color: #1e3a8a;
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 20px;
+  border: none;
+  font-weight: 500;
+  box-shadow: 0 0 6px #1e3a8a;
+  transition: all 0.3s;
+}
+
+.connect-btn:hover {
+  opacity: 0.85;
+}
+
+/* Card toàn trang */
+.ant-card {
+  background-color: #141b2b !important;
+  border-radius: 12px !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+/* Tiêu đề Card */
+.ant-card-head-title {
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Label phụ */
+.sub-text {
+  color: #ccc;
+  font-size: 13px;
+}
+
+/* Bố cục ô thống kê nhỏ */
+.stat-box {
+  text-align: center;
+  padding: 12px 0;
+  background-color: #1b2232;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #fff;
+}
+
+/* Biểu đồ CircularProgressbar */
+.circular-wrapper {
+  width: 80px;
+  margin: 0 auto;
+}
+
+.circular-title {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 13px;
+  color: #ccc;
+}
+
+/* Tuổi - giới tính - thành phố */
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.info-list span {
+  display: flex;
+  justify-content: space-between;
+  color: #ccc;
+}
+
+/* Dot nhỏ cho chú thích */
+.dot {
+  height: 8px;
+  width: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.dot.green {
+  background-color: #00d084;
+}
+
+.dot.gray {
+  background-color: #555;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 16px;
+  }
+
+  .stat-box {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .connect-btn {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+
+  .circular-wrapper {
+    width: 60px;
+  }
+
+  .circular-title {
+    font-size: 12px;
+  }
+
+  .info-list span {
+    font-size: 13px;
+  }
+}

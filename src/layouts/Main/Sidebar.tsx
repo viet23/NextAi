@@ -1,13 +1,13 @@
 // Sidebar.tsx
 import Logo from "src/assets/images/next-logo.jpg";
-import { ReactComponent as NavbarIcon } from "src/assets/images/icon/icon-4-gach-den.svg";
-import { Flex, Menu } from "antd";
-import { MenuInfo } from "rc-menu/lib/interface";
-import { Link, useNavigate } from "react-router-dom";
-import { Dispatch, SetStateAction, useEffect } from "react";
-import Sider from "antd/es/layout/Sider";
-import { IMenuItem } from "src/routes/menu-item";
 import { DownOutlined, RightOutlined } from "@ant-design/icons";
+import { Flex, Menu } from "antd";
+import Sider from "antd/es/layout/Sider";
+import { Dispatch, SetStateAction, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { MenuInfo } from "rc-menu/lib/interface";
+import type { MenuProps } from "antd";
+import { IMenuItem } from "src/routes/menu-item";
 
 interface IProps {
   menuItemsAuthorize: IMenuItem[];
@@ -17,6 +17,16 @@ interface IProps {
   defaultSelectedKeys: string[];
   defaultOpenKeys?: string[];
 }
+
+// ✅ Hàm convert từ IMenuItem sang Ant Design Menu Item chuẩn
+const convertMenuItems = (items: IMenuItem[]): MenuProps["items"] =>
+  items.map((item) => ({
+    key: item.key,
+    label: item.label,
+    icon: item.icon,
+    onClick: item.onClick,
+    children: item.children ? convertMenuItems(item.children) : undefined,
+  }));
 
 export const Sidebar = ({
   menuItemsAuthorize,
@@ -55,10 +65,6 @@ export const Sidebar = ({
               <img className="logo" src={Logo} alt="logo" />
             </div>
           )}
-          {/* <NavbarIcon
-            style={{ color: '#1a73e8', width: 24, height: 24 }}
-            onClick={handleToggleCollapsed}
-          /> */}
         </Flex>
 
         {!isFetching && (
@@ -72,7 +78,7 @@ export const Sidebar = ({
             style={{ backgroundColor: "#ffffff" }}
             expandIcon={({ isOpen }) => (isOpen ? <DownOutlined /> : <RightOutlined />)}
             inlineIndent={0}
-            items={menuItemsAuthorize}
+            items={convertMenuItems(menuItemsAuthorize)} // ✅ Sửa lỗi TS2322 tại đây
             onClick={handleClick}
           />
         )}

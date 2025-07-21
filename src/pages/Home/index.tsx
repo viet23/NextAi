@@ -72,8 +72,8 @@ const LandingPage: React.FC = () => {
                     <Link to="/signin">Contact</Link> */}
                 </div>
                 <div className="nav-right">
-                    <Link to="/signin" className="btn-text">Sign in</Link>
-                    <Link to="/signin" className="btn-text">Get started</Link>
+                    <Link to="/signin" className="btn-text">Đăng nhập</Link>
+                    <Link to="/signin" className="btn-text-2">Đăng ký</Link>
                 </div>
             </div>
 
@@ -86,7 +86,7 @@ const LandingPage: React.FC = () => {
                     <p>Nền tảng giúp bạn tạo hình ảnh, video, viết nội dung, chạy quảng cáo Facebook tự động bằng AI. Không cần kỹ năng thiết kế hay marketing.</p>
 
                     <Link to="/signin" className="btn-text" style={{ marginRight: "12px" }}>Bắt đầu</Link>
-                    <Link to="/signin" className="btn-text">Khám phá</Link>
+                    <Link to="/signin" className="btn-text-2">Khám phá</Link>
                 </div>
                 <div className="hero-right">
                     <img src={Container} alt="Hero" />
@@ -297,8 +297,8 @@ const LandingPage: React.FC = () => {
                 </div>
             </div>
 
-            <div className="video-demo-wrapper">
-                {/* Bên trái: ảnh video demo */}
+            {/* <div className="video-demo-wrapper">
+              
                 <div className="video-demo-image">
                     <img
                         src={Video}
@@ -306,12 +306,12 @@ const LandingPage: React.FC = () => {
                     />
                 </div>
 
-                {/* Bên phải: nội dung demo */}
+              
                 <div className="video-demo-content">
                     <h2>Video Demo</h2>
                     <p>Từ ý tưởng đến chiến dịch hoàn chỉnh – chỉ trong 5 phút</p>
                 </div>
-            </div>
+            </div> */}
 
 
 
@@ -384,7 +384,7 @@ const LandingPage: React.FC = () => {
                 </div>
             </div>
 
-
+{/* 
             <div className="container tutorials-section">
                 <h2 className="tutorials-title">Hướng dẫn sử dụng</h2>
                 <div className="tutorials-grid">
@@ -424,7 +424,7 @@ const LandingPage: React.FC = () => {
                         </div>
                     ))}
                 </div>
-            </div>
+            </div> */}
 
             <footer className="footer">
                 <div
@@ -445,7 +445,7 @@ const LandingPage: React.FC = () => {
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "space-between",
-                            minHeight: 680, // Ép chiều cao đều
+                            minHeight: 280, // Ép chiều cao đều
                         }}
                     >
                         <div>
@@ -476,14 +476,32 @@ const LandingPage: React.FC = () => {
                                 Đến với All One Ads, bạn hoàn toàn yên tâm trải nghiệm nền tảng tạo quảng cáo tự động thông minh, tối ưu hiệu suất và giúp thương hiệu của bạn nổi bật, tiếp cận đúng khách hàng mục tiêu một cách dễ dàng nhất.
                             </p>
 
-                            <hr
+                            {/* <hr
                                 style={{
                                     borderColor: "rgba(255,255,255,0.05)",
                                     margin: "24px 0",
                                 }}
-                            />
+                            /> */}
 
-                            <h4
+                         
+                        </div>
+                    </div>
+
+                    {/* Bên phải: banner BestMall + form email */}
+                    <div
+                        className="footer-right"
+                        style={{
+                            flex: 1,
+                            minWidth: 320,
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            minHeight: 280,
+                        }}
+                    >
+                        <div>
+                            <br /><br /><br /><br />
+                               <h4
                                 style={{
                                     fontFamily: "Inter, sans-serif",
                                     fontWeight: 500,
@@ -560,24 +578,7 @@ const LandingPage: React.FC = () => {
                                 <img src={Frame_699} style={{ width: 50, height: 39, flexShrink: 0 }} />
                                 <img src={image_54} style={{ width: 39, height: 39, flexShrink: 0 }} />
                             </div>
-                        </div>
-                    </div>
-
-                    {/* Bên phải: banner BestMall + form email */}
-                    <div
-                        className="footer-right"
-                        style={{
-                            flex: 1,
-                            minWidth: 320,
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            minHeight: 680,
-                        }}
-                    >
-                        <div>
-                            <br /><br /><br /><br />
-                            <img
+                            {/* <img
                                 src={Home_47}
                                 alt="Bestmall"
                                 style={{
@@ -624,7 +625,7 @@ const LandingPage: React.FC = () => {
                                     </button>
                                 </div>
 
-                            </form>
+                            </form> */}
                         </div>
                     </div>
                 </div>

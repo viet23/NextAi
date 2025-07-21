@@ -10,6 +10,7 @@ import DetailAds from "../DetailAds";
 import { useTranslation } from "react-i18next";
 import "./styles.scss";
 import { CloseOutlined } from "@ant-design/icons";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 const { Title } = Typography;
 
@@ -109,6 +110,9 @@ const Dashboard = () => {
         monthlyCount[month].quantity += 1;
       });
 
+      console.log(`------------monthlyCount` , monthlyCount);
+      
+
       setBarData(monthlyCount);
     } catch (err) {
       console.error("❌ Lỗi khi gọi Facebook API:", err);
@@ -120,31 +124,6 @@ const Dashboard = () => {
   useEffect(() => {
     fetchFacebookPosts();
   }, [fetchFacebookPosts]);
-
-  const chartConfig = {
-    data: barData,
-    xField: "date",
-    yField: "quantity",
-    columnWidthRatio: 0.5,
-    color: "#1890ff",
-    label: {
-      position: "top",
-      style: { fill: "#000", fontSize: 12 },
-      formatter: (datum: any) => (datum.quantity > 0 ? datum.quantity.toString() : ""),
-    },
-    xAxis: {
-      title: { text: t("dashboard.chart.x_axis") },
-      label: { autoRotate: false },
-    },
-    yAxis: {
-      title: { text: t("dashboard.chart.y_axis") },
-      label: {
-        formatter: (value: number) => (value > 0 ? value.toString() : ""),
-      },
-    },
-    height: 300,
-    responsive: true,
-  };
 
   const columns: ColumnsType<any> = [
     {
@@ -240,12 +219,55 @@ const Dashboard = () => {
         </h3>
         <Row gutter={[16, 16]}>
           <Col xs={24}>
-            <Title level={4} style={{ color: "#fff", marginBottom: 16, fontSize: "1.2rem" }}>
+            {/* <Title level={4} style={{ color: "#fff", marginBottom: 16, fontSize: "1.2rem" }}>
               {t("dashboard.posts")}
-            </Title>
-            <Card style={{ marginBottom: 24 }}>
-              <Column {...chartConfig} />
-            </Card>
+            </Title> */}
+           
+            <Card
+                    style={{
+                      background: "#1e293b",
+                      border: "1px solid #334155",
+                      borderRadius: 12,
+                      color: "#fff",
+                    }}
+                    bodyStyle={{ padding: 16 }}
+                  >
+                    <div style={{ marginBottom: 16, fontWeight: 600, color: "#E2E8F0" }}> {t("dashboard.posts")}</div>
+                    <ResponsiveContainer width="100%" height={220}>
+                      <LineChart data={barData}>
+                        <XAxis dataKey="date" stroke="#94a3b8" />
+                        <YAxis stroke="#94a3b8" />
+                        <Tooltip contentStyle={{ background: "#0f172a", borderColor: "#334155" }} />
+                        <Line type="monotone" dataKey="quantity" stroke="#6cc3ff" strokeWidth={2} />
+                      </LineChart>
+                    </ResponsiveContainer>
+            
+                    {/* <Row gutter={12} style={{ marginTop: 16 }}>
+                      {[
+                        "Tổng lượt xem",
+                        "Trung bình",
+                        "Xem tối thiểu 3 giây",
+                        "Xem tối thiểu 1 giây",
+                      ].map((label, idx) => (
+                        <Col span={6} key={idx}>
+                          <div
+                            style={{
+                              background: "#0f172a",
+                              border: "1px solid #334155",
+                              borderRadius: 8,
+                              padding: "6px 10px",
+                              textAlign: "center",
+                              fontSize: 13,
+                              color: "#CBD5E1",
+                            }}
+                          >
+                            0<br />
+                            {label}
+                          </div>
+                        </Col>
+                      ))}
+                    </Row> */}
+                  </Card>
           </Col>
 
           <Col xs={24}>
