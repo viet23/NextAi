@@ -95,42 +95,26 @@ const LandingPage: React.FC = () => {
             <br />
 
             {/* Customer Segment */}
-            <div className="container segments">
-                <p>Đối tượng khách hàng phù hợp bao gồm</p>
+            <div className="customer-segment">
+                <p className="customer-title">Đối tác hoặc khách hàng tiêu biểu</p>
 
-                <div
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(auto-fit, minmax(62px, 1fr))",
-                        gap: "24px",
-                        padding: "20px 0",
-                        justifyItems: "center",
-                        alignItems: "center",
-                    }}
-                >
-                    {[
-                        Logo_2,
-                        Logo_3,
-                        Logo_4,
-                        Logo_5,
-                        Logo_6,
-                        Logo_7,
-                    ].map((name) => (
+                <div className="logo-grid">
+                    {[Logo_2, Logo_3, Logo_4, Logo_5, Logo_6, Logo_7].map((logo, index) => (
                         <img
-                            key={name}
-                            src={name}
-                            alt={name}
-                            onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
-                            onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                            key={`logo-${index}`}
+                            src={logo}
+                            alt={`customer-logo-${index}`}
+                            className="logo-item"
                         />
                     ))}
                 </div>
 
+                <p className="badge">ALL ONE ADS</p>
 
+                <h2 className="section-title">Mở khoá tính năng phân tích fanpage</h2>
             </div>
 
-            {/* Section title */}
-            <div className="section-title">Mở khoá tính năng phân tích fanpage</div>
+
 
             {/* Các khối nội dung */}
             {[
@@ -318,11 +302,12 @@ const LandingPage: React.FC = () => {
 
 
             <div className="container tutorials-section">
-                <p className="container testimonial-label">PHẢN HỒI</p>
+                {/* <p className="container testimonial-label">PHẢN HỒI</p> */}
+                 <p className="badge">ALL ONE ADS</p>
                 <h2 className="testimonial-heading">Đánh giá từ khách hàng</h2>
-                <p className="testimonial-subtext">
+                {/* <p className="testimonial-subtext">
                     Khách hàng đánh giá rất cao trải nghiệm sử dụng nền tảng của chúng tôi. Từ giao diện dễ dùng, tính năng AI thông minh cho đến hiệu quả quảng cáo mang lại – tất cả đều vượt kỳ vọng.
-                </p>
+                </p> */}
 
                 <div className="testimonial-grid">
                     {[
@@ -382,9 +367,10 @@ const LandingPage: React.FC = () => {
                         </div>
                     ))}
                 </div>
+                 {/* <Link to="/signin" className="btn-text">Bắt đầu ngay</Link> */}
             </div>
 
-{/* 
+            {/* 
             <div className="container tutorials-section">
                 <h2 className="tutorials-title">Hướng dẫn sử dụng</h2>
                 <div className="tutorials-grid">
@@ -483,7 +469,7 @@ const LandingPage: React.FC = () => {
                                 }}
                             /> */}
 
-                         
+
                         </div>
                     </div>
 
@@ -501,7 +487,7 @@ const LandingPage: React.FC = () => {
                     >
                         <div>
                             <br /><br /><br /><br />
-                               <h4
+                            <h4
                                 style={{
                                     fontFamily: "Inter, sans-serif",
                                     fontWeight: 500,

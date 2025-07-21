@@ -272,7 +272,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
         />
         <meta name="twitter:image" content="https://alloneads.com/og-image.png" />
       </Helmet>
-      <Layout style={{ minHeight: "100vh", background: "#0D0F1A" }}>
+      <Layout className="image-layout">
         <Content style={{ padding: 24, color: "#F1F5F9" }}>
 
           {/* Modal hiển thị khi click */}

@@ -20,6 +20,7 @@ $gradient-mid-blue: rgba(0, 26, 51, 0.6);
 $overlay-blue: rgba(0, 21, 40, 0.8);
 $highlight-blue: #00ccff;
 
+
 @mixin menu-items-style {
   &.ant-menu,
   .ant-menu {
@@ -59,7 +60,7 @@ $highlight-blue: #00ccff;
 // Header chung (mobile & desktop)
 .header {
  background-color: $overlay-blue; // rgba(0, 21, 40, 0.8)
-  color: white;
+  color: rgb(255, 255, 255);
 
   .title,
   .dropdown,
@@ -280,3 +281,46 @@ $highlight-blue: #00ccff;
     }
   }
 }
+
+
+
+.header {
+  background-color:  #070719; // thêm dòng này để đổi màu nền header
+
+  .ant-menu {
+    background-color: #070719 !important; // nền menu
+
+    .ant-menu-item {
+      color: #44A8FF !important;
+      background-color: transparent !important;
+
+      &:hover {
+        color: lighten(#44A8FF, 10%) !important;
+        background-color: transparent !important;
+      }
+
+      &.ant-menu-item-selected {
+        color: #44A8FF !important;
+        background-color: transparent !important;
+        font-weight: 500;
+      }
+    }
+
+    .ant-menu-item-selected::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 36px;
+      height: 2px;
+      background-color: #44A8FF;
+      border-radius: 2px;
+    }
+
+    .ant-menu-item::after {
+      border-bottom: none !important;
+    }
+  }
+}
+

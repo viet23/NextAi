@@ -144,14 +144,20 @@
 
  .badge {
      display: inline-block;
-     font-size: 12px;
-     color: #ff76cb;
-     background-color: rgba(255, 118, 203, 0.12);
-     padding: 6px 14px;
-     border-radius: 20px;
-     font-weight: 500;
-     letter-spacing: 0.5px;
+     padding: 10px 24px;
+     border-radius: 999px;
+     border: 1px solid rgba(255, 255, 255, 0.15);
+     background: rgba(255, 255, 255, 0.05);
+     color: #ffffff;
+     font-size: 13px;
+     letter-spacing: 1px;
+     font-weight: 400;
+     text-transform: uppercase;
+     font-family: 'Inter', sans-serif;
+     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+     transition: all 0.2s ease;
  }
+
 
  .hero-right {
      flex: 1;
@@ -192,14 +198,70 @@
  }
 
  /* Section Title */
- .section-title {
+ .customer-segment {
      text-align: center;
-     font-size: 30px;
-     font-weight: 600;
-     margin: 40px 0 40px;
-     /* giảm từ 100px xuống 40px */
-     color: white;
+     padding: 40px 0;
  }
+
+ .customer-title {
+     color: #ffffff;
+     font-size: 14px;
+     font-weight: 400;
+     opacity: 0.9;
+     margin-bottom: 24px;
+ }
+
+ .logo-grid {
+     display: grid;
+     grid-template-columns: repeat(6, 1fr);
+     /* 6 logo chia đều 1 dòng */
+     max-width: 960px;
+     margin: 0 auto;
+     gap: 3px;
+     /* thu nhỏ khoảng cách giữa các logo */
+     justify-items: center;
+     align-items: center;
+     padding: 12px 0 28px;
+ }
+
+ .logo-item {
+     width: 250px;
+     height: 100px;
+     opacity: 1;
+     transform: rotate(0deg);
+     transition: transform 0.2s ease;
+     object-fit: contain;
+ }
+
+
+ .logo-item:hover {
+     transform: scale(1.1);
+ }
+
+ .badge {
+     display: inline-block;
+     padding: 8px 22px;
+     border-radius: 999px;
+     border: 1px solid rgba(255, 255, 255, 0.15);
+     background: rgba(255, 255, 255, 0.05);
+     color: #ffffff;
+     font-size: 12px;
+     letter-spacing: 1px;
+     font-weight: 400;
+     text-transform: uppercase;
+     font-family: 'Inter', sans-serif;
+     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+     margin-bottom: 24px;
+ }
+
+ .section-title {
+     font-size: 32px;
+     font-weight: 500;
+     color: #ffffff;
+     margin-top: 12px;
+     line-height: 1.4;
+ }
+
 
 
  .container {
@@ -776,6 +838,13 @@
          margin-right: 0 !important;
      }
 
+     .btn-text-2 {
+         padding: 4px 10px;
+         font-size: 11px;
+         border-radius: 4px;
+         margin-right: 0 !important;
+     }
+
      .hero {
          flex-direction: column;
          text-align: center;
@@ -789,11 +858,6 @@
 
      .hero-left p {
          font-size: 14px;
-     }
-
-     .badge {
-         font-size: 11px;
-         padding: 4px 12px;
      }
 
      .feature-block {
