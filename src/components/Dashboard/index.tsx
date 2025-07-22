@@ -86,9 +86,9 @@ const Dashboard = () => {
         key: (index + 1).toString(),
         id: post.id,
         media: post.full_picture ? (
-          <Image width={40} src={post.full_picture} alt="media" />
+          <Image width={68} src={post.full_picture} alt="media" />
         ) : (
-          <Image width={40} src="https://via.placeholder.com/40" alt="no image" />
+          <Image width={68} src="https://via.placeholder.com/40" alt="no image" />
         ),
         caption: post.message || "(No content)",
         react: post.likes?.summary?.total_count || 0,
@@ -110,8 +110,8 @@ const Dashboard = () => {
         monthlyCount[month].quantity += 1;
       });
 
-      console.log(`------------monthlyCount` , monthlyCount);
-      
+      console.log(`------------monthlyCount`, monthlyCount);
+
 
       setBarData(monthlyCount);
     } catch (err) {
@@ -133,20 +133,7 @@ const Dashboard = () => {
       width: 30,
       responsive: ["md"],
     },
-    {
-      title: t("dashboard.action"),
-      key: "action",
-      width: 30,
-      align: "center",
-      render: (_, record) => (
-        <button
-          className="ads-button-glow"
-          onClick={() => handleOnClickDetail(record)}
-        >
-          {t("dashboard.ads_button")}
-        </button>
-      ),
-    },
+
     {
       title: t("dashboard.media"),
       dataIndex: "media",
@@ -168,16 +155,6 @@ const Dashboard = () => {
           </span>
         );
       },
-    }
-
-    ,
-
-    {
-      title: t("dashboard.created_time"),
-      dataIndex: "createdTime",
-      key: "createdTime",
-      width: 120,
-      align: "center",
     },
     {
       title: t("dashboard.reach"),
@@ -207,7 +184,40 @@ const Dashboard = () => {
       width: 70,
       align: "center",
     },
+    {
+      title: t("dashboard.created_time"),
+      dataIndex: "createdTime",
+      key: "createdTime",
+      width: 120,
+      align: "center",
+    },
+    {
+      title: t("dashboard.action"),
+      key: "action",
+      width: 100,
+      align: "center",
+      render: (_, record) => (
+        <button
+          className="ads-button-glow"
+          onClick={() => handleOnClickDetail(record)}
+        >
+          {t("dashboard.ads_button")}
+        </button>
+      ),
+    },
   ];
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    handleResize(); // gọi ngay khi load
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <Layout
@@ -222,52 +232,26 @@ const Dashboard = () => {
             {/* <Title level={4} style={{ color: "#fff", marginBottom: 16, fontSize: "1.2rem" }}>
               {t("dashboard.posts")}
             </Title> */}
-           
+
             <Card
-                    style={{
-                      background: "#1e293b",
-                      border: "1px solid #334155",
-                      borderRadius: 12,
-                      color: "#fff",
-                    }}
-                    bodyStyle={{ padding: 16 }}
-                  >
-                    <div style={{ marginBottom: 16, fontWeight: 600, color: "#E2E8F0" }}> {t("dashboard.posts")}</div>
-                    <ResponsiveContainer width="100%" height={220}>
-                      <LineChart data={barData}>
-                        <XAxis dataKey="date" stroke="#94a3b8" />
-                        <YAxis stroke="#94a3b8" />
-                        <Tooltip contentStyle={{ background: "#0f172a", borderColor: "#334155" }} />
-                        <Line type="monotone" dataKey="quantity" stroke="#6cc3ff" strokeWidth={2} />
-                      </LineChart>
-                    </ResponsiveContainer>
-            
-                    {/* <Row gutter={12} style={{ marginTop: 16 }}>
-                      {[
-                        "Tổng lượt xem",
-                        "Trung bình",
-                        "Xem tối thiểu 3 giây",
-                        "Xem tối thiểu 1 giây",
-                      ].map((label, idx) => (
-                        <Col span={6} key={idx}>
-                          <div
-                            style={{
-                              background: "#0f172a",
-                              border: "1px solid #334155",
-                              borderRadius: 8,
-                              padding: "6px 10px",
-                              textAlign: "center",
-                              fontSize: 13,
-                              color: "#CBD5E1",
-                            }}
-                          >
-                            0<br />
-                            {label}
-                          </div>
-                        </Col>
-                      ))}
-                    </Row> */}
-                  </Card>
+              style={{
+                background: "#1e293b",
+                border: "1px solid #334155",
+                borderRadius: 12,
+                color: "#fff",
+              }}
+              bodyStyle={{ padding: 16 }}
+            >
+              <div style={{ marginBottom: 16, fontWeight: 600, color: "#E2E8F0" }}> {t("dashboard.posts")}</div>
+              <ResponsiveContainer width="100%" height={220}>
+                <LineChart data={barData}>
+                  <XAxis dataKey="date" stroke="#94a3b8" />
+                  <YAxis stroke="#94a3b8" />
+                  <Tooltip contentStyle={{ background: "#0f172a", borderColor: "#334155" }} />
+                  <Line type="monotone" dataKey="quantity" stroke="#6cc3ff" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+            </Card>
           </Col>
 
           <Col xs={24}>
@@ -276,28 +260,72 @@ const Dashboard = () => {
             </Title>
             <div style={{ overflowX: "auto" }}>
               <Spin spinning={loading}>
-                <Table
-                  columns={columns}
-                  dataSource={postData}
-                  pagination={{ pageSize: 5 }}
-                  bordered
-                  scroll={{ x: "max-content" }}
-                  className="dark-header-table"
-                />
-              </Spin>
 
-              {/* ✅ CSS ép màu giống ảnh bạn gửi */}
-              <style>
-                {`
-      .dark-header-table .ant-table-thead > tr > th {
-        background-color: #1e293b !important; /* nền xanh đậm */
-        color: #e2e8f0 !important;            /* chữ xám nhạt */
-        font-weight: 500;
-        text-transform: uppercase;
-        font-size: 13px;
-      }
-    `}
-              </style>
+                {isMobile ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: "100%", overflowX: "hidden" }}>
+                    {postData.map((item) => (
+                      <Card
+                        key={item.id}
+                        style={{
+                          background: "#1e293b",
+                          border: "1px solid #334155",
+                          borderRadius: 12,
+                          color: "#e2e8f0",
+                          fontSize: 13,
+                          maxWidth: "100%", // Ngăn Card tràn màn hình
+                        }}
+                        bodyStyle={{ padding: 12 }}
+                      >
+                        <Row gutter={[8, 8]}>
+                          <Col span={24}>
+                            <div style={{ marginBottom: 8 }}>
+                              <strong>{t("dashboard.media")}:</strong><br />
+                              <Image
+                                src={item.url}
+                                alt="media"
+                                style={{
+                                  borderRadius: 8,
+                                  width: "100%",     // Cho ảnh co giãn theo card
+                                  maxWidth: 350,     // Giới hạn kích thước tối đa
+                                  height: "auto",
+                                }}
+                              />
+                            </div>
+                            <div style={{ marginBottom: 4 }}>
+                              <strong>{t("dashboard.caption")}:</strong>
+                              <div style={{ paddingLeft: 8, maxWidth: 350, wordWrap: "break-word" }}>
+                                {item.caption.length > 100 ? item.caption.slice(0, 100) + "..." : item.caption}
+                              </div>
+                            </div>
+
+
+                            <div><strong>{t("dashboard.reach")}:</strong> {item.reach}</div>
+                            <div><strong>{t("dashboard.react")}:</strong> {item.react}</div>
+                            <div><strong>{t("dashboard.comment")}:</strong> {item.comment}</div>
+                            <div><strong>{t("dashboard.share")}:</strong> {item.share}</div>
+                            <div><strong>{t("dashboard.created_time")}:</strong> {item.createdTime}</div>
+                            <div style={{ marginTop: 8, display: "flex", justifyContent: "center" }}>
+                              <button className="ads-button-glow" onClick={() => handleOnClickDetail(item)}>
+                                {t("dashboard.ads_button")}
+                              </button>
+                            </div>
+                          </Col>
+                        </Row>
+                      </Card>
+                    ))}
+                  </div>
+
+                ) : (
+                  <Table
+                    columns={columns}
+                    dataSource={postData}
+                    pagination={{ pageSize: 5 }}
+                    bordered
+                    scroll={{ x: "max-content" }}
+                    className="dark-header-table"
+                  />
+                )}
+              </Spin>
             </div>
 
 
@@ -311,14 +339,15 @@ const Dashboard = () => {
           maskClosable={false}
           closeIcon={<CloseOutlined style={{ color: "#e2e8f0", fontSize: 18 }} />}
           title={detailId ? t("dashboard.ads") : t("dashboard.ads_new")}
+          className="custom-dark-drawer"
           styles={{
             header: {
-              backgroundColor: "#0f172a",
+              backgroundColor: "#070719",
               color: "#f8fafc",
               borderBottom: "1px solid #334155"
             },
             body: {
-              backgroundColor: "#0f172a",
+              backgroundColor: "#070719",
               color: "#e2e8f0",
               padding: 24,
               maxHeight: "calc(100vh - 108px)",
@@ -328,7 +357,6 @@ const Dashboard = () => {
         >
           <DetailAds id={detailId} pageId={pageId ?? null} />
         </Drawer>
-
 
       </div>
     </Layout>

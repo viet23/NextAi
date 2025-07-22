@@ -77,28 +77,28 @@ const MediaList: React.FC<any> = () => {
                 className="criclebox tablespace mb-24"
                 title={t("media_ls.card_title")}
                 headStyle={{ color: "#ffffff" }}
-                extra={
-                  <Radio.Group
-                    onChange={handleOnChangeRadio}
-                    defaultValue="all"
-                    style={{ display: "flex", alignItems: "center" }}
-                  >
-                    <Button
-                      type="primary"
-                      style={{
-                        marginLeft: 8,
-                        backgroundColor: "#1890ff",
-                        borderColor: "#1890ff",
-                        color: "#fff",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                      icon={<RefetchIcon />}
-                      onClick={handleReset}
-                    />
-                  </Radio.Group>
-                }
+                // extra={
+                //   <Radio.Group
+                //     onChange={handleOnChangeRadio}
+                //     defaultValue="all"
+                //     style={{ display: "flex", alignItems: "center" }}
+                //   >
+                //     <Button
+                //       type="primary"
+                //       style={{
+                //         marginLeft: 8,
+                //         backgroundColor: "#1890ff",
+                //         borderColor: "#1890ff",
+                //         color: "#fff",
+                //         display: "flex",
+                //         alignItems: "center",
+                //         justifyContent: "center",
+                //       }}
+                //       icon={<RefetchIcon />}
+                //       onClick={handleReset}
+                //     />
+                //   </Radio.Group>
+                // }
               >
 
                 <>
@@ -255,7 +255,7 @@ const MediaList: React.FC<any> = () => {
                   <style>
                     {`
       .dark-header-table .ant-table-thead > tr > th {
-        background-color: #1e293b !important;
+        background-color: #1F2937 !important;
         color: #e2e8f0 !important;
         font-weight: 500;
         text-transform: uppercase;

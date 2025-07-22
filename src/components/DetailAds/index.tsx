@@ -142,7 +142,7 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
   return (
     <Card
       style={{
-        backgroundColor: "#0f172a",
+        backgroundColor: "#070719",
         borderRadius: 16,
         padding: 24,
         color: "#e2e8f0",
@@ -364,7 +364,7 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
             title={t("ads.preview")}
             bordered={false}
             style={{
-              backgroundColor: "#1e293b",
+              backgroundColor: "#070719",
               borderRadius: 12,
               marginTop: 0,
               color: "#e2e8f0"

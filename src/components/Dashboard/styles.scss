@@ -1,6 +1,6 @@
 .image-layout {
   min-height: 100vh;
-   background-color: #070719;
+  background-color: #070719;
   padding: 24px;
   font-family: 'Inter', sans-serif;
 }
@@ -34,7 +34,8 @@
   background-color: #0f172a;
   border: 1px solid #4cc0ff;
   border-radius: 8px;
-  padding: 6px 16px;
+  padding: 1px 4px;
+  margin: 2px;
   font-size: 12px;
   color: #ffffff;
   font-weight: 500;
@@ -49,7 +50,7 @@
   overflow: hidden;
 }
 
-.image-layout .ant-table-thead > tr > th {
+.image-layout .ant-table-thead>tr>th {
   background-color: #2d3443;
   color: #c2c8d4;
   font-weight: 500;
@@ -57,14 +58,14 @@
   border-bottom: 1px solid #3b4355;
 }
 
-.image-layout .ant-table-tbody > tr > td {
+.image-layout .ant-table-tbody>tr>td {
   background-color: #101828;
   color: #c7d2f0;
   border-bottom: 1px solid #1f2a44;
   font-size: 13px;
 }
 
-.image-layout .ant-table-tbody > tr:hover > td {
+.image-layout .ant-table-tbody>tr:hover>td {
   background-color: #101828 !important;
 }
 
@@ -76,7 +77,7 @@
     padding: 12px;
   }
 
-  .image-layout > div {
+  .image-layout>div {
     margin: 0 !important;
     max-width: 100% !important;
   }
@@ -89,8 +90,9 @@
     box-sizing: border-box;
   }
 
-  .image-layout .ant-card > div {
-    min-width: 500px; /* Giữ kích thước biểu đồ đủ hiển thị */
+  .image-layout .ant-card>div {
+    min-width: 500px;
+    /* Giữ kích thước biểu đồ đủ hiển thị */
   }
 
   /* Bảng */
@@ -101,11 +103,12 @@
 
   .image-layout .ant-table {
     width: 100%;
-    min-width: 600px; /* Đảm bảo đủ cột không bị bóp méo */
+    min-width: 600px;
+    /* Đảm bảo đủ cột không bị bóp méo */
   }
 
-  .image-layout .ant-table-thead > tr > th,
-  .image-layout .ant-table-tbody > tr > td {
+  .image-layout .ant-table-thead>tr>th,
+  .image-layout .ant-table-tbody>tr>td {
     font-size: 12px;
     padding: 6px;
     white-space: nowrap;
@@ -115,4 +118,23 @@
     font-size: 15px !important;
     text-align: center;
   }
+}
+
+.ant-drawer-content {
+  background-color: #070719 !important;
+}
+
+
+.dark-header-table .ant-table-thead>tr>th {
+  background-color: #1F2937 !important;
+  /* nền xanh đậm */
+  color: #e2e8f0 !important;
+  /* chữ xám nhạt */
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+.dark-header-table .ant-table-cell {
+  border-right: none !important;
 }

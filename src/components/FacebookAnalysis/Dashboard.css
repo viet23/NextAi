@@ -1,9 +1,10 @@
 .image-layout {
   min-height: 100vh;
-   background-color: #070719;
+  background-color: #070719;
   padding: 24px;
   font-family: 'Inter', sans-serif;
 }
+
 .dashboard {
   background-color: #0b0f1a;
   padding: 24px;
@@ -104,6 +105,17 @@
   background-color: #555;
 }
 
+/* Thêm vào file CSS hoặc styled-components */
+.dashboard-wrapper {
+  padding: 24px;
+  background: #0f172a;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
 /* Responsive cho mobile */
 @media (max-width: 768px) {
   .dashboard {
@@ -130,5 +142,36 @@
 
   .info-list span {
     font-size: 13px;
+  }
+
+  .dashboard-wrapper {
+    padding: 16px;
+  }
+
+  .ant-row {
+    flex-direction: column !important;
+  }
+
+  .ant-col {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .dashboard-wrapper .ant-picker-range {
+    width: 100%;
+  }
+
+  .dashboard-wrapper .ant-btn {
+    width: 100%;
+    margin-top: 12px;
+  }
+
+  .dashboard-wrapper .ant-card {
+    border-radius: 12px !important;
+    margin-bottom: 16px;
+  }
+
+  .dashboard-wrapper .CircularProgressbar {
+    width: 60px !important;
   }
 }

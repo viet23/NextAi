@@ -273,25 +273,25 @@
 }
 
 .btn-text {
-     background: none;
-     border: 1px solid #5a6789;
-     color: #c5cbd8;
-     font-weight: 500;
-     font-size: 14px;
-     border-radius: 6px;
-     padding: 10px 24px;
-     cursor: pointer;
-     transition: all 0.3s ease;
-     border-color: #00bfff;
- }
+  background: none;
+  border: 1px solid #5a6789;
+  color: #c5cbd8;
+  font-weight: 500;
+  font-size: 14px;
+  border-radius: 6px;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-color: #00bfff;
+}
 
- .btn-text:hover {
-     background-color: rgba(255, 255, 255, 0.06);
-     border-color: #00bfff;
-     color: white;
- }
+.btn-text:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: #00bfff;
+  color: white;
+}
 
-@media (max-width: 768px) {
+@media (max-width: 576px) {
   .ant-card-body {
     padding: 12px !important;
   }
@@ -309,17 +309,17 @@
     margin: 0;
   }
 
-  .criclebox {
-    padding: 12px !important;
-  }
-
   .tablespace {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
   }
 
   .mb-24 {
-    margin-bottom: 16px !important; /* hoặc 12px cho mobile */
+    margin-bottom: 12px !important;
+  }
+
+  .criclebox {
+    padding: 8px !important;
   }
 
   .mobile-card {
@@ -328,10 +328,14 @@
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     overflow: hidden;
-    width: 60%;       /* ✅ Full bề ngang */
-    margin: 0;         /* ✅ Không margin ngang */
-    padding: 0;        /* ✅ Không padding bao ngoài */
-    max-width: unset;  /* ✅ Bỏ giới hạn chiều rộng */
+    width: 60%;
+    /* ✅ Full bề ngang */
+    margin: 0;
+    /* ✅ Không margin ngang */
+    padding: 0;
+    /* ✅ Không padding bao ngoài */
+    max-width: unset;
+    /* ✅ Bỏ giới hạn chiều rộng */
   }
 
   .mobile-card-media {
@@ -365,7 +369,8 @@
   }
 
   .mobile-card-content {
-    padding: 12px 16px; /* ✅ Khoảng cách bên trong nội dung */
+    padding: 12px 16px;
+    /* ✅ Khoảng cách bên trong nội dung */
   }
 
   .mobile-card-caption {
@@ -476,4 +481,3 @@
     padding: 5px;
   }
 }
-
