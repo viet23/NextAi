@@ -11,6 +11,11 @@ import { setCurrentUser, setIsLogin, setRefreshToken, setToken } from "src/store
 import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
+import {
+  UserOutlined,
+  CreditCardOutlined,
+  GlobalOutlined,
+} from "@ant-design/icons";
 
 const { Header: AntHeader } = Layout;
 
@@ -48,16 +53,59 @@ export const Header = ({ menuItems }: IProps) => {
   const userMenuItems = useMemo(
     () => [
       {
+        key: "profile",
         label: (
-          <Flex gap={5} onClick={handleLogout}>
-            <LogoutOutlined />
-            <span>{t("sign_out") || "Sign out"}</span>
+          <Flex align="center" gap={8}>
+            <UserOutlined />
+            <span>{t("accounts.profile") || "Thông tin cá nhân"}</span>
           </Flex>
         ),
+        // onClick: handleProfileClick,
+      },
+      {
+        key: "credits",
+        label: (
+          <Flex align="center" gap={8}>
+            <CreditCardOutlined />
+            <span>{t("accounts.credits") || "Mua credits"}</span>
+          </Flex>
+        ),
+        // onClick: handleBuyCredits,
+      },
+      {
+        key: "language",
+        label: (
+          <Flex
+            align="center"
+            gap={8}
+            onClick={toggleLanguage}
+            style={{ cursor: "pointer" }} // 👈 để toàn khối có tay chuột
+          >
+            <img
+              src={currentFlag}
+              alt="flag"
+              style={{ width: 28, height: 28, borderRadius: "50%" }}
+            />
+            <span>{t("accounts.language") || "Ngôn ngữ"}</span>
+          </Flex>
+
+        ),
+        // onClick: handleChangeLanguage,
+      },
+      {
         key: "logout",
+        label: (
+          <Flex align="center" gap={8}>
+            <LogoutOutlined />
+            <span>{t("accounts.sign_out") || "Đăng xuất"}</span>
+          </Flex>
+        ),
+        onClick: handleLogout,
       },
     ],
-    [handleLogout, t]
+    [t, handleLogout,
+      //  handleProfileClick, handleBuyCredits, 
+    ]
   );
 
   return (
@@ -97,21 +145,21 @@ export const Header = ({ menuItems }: IProps) => {
       {/* Bên phải: icon cờ + user */}
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         {/* Nút đổi ngôn ngữ: icon cờ */}
-        <img
+        {/* <img
           onClick={toggleLanguage}
           src={currentFlag}
           alt="flag"
           style={{ width: 28, height: 28, borderRadius: "50%", cursor: "pointer" }}
-        />
+        /> */}
 
         {/* Avatar và dropdown */}
-        <Dropdown className="dropdown" trigger={["click"]} menu={{ items: userMenuItems }}>
+        <Dropdown className="dropdown" trigger={["click"]} menu={{ items: userMenuItems }} overlayClassName="user-dropdown-menu">
           <div
             className="menu-trigger"
             style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}
           >
             <Avatar size={34} />
-            {!isMobile && <span style={{ color: "#fff" }}>{user?.username}</span>}
+            {!isMobile && <span style={{ color: "#fff" }}><UserOutlined />  {user?.username}</span>}
           </div>
         </Dropdown>
       </div>

@@ -1,4 +1,4 @@
-import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { EditOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import "./Accounts.scss";
 import {
   Button,
@@ -114,18 +114,48 @@ const AccountsPage = () => {
         title: t("accounts.columns.status"),
         key: "status",
         dataIndex: "isActive",
-        render: value => (value ? t("accounts.status.active") : t("accounts.status.inactive")),
+        render: (value: boolean) => {
+          const isActive = Boolean(value);
+
+          const statusStyle: React.CSSProperties = {
+            display: "inline-block",
+            padding: "4px 16px",
+            borderRadius: "999px", // pill shape
+            fontWeight: 500,
+            textAlign: "center",
+            color: isActive ? "#22c55e" : "#ef4444", // text: green/red
+            backgroundColor: isActive ? "#14532d" : "#7f1d1d", // bg: dark green/red
+          };
+
+          return (
+            <span style={statusStyle}>
+              {isActive
+                ? t("accounts.status.active")
+                : t("accounts.status.inactive")}
+            </span>
+          );
+        },
       },
+
       {
         title: t("accounts.columns.actions"),
         key: "actions",
         dataIndex: "id",
-        render: id => (
-          <Link className="edit" to={`/tai-khoan/${id}`}>
-            {t("accounts.edit")}
+        render: (id: string) => (
+          <Link
+            className="edit-icon"
+            to={`/tai-khoan/${id}`}
+            style={{
+              display: "inline-block",
+              padding: 6,
+              borderRadius: 6,
+              backgroundColor: "#1e293b",
+            }}
+          >
+            <EditOutlined style={{ color: "#ffffff", fontSize: 18 }} />
           </Link>
         ),
-      },
+      }
     ],
     [t]
   );
@@ -182,11 +212,24 @@ const AccountsPage = () => {
     <PageTitleHOC title={t("accounts.page_title")}>
       <Layout style={{ minHeight: "100vh", background: "#0D0F1A" }}>
         <Content style={{ padding: 24 }}>
+          <h3 style={{ textAlign: "center", color: "#fff", marginBottom: 12 }}>
+            {t("accounts.user_list_type")}
+          </h3>
           <Card className="accounts">
-            <Typography.Title className="title" level={4} color="#1B1B1B">
+            <Typography.Title
+              level={4}
+              style={{
+                textAlign: "center",
+                color: "#e2e8f0",
+                width: "100%",
+                marginTop: "4px", // 👈 Sát hơn, có thể dùng "0px" nếu muốn sát hoàn toàn
+                marginBottom: "10px" // tuỳ chỉnh nếu cần khoảng dưới
+              }}
+            >
               {t("accounts.user_list")}
             </Typography.Title>
 
+            <br />
             <Form
               layout="vertical"
               requiredMark={false}
@@ -197,36 +240,58 @@ const AccountsPage = () => {
               style={{ marginBottom: 24 }}
             >
               <Row gutter={[16, 16]} align="bottom">
-                <Col xs={24} md={12} lg={10}>
+                <Col span={5} >
                   <Form.Item name="search" label={t("accounts.search_label")}>
                     <Input
-                      allowClear
                       size="large"
-                      prefix={<SearchOutlined />}
                       placeholder={t("accounts.search_placeholder")}
+                      style={{
+                        width: 250,
+                        height: 36,
+                        borderRadius: 6,
+                        borderWidth: 1,
+                        paddingLeft: 10,
+                        paddingRight: 10,
+                      }}
                     />
                   </Form.Item>
                 </Col>
 
-                <Col xs={24} md={12} lg={8}>
-                  <Form.Item name="status" label={t("accounts.status_placeholder")}>
-                    <Select allowClear size="large" placeholder={t("accounts.status_placeholder")}>
+                <Col span={5}>
+                  <Form.Item name="status" label={t("accounts.status_placeholder")} >
+                    <Select
+                      size="large"
+                      placeholder={t("accounts.status_placeholder")}
+                      style={{
+                        width: 250,
+                        height: 36,
+                      }}
+                      dropdownStyle={{
+                        backgroundColor: "#1e293b",
+                        color: "#ffffff",
+                      }}
+                    >
                       {ACCOUNT_STATUS.map((status) => (
-                        <Select.Option key={status.value}>
-                          {t(`accounts.status.${status.label}`)}
+                        <Select.Option
+                          key={status.value}
+                          value={status.value}
+                          style={{ color: "#ffffff" }}
+                        >
+                          {status.label}
                         </Select.Option>
                       ))}
                     </Select>
+
                   </Form.Item>
                 </Col>
 
-                <Col xs={24} md={24} lg={6}>
+                {/* <Col xs={24} md={24} lg={6}>
                   <Form.Item label=" ">
                     <Button block size="large" type="primary" onClick={handleAddNew}>
                       {t("accounts.add_button")}
                     </Button>
                   </Form.Item>
-                </Col>
+                </Col> */}
               </Row>
             </Form>
 

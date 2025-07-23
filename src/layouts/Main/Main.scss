@@ -324,3 +324,31 @@ $highlight-blue: #00ccff;
   }
 }
 
+/* Dropdown menu tổng thể */
+.user-dropdown-menu .ant-dropdown-menu {
+  background-color: #1f2937 !important;
+  color: #ffffff !important;
+  border-radius: 8px;
+}
+
+/* Item chữ và icon */
+.user-dropdown-menu .ant-dropdown-menu-item {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+/* Icon bên trái */
+.user-dropdown-menu .ant-dropdown-menu-item .anticon {
+  color: #ffffff !important;
+}
+
+/* Nội dung chữ (span) */
+.user-dropdown-menu .ant-dropdown-menu-item span {
+  color: #ffffff !important;
+}
+
+/* Hover */
+.user-dropdown-menu .ant-dropdown-menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}

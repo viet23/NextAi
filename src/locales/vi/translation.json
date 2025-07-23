@@ -244,8 +244,14 @@
     "user_authorization": "Phân quyền người dùng"
   },
   "accounts": {
+    "profile": "Thông tin cá nhân",
+    "credits": "Mua credits",
+    "sign_out": "Đăng xuất",
+    "language": "Ngôn ngữ",
     "page_title": "Danh sách tài khoản",
-    "user_list": "Danh sách người dùng",
+    "user_list": "Danh sách tài khoản",
+    "user_list_type": "Tài khoản người dùng",
+    "user_detail": "Thông tin Tài khoản",
     "search_label": "Tên Đăng nhập",
     "search_placeholder": "Tìm kiếm",
     "status_placeholder": "Trạng thái tài khoản",
