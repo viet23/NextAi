@@ -10,6 +10,7 @@ import {
   VIDEO_ROUTE,
   FB_ANALYSIS_ROUTE,
   DASHBOARD_ROUTE,
+  CREDITS_ROUTE,
 } from "src/constants/routes.constants";
 
 import { TicketManageIcon } from "src/components/MenuItemIcon/TicketIcon";
@@ -58,6 +59,14 @@ export const getMenuItems = (t: TFunction): IMenuItem[] => [
     label: t("menu.user_account"),
     rolenames: [GET_USER],
   },
+   {
+    key: CREDITS_ROUTE,
+    icon: createElement(DotIcon),
+    label: t("accounts.credits"),
+    // rolenames: [GET_USER],
+  },
+
+  
   {
     key: AUTHORIZATION_ROUTE,
     icon: createElement(DotIcon),

@@ -1,6 +1,7 @@
 export const IMAGE_ROUTE = "/image-ai";
 export const VIDEO_ROUTE = "/video-ai";
 export const FB_ANALYSIS_ROUTE = "/";
+export const CREDITS_ROUTE = "/credits";
 export const CUSTOMER_ROUTE = "/quan-ly-khach-hang";
 export const MEDIA_ROUTE = "/media";
 export const DASHBOARD_ROUTE = "/ai-ads";

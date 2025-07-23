@@ -22,6 +22,7 @@ $highlight-blue: #00ccff;
 
 
 @mixin menu-items-style {
+
   &.ant-menu,
   .ant-menu {
     background-color: inherit !important;
@@ -59,7 +60,7 @@ $highlight-blue: #00ccff;
 
 // Header chung (mobile & desktop)
 .header {
- background-color: $overlay-blue; // rgba(0, 21, 40, 0.8)
+  background-color: $overlay-blue; // rgba(0, 21, 40, 0.8)
   color: rgb(255, 255, 255);
 
   .title,
@@ -183,23 +184,21 @@ $highlight-blue: #00ccff;
     }
   }
 
- .main {
-  background: radial-gradient(
-    ellipse at center,
-    $gradient-light-blue 0%,
-    $gradient-mid-blue 40%,
-    $dark-bg 100%
-  );
-  background-color: $dark-bg;
-  min-height: 100vh;
-  color: white;
-  transition: all 0.2s;
-  margin-left: 0; // ✅ sửa ở đây
+  .main {
+    background: radial-gradient(ellipse at center,
+        $gradient-light-blue 0%,
+        $gradient-mid-blue 40%,
+        $dark-bg 100%);
+    background-color: $dark-bg;
+    min-height: 100vh;
+    color: white;
+    transition: all 0.2s;
+    margin-left: 0; // ✅ sửa ở đây
 
-  .content {
-    padding: 8px;
+    .content {
+      padding: 8px;
+    }
   }
-}
 
 
   .sider {
@@ -226,6 +225,7 @@ $highlight-blue: #00ccff;
       margin-top: 16px;
 
       &.collapsed {
+
         div.ant-menu-submenu-title,
         div.ant-menu-item {
           padding-left: 0 !important;
@@ -262,6 +262,7 @@ $highlight-blue: #00ccff;
   }
 
   .nav-submenu-popup.ant-menu-submenu-popup {
+
     .ant-menu-item,
     .ant-menu-submenu-title {
       display: flex !important;
@@ -285,7 +286,7 @@ $highlight-blue: #00ccff;
 
 
 .header {
-  background-color:  #070719; // thêm dòng này để đổi màu nền header
+  background-color: #070719; // thêm dòng này để đổi màu nền header
 
   .ant-menu {
     background-color: #070719 !important; // nền menu
@@ -351,4 +352,28 @@ $highlight-blue: #00ccff;
 .user-dropdown-menu .ant-dropdown-menu-item:hover {
   background-color: rgba(255, 255, 255, 0.08) !important;
   color: #ffffff !important;
+}
+
+.credit-button {
+  background: #0f172a;
+  color: #cbd5ff;
+  border: 1px solid #3b82f6;
+  border-radius: 6px;
+  padding: 2px 2px; // 👈 Giảm padding dọc và ngang
+  font-size: 14px; // 👈 Nhỏ gọn hơn
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px; // 👈 Giảm chiều cao
+  line-height: 1;
+  box-shadow: 0 0 4px rgba(59, 130, 246, 0.6); // 👈 Nhẹ hơn
+  transition: all 0.3s ease;
+  margin: 0 4px; // 👈 Giảm khoảng cách với nút bên cạnh
+}
+
+.credit-button:hover {
+  box-shadow: 0 0 8px rgba(59, 130, 246, 1);
+  border-color: #60a5fa;
+  color: #ffffff;
 }

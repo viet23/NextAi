@@ -1,5 +1,5 @@
 import { LogoutOutlined } from "@ant-design/icons";
-import { Menu, Layout, Avatar, Dropdown, Flex, Drawer } from "antd";
+import { Menu, Layout, Avatar, Dropdown, Flex, Drawer, Button } from "antd";
 import { IMenuItem } from "src/routes/menu-item";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useMemo, useState } from "react";
@@ -16,6 +16,7 @@ import {
   CreditCardOutlined,
   GlobalOutlined,
 } from "@ant-design/icons";
+import { CREDITS_ROUTE } from "src/constants/routes.constants";
 
 const { Header: AntHeader } = Layout;
 
@@ -42,6 +43,10 @@ export const Header = ({ menuItems }: IProps) => {
     localStorage.clear();
     navigate("/signin", { replace: true });
   }, [dispatch, navigate]);
+
+  const handleBuyCredits = useCallback(() => {
+    navigate(CREDITS_ROUTE, { replace: true });
+  }, [navigate]);
 
   const toggleLanguage = () => {
     const newLang = i18n.language === "vi" ? "en" : "vi";
@@ -70,7 +75,7 @@ export const Header = ({ menuItems }: IProps) => {
             <span>{t("accounts.credits") || "Mua credits"}</span>
           </Flex>
         ),
-        // onClick: handleBuyCredits,
+        onClick: handleBuyCredits,
       },
       {
         key: "language",
@@ -90,7 +95,6 @@ export const Header = ({ menuItems }: IProps) => {
           </Flex>
 
         ),
-        // onClick: handleChangeLanguage,
       },
       {
         key: "logout",
@@ -103,10 +107,12 @@ export const Header = ({ menuItems }: IProps) => {
         onClick: handleLogout,
       },
     ],
-    [t, handleLogout,
-      //  handleProfileClick, handleBuyCredits, 
+    [t, handleLogout, handleBuyCredits,
+      //  handleProfileClick, , 
     ]
   );
+
+
 
   return (
     <AntHeader
@@ -143,26 +149,29 @@ export const Header = ({ menuItems }: IProps) => {
       )}
 
       {/* Bên phải: icon cờ + user */}
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        {/* Nút đổi ngôn ngữ: icon cờ */}
-        {/* <img
-          onClick={toggleLanguage}
-          src={currentFlag}
-          alt="flag"
-          style={{ width: 28, height: 28, borderRadius: "50%", cursor: "pointer" }}
-        /> */}
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <Button className="credit-button">
+          <span role="img" aria-label="diamond">💎</span> 999 credits
+        </Button>
 
-        {/* Avatar và dropdown */}
-        <Dropdown className="dropdown" trigger={["click"]} menu={{ items: userMenuItems }} overlayClassName="user-dropdown-menu">
-          <div
-            className="menu-trigger"
-            style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}
+        <div style={{ marginLeft: 6 }}>
+          <Dropdown
+            className="dropdown"
+            trigger={["click"]}
+            menu={{ items: userMenuItems }}
+            overlayClassName="user-dropdown-menu"
           >
-            <Avatar size={34} />
-            {!isMobile && <span style={{ color: "#fff" }}><UserOutlined />  {user?.username}</span>}
-          </div>
-        </Dropdown>
+            <div
+              className="menu-trigger"
+              style={{ display: "flex", alignItems: "center", gap: 6, cursor: "pointer" }}
+            >
+              <Avatar size={34} />
+              {!isMobile && <span style={{ color: "#fff" }}><UserOutlined /> {user?.username}</span>}
+            </div>
+          </Dropdown>
+        </div>
       </div>
+
 
       {/* Drawer menu cho mobile */}
       <Drawer

@@ -16,12 +16,14 @@ import {
   MEDIA_ROUTE,
   USER_ROUTE,
   VIDEO_ROUTE,
-  DASHBOARD_ROUTE
+  DASHBOARD_ROUTE,
+  CREDITS_ROUTE
 } from "src/constants/routes.constants";
 import MediaList from "src/pages/MediaList";
 import Dashboard from "src/pages/Dashboard";
 import RegisterForm from "src/pages/Register";
 import RegisterPage from "src/pages/Register";
+const CreditsPage = React.lazy(() => import("src/pages/Credits"));
 const AccountDetailPage = React.lazy(() => import("src/pages/AccountDetail"));
 const AccountsPage = React.lazy(() => import("src/pages/Accounts"));
 const AuthorizationsPage = React.lazy(() => import("src/pages/Authorizations"));
@@ -138,6 +140,13 @@ export const routes = [
         key: "accountDetail",
         name: "accountDetail",
         component: AccountDetailPage,
+      },
+      {
+        path: CREDITS_ROUTE,
+        isProtect: true,
+        key: "credits",
+        name: "credits",
+        component: CreditsPage,
       },
       {
         path: AUTHORIZATION_ROUTE,
