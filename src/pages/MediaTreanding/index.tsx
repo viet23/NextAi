@@ -96,15 +96,51 @@ const MediaTrending: React.FC = () => {
             </Masonry>
           )}
 
-          {/* Modal xem chi tiết */}
-          <Modal
-            open={isModalOpen}
-            onCancel={handleCloseModal}
-            footer={null}
-            centered
-            width={800}
-            bodyStyle={{ background: "#000", padding: 0 }}
+
+
+
+        </Content>
+      </Layout>
+      {/* Modal xem chi tiết */}
+      <Modal
+        open={isModalOpen}
+        onCancel={handleCloseModal}
+        footer={null}
+        centered
+        width={800}
+        closable={false} // Tắt nút X mặc định để dùng custom
+        maskStyle={{ backgroundColor: "rgba(0, 0, 0, 0.8)" }}
+        modalRender={(node) => (
+          <div
+            style={{
+              backgroundColor: "#1a1a1a",
+              color: "#fff",
+              borderRadius: 8,
+              overflow: "hidden",
+              position: "relative",
+              paddingTop: 40,  // tạo khoảng cách với nút X
+              paddingRight: 16, // tránh dính viền
+              paddingLeft: 16,
+              paddingBottom: 16,
+            }}
           >
+            {/* Nút X ở góc trên bên phải */}
+            <div
+              style={{
+                position: "absolute",
+                top: 12,
+                right: 12,
+                zIndex: 10,
+                cursor: "pointer",
+                color: "#fff",
+                fontSize: 20,
+              }}
+              onClick={handleCloseModal}
+            >
+              ✖
+            </div>
+
+            {/* Nội dung modal */}
             {selectedItem && (
               <>
                 {/\.(mp4|webm|ogg)(\?|$)/i.test(selectedItem.urlVideo) ? (
@@ -121,22 +157,21 @@ const MediaTrending: React.FC = () => {
                     style={{ width: "100%", borderRadius: 8 }}
                   />
                 )}
-                <div style={{ padding: "12px 16px", color: "#fff" }}>
+                <div style={{ marginTop: 12 }}>
                   <p style={{ fontWeight: 600, fontSize: 16 }}>{selectedItem.caption}</p>
                   <p style={{ fontSize: 13, opacity: 0.7 }}>
-
                     {dayjs(selectedItem.createdAt).format("YYYY-MM-DD HH:mm:ss")}
                   </p>
-                  {/* <p style={{ fontSize: 13, opacity: 0.5 }}>
-                    👤 {selectedItem.createdBy || "Không rõ"}
-                  </p> */}
                 </div>
               </>
             )}
-          </Modal>
-        </Content>
-      </Layout>
+          </div>
+        )}
+      />
+
+
     </PageTitleHOC>
+
   );
 };
 
