@@ -17,12 +17,14 @@ import {
   USER_ROUTE,
   VIDEO_ROUTE,
   DASHBOARD_ROUTE,
-  CREDITS_ROUTE
+  CREDITS_ROUTE,
+  HOME_INTEL_ROUTE
 } from "src/constants/routes.constants";
 import MediaList from "src/pages/MediaList";
 import Dashboard from "src/pages/Dashboard";
 import RegisterForm from "src/pages/Register";
 import RegisterPage from "src/pages/Register";
+const HomeIntel = React.lazy(() => import("src/pages/HomeIntel"));
 const CreditsPage = React.lazy(() => import("src/pages/Credits"));
 const AccountDetailPage = React.lazy(() => import("src/pages/AccountDetail"));
 const AccountsPage = React.lazy(() => import("src/pages/Accounts"));
@@ -76,6 +78,15 @@ export const routes = [
     key: "main",
     layout: MainLayout,
     routes: [
+
+
+      {
+        path: HOME_INTEL_ROUTE,
+        isProtect: true,
+        key: "homeIntel",
+        name: "homeIntel",
+        component: HomeIntel,
+      },
 
       {
         path: FB_ANALYSIS_ROUTE,

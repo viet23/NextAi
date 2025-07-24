@@ -37,7 +37,7 @@ import Phone from "../../assets/images/phone.png";
 
 
 
-const LandingPage: React.FC = () => {
+const HomePage: React.FC = () => {
     const data = {
         img: Home_5,
         title: "Tại sao chọn All One Ads",
@@ -61,33 +61,17 @@ const LandingPage: React.FC = () => {
     };
     return (
         <div className="page">
-
-            {/* Header */}
-            <div className="container header">
-                <div className="nav-center">
-                    <img src={Logo} alt="logo" style={{ width: 202, height: 100 }} />
-                    {/* <Link to="/signin">Home</Link>
-                    <Link to="/signin">About</Link>
-                    <Link to="/signin">Pages</Link>
-                    <Link to="/signin">Contact</Link> */}
-                </div>
-                <div className="nav-right">
-                    <Link to="/signin" className="btn-text">Đăng nhập</Link>
-                    <Link to="/signin" className="btn-text-2">Đăng ký</Link>
-                </div>
-            </div>
-
             <br />
             {/* Hero */}
             <div className="container hero">
                 <div className="hero-left">
                     <p className="badge"> WE'VE ANNOUNCED AI+ 2.0. CHECK IT OUT</p>
-                    <h1>Quảng cáo tự động - Hiệu quả tối đa</h1>
+                    <h1>Quảng cáo tự động - Hiệu quả tối đa </h1>
                     <h1>Tất cả trong một</h1>
                     <p>Nền tảng giúp bạn tạo hình ảnh, video, viết nội dung, chạy quảng cáo Facebook tự động bằng AI. Không cần kỹ năng thiết kế hay marketing.</p>
 
-                    <Link to="/signin" className="btn-text" style={{ marginRight: "12px" }}>Bắt đầu</Link>
-                    <Link to="/signin" className="btn-text-2">Khám phá</Link>
+                    {/* <Link to="/signin" className="btn-text" style={{ marginRight: "12px" }}>Bắt đầu</Link>
+                    <Link to="/signin" className="btn-text-2">Khám phá</Link> */}
                 </div>
                 <div className="hero-right">
                     <img src={Container} alt="Hero" />
@@ -110,7 +94,26 @@ const LandingPage: React.FC = () => {
                     ))}
                 </div>
 
-                <p className="badge">ALL ONE ADS</p>
+                <p
+                    style={{
+                        display: 'inline-block',
+                        padding: '8px 22px',
+                        borderRadius: '999px',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        color: '#ffffff',
+                        fontSize: '12px',
+                        letterSpacing: '1px',
+                        fontWeight: 400,
+                        textTransform: 'uppercase',
+                        fontFamily: "'Inter', sans-serif",
+                        boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.1) inset',
+                        marginBottom: '24px',
+                    }}
+                >
+                    ALL ONE ADS
+                </p>
+
 
                 <h2 className="section-title">Mở khoá tính năng phân tích fanpage</h2>
             </div>
@@ -281,137 +284,124 @@ const LandingPage: React.FC = () => {
                     </div>
                 </div>
             </div>
+            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                <div className="container tutorials-section">
 
-            {/* <div className="video-demo-wrapper">
-              
-                <div className="video-demo-image">
-                    <img
-                        src={Video}
-                        alt="Video demo"
-                    />
-                </div>
+                    <p
+                        style={{
+                            display: 'inline-block',
+                            padding: '8px 22px',
+                            borderRadius: '999px',
+                            border: '1px solid rgba(255, 255, 255, 0.15)',
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            color: '#ffffff',
+                            fontSize: '12px',
+                            letterSpacing: '1px',
+                            fontWeight: 400,
+                            textTransform: 'uppercase',
+                            fontFamily: "'Inter', sans-serif",
+                            boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.1) inset',
+                            marginBottom: '24px',
+                        }}
+                    >
+                        ALL ONE ADS
+                    </p>
 
-              
-                <div className="video-demo-content">
-                    <h2>Video Demo</h2>
-                    <p>Từ ý tưởng đến chiến dịch hoàn chỉnh – chỉ trong 5 phút</p>
-                </div>
-            </div> */}
+                    <h2 className="testimonial-heading">Đánh giá từ khách hàng</h2>
 
-
-
-
-
-            <div className="container tutorials-section">
-                {/* <p className="container testimonial-label">PHẢN HỒI</p> */}
-                <p className="badge">ALL ONE ADS</p>
-                <h2 className="testimonial-heading">Đánh giá từ khách hàng</h2>
-                {/* <p className="testimonial-subtext">
-                    Khách hàng đánh giá rất cao trải nghiệm sử dụng nền tảng của chúng tôi. Từ giao diện dễ dùng, tính năng AI thông minh cho đến hiệu quả quảng cáo mang lại – tất cả đều vượt kỳ vọng.
-                </p> */}
-
-                <div className="testimonial-grid">
-                    {[
-                        {
-                            name: "Anh Tiến ",
-                            highlight: true,
-                            username: "Chủ chuỗi lẩu Hotpot Kingdom",
-                            avatar: "https://htmediagroup.vn/wp-content/uploads/2022/11/Anh-58-copy-min.jpg.webp",
-                            text: "Tôi không rành công nghệ, nhưng nhờ All One Ads tôi có thể tự tạo video món ăn cực hấp dẫn chỉ với vài cú nhấp. Khách đến quán đông hơn hẳn sau mỗi video đăng!",
-                        },
-                        {
-                            name: "Anh Linh",
-                            username: "COO BestMall",
-                            avatar: "https://htmediagroup.vn/wp-content/uploads/2024/12/Anh-profile-nam-8-min.jpg.webp",
-                            text: "Chúng tôi tích hợp All One Ads vào hệ thống marketing của BestMall. Nhờ đó, đội ngũ tiết kiệm được hàng chục giờ mỗi tuần mà vẫn đảm bảo chất lượng hình ảnh và nội dung vượt chuẩn.",
-                            highlight: true,
-                        },
-                        {
-                            name: "Chị Huệ",
-                            username: "Trung tâm tiếng Anh",
-                            highlight: true,
-                            avatar: "https://sohanews.sohacdn.com/thumb_w/480/2017/15780713-1193573474058728-4385323881681449622-n-1486883057646.jpg",
-                            text: "Trước đây tôi phải thuê cả đội media làm video tuyển sinh. Giờ thì chỉ cần nhập nội dung, All One Ads lo hết. Video chuyên nghiệp, phụ đề đẹp, học viên inbox về liên tục!",
-                        },
-                        {
-                            name: "Anh Giang",
-                            username: "Admin Cộng đồng AI Agent Vietnam",
-                            highlight: true,
-                            avatar: "https://bizweb.dktcdn.net/100/175/849/files/chup-anh-phong-cach-cho-nam-gioi-trong-studio-nghe-thuat-o-ha-noi-18.jpg?v=1595935877803",
-                            text: "All One Ads đúng nghĩa là AI hỗ trợ toàn diện. Chúng tôi dùng để tạo nội dung cho cộng đồng mỗi ngày – từ ảnh, video, caption cho đến chạy quảng cáo – tất cả tự động hóa!",
-                        },
-                        {
-                            name: "Anh Việt",
-                            username: "Admin Cộng đồng B.A và Những Người Bạn",
-                            highlight: true,
-                            avatar: "https://danviet.ex-cdn.com/files/f1/296231569849192448/2021/7/29/12-16275551684732026163150.jpg",
-                            text: "Chúng tôi dùng All One Ads để quảng bá các sự kiện, khóa học. Chất lượng video AI tạo ra rất ổn, nội dung rõ ràng, tiết kiệm thời gian mà vẫn chuyên nghiệp.",
-                        },
-                        {
-                            name: "Chị Ngọc",
-                            username: "Product Design, All One Ads",
-                            highlight: true,
-                            avatar: "https://kenh14cdn.com/thumb_w/660/2017/6-1513528894695.png",
-                            text: "Tôi đồng hành từ ngày đầu thiết kế trải nghiệm người dùng cho All One Ads. Giờ chính tôi cũng đang dùng nó mỗi ngày để tạo video mô phỏng và thiết kế nội dung cho khách hàng nhanh gấp 5 lần!”",
-                        },
-                    ].map((item, idx) => (
-                        <div className={`testimonial-card ${item.highlight ? 'highlight' : ''}`} key={idx}>
-                            <div className="testimonial-top">
-                                <img className="avatar" src={item.avatar} />
-                                <div className="user-info">
-                                    <p className="name">{item.name}</p>
-                                    <p className="username">{item.username}</p>
+                    <div
+                        className="testimonial-grid"
+                        style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                            gap: '20px',
+                        }}
+                    >
+                        {[
+                            {
+                                name: "Anh Tiến ",
+                                highlight: true,
+                                username: "Chủ chuỗi lẩu Hotpot Kingdom",
+                                avatar: "https://htmediagroup.vn/wp-content/uploads/2022/11/Anh-58-copy-min.jpg.webp",
+                                text: "Tôi không rành công nghệ, nhưng nhờ All One Ads tôi có thể tự tạo video món ăn cực hấp dẫn chỉ với vài cú nhấp. Khách đến quán đông hơn hẳn sau mỗi video đăng!",
+                            },
+                            {
+                                name: "Anh Linh",
+                                username: "COO BestMall",
+                                avatar: "https://htmediagroup.vn/wp-content/uploads/2024/12/Anh-profile-nam-8-min.jpg.webp",
+                                text: "Chúng tôi tích hợp All One Ads vào hệ thống marketing của BestMall. Nhờ đó, đội ngũ tiết kiệm được hàng chục giờ mỗi tuần mà vẫn đảm bảo chất lượng hình ảnh và nội dung vượt chuẩn.",
+                                highlight: true,
+                            },
+                            {
+                                name: "Chị Huệ",
+                                username: "Trung tâm tiếng Anh",
+                                highlight: true,
+                                avatar: "https://sohanews.sohacdn.com/thumb_w/480/2017/15780713-1193573474058728-4385323881681449622-n-1486883057646.jpg",
+                                text: "Trước đây tôi phải thuê cả đội media làm video tuyển sinh. Giờ thì chỉ cần nhập nội dung, All One Ads lo hết. Video chuyên nghiệp, phụ đề đẹp, học viên inbox về liên tục!",
+                            },
+                            {
+                                name: "Anh Giang",
+                                username: "Admin Cộng đồng AI Agent Vietnam",
+                                highlight: true,
+                                avatar: "https://bizweb.dktcdn.net/100/175/849/files/chup-anh-phong-cach-cho-nam-gioi-trong-studio-nghe-thuat-o-ha-noi-18.jpg?v=1595935877803",
+                                text: "All One Ads đúng nghĩa là AI hỗ trợ toàn diện. Chúng tôi dùng để tạo nội dung cho cộng đồng mỗi ngày – từ ảnh, video, caption cho đến chạy quảng cáo – tất cả tự động hóa!",
+                            },
+                            {
+                                name: "Anh Việt",
+                                username: "Admin Cộng đồng B.A và Những Người Bạn",
+                                highlight: true,
+                                avatar: "https://danviet.ex-cdn.com/files/f1/296231569849192448/2021/7/29/12-16275551684732026163150.jpg",
+                                text: "Chúng tôi dùng All One Ads để quảng bá các sự kiện, khóa học. Chất lượng video AI tạo ra rất ổn, nội dung rõ ràng, tiết kiệm thời gian mà vẫn chuyên nghiệp.",
+                            },
+                            {
+                                name: "Chị Ngọc",
+                                username: "Product Design, All One Ads",
+                                highlight: true,
+                                avatar: "https://kenh14cdn.com/thumb_w/660/2017/6-1513528894695.png",
+                                text: "Tôi đồng hành từ ngày đầu thiết kế trải nghiệm người dùng cho All One Ads. Giờ chính tôi cũng đang dùng nó mỗi ngày để tạo video mô phỏng và thiết kế nội dung cho khách hàng nhanh gấp 5 lần!”",
+                            },
+                        ].map((item, idx) => (
+                            <div
+                                key={idx}
+                                style={{
+                                    background: 'rgba(255, 255, 255, 0.02)',
+                                    border: item.highlight ? '1px solid #00bfff' : '1px solid rgba(255, 255, 255, 0.06)',
+                                    borderRadius: '12px',
+                                    padding: '20px',
+                                    textAlign: 'left',
+                                    maxWidth: '100%',
+                                    transition: '0.3s ease',
+                                    boxShadow: item.highlight ? '0 0 12px rgba(0, 191, 255, 0.4)' : 'none',
+                                    color: 'white',
+                                }}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
+                                    <img
+                                        src={item.avatar}
+                                        alt="avatar"
+                                        style={{ width: 40, height: 40, borderRadius: '50%', marginRight: 12 }}
+                                    />
+                                    <div>
+                                        <p style={{ margin: 0, fontWeight: 'bold' }}>{item.name}</p>
+                                        <p style={{ margin: 0, opacity: 0.7 }}>{item.username}</p>
+                                    </div>
+                                    <img
+                                        src="https://cdn-icons-png.flaticon.com/512/733/733579.png"
+                                        alt="Twitter Icon"
+                                        style={{ width: 20, height: 20, marginLeft: 'auto' }}
+                                    />
                                 </div>
-                                <img className="twitter-icon" src="https://cdn-icons-png.flaticon.com/512/733/733579.png" />
+                                <p style={{ margin: 0, fontStyle: 'italic' }}>"{item.text}"</p>
                             </div>
-                            <p className="testimonial-text">"{item.text}"</p>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
+
                 </div>
-                {/* <Link to="/signin" className="btn-text">Bắt đầu ngay</Link> */}
             </div>
 
-            {/* 
-            <div className="container tutorials-section">
-                <h2 className="tutorials-title">Hướng dẫn sử dụng</h2>
-                <div className="tutorials-grid">
-                    {[
-                        {
-                            img: Simplify,
-                            tag: "Company",
-                            date: "Aug 8, 2023",
-                            title: "Cách sử dụng video",
-                            link: "#",
-                        },
-                        {
-                            img: Expanding,
-                            tag: "Product",
-                            date: "Aug 8, 2023",
-                            title: "Cách tạo hình ảnh",
-                            link: "#",
-                        },
-                        {
-                            img: What,
-                            tag: "News",
-                            date: "Aug 8, 2023",
-                            title: "Cách chạy ads tự động",
-                            link: "#",
-                        },
-                    ].map((item, idx) => (
-                        <div className="tutorial-card" key={idx}>
-                            <div className="tutorial-thumbnail">
-                                <img src={item.img} alt={item.title} />
-                            </div>
-                            <div className="tutorial-info">
-                                <p className="tutorial-meta">
-                                    <span>{item.tag}</span> &nbsp;|&nbsp; {item.date}
-                                </p>
-                                <a href={item.link} className="tutorial-title-link">{item.title}</a>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div> */}
+
+
+
 
             <footer className="footer">
                 <div
@@ -462,14 +452,6 @@ const LandingPage: React.FC = () => {
                                 <br />
                                 Đến với All One Ads, bạn hoàn toàn yên tâm trải nghiệm nền tảng tạo quảng cáo tự động thông minh, tối ưu hiệu suất và giúp thương hiệu của bạn nổi bật, tiếp cận đúng khách hàng mục tiêu một cách dễ dàng nhất.
                             </p>
-
-                            {/* <hr
-                                style={{
-                                    borderColor: "rgba(255,255,255,0.05)",
-                                    margin: "24px 0",
-                                }}
-                            /> */}
-
 
                         </div>
                     </div>
@@ -565,54 +547,7 @@ const LandingPage: React.FC = () => {
                                 <img src={Frame_699} style={{ width: 50, height: 39, flexShrink: 0 }} />
                                 <img src={image_54} style={{ width: 39, height: 39, flexShrink: 0 }} />
                             </div>
-                            {/* <img
-                                src={Home_47}
-                                alt="Bestmall"
-                                style={{
-                                    maxWidth: "100%",
-                                    borderRadius: 8,
-                                    marginBottom: 20,
-                                }}
-                            />
 
-                            <h4 style={{ fontSize: 16, color: "#e2e8f0", marginBottom: 12 }}>Liên hệ</h4>
-                            <form
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    // xử lý email
-                                }}
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "row",
-                                    gap: 12,
-                                    alignItems: "center",
-                                    marginTop: "auto",
-                                }}
-                            >
-                                <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 20 }}>
-                                    <input
-                                        type="email"
-                                        placeholder="Email của bạn"
-                                        style={{
-                                            width: 400, // 👈 Kích thước như ảnh
-                                            height: 48,
-                                            padding: "12px 16px",
-                                            borderRadius: 8,
-                                            border: "1px solid rgba(255,255,255,0.15)",
-                                            backgroundColor: "#0f172a", // Màu nền theo ảnh
-                                            color: "#e2e8f0",
-                                            fontSize: 16,
-                                            fontFamily: "Inter, sans-serif",
-                                            outline: "none",
-                                        }}
-                                    />
-
-                                    <button type="submit" className="btn-text">
-                                        Gửi
-                                    </button>
-                                </div>
-
-                            </form> */}
                         </div>
                     </div>
                 </div>
@@ -623,4 +558,4 @@ const LandingPage: React.FC = () => {
     );
 };
 
-export default LandingPage;
+export default HomePage;

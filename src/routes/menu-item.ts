@@ -11,11 +11,13 @@ import {
   FB_ANALYSIS_ROUTE,
   DASHBOARD_ROUTE,
   CREDITS_ROUTE,
+  HOME_INTEL_ROUTE,
 } from "src/constants/routes.constants";
 
 import { TicketManageIcon } from "src/components/MenuItemIcon/TicketIcon";
 import { GET_BLACK_LIST, GET_GROUP, GET_ROLE, GET_USER } from "src/constants/roles.constants";
 import { TFunction } from "i18next";
+import HomeIntel from "src/pages/HomeIntel";
 
 export interface IMenuItem {
   key: string;
@@ -28,6 +30,11 @@ export interface IMenuItem {
 }
 
 export const getMenuItems = (t: TFunction): IMenuItem[] => [
+  {
+    key: HOME_INTEL_ROUTE,
+    label: t("menu.home"),
+    icon: createElement(HomeIntel),
+  },
   {
     key: FB_ANALYSIS_ROUTE,
     label: t("menu.facebook_analysis"),
@@ -59,14 +66,14 @@ export const getMenuItems = (t: TFunction): IMenuItem[] => [
     label: t("menu.user_account"),
     rolenames: [GET_USER],
   },
-   {
+  {
     key: CREDITS_ROUTE,
     icon: createElement(DotIcon),
     label: t("accounts.credits"),
     // rolenames: [GET_USER],
   },
 
-  
+
   {
     key: AUTHORIZATION_ROUTE,
     icon: createElement(DotIcon),

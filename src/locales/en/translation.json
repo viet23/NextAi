@@ -209,6 +209,7 @@
     }
   },
   "menu": {
+     "home": "Home",
     "facebook_analysis": "AI Facebook Analysis",
     "image_generation": "AI Image Generation",
     "video_generation": "AI Video Generation",

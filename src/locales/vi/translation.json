@@ -253,6 +253,7 @@
     }
   },
   "menu": {
+    "home": "Trang chủ",
     "facebook_analysis": "Phân tích Facebook AI",
     "image_generation": "Tạo ảnh AI",
     "video_generation": "Tạo video AI",
