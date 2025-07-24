@@ -91,7 +91,7 @@ const CreditsPage = () => {
               marginTop: 24,
             }}
           >
-            {t("accounts.user_credits")}
+            {t("credits.user_credits")}
           </h3>
 
           <Card className="accountDetail" style={{ marginBottom: 24 }}>
@@ -103,7 +103,7 @@ const CreditsPage = () => {
                 <div style={{ marginTop: 8 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                     <span style={{ color: "#ffffff", fontWeight: 500 }}>
-                      {t("accounts.auto_payment") || "Tự động thanh toán"}
+                      {t("credits.auto_payment")}
                     </span>
                     <Switch
                       checked={autoPayment}
@@ -111,17 +111,16 @@ const CreditsPage = () => {
                     />
                   </div>
                   <span style={{ color: "#94a3b8", fontSize: 13 }}>
-                    {t("accounts.auto_payment_note") || "Hãy thiết lập tự động thanh toán để đơn giản hoá công việc của bạn"}
+                    {t("credits.auto_payment_note")}
                   </span>
                 </div>
-
               </Col>
               <Col>
                 <Button
                   size="large"
                   className="btn-text"
                 >
-                  {t("accounts.buy_more") || "Mua thêm"}
+                  {t("credits.buy_more")}
                 </Button>
               </Col>
             </Row>
@@ -143,7 +142,7 @@ const CreditsPage = () => {
                 key="1"
                 header={
                   <span style={{ color: "#ffffff", fontWeight: 600 }}>
-                    Lịch sử thanh toán
+                    {t("credits.payment_history")}
                   </span>
                 }
               >
@@ -159,25 +158,31 @@ const CreditsPage = () => {
                   />
 
                   <Select defaultValue="3_months" style={{ width: 160 }}>
-                    <Select.Option value="3_months">3 tháng gần nhất</Select.Option>
-                    <Select.Option value="6_months">6 tháng</Select.Option>
-                    <Select.Option value="12_months">12 tháng</Select.Option>
+                    <Select.Option value="3_months">
+                      {t("credits.last_3_months")}
+                    </Select.Option>
+                    <Select.Option value="6_months">
+                      {t("credits.last_6_months")}
+                    </Select.Option>
+                    <Select.Option value="12_months">
+                      {t("credits.last_12_months")}
+                    </Select.Option>
                   </Select>
                 </Flex>
                 <Table
                   className="table-scroll dark-header-table"
                   rowKey="id"
                   columns={[
-                    { title: "STT", dataIndex: "index", key: "index", width: 80 },
-                    { title: "Ngày thanh toán", dataIndex: "date", key: "date" },
+                    { title: t("credits.table.index"), dataIndex: "index", key: "index", width: 80 },
+                    { title: t("credits.table.payment_date"), dataIndex: "date", key: "date" },
                     {
-                      title: "Số tiền đã thanh toán (VND)",
+                      title: t("credits.table.amount_paid"),
                       dataIndex: "amount",
                       key: "amount",
                       align: "right",
                     },
                     {
-                      title: "Credits đã mua",
+                      title: t("credits.table.credits_bought"),
                       dataIndex: "credits",
                       key: "credits",
                       align: "right",
@@ -193,6 +198,7 @@ const CreditsPage = () => {
           </Card>
         </div>
       </Layout>
+
     </PageTitleHOC>
   );
 };

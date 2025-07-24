@@ -16,7 +16,16 @@
     "customer_engagement": "CUSTOMER INTERACTION",
     "strategy": "COMMUNICATIONS STRATEGY",
     "title": "Facebook Analysis",
-    "subtitle": "Explore your Facebook page"
+    "subtitle": "Explore your Facebook page",
+    "follow": "Follow",
+    "unfollow": "Unfollow",
+    "connect_page": "Connect page to view information",
+    "views": "Views",
+    "follow_rate": "Follower Ratio",
+    "age_gender": "Age and Gender",
+    "male": "Male",
+    "female": "Female",
+    "city": "City"
   },
   "dashboard": {
     "title": "AI ADS",
@@ -52,6 +61,8 @@
     "enter_prompt": "Please enter a prompt.",
     "generate_error": "Image generation error. Your budget may be out. Contact Admin.",
     "points": "points",
+    "main_idea_title": "Main idea",
+    "generate_detail_prompt": "Create detailed description",
     "main_result": "Result",
     "main_describe_title": " Describe your core idea. For example: A steaming hot pot restaurant in the evening.",
     "auto_post_setting": "Set up auto post Facebook page",
@@ -137,7 +148,17 @@
     "description": "Description",
     "around": "Surrounding the product is",
     "effects": "Effects",
-    "required_fields_warning": "Please fill in all required fields."
+    "create_script_title": "Create Detailed Script",
+    "effects_label": "Special Effects",
+    "effects_placeholder": "E.g. Sparkling light",
+    "surrounding_label": "Surrounding Objects",
+    "surrounding_placeholder": "E.g. Fields, mountains, ocean",
+    "create_script_button": "Generate Script",
+    "required_fields_warning": "Please fill in all required information before generating.",
+    "scene_description_placeholder": "Enter scene description",
+    "generate_video_button": "Generate Video",
+    "upload_image_label": "Upload product image",
+    "result_label": "Result"
   },
   "vitual_accounts": {
     "form_search": {
@@ -202,6 +223,8 @@
     "user_list": "List of user accounts",
     "search_placeholder": "Search",
     "status_placeholder": "Account status",
+    "user_list_type": "User account",
+    "search_label": "Login name",
     "add_button": "Add new",
     "edit": "Edit",
     "no_data": "No Data",
@@ -216,6 +239,22 @@
       "created": "Creation date",
       "status": "Status",
       "actions": "Actions"
+    }
+  },
+  "credits": {
+    "user_credits": "Your Credit Balance",
+    "auto_payment": "Auto Payment",
+    "auto_payment_note": "Set up auto payment to simplify your workflow",
+    "buy_more": "Buy More",
+    "payment_history": "Payment History",
+    "last_3_months": "Last 3 months",
+    "last_6_months": "Last 6 months",
+    "last_12_months": "Last 12 months",
+    "table": {
+      "index": "No.",
+      "payment_date": "Payment Date",
+      "amount_paid": "Amount Paid (VND)",
+      "credits_bought": "Credits Purchased"
     }
   },
   "auth_groups": {

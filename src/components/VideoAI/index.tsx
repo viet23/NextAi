@@ -608,6 +608,7 @@ const VideoGenerator = () => {
         const body = {
           urlVideo: mergedUrl,
           caption: `Merge Selected Videos : ${promptTextsMerge}`,
+          renderId: renderId
         };
         await createCase(body).unwrap();
         setLoading(false);
@@ -853,9 +854,8 @@ Please contact Admin`);
                 <Row gutter={[16, 16]}>
                   <Col xs={24} md={12}>
                     <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 20 }}>
-                      Tạo kịch bản chi tiết
+                      {t("video.create_script_title")}
                     </div>
-
                   </Col>
 
                   <Col xs={24} md={12}>
@@ -871,8 +871,8 @@ Please contact Admin`);
                           width: 110,
                           height: 36,
                           fontSize: 13,
-                          backgroundColor: "#1e293b", // Nền giống Ratio
-                          color: "#e2e8f0",           // Chữ trắng
+                          backgroundColor: "#1e293b",
+                          color: "#e2e8f0",
                           border: "1px solid #334155",
                           borderRadius: 8,
                           outline: "none",
@@ -898,47 +898,53 @@ Please contact Admin`);
                           </Option>
                         ))}
                       </Select>
-
-
                     </div>
                   </Col>
 
                   <Col xs={24} md={12}>
-                    <label style={{ display: "block", marginBottom: 4 }}>Tên sản phẩm/ dịch vụ</label>
+                    <label style={{ display: "block", marginBottom: 4 }}>
+                      {t("video.product_name_label")}
+                    </label>
                     <Input
                       value={productName}
                       onChange={e => setProductName(e.target.value)}
-                      placeholder="VD: Một cô gái tóc dài"
+                      placeholder={t("video.product_name_placeholder")}
                       style={inputStyle}
                     />
                   </Col>
 
                   <Col xs={24} md={12}>
-                    <label style={{ display: "block", marginBottom: 4 }}>Mô tả sản phẩm</label>
+                    <label style={{ display: "block", marginBottom: 4 }}>
+                      {t("video.product_description_label")}
+                    </label>
                     <Input
                       value={productDescription}
                       onChange={e => setProductDescription(e.target.value)}
-                      placeholder="VD: Cô gái bước đi dưới ánh hoàng hôn"
+                      placeholder={t("video.product_description_placeholder")}
                       style={inputStyle}
                     />
                   </Col>
 
                   <Col xs={24} md={12}>
-                    <label style={{ display: "block", marginBottom: 4 }}>Hiệu ứng</label>
+                    <label style={{ display: "block", marginBottom: 4 }}>
+                      {t("video.effects_label")}
+                    </label>
                     <Input
                       value={specialEffects}
                       onChange={e => setSpecialEffects(e.target.value)}
-                      placeholder="VD: Ánh sáng lung linh"
+                      placeholder={t("video.effects_placeholder")}
                       style={inputStyle}
                     />
                   </Col>
 
                   <Col xs={24} md={12}>
-                    <label style={{ display: "block", marginBottom: 4 }}>Vật thể xung quanh</label>
+                    <label style={{ display: "block", marginBottom: 4 }}>
+                      {t("video.surrounding_label")}
+                    </label>
                     <Input
                       value={productSurrounding}
                       onChange={e => setProductSurrounding(e.target.value)}
-                      placeholder="VD: Cánh đồng, núi non, biển cả"
+                      placeholder={t("video.surrounding_placeholder")}
                       style={inputStyle}
                     />
                   </Col>
@@ -971,11 +977,12 @@ Please contact Admin`);
                           generateScriptByGPT();
                         }}
                       >
-                        Tạo kịch bản
+                        {t("video.create_script_button")}
                       </Button>
                     </div>
                   </Col>
                 </Row>
+
               </div>
 
 
@@ -1098,9 +1105,9 @@ Please contact Admin`);
                 <div
                   style={{
                     backgroundColor: "#0f172a",
-                    padding: "24px 16px", // bỏ maxWidth
+                    padding: "24px 16px",
                     borderRadius: 12,
-                    width: "100%", // chiếm toàn bộ khung
+                    width: "100%",
                   }}
                 >
                   <Row gutter={16} justify="space-between" align="top">
@@ -1110,7 +1117,7 @@ Please contact Admin`);
                         rows={5}
                         autoSize={false}
                         value={promptTexts[index] || ""}
-                        placeholder="Nhập mô tả cảnh quay"
+                        placeholder={t("video.scene_description_placeholder")}
                         onChange={(e) => {
                           const newPrompts = [...promptTexts];
                           newPrompts[index] = e.target.value;
@@ -1119,13 +1126,12 @@ Please contact Admin`);
                         className="image-textarea"
                       />
 
-                      {/* Nút Tạo video – full chiều ngang */}
                       <div style={{ marginTop: 10 }}>
                         <Button
                           onClick={() => generateSingleSceneVideo(index)}
                           className="image-button image-button-large"
                         >
-                          Tạo video
+                          {t("video.generate_video_button")}
                         </Button>
                       </div>
                     </Col>
@@ -1175,7 +1181,7 @@ Please contact Admin`);
                               alt="upload"
                               style={{ width: 24, height: 24, marginBottom: 2 }}
                             />
-                            <div style={{ fontSize: 13 }}>Media</div>
+                            <div style={{ fontSize: 13 }}>{t("video.upload_image_label")}</div>
                           </div>
                         ) : (
                           <div style={{ position: "relative", display: "inline-block" }}>
@@ -1256,65 +1262,23 @@ Please contact Admin`);
                                   transform: "scale(0.8)",
                                 }}
                               />
-                              {/* <DownloadOutlined
-                                onClick={() => {
-                                  const url = generatedVideos.find((v) => v.index === index)?.url;
-                                  if (!url) {
-                                    message.error("Không tìm thấy video để tải");
-                                    return;
-                                  }
-                                  Modal.confirm({
-                                    title: "Tải video?",
-                                    content: "Bạn có chắc muốn tải video này xuống thiết bị của mình?",
-                                    okText: "Tải xuống",
-                                    cancelText: "Hủy",
-                                    onOk: async () => {
-                                      try {
-                                        const response = await fetch(url);
-                                        const blob = await response.blob();
-                                        const blobUrl = window.URL.createObjectURL(blob);
-                                        const a = document.createElement("a");
-                                        a.href = blobUrl;
-                                        a.download = `video-${index}.mp4`;
-                                        document.body.appendChild(a);
-                                        a.click();
-                                        a.remove();
-                                        window.URL.revokeObjectURL(blobUrl);
-                                        message.success("Đã bắt đầu tải video");
-                                      } catch (err) {
-                                        console.error("Tải video thất bại:", err);
-                                        message.error("Tải video thất bại");
-                                      }
-                                    },
-                                  });
-                                }}
-                                style={{
-                                  fontSize: 12,
-                                  background: "#ffffff",
-                                  padding: 5,
-                                  borderRadius: "50%",
-                                  cursor: "pointer",
-                                  boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
-                                }}
-                                title="Tải video"
-                              /> */}
                             </div>
                           </div>
                         ) : (
                           <>
                             <img
                               src="https://img.icons8.com/ios/50/94a3b8/picture.png"
-                              alt="kết quả"
+                              alt="result"
                               style={{ width: 24, marginBottom: 2 }}
                             />
-                            <div>Kết quả</div>
+                            <div>{t("video.result_label")}</div>
                           </>
                         )}
                       </div>
                     </Col>
-
                   </Row>
                 </div>
+
 
               ))}
 

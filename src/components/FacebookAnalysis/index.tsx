@@ -15,6 +15,7 @@ import page1 from "../../assets/images/page1.png";
 import page2 from "../../assets/images/page2.png";
 import page3 from "../../assets/images/page3.png";
 import page4 from "../../assets/images/page4.png";
+import FullscreenLoader from "../FullscreenLoader";
 
 
 const { Content } = Layout;
@@ -545,38 +546,24 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
         />
         <meta name="twitter:image" content="https://alloneads.com/og-image.png" />
       </Helmet>
+      <FullscreenLoader
+        spinning={loading}
+      />
       <Layout className="image-layout">
         <Content style={{ padding: 24, color: "#F1F5F9" }}>
-
-          {/* Modal hiển thị khi click */}
           <AutoPostModal visible={showModal} onClose={() => setShowModal(false)} />
 
           <div style={{ textAlign: "center", marginBottom: 24 }}>
             <h3 style={{ color: "#F8FAFC", marginBottom: 4 }}>
-              {t("facebook_analysis.title")} {/* Phân tích Facebook */}
+              {t("facebook_analysis.title")}
             </h3>
             <p style={{ color: "#94A3B8", fontSize: 14 }}>
-              {t("facebook_analysis.subtitle")} {/* Khám phá trang Facebook của bạn */}
+              {t("facebook_analysis.subtitle")}
             </p>
           </div>
 
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center", // căn giữa toàn khối
-              marginBottom: 24,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-                maxWidth: 800, // ✅ Thu gọn chiều ngang tại đây
-                width: "100%",
-              }}
-            >
+          <div style={{ width: "100%", display: "flex", justifyContent: "center", marginBottom: 24 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, maxWidth: 800, width: "100%" }}>
               <Input
                 value={url}
                 onChange={e => setUrl(e.target.value)}
@@ -602,34 +589,33 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
                   boxShadow: "0 0 6px #3B82F6",
                 }}
                 type="default"
-                loading={loading}
                 onClick={analyzeFacebookPage}
               >
                 {t("facebook_analysis.button_analyze")}
               </Button>
             </div>
           </div>
-          <br />
-          <Title level={4} style={{ color: "#E2E8F0" }}>{t("facebook_analysis.section_page_analysis")}</Title>
-          <div
-            className="dashboard-wrapper"
-            style={{
-              padding: 24,
-              background: "#0f172a",
-              borderRadius: 20,
-              width: "100%",
-              maxWidth: 1200,
-              margin: "0 auto",
-              boxSizing: "border-box",
-            }}
-          >
-            {/* Hàng trên: DatePicker + Button */}
-            <Row
-              gutter={16}
-              justify="space-between"
-              align="middle"
-              style={{ marginBottom: 24 }}
-            >
+
+          <div className="dashboard-wrapper" style={{
+            padding: 24,
+            borderRadius: 20,
+            width: "100%",
+            maxWidth: 1200,
+            margin: "0 auto",
+            boxSizing: "border-box",
+          }}><Title level={4} style={{ color: "#E2E8F0" }}>{t("facebook_analysis.section_page_analysis")}</Title></div>
+
+
+          <div className="dashboard-wrapper" style={{
+            padding: 24,
+            background: "#0f172a",
+            borderRadius: 20,
+            width: "100%",
+            maxWidth: 1200,
+            margin: "0 auto",
+            boxSizing: "border-box",
+          }}>
+            <Row gutter={16} justify="space-between" align="middle" style={{ marginBottom: 24 }}>
               <Col>
                 <DatePicker.RangePicker
                   style={{
@@ -655,99 +641,49 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
                     boxShadow: "0 0 6px #3B82F6",
                   }}
                 >
-                  Kết nối page để xem thông tin
+                  {t("facebook_analysis.connect_page")}
                 </Button>
               </Col>
             </Row>
 
-            {/* Hàng dưới: 2 cột bằng nhau */}
             <Row gutter={16}>
-              {/* Cột trái */}
               <Col span={12}>
-                <Card
-                  style={{
-                    background: "#1e293b",
-                    border: "none", // bỏ viền
-                    borderTopLeftRadius: 20,
-                    borderBottomLeftRadius: 20,
-                    borderTopRightRadius: 0,
-                    borderBottomRightRadius: 0,
-                    color: "#fff",
-                    height: "100%",
-                  }}
-                  bodyStyle={{ padding: 10 }}
-                >
+                <Card style={{
+                  background: "#1e293b",
+                  border: "none",
+                  borderTopLeftRadius: 20,
+                  borderBottomLeftRadius: 20,
+                  color: "#fff",
+                  height: "100%",
+                }} bodyStyle={{ padding: 10 }}>
                   <div style={{ marginBottom: 16, fontWeight: 600, color: "#E2E8F0" }}>
-                    Lượt xem
+                    {t("facebook_analysis.views")}
                   </div>
                   <ResponsiveContainer width="100%" height={220}>
                     <LineChart data={dataChart}>
                       <XAxis dataKey="name" stroke="#94a3b8" />
                       <YAxis stroke="#94a3b8" />
-                      <Tooltip
-                        contentStyle={{
-                          background: "#0f172a",
-                          borderColor: "#334155",
-                        }}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="views"
-                        stroke="#6cc3ff"
-                        strokeWidth={2}
-                      />
+                      <Tooltip contentStyle={{ background: "#0f172a", borderColor: "#334155" }} />
+                      <Line type="monotone" dataKey="views" stroke="#6cc3ff" strokeWidth={2} />
                     </LineChart>
                   </ResponsiveContainer>
-                  {/* 
-                  <Row gutter={12} style={{ marginTop: 16 }}>
-                    {[
-                      "Tổng lượt xem",
-                      "Trung bình",
-                      "Xem tối thiểu 3 giây",
-                      "Xem tối thiểu 1 giây",
-                    ].map((label, idx) => (
-                      <Col span={6} key={idx}>
-                        <div
-                          style={{
-                            background: "#0f172a",
-                            border: "1px solid #334155",
-                            borderRadius: 8,
-                            padding: "6px 10px",
-                            textAlign: "center",
-                            fontSize: 10,
-                            color: "#CBD5E1",
-                          }}
-                        >
-                          0<br />
-                          {label}
-                        </div>
-                      </Col>
-                    ))}
-                  </Row> */}
                 </Card>
               </Col>
 
-              {/* Cột phải */}
               <Col span={12}>
-                <Card
-                  style={{
-                    background: "#1e293b",
-                    border: "none",
-                    borderTopLeftRadius: 20,
-                    borderBottomLeftRadius: 20,
-                    borderTopRightRadius: 0,
-                    borderBottomRightRadius: 0,
-                    color: "#fff",
-                    height: "100%",
-                  }}
-                  bodyStyle={{ padding: 10 }}
-                >
+                <Card style={{
+                  background: "#1e293b",
+                  border: "none",
+                  borderTopLeftRadius: 20,
+                  borderBottomLeftRadius: 20,
+                  color: "#fff",
+                  height: "100%",
+                }} bodyStyle={{ padding: 10 }}>
                   <Row gutter={[24, 24]}>
-                    {/* Tỉ lệ người theo dõi */}
                     <Col span={8}>
                       <div style={{ textAlign: "center" }}>
                         <div style={{ fontSize: 14, fontWeight: 500 }}>
-                          Tỉ lệ người theo dõi
+                          {t("facebook_analysis.follow_rate")}
                         </div>
                         <div style={{ width: 80, margin: "0 auto", marginTop: 12 }}>
                           <CircularProgressbar
@@ -760,187 +696,90 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
                             })}
                           />
                         </div>
-                        <div
-                          style={{
-                            fontSize: 12,
-                            color: "#94a3b8",
-                            lineHeight: 1.5,
-                            marginTop: 12,
-                          }}
-                        >
-                          ● Theo dõi<br />● Không theo dõi
+                        <div style={{
+                          fontSize: 12,
+                          color: "#94a3b8",
+                          lineHeight: 1.5,
+                          marginTop: 12,
+                        }}>
+                          ● {t("facebook_analysis.follow")}<br />● {t("facebook_analysis.unfollow")}
                         </div>
                       </div>
                     </Col>
 
-                    {/* Tuổi và giới tính */}
                     <Col span={8}>
                       <div>
                         <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 8 }}>
-                          Tuổi và giới tính
+                          {t("facebook_analysis.age_gender")}
                         </div>
                         <div style={{ fontSize: 12, color: "#94a3b8", marginBottom: 8 }}>
-                          ● Nam &nbsp;&nbsp; ● Nữ
+                          ● {t("facebook_analysis.male")} &nbsp;&nbsp; ● {t("facebook_analysis.female")}
                         </div>
                         {genderAgeData.map((item) => (
                           <div key={item.age} style={{ marginBottom: 8 }}>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                fontSize: 12,
-                                color: "#E2E8F0",
-                              }}
-                            >
+                            <div style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              fontSize: 12,
+                              color: "#E2E8F0",
+                            }}>
                               <span>{item.age}</span>
                               <span>{item.total || 0}%</span>
                             </div>
-                            <div
-                              style={{
-                                height: 6,
-                                background: "#a3a3a3",
-                                borderRadius: 6,
-                                marginTop: 4,
-                              }}
-                            />
+                            <div style={{
+                              height: 6,
+                              background: "#a3a3a3",
+                              borderRadius: 6,
+                              marginTop: 4,
+                            }} />
                           </div>
                         ))}
                       </div>
                     </Col>
 
-                    {/* Thành Phố */}
                     <Col span={8}>
                       <div>
                         <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 8 }}>
-                          Thành Phố
+                          {t("facebook_analysis.city")}
                         </div>
                         {cityData.map((item) => (
                           <div key={item.city} style={{ marginBottom: 8 }}>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                fontSize: 12,
-                                color: "#E2E8F0",
-                              }}
-                            >
+                            <div style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              fontSize: 12,
+                              color: "#E2E8F0",
+                            }}>
                               <span>{item.city}</span>
                               <span>{item.count || 0}%</span>
                             </div>
-                            <div
-                              style={{
-                                height: 6,
-                                background: "#a3a3a3",
-                                borderRadius: 6,
-                                marginTop: 4,
-                              }}
-                            />
+                            <div style={{
+                              height: 6,
+                              background: "#a3a3a3",
+                              borderRadius: 6,
+                              marginTop: 4,
+                            }} />
                           </div>
                         ))}
                       </div>
                     </Col>
-
-                    {/* Tin nhắn */}
-                    {/* <Col span={15}>
-                      <div>
-                        <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 8 }}>
-                          Tin nhắn
-                        </div>
-                        <Row gutter={[8, 8]}>
-                          {[
-                            { label: "Tổng cộng", value: "0 tin", dark: true },
-                            { label: "% trả lời", value: "0 %", dark: false },
-                            { label: "Thời gian trả lời trung bình", value: "0 giờ", dark: true },
-                            { label: "% chốt đơn", value: "0 %", dark: false },
-                          ].map((item, index) => (
-                            <Col span={12} key={index}>
-                              <div
-                                style={{
-                                  background: item.dark ? "#334155" : "#fff",
-                                  color: item.dark ? "#fff" : "#000",
-                                  borderRadius: 10,
-                                  padding: "3px 4px",
-                                  fontSize: 12,
-                                  textAlign: "center",
-                                  minHeight: 36,
-                                  boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-                                  whiteSpace: "pre-line",
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  justifyContent: "center",
-                                }}
-                              >
-                                <div style={{ fontWeight: 600 }}>{item.label}</div>
-                                <div>{item.value}</div>
-                              </div>
-                            </Col>
-                          ))}
-                        </Row>
-                      </div>
-                    </Col> */}
-
-                    {/* Liên hệ lại */}
-                    {/* <Col span={7}>
-                      <div style={{ display: "flex", alignItems: "center", marginTop: 8 }}>
-                        <div style={{ flex: 1 }}>
-                          <div
-                            style={{
-                              fontSize: 14,
-                              fontWeight: 600,
-                              color: "#fff",
-                              marginBottom: 12,
-                            }}
-                          >
-                            Liên hệ lại
-                          </div>
-                          <div style={{ width: 72 }}>
-                            <CircularProgressbar
-                              value={percentageContact}
-                              text={`${percentageContact}%`}
-                              strokeWidth={10}
-                              styles={buildStyles({
-                                textColor: "#fff",
-                                pathColor: "#a3a3a3",
-                                trailColor: "#1e293b",
-                              })}
-                            />
-                          </div>
-                        </div>
-                        <div>
-                          <div
-                            style={{ fontSize: 12, color: "#cbd5e1", marginBottom: 6 }}
-                          >
-                            <span style={{ color: "#cbd5e1" }}>●</span> Tự nhiên
-                          </div>
-                          <div style={{ fontSize: 12, color: "#475569" }}>
-                            <span style={{ color: "#475569" }}>●</span> Trả phí
-                          </div>
-                        </div>
-                      </div>
-                    </Col> */}
                   </Row>
                 </Card>
               </Col>
-
             </Row>
           </div>
 
           <br />
           <div style={styles.twoColumns}>
-            {/* Cột trái */}
             <div style={styles.column}>
-
               <Card style={{
                 background: "#1E293B",
                 border: "1px solid #334155",
                 color: "#F1F5F9",
-              }}
-                bodyStyle={{ padding: 16 }}>
-                <Title
-                  level={5}
-                  style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}
-                >
-                  <img src={page1} alt="icon" style={{ width: 20, height: 20 }} />{t("facebook_analysis.general_info")}</Title>
+              }} bodyStyle={{ padding: 16 }}>
+                <Title level={5} style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}>
+                  <img src={page1} alt="icon" style={{ width: 20, height: 20 }} />{t("facebook_analysis.general_info")}
+                </Title>
                 <TextArea
                   value={analysis.overview}
                   readOnly
@@ -949,18 +788,16 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
                     marginBottom: 12,
                     whiteSpace: "pre-wrap",
                     backgroundColor: "#070719",
-                    color: "#E2E8F0", // màu chữ sáng dễ đọc trên nền tối
+                    color: "#E2E8F0",
                     border: "1px solid #1e1e2e",
                     borderRadius: 8,
                     padding: "8px 12px",
                   }}
                 />
 
-                <Title
-                  level={5}
-                  style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}
-                >
-                  <img src={page2} alt="icon" style={{ width: 20, height: 20 }} />{t("facebook_analysis.products_services")}</Title>
+                <Title level={5} style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}>
+                  <img src={page2} alt="icon" style={{ width: 20, height: 20 }} />{t("facebook_analysis.products_services")}
+                </Title>
                 <TextArea
                   value={analysis.products}
                   readOnly
@@ -969,18 +806,16 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
                     marginBottom: 12,
                     whiteSpace: "pre-wrap",
                     backgroundColor: "#070719",
-                    color: "#E2E8F0", // màu chữ sáng dễ đọc trên nền tối
+                    color: "#E2E8F0",
                     border: "1px solid #1e1e2e",
                     borderRadius: 8,
                     padding: "8px 12px",
                   }}
                 />
 
-                <Title
-                  level={5}
-                  style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}
-                >
-                  <img src={page3} alt="icon" style={{ width: 20, height: 20 }} />{t("facebook_analysis.customer_engagement")}</Title>
+                <Title level={5} style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}>
+                  <img src={page3} alt="icon" style={{ width: 20, height: 20 }} />{t("facebook_analysis.customer_engagement")}
+                </Title>
                 <TextArea
                   value={analysis.engagement}
                   readOnly
@@ -989,18 +824,16 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
                     marginBottom: 12,
                     whiteSpace: "pre-wrap",
                     backgroundColor: "#070719",
-                    color: "#E2E8F0", // màu chữ sáng dễ đọc trên nền tối
+                    color: "#E2E8F0",
                     border: "1px solid #1e1e2e",
                     borderRadius: 8,
                     padding: "8px 12px",
                   }}
                 />
 
-                <Title
-                  level={5}
-                  style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}
-                >
-                  <img src={page4} alt="icon" style={{ width: 20, height: 20 }} />{t("facebook_analysis.strategy")}</Title>
+                <Title level={5} style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}>
+                  <img src={page4} alt="icon" style={{ width: 20, height: 20 }} />{t("facebook_analysis.strategy")}
+                </Title>
                 <TextArea
                   value={analysis.strategy}
                   readOnly
@@ -1009,7 +842,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
                     marginBottom: 12,
                     whiteSpace: "pre-wrap",
                     backgroundColor: "#070719",
-                    color: "#E2E8F0", // màu chữ sáng dễ đọc trên nền tối
+                    color: "#E2E8F0",
                     border: "1px solid #1e1e2e",
                     borderRadius: 8,
                     padding: "8px 12px",
@@ -1018,20 +851,13 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
               </Card>
             </div>
 
-            {/* Cột phải */}
             <div style={styles.column}>
-
-              <Card
-                style={{
-                  background: "#1E293B",
-                  border: "1px solid #334155",
-                  color: "#F1F5F9",
-                }}
-                bodyStyle={{ padding: 16 }}>
-                <Title
-                  level={5}
-                  style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}
-                >
+              <Card style={{
+                background: "#1E293B",
+                border: "1px solid #334155",
+                color: "#F1F5F9",
+              }} bodyStyle={{ padding: 16 }}>
+                <Title level={5} style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}>
                   {t("facebook_analysis.section_channel_plan")}
                 </Title>
                 <TextArea
@@ -1060,8 +886,8 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
                     borderRadius: 6,
                     height: 30,
                     padding: "0 16px",
-                    width: "100%", // ✅ full width như ảnh
-                    boxShadow: "0 0 6px #3B82F6", // ✅ viền phát sáng
+                    width: "100%",
+                    boxShadow: "0 0 6px #3B82F6",
                     fontWeight: 500,
                     fontSize: 14,
                     cursor: "pointer",
@@ -1071,10 +897,10 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
                 </button>
               </Card>
             </div>
-
           </div>
         </Content>
       </Layout>
+
     </>
   );
 };

@@ -16,7 +16,16 @@
     "customer_engagement": "Tương tác khách hàng",
     "strategy": "Chiến lược truyền thông",
     "title": "Phân tích Facebook",
-    "subtitle": "Khám phá trang Facebook của bạn"
+    "subtitle": "Khám phá trang Facebook của bạn",
+    "connect_page": "Kết nối page để xem thông tin",
+    "views": "Lượt xem",
+    "follow_rate": "Tỉ lệ người theo dõi",
+    "age_gender": "Tuổi và giới tính",
+    "male": "Nam",
+    "female": "Nữ",
+    "city": "Thành phố",
+    "follow": "Theo dõi",
+    "unfollow": "Không theo dõi"
   },
   "dashboard": {
     "title": "Quảng cáo AI",
@@ -142,7 +151,17 @@
     "description": "Mô tả",
     "around": "Bao quanh quanh sản phẩm là",
     "effects": "Hiệu ứng",
-    "required_fields_warning": "Vui lòng điền đầy đủ tất cả các trường thông tin."
+    "effects_label": "Hiệu ứng",
+    "effects_placeholder": "VD: Ánh sáng lung linh",
+    "surrounding_label": "Vật thể xung quanh",
+    "surrounding_placeholder": "VD: Cánh đồng, núi non, biển cả",
+    "create_script_button": "Tạo kịch bản",
+    "required_fields_warning": "Vui lòng điền đầy đủ thông tin trước khi tạo kịch bản.",
+    "create_script_title": "Tạo kịch bản chi tiết",
+    "scene_description_placeholder": "Nhập mô tả cảnh quay",
+    "generate_video_button": "Tạo video",
+    "upload_image_label": "Tải ảnh sản phẩm lên",
+    "result_label": "Kết quả"
   },
   "signin": {
     "welcomeBack": "Chào mừng bạn trở lại",
@@ -273,6 +292,22 @@
       "created": "Ngày tạo",
       "status": "Trạng thái",
       "actions": "Hành động"
+    }
+  },
+  "credits": {
+    "user_credits": "Số dư Credits của bạn",
+    "auto_payment": "Tự động thanh toán",
+    "auto_payment_note": "Hãy thiết lập tự động thanh toán để đơn giản hoá công việc của bạn",
+    "buy_more": "Mua thêm",
+    "payment_history": "Lịch sử thanh toán",
+    "last_3_months": "3 tháng gần nhất",
+    "last_6_months": "6 tháng",
+    "last_12_months": "12 tháng",
+    "table": {
+      "index": "STT",
+      "payment_date": "Ngày thanh toán",
+      "amount_paid": "Số tiền đã thanh toán (VND)",
+      "credits_bought": "Credits đã mua"
     }
   },
   "auth_groups": {
