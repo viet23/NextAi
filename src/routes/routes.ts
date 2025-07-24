@@ -24,6 +24,7 @@ import MediaList from "src/pages/MediaList";
 import Dashboard from "src/pages/Dashboard";
 import RegisterForm from "src/pages/Register";
 import RegisterPage from "src/pages/Register";
+import MediaTreanding from "src/pages/MediaTreanding";
 const HomeIntel = React.lazy(() => import("src/pages/HomeIntel"));
 const CreditsPage = React.lazy(() => import("src/pages/Credits"));
 const AccountDetailPage = React.lazy(() => import("src/pages/AccountDetail"));
@@ -117,13 +118,21 @@ export const routes = [
         name: "Customers",
         component: Customers,
       },
-      {
+      
+       {
         path: MEDIA_ROUTE,
         isProtect: true,
         key: "mediaList",
         name: "MediaList",
-        component: MediaList,
+        component: MediaTreanding,
       },
+      // {
+      //   path: MEDIA_ROUTE,
+      //   isProtect: true,
+      //   key: "mediaList",
+      //   name: "MediaList",
+      //   component: MediaList,
+      // },
       {
         path: DASHBOARD_ROUTE,
         isProtect: true,

@@ -92,6 +92,7 @@
     "react-jvectormap": "0.0.14",
     "react-loadable": "^5.5.0",
     "react-loki": "^1.2.0",
+    "react-masonry-css": "^1.0.16",
     "react-minimal-pie-chart": "^5.0.2",
     "react-nestable": "^1.2.2",
     "react-number-format": "^4.3.1",
