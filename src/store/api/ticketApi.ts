@@ -16,6 +16,15 @@ const TicketApi = api.injectEndpoints({
         return res;
       },
     }),
+     getCasesAll: build.query<any, any>({
+      query: filter => ({
+        url: `/api/v1/case/all?${buildQueryString(filter)}`,
+        method: "GET",
+      }),
+      transformResponse: (res: any) => {
+        return res;
+      },
+    }),
     getAnalysis: build.query<any, any>({
       query: filter => ({
         url: `/api/v1/case/analysis?${buildQueryString(filter)}`,
@@ -131,6 +140,7 @@ const TicketApi = api.injectEndpoints({
 });
 export const {
   useGetCasesQuery,
+  useGetCasesAllQuery,
   useGetAnalysisQuery,
   useGetReportCasesQuery,
   useLazyDetailCaseQuery,

@@ -3,7 +3,7 @@ import { Layout, Modal, Empty } from "antd";
 import { Content } from "antd/es/layout/layout";
 import Masonry from "react-masonry-css";
 import { PageTitleHOC } from "src/components/PageTitleHOC";
-import { useGetCasesQuery } from "src/store/api/ticketApi";
+import { useGetCasesAllQuery } from "src/store/api/ticketApi";
 import { useTranslation } from "react-i18next";
 import "./styles.scss";
 import dayjs from "dayjs";
@@ -14,7 +14,7 @@ const MediaTrending: React.FC = () => {
   const [filter, setFilter] = useState<any>({ page: 1, pageSize: 30 });
 
   const { t } = useTranslation();
-  const { data } = useGetCasesQuery(filter);
+  const { data } = useGetCasesAllQuery(filter);
 
   const mediaItems = data?.data || [];
 
