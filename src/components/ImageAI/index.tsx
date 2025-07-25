@@ -20,6 +20,7 @@ const { TextArea } = Input;
 const FullscreenSplitCard = () => {
   const { t } = useTranslation();
   const [caption, setCaption] = useState("");
+  const [taskId, setTaskId] = useState("");
   const [prompt, setPrompt] = useState("");
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -225,7 +226,8 @@ const FullscreenSplitCard = () => {
       const data = await response.json();
       if (data?.imageUrl) {
         setImageUrl(data.imageUrl);
-        const body = { urlVideo: data.imageUrl, caption: `Generate Image : ${prompt}` };
+        const body = { urlVideo: data.imageUrl, caption: `Generate Image : ${prompt}`,taskId: data?.taskId  ,action: "generate_image" };
+        setTaskId(data?.taskId || "");
         await createCase(body).unwrap();
       } else {
         message.error(t("image.generate_error"));
@@ -274,6 +276,8 @@ const FullscreenSplitCard = () => {
       const body = {
         urlVideo: imageUrl,
         caption: `Generate caption : ${data?.choices?.[0]?.message?.content?.trim().replace(/^"|"$/g, "") || ""}`,
+        taskId: taskId || "",
+        action: "generate_image_caption", 
       };
       await createCase(body).unwrap();
     } catch (error) {

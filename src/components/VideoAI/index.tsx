@@ -294,7 +294,7 @@ const VideoGenerator = () => {
               .slice(0, activeScenes)
               .filter(Boolean)
               .join("\n - ");
-            const body = { urlVideo: url, caption: `Music pairing : ${promptTextsMerge}` };
+            const body = { urlVideo: url, caption: `Music pairing : ${promptTextsMerge}`,taskId: renderId, action: "merge_music" };
             await createCase(body).unwrap();
             setLoading(false);
           }
@@ -526,7 +526,7 @@ const VideoGenerator = () => {
           },
           body: JSON.stringify(payload),
         });
-        const body = { urlVideo: videoSrc, caption };
+        const body = { urlVideo: videoSrc, caption, taskId: "", action: "video_post_facebook" };
         await createCase(body).unwrap();
 
         message.success("Posted to Facebook (via Make.com) successfully!");
@@ -608,7 +608,7 @@ const VideoGenerator = () => {
         const body = {
           urlVideo: mergedUrl,
           caption: `Merge Selected Videos : ${promptTextsMerge}`,
-          renderId: renderId
+          taskId: renderId, action: "merge_video",
         };
         await createCase(body).unwrap();
         setLoading(false);
@@ -690,6 +690,8 @@ const VideoGenerator = () => {
       });
 
       const data = await res.json();
+      console.log(`data`, data);
+      
 
       if (data?.videoUrl) {
         if (videoDuration <= 10) {
@@ -701,7 +703,7 @@ const VideoGenerator = () => {
           return updated;
         });
         message.success(`Recreated video for Scene ${index + 1}`);
-        const body = { urlVideo: data?.videoUrl, caption: promptTexts[index] };
+        const body = { urlVideo: data?.videoUrl, caption: promptTexts[index] , taskId: data?.taskId, action: "generate_video" };
         await createCase(body).unwrap();
       }
       setLoading(false);
@@ -749,7 +751,7 @@ Please contact Admin`);
         setCaption(data.choices[0].message.content.trim().replace(/^"|"$/g, ""));
         const body = {
           urlVideo: videoSrc,
-          caption: `Generate caption : ${data.choices[0].message.content.trim().replace(/^"|"$/g, "")}`,
+          caption: `Generate caption : ${data.choices[0].message.content.trim().replace(/^"|"$/g, "")}`, action: "generate_video_caption", 
         };
         await createCase(body).unwrap();
       } else {

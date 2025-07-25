@@ -151,13 +151,14 @@
  }
 
  .hero-left h1 {
-     font-size: 36px;
-     line-height: 1.4;
-     font-weight: 700;
-     margin: 16px 0;
-     color: white;
-     letter-spacing: 0.5px;
- }
+  font-size: 42px;
+  line-height: 1.4;
+  font-weight: 700;
+  margin: 8px auto;            /* giảm khoảng cách trên dưới + căn giữa ngang */
+  color: white;
+  letter-spacing: 0.5px;
+}
+
 
  .hero-left p {
      color: #b4bcd0;
@@ -178,6 +179,22 @@
      max-width: 540px;
      border-radius: 16px;
      box-shadow: 0 0 40px rgba(0, 191, 255, 0.25);
+ }
+
+ .badge {
+     display: inline-block;
+     padding: 8px 22px;
+     border-radius: 999px;
+     border: 1px solid rgba(255, 255, 255, 0.15);
+     background: rgba(255, 255, 255, 0.05);
+     color: #ffffff;
+     font-size: 12px;
+     letter-spacing: 1px;
+     font-weight: 400;
+     text-transform: uppercase;
+     font-family: 'Inter', sans-serif;
+     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+     margin-bottom: 24px;
  }
 
  /* Customer Segments */

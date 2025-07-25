@@ -82,7 +82,8 @@ const LandingPage: React.FC = () => {
             <div className="container hero">
                 <div className="hero-left">
                     <p className="badge"> WE'VE ANNOUNCED AI+ 2.0. CHECK IT OUT</p>
-                    <h1>Quảng cáo tự động - Hiệu quả tối đa</h1>
+                    <h1>Quảng cáo tự động </h1>
+                    <h1> Hiệu quả tối đa</h1>
                     <h1>Tất cả trong một</h1>
                     <p>Nền tảng giúp bạn tạo hình ảnh, video, viết nội dung, chạy quảng cáo Facebook tự động bằng AI. Không cần kỹ năng thiết kế hay marketing.</p>
 
