@@ -348,7 +348,7 @@ const VideoGenerator = () => {
     setLoadingScript(true);
 
     const promptContent = buildScriptPrompt({
-      scriptPrompt,
+      scriptPrompt:prompt,
       sceneCount,
       durationSceneMap,
     });

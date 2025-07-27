@@ -45,7 +45,6 @@ export const buildScriptPrompt = ({
 . Mỗi cảnh dài khoảng 10 giây, mô tả chi tiết cảnh quay với nhiều hoạt động và chuyển động sống động trong khung hình. Kết quả trả về dưới dạng JSON mảng các chuỗi, mỗi chuỗi là một cảnh.
 
 Yêu cầu:
-- Quảng cáo chỉ tạo cảnh bao quanh sản phẩm thôi.
 - Mỗi cảnh dài khoảng 10 giây, nhưng phải có **nhiều hoạt động và hiệu ứng liên tục, lồng ghép hoặc chuyển tiếp mượt mà**.
 - Mỗi cảnh cần có ít nhất **5 hoạt động hoặc hiệu ứng**, ví dụ:
   + Nguyên liệu rơi, xoay, lăn, va đập
