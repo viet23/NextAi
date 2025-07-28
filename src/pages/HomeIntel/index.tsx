@@ -36,32 +36,49 @@ import Phone from "../../assets/images/phone.png";
 import { PageTitleHOC } from "src/components/PageTitleHOC";
 import { Layout } from "antd";
 import { Content } from "antd/es/layout/layout";
-
+import { useTranslation } from "react-i18next";
 
 
 
 const HomePage: React.FC = () => {
+    const { t } = useTranslation();
     const data = {
         img: Home_5,
-        title: "Tại sao chọn All One Ads",
         content: [
             {
-                heading: "AI dễ dùng – không cần kỹ thuật",
-                description: "Ai cũng dùng được – không cần học quảng cáo",
+                heading: t("whyChoose.features.0.heading"),
+                description: t("whyChoose.features.0.description"),
                 icon: Home_icon_5,
             },
             {
-                heading: "Tạo nội dung siêu nhanh",
-                description: "Không cần designer – AI lo tất cả",
+                heading: t("whyChoose.features.1.heading"),
+                description: t("whyChoose.features.1.description"),
                 icon: Home_icon_3,
             },
             {
-                heading: "Chạy quảng cáo thật",
-                description: "Không chỉ tạo nội dung mà còn thực thi hiệu quả",
+                heading: t("whyChoose.features.2.heading"),
+                description: t("whyChoose.features.2.description"),
                 icon: Home_icon_6,
             },
-        ],
+        ]
     };
+    const testimonials = t("testimonial.list", { returnObjects: true }) as {
+        name: string;
+        username: string;
+        text: string;
+        highlight?: boolean;
+    }[];
+
+    const avatars = [
+        "https://htmediagroup.vn/wp-content/uploads/2022/11/Anh-58-copy-min.jpg.webp",
+        "https://htmediagroup.vn/wp-content/uploads/2024/12/Anh-profile-nam-8-min.jpg.webp",
+        "https://sohanews.sohacdn.com/thumb_w/480/2017/15780713-1193573474058728-4385323881681449622-n-1486883057646.jpg",
+        "https://bizweb.dktcdn.net/100/175/849/files/chup-anh-phong-cach-cho-nam-gioi-trong-studio-nghe-thuat-o-ha-noi-18.jpg?v=1595935877803",
+        "https://danviet.ex-cdn.com/files/f1/296231569849192448/2021/7/29/12-16275551684732026163150.jpg",
+        "https://kenh14cdn.com/thumb_w/660/2017/6-1513528894695.png"
+    ];
+
+
     return (
         <PageTitleHOC title="Chi tiết tài khoản Credits">
             <Layout className="image-layout">
@@ -71,11 +88,12 @@ const HomePage: React.FC = () => {
                         {/* Hero */}
                         <div className="container hero">
                             <div className="hero-left">
-                                <p className="badge"> WE'VE ANNOUNCED AI+ 2.0. CHECK IT OUT</p>
-                                <h1>Quảng cáo tự động </h1>
-                                <h1> Hiệu quả tối đa</h1>
-                                <h1>Tất cả trong một</h1>
-                                <p>Nền tảng giúp bạn tạo hình ảnh, video, viết nội dung, chạy quảng cáo Facebook tự động bằng AI. Không cần kỹ năng thiết kế hay marketing.</p>
+                                <p className="badge"> {t("hero.subtitle")}</p>
+                                <h1>{t("hero.title1")}</h1>
+                                <h1>{t("hero.title2")}</h1>
+                                <h1>{t("hero.title3")}</h1>
+                                <p>{t("hero.description")}</p>
+
 
                                 {/* <Link to="/signin" className="btn-text" style={{ marginRight: "12px" }}>Bắt đầu</Link>
                     <Link to="/signin" className="btn-text-2">Khám phá</Link> */}
@@ -88,7 +106,7 @@ const HomePage: React.FC = () => {
 
                         {/* Customer Segment */}
                         <div className="customer-segment">
-                            <p className="customer-title">Đối tác hoặc khách hàng tiêu biểu</p>
+                            <p className="customer-title">{t('partners.title')}</p>
 
                             <div className="logo-grid">
                                 {[Logo_2, Logo_3, Logo_4, Logo_5, Logo_6, Logo_7].map((logo, index) => (
@@ -122,92 +140,25 @@ const HomePage: React.FC = () => {
                             </p>
 
 
-                            <h2 className="section-title">Mở khoá tính năng phân tích fanpage</h2>
+                            <h2 className="section-title">{t('section.title')}</h2>
                         </div>
 
 
 
-                        {/* Các khối nội dung */}
-                        {[
-                            {
-                                img: Home_1,
-                                title: "Phân tích fanpage và quảng cáo",
-                                content: [
-                                    {
-                                        heading: "Phân tích trang web",
-                                        description: "Dựa trên URL bạn cung cấp",
-                                        icon: Home_icon_1,
-                                    },
-                                    {
-                                        heading: "Phân tích hiệu quả quảng cáo",
-                                        description: "Theo ngành hàng, nội dung, CTA",
-                                        icon: Home_icon_2,
-                                    },
-                                ],
-                            },
-                            {
-                                img: Home_2,
-                                title: "Quảng cáo tự động",
-                                content: [
-                                    {
-                                        heading: "Sử dụng AI phân tích quảng cáo",
-                                        description: "Tối ưu hoá nội dung hiệu quả",
-                                        icon: Home_icon_3,
-                                    },
-                                    {
-                                        heading: "Tự động gửi thông báo",
-                                        description: "Thông báo thông minh dựa trên dữ liệu AI",
-                                        icon: Home_icon_4,
-                                    },
-                                ],
-                            },
-                            {
-                                img: Home_3,
-                                title: "Tạo video AI theo kịch bản",
-                                content: [
-                                    {
-                                        heading: "Ghép nhạc, cảnh quay",
-                                        description: "Tạo video hoàn chỉnh trong vài phút",
-                                        icon: Home_icon_1,
-                                    },
-                                    {
-                                        heading: "Tự động hoàn chỉnh video",
-                                        description: "Không cần kỹ thuật, chỉ cần nội dung",
-                                        icon: Home_icon_2,
-                                    },
-                                ],
-                            },
-                            {
-                                img: Home_4,
-                                title: "AI đánh giá hiệu quả quảng cáo",
-                                content: [
-                                    {
-                                        heading: "Sử dụng AI phân tích quảng cáo",
-                                        description: "Hiệu quả theo hành vi và phản hồi",
-                                        icon: Home_icon_3,
-                                    },
-                                    {
-                                        heading: "Tự động gửi thông báo",
-                                        description: "Đánh giá và nhắc nhở tối ưu thời gian thực",
-                                        icon: Home_icon_4,
-                                    },
-                                ],
-                            },
-
-                        ].map((block, i) => (
+                        {[Home_1, Home_2, Home_3, Home_4].map((img, i) => (
                             <div className="feature-block" key={i}>
-                                <img className="feature-image" src={block.img} alt={block.title} />
+                                <img className="feature-image" src={img} alt={t(`features.${i}.title`)} />
                                 <div className="feature-content">
-                                    <h3>{block.title}</h3>
+                                    <h3>{t(`features.${i}.title`)}</h3>
                                     <div className="feature-items">
-                                        {block.content.map((item: any, j) => (
+                                        {[0, 1].map(j => (
                                             <div className="feature-item" key={j}>
                                                 <div className="icon-wrapper">
-                                                    <img src={item.icon} alt="icon" />
+                                                    <img src={[Home_icon_1, Home_icon_2, Home_icon_3, Home_icon_4][(i * 2 + j) % 4]} alt="icon" />
                                                 </div>
                                                 <div>
-                                                    <div className="item-heading">{item.heading}</div>
-                                                    <div className="item-description">{item.description}</div>
+                                                    <div className="item-heading">{t(`features.${i}.content.${j}.heading`)}</div>
+                                                    <div className="item-description">{t(`features.${i}.content.${j}.description`)}</div>
                                                 </div>
                                             </div>
                                         ))}
@@ -215,6 +166,7 @@ const HomePage: React.FC = () => {
                                 </div>
                             </div>
                         ))}
+
 
                         {/* Tiêu đề căn giữa phía trên */}
                         <div style={{ textAlign: "center", marginBottom: 60 }}>
@@ -227,7 +179,7 @@ const HomePage: React.FC = () => {
                                     color: "#fff",
                                 }}
                             >
-                                {data.title}
+                                {t("whyChoose.title")}
                             </h2>
                             <p
                                 style={{
@@ -238,9 +190,10 @@ const HomePage: React.FC = () => {
                                     margin: "0 auto",
                                 }}
                             >
-                                All One Ads là công cụ hỗ trợ quảng cáo thế hệ mới, ứng dụng trí tuệ nhân tạo để tạo ra hình ảnh, video, nội dung và chiến dịch quảng cáo một cách tự động – giúp tiết kiệm thời gian, chi phí và tăng hiệu quả vượt trội trên nền tảng Facebook.
+                                {t("whyChoose.description")}
                             </p>
                         </div>
+
 
                         <div
                             className="feature-block"
@@ -324,50 +277,7 @@ const HomePage: React.FC = () => {
                                         gap: '20px',
                                     }}
                                 >
-                                    {[
-                                        {
-                                            name: "Anh Tiến ",
-                                            highlight: true,
-                                            username: "Chủ chuỗi lẩu Hotpot Kingdom",
-                                            avatar: "https://htmediagroup.vn/wp-content/uploads/2022/11/Anh-58-copy-min.jpg.webp",
-                                            text: "Tôi không rành công nghệ, nhưng nhờ All One Ads tôi có thể tự tạo video món ăn cực hấp dẫn chỉ với vài cú nhấp. Khách đến quán đông hơn hẳn sau mỗi video đăng!",
-                                        },
-                                        {
-                                            name: "Anh Linh",
-                                            username: "COO BestMall",
-                                            avatar: "https://htmediagroup.vn/wp-content/uploads/2024/12/Anh-profile-nam-8-min.jpg.webp",
-                                            text: "Chúng tôi tích hợp All One Ads vào hệ thống marketing của BestMall. Nhờ đó, đội ngũ tiết kiệm được hàng chục giờ mỗi tuần mà vẫn đảm bảo chất lượng hình ảnh và nội dung vượt chuẩn.",
-                                            highlight: true,
-                                        },
-                                        {
-                                            name: "Chị Huệ",
-                                            username: "Trung tâm tiếng Anh",
-                                            highlight: true,
-                                            avatar: "https://sohanews.sohacdn.com/thumb_w/480/2017/15780713-1193573474058728-4385323881681449622-n-1486883057646.jpg",
-                                            text: "Trước đây tôi phải thuê cả đội media làm video tuyển sinh. Giờ thì chỉ cần nhập nội dung, All One Ads lo hết. Video chuyên nghiệp, phụ đề đẹp, học viên inbox về liên tục!",
-                                        },
-                                        {
-                                            name: "Anh Giang",
-                                            username: "Admin Cộng đồng AI Agent Vietnam",
-                                            highlight: true,
-                                            avatar: "https://bizweb.dktcdn.net/100/175/849/files/chup-anh-phong-cach-cho-nam-gioi-trong-studio-nghe-thuat-o-ha-noi-18.jpg?v=1595935877803",
-                                            text: "All One Ads đúng nghĩa là AI hỗ trợ toàn diện. Chúng tôi dùng để tạo nội dung cho cộng đồng mỗi ngày – từ ảnh, video, caption cho đến chạy quảng cáo – tất cả tự động hóa!",
-                                        },
-                                        {
-                                            name: "Anh Việt",
-                                            username: "Admin Cộng đồng B.A và Những Người Bạn",
-                                            highlight: true,
-                                            avatar: "https://danviet.ex-cdn.com/files/f1/296231569849192448/2021/7/29/12-16275551684732026163150.jpg",
-                                            text: "Chúng tôi dùng All One Ads để quảng bá các sự kiện, khóa học. Chất lượng video AI tạo ra rất ổn, nội dung rõ ràng, tiết kiệm thời gian mà vẫn chuyên nghiệp.",
-                                        },
-                                        {
-                                            name: "Chị Ngọc",
-                                            username: "Product Design, All One Ads",
-                                            highlight: true,
-                                            avatar: "https://kenh14cdn.com/thumb_w/660/2017/6-1513528894695.png",
-                                            text: "Tôi đồng hành từ ngày đầu thiết kế trải nghiệm người dùng cho All One Ads. Giờ chính tôi cũng đang dùng nó mỗi ngày để tạo video mô phỏng và thiết kế nội dung cho khách hàng nhanh gấp 5 lần!”",
-                                        },
-                                    ].map((item, idx) => (
+                                    {testimonials.map((item, idx) => (
                                         <div
                                             key={idx}
                                             style={{
@@ -384,7 +294,7 @@ const HomePage: React.FC = () => {
                                         >
                                             <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
                                                 <img
-                                                    src={item.avatar}
+                                                    src={avatars[idx]}
                                                     alt="avatar"
                                                     style={{ width: 40, height: 40, borderRadius: '50%', marginRight: 12 }}
                                                 />
@@ -401,14 +311,12 @@ const HomePage: React.FC = () => {
                                             <p style={{ margin: 0, fontStyle: 'italic' }}>"{item.text}"</p>
                                         </div>
                                     ))}
+
                                 </div>
+
 
                             </div>
                         </div>
-
-
-
-
 
                         <footer className="footer">
                             <div
@@ -416,11 +324,11 @@ const HomePage: React.FC = () => {
                                 style={{
                                     display: "flex",
                                     flexWrap: "wrap",
-                                    alignItems: "stretch", // Giúp 2 khối cao bằng nhau
+                                    alignItems: "stretch",
                                     gap: 40,
                                 }}
                             >
-                                {/* Bên trái: logo, mô tả, liên hệ, thanh toán */}
+                                {/* Bên trái: logo, mô tả */}
                                 <div
                                     className="footer-left"
                                     style={{
@@ -429,41 +337,21 @@ const HomePage: React.FC = () => {
                                         display: "flex",
                                         flexDirection: "column",
                                         justifyContent: "space-between",
-                                        minHeight: 280, // Ép chiều cao đều
+                                        minHeight: 280,
                                     }}
                                 >
                                     <div>
-                                        <div
-                                            className="footer-brand"
-                                            style={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                gap: 12,
-                                                marginBottom: 12,
-                                            }}
-                                        >
+                                        <div className="footer-brand" style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
                                             <img src={Logo} alt="logo" style={{ width: 202, height: 100 }} />
                                         </div>
 
-                                        <p
-                                            className="footer-description"
-                                            style={{
-                                                color: "#94a3b8",
-                                                fontSize: 14,
-                                                marginBottom: 24,
-                                            }}
-                                        >
-                                            AllOneAds.com là nền tảng quảng cáo tự động bằng AI giúp doanh nghiệp và cá nhân dễ dàng tạo ra các chiến dịch quảng cáo chuyên nghiệp trên nhiều nền tảng chỉ trong vài phút. Với công nghệ AI hiện đại, All One Ads hỗ trợ bạn tạo hình ảnh, video, viết nội dung và thiết lập quảng cáo Facebook một cách nhanh chóng mà không cần kỹ năng thiết kế hay chạy ads chuyên sâu. <br />
-                                            <br />
-                                            Chúng tôi cam kết mang đến giải pháp quảng cáo minh bạch, hiệu quả, tối ưu chi phí và thời gian cho mọi đối tượng khách hàng. Toàn bộ quy trình đều được tối ưu bởi AI, đảm bảo nội dung quảng cáo phù hợp và chất lượng, đồng thời tự động phân tích, đánh giá hiệu quả để tối ưu chiến dịch liên tục. <br />
-                                            <br />
-                                            Đến với All One Ads, bạn hoàn toàn yên tâm trải nghiệm nền tảng tạo quảng cáo tự động thông minh, tối ưu hiệu suất và giúp thương hiệu của bạn nổi bật, tiếp cận đúng khách hàng mục tiêu một cách dễ dàng nhất.
+                                        <p className="footer-description" style={{ color: "#94a3b8", fontSize: 14, marginBottom: 24 }}>
+                                            {t("footer.description")}
                                         </p>
-
                                     </div>
                                 </div>
 
-                                {/* Bên phải: banner BestMall + form email */}
+                                {/* Bên phải: thông tin liên hệ và thanh toán */}
                                 <div
                                     className="footer-right"
                                     style={{
@@ -477,88 +365,76 @@ const HomePage: React.FC = () => {
                                 >
                                     <div>
                                         <br /><br /><br /><br />
-                                        <h4
-                                            style={{
-                                                fontFamily: "Inter, sans-serif",
-                                                fontWeight: 500,
-                                                fontSize: 24,
-                                                lineHeight: "18px",
-                                                letterSpacing: "0",
-                                                verticalAlign: "middle",
-                                                color: "#e2e8f0",
-                                                marginBottom: 12,
-                                            }}
-                                        >
-                                            Về chúng tôi
+                                        <h4 style={{
+                                            fontFamily: "Inter, sans-serif",
+                                            fontWeight: 500,
+                                            fontSize: 24,
+                                            lineHeight: "18px",
+                                            color: "#e2e8f0",
+                                            marginBottom: 12,
+                                        }}>
+                                            {t("footer.about")}
                                         </h4>
 
-                                        <ul
-                                            style={{
-                                                listStyle: "none",
-                                                padding: 0,
-                                                margin: 0,
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                gap: 10,
-                                                width: 673,
-                                                color: "#94a3b8",
-                                                fontSize: 14,
-                                                lineHeight: 1.8,
-                                            }}
-                                        >
+                                        <ul style={{
+                                            listStyle: "none",
+                                            padding: 0,
+                                            margin: 0,
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            gap: 10,
+                                            width: 673,
+                                            color: "#94a3b8",
+                                            fontSize: 14,
+                                            lineHeight: 1.8,
+                                        }}>
                                             <li style={{ display: "flex", alignItems: "center" }}>
-                                                <img src={Frame} alt="Địa chỉ" style={{ width: 18, height: 18, marginRight: 8 }} />
-                                                Số 1 ngõ 75 Hồ Tùng Mậu, Quận Cầu Giấy, Hà Nội
+                                                <img src={Frame} alt="address" style={{ width: 18, height: 18, marginRight: 8 }} />
+                                                {t("footer.address")}
                                             </li>
                                             <li style={{ display: "flex", alignItems: "center" }}>
-                                                <img src={Phone} alt="CSKH" style={{ width: 18, height: 18, marginRight: 8 }} />
-                                                CSKH: 0989 471 727
+                                                <img src={Phone} alt="support" style={{ width: 18, height: 18, marginRight: 8 }} />
+                                                {t("footer.support")}
                                             </li>
                                             <li style={{ display: "flex", alignItems: "center" }}>
-                                                <img src={Phone} alt="Đối tác" style={{ width: 18, height: 18, marginRight: 8 }} />
-                                                Đối tác: 0962 753 455
+                                                <img src={Phone} alt="partner" style={{ width: 18, height: 18, marginRight: 8 }} />
+                                                {t("footer.partner")}
                                             </li>
                                             <li style={{ display: "flex", alignItems: "center" }}>
-                                                <img src={Mail} alt="Email" style={{ width: 18, height: 18, marginRight: 8 }} />
-                                                chamsockhachhang.alloneads@gmail.com
+                                                <img src={Mail} alt="email" style={{ width: 18, height: 18, marginRight: 8 }} />
+                                                {t("footer.email")}
                                             </li>
                                         </ul>
-                                        <h4
-                                            style={{
-                                                fontFamily: "Inter, sans-serif",
-                                                fontWeight: 500,
-                                                fontSize: 24,
-                                                lineHeight: "18px",
-                                                letterSpacing: "0",
-                                                marginTop: 24,
-                                                marginBottom: 12,
-                                                color: "#e2e8f0",
-                                                verticalAlign: "middle",
-                                            }}
-                                        >
-                                            Phương thức thanh toán
+
+                                        <h4 style={{
+                                            fontFamily: "Inter, sans-serif",
+                                            fontWeight: 500,
+                                            fontSize: 24,
+                                            marginTop: 24,
+                                            marginBottom: 12,
+                                            color: "#e2e8f0",
+                                        }}>
+                                            {t("footer.payment")}
                                         </h4>
 
-                                        <div
-                                            style={{
-                                                display: "flex",
-                                                flexWrap: "nowrap",
-                                                gap: 24,
-                                                overflowX: "auto",
-                                                padding: "16px 0",
-                                            }}
-                                        >
-                                            <img src={Frame_696} style={{ width: 50, height: 39, flexShrink: 0 }} />
-                                            <img src={Frame_697} style={{ width: 50, height: 39, flexShrink: 0 }} />
-                                            <img src={image_51} style={{ width: 50, height: 39, flexShrink: 0 }} />
-                                            <img src={Frame_699} style={{ width: 50, height: 39, flexShrink: 0 }} />
-                                            <img src={image_54} style={{ width: 39, height: 39, flexShrink: 0 }} />
+                                        <div style={{
+                                            display: "flex",
+                                            flexWrap: "nowrap",
+                                            gap: 24,
+                                            overflowX: "auto",
+                                            padding: "16px 0",
+                                        }}>
+                                            <img src={Frame_696} style={{ width: 50, height: 39 }} />
+                                            <img src={Frame_697} style={{ width: 50, height: 39 }} />
+                                            <img src={image_51} style={{ width: 50, height: 39 }} />
+                                            <img src={Frame_699} style={{ width: 50, height: 39 }} />
+                                            <img src={image_54} style={{ width: 39, height: 39 }} />
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
                         </footer>
+
 
 
                     </div>

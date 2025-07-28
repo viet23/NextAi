@@ -353,5 +353,134 @@
     "error_empty_website": "Vui lòng nhập liên kết website khi chọn mục tiêu là 'Tăng lượt truy cập website'",
     "error_generic": "Tạo quảng cáo thất bại.",
     "preview": "Xem trước"
+  },
+  "hero": {
+    "subtitle": "Công cụ AI ưu việt cho bạn",
+    "title1": "Quảng cáo tự động",
+    "title2": "Hiệu quả tối đa",
+    "title3": "Tất cả trong một",
+    "description": "Nền tảng giúp bạn tạo hình ảnh, video, viết nội dung, chạy quảng cáo Facebook tự động bằng AI. Không cần kỹ năng thiết kế hay marketing."
+  },
+  "partners": {
+    "title": "Đối tác hoặc khách hàng tiêu biểu"
+  },
+  "section": {
+    "title": "AI quảng cáo tự động, AI tạo ảnh, AI tạo video lên đến 60 giây"
+  },
+  "features": [
+    {
+      "title": "Phân tích fanpage và quảng cáo",
+      "content": [
+        {
+          "heading": "Phân tích fanpage của bạn",
+          "description": "Dựa trên link địa chỉ fanpage"
+        },
+        {
+          "heading": "Phân tích hiệu quả quảng cáo",
+          "description": "Theo ngành hàng, nội dung, CTA"
+        }
+      ]
+    },
+    {
+      "title": "Quảng cáo tự động",
+      "content": [
+        {
+          "heading": "Sử dụng AI phân tích quảng cáo",
+          "description": "Tối ưu hoá nội dung hiệu quả"
+        },
+        {
+          "heading": "Tự động gửi thông báo",
+          "description": "Thông báo thông minh dựa trên dữ liệu AI"
+        }
+      ]
+    },
+    {
+      "title": "Tạo video AI theo kịch bản",
+      "content": [
+        {
+          "heading": "Ghép nhạc, cảnh quay",
+          "description": "Tạo video hoàn chỉnh trong vài phút"
+        },
+        {
+          "heading": "Tự động hoàn chỉnh video",
+          "description": "Không cần kỹ thuật, chỉ cần nội dung"
+        }
+      ]
+    },
+    {
+      "title": "Tạo ảnh quảng cáo sản phẩm",
+      "content": [
+        {
+          "heading": "Sử dụng AI thông minh tạo ảnh",
+          "description": " Hiệu quả theo mô tả của bạn"
+        },
+        {
+          "heading": " Ghép khung hình thông minh",
+          "description": "Sáng tạo giúp sản phẩm cuốn hút"
+        }
+      ]
+    }
+  ],
+  "whyChoose": {
+    "title": "Tại sao chọn All One Ads",
+    "description": "All One Ads là công cụ hỗ trợ quảng cáo thế hệ mới, ứng dụng trí tuệ nhân tạo để tạo ra hình ảnh, video, nội dung và chiến dịch quảng cáo một cách tự động – giúp tiết kiệm thời gian, chi phí và tăng hiệu quả vượt trội trên nền tảng Facebook.",
+    "features": [
+      {
+        "heading": "AI dễ dùng – không cần kỹ thuật",
+        "description": "Ai cũng dùng được – không cần học quảng cáo"
+      },
+      {
+        "heading": "Tạo nội dung siêu nhanh",
+        "description": "Không cần designer – AI lo tất cả"
+      },
+      {
+        "heading": "Chạy quảng cáo thật",
+        "description": "Không chỉ tạo nội dung mà còn thực thi hiệu quả"
+      }
+    ]
+  },
+  "testimonial": {
+    "title": "Đánh giá từ khách hàng",
+    "list": [
+      {
+        "name": "Anh Tiến",
+        "username": "Chủ chuỗi lẩu Hotpot Kingdom",
+        "text": "Tôi không rành công nghệ, nhưng nhờ All One Ads tôi có thể tự tạo video món ăn cực hấp dẫn chỉ với vài cú nhấp. Khách đến quán đông hơn hẳn sau mỗi video đăng!"
+      },
+      {
+        "name": "Anh Linh",
+        "username": "COO BestMall",
+        "text": "Chúng tôi tích hợp All One Ads vào hệ thống marketing của BestMall. Nhờ đó, đội ngũ tiết kiệm được hàng chục giờ mỗi tuần mà vẫn đảm bảo chất lượng hình ảnh và nội dung vượt chuẩn."
+      },
+      {
+        "name": "Chị Huệ",
+        "username": "Trung tâm tiếng Anh",
+        "text": "Trước đây tôi phải thuê cả đội media làm video tuyển sinh. Giờ thì chỉ cần nhập nội dung, All One Ads lo hết. Video chuyên nghiệp, phụ đề đẹp, học viên inbox về liên tục!"
+      },
+      {
+        "name": "Anh Giang",
+        "username": "Admin Cộng đồng AI Agent Vietnam",
+        "text": "All One Ads đúng nghĩa là AI hỗ trợ toàn diện. Chúng tôi dùng để tạo nội dung cho cộng đồng mỗi ngày – từ ảnh, video, caption cho đến chạy quảng cáo – tất cả tự động hóa!"
+      },
+      {
+        "name": "Anh Việt",
+        "username": "Admin Cộng đồng B.A và Những Người Bạn",
+        "text": "Chúng tôi dùng All One Ads để quảng bá các sự kiện, khóa học. Chất lượng video AI tạo ra rất ổn, nội dung rõ ràng, tiết kiệm thời gian mà vẫn chuyên nghiệp."
+      },
+      {
+        "name": "Chị Ngọc",
+        "username": "Product Design, All One Ads",
+        "text": "Tôi đồng hành từ ngày đầu thiết kế trải nghiệm người dùng cho All One Ads. Giờ chính tôi cũng đang dùng nó mỗi ngày để tạo video mô phỏng và thiết kế nội dung cho khách hàng nhanh gấp 5 lần!"
+      }
+    ]
+  },
+  "footer": {
+    "description": "AllOneAds.com là nền tảng quảng cáo tự động bằng AI giúp doanh nghiệp và cá nhân dễ dàng tạo ra các chiến dịch quảng cáo chuyên nghiệp trên nhiều nền tảng chỉ trong vài phút. Với công nghệ AI hiện đại, All One Ads hỗ trợ bạn tạo hình ảnh, video, viết nội dung và thiết lập quảng cáo Facebook một cách nhanh chóng mà không cần kỹ năng thiết kế hay chạy ads chuyên sâu.\n\nChúng tôi cam kết mang đến giải pháp quảng cáo minh bạch, hiệu quả, tối ưu chi phí và thời gian cho mọi đối tượng khách hàng. Toàn bộ quy trình đều được tối ưu bởi AI, đảm bảo nội dung quảng cáo phù hợp và chất lượng, đồng thời tự động phân tích, đánh giá hiệu quả để tối ưu chiến dịch liên tục.\n\nĐến với All One Ads, bạn hoàn toàn yên tâm trải nghiệm nền tảng tạo quảng cáo tự động thông minh, tối ưu hiệu suất và giúp thương hiệu của bạn nổi bật, tiếp cận đúng khách hàng mục tiêu một cách dễ dàng nhất.",
+    "about": "Về chúng tôi",
+    "address": "Số 1 ngõ 75 Hồ Tùng Mậu, Quận Cầu Giấy, Hà Nội",
+    "support": "CSKH: 0989 471 727",
+    "partner": "Đối tác: 0962 753 455",
+    "email": "chamsockhachhang.alloneads@gmail.com",
+    "payment": "Phương thức thanh toán"
   }
 }

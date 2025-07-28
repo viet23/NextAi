@@ -226,7 +226,7 @@ const FullscreenSplitCard = () => {
       const data = await response.json();
       if (data?.imageUrl) {
         setImageUrl(data.imageUrl);
-        const body = { urlVideo: data.imageUrl, caption: `Generate Image : ${prompt}`,taskId: data?.taskId  ,action: "generate_image" };
+        const body = { urlVideo: data.imageUrl, caption: `Generate Image : ${prompt}`, taskId: data?.taskId, action: "generate_image" };
         setTaskId(data?.taskId || "");
         await createCase(body).unwrap();
       } else {
@@ -273,13 +273,16 @@ const FullscreenSplitCard = () => {
 
       const data = await response.json();
       setCaption(data?.choices?.[0]?.message?.content?.trim().replace(/^"|"$/g, "") || "");
-      const body = {
-        urlVideo: imageUrl,
-        caption: `Generate caption : ${data?.choices?.[0]?.message?.content?.trim().replace(/^"|"$/g, "") || ""}`,
-        taskId: taskId || "",
-        action: "generate_image_caption", 
-      };
-      await createCase(body).unwrap();
+      if (imageUrl) {
+        const body = {
+          urlVideo: imageUrl,
+          caption: `Generate caption : ${data?.choices?.[0]?.message?.content?.trim().replace(/^"|"$/g, "") || ""}`,
+          taskId: taskId || "",
+          action: "generate_image_caption",
+        };
+        await createCase(body).unwrap();
+      }
+
     } catch (error) {
       console.error("Caption error:", error);
       message.error("Caption generation error. Your budget may be out. Please contact Admin.");

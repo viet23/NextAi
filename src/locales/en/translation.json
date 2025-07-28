@@ -209,7 +209,7 @@
     }
   },
   "menu": {
-     "home": "Home",
+    "home": "Home",
     "facebook_analysis": "AI Facebook Analysis",
     "image_generation": "AI Image Generation",
     "video_generation": "AI Video Generation",
@@ -341,5 +341,134 @@
     "withFacebook": "Register with Facebook",
     "alreadyHaveAccount": "Already have an account?",
     "loginNow": "Log in"
+  },
+  "hero": {
+    "subtitle": "The ultimate AI tool for you",
+    "title1": "Automated Advertising",
+    "title2": "Maximum Efficiency",
+    "title3": "All-in-One Solution",
+    "description": "A platform that helps you create images, videos, content, and run Facebook ads automatically using AI. No design or marketing skills needed."
+  },
+  "partners": {
+    "title": "Key Partners and Clients"
+  },
+  "section": {
+    "title": "AI automatic advertising, AI image generation, AI video generation up to 60 seconds"
+  },
+  "features": [
+    {
+      "title": "Fanpage and Ads Analysis",
+      "content": [
+        {
+          "heading": "Analyze your fanpage",
+          "description": "Based on fanpage address link"
+        },
+        {
+          "heading": "Ad Effectiveness Analysis",
+          "description": "By industry, content, CTA"
+        }
+      ]
+    },
+    {
+      "title": "Automated Advertising",
+      "content": [
+        {
+          "heading": "AI-Powered Ad Analysis",
+          "description": "Optimize content performance"
+        },
+        {
+          "heading": "Automated Notifications",
+          "description": "Smart alerts based on AI insights"
+        }
+      ]
+    },
+    {
+      "title": "AI Video Creation",
+      "content": [
+        {
+          "heading": "Music and Scene Matching",
+          "description": "Create full video in minutes"
+        },
+        {
+          "heading": "Automatic Video Completion",
+          "description": "No technical skills needed, just content"
+        }
+      ]
+    },
+    {
+      "title": "Create product advertising images",
+      "content": [
+        {
+          "heading": "Using smart AI to create images",
+          "description": "Effective as per your description"
+        },
+        {
+          "heading": "Smart Frame Collage",
+          "description": "Creativity makes products attractive"
+        }
+      ]
+    }
+  ],
+  "whyChoose": {
+    "title": "Why Choose All One Ads",
+    "description": "All One Ads is a next-gen advertising assistant powered by AI, helping you automatically create images, videos, content, and ad campaigns – saving time and cost while delivering outstanding results on Facebook.",
+    "features": [
+      {
+        "heading": "Easy-to-use AI – no tech skills needed",
+        "description": "Anyone can use it – no ad knowledge required"
+      },
+      {
+        "heading": "Ultra-fast content creation",
+        "description": "No designer needed – AI handles it all"
+      },
+      {
+        "heading": "Real advertising execution",
+        "description": "Not just creating content – but actually launching ads effectively"
+      }
+    ]
+  },
+  "testimonial": {
+    "title": "Customer Testimonials",
+    "list": [
+      {
+        "name": "Mr. Tiến",
+        "username": "Owner of Hotpot Kingdom",
+        "text": "I'm not tech-savvy, but thanks to All One Ads, I can create mouth-watering food videos with just a few clicks. More customers come to the restaurant after each video!"
+      },
+      {
+        "name": "Mr. Linh",
+        "username": "COO of BestMall",
+        "text": "We integrated All One Ads into BestMall’s marketing system. It saved our team dozens of hours every week while ensuring top-tier content quality."
+      },
+      {
+        "name": "Ms. Huệ",
+        "username": "English Center Owner",
+        "text": "Previously I had to hire an entire media team for enrollment videos. Now I just input content, and All One Ads does the rest. Professional videos, great subtitles, and inquiries flood in!"
+      },
+      {
+        "name": "Mr. Giang",
+        "username": "Admin of AI Agent Vietnam Community",
+        "text": "All One Ads truly is full-spectrum AI support. We use it daily to create content — from images, videos, captions to running ads — all automated!"
+      },
+      {
+        "name": "Mr. Việt",
+        "username": "Admin of B.A and Friends",
+        "text": "We use All One Ads to promote events and courses. The AI-generated videos are great, content is clear, and it saves a lot of time."
+      },
+      {
+        "name": "Ms. Ngọc",
+        "username": "Product Designer, All One Ads",
+        "text": "I’ve been with All One Ads since the early UX days. Now I personally use it daily to simulate videos and create client content 5x faster!"
+      }
+    ]
+  },
+  "footer": {
+    "description": "AllOneAds.com is an AI-powered advertising platform that helps individuals and businesses easily create professional ad campaigns across multiple platforms in just minutes. With cutting-edge AI technology, All One Ads assists you in generating images, videos, content, and setting up Facebook ads quickly without needing design or advertising skills.\n\nWe are committed to delivering transparent, efficient, and cost-effective advertising solutions. Every process is optimized by AI to ensure quality content and continuous campaign improvement.\n\nWith All One Ads, you can confidently experience an intelligent auto-ad platform that enhances performance and helps your brand reach the right audience with ease.",
+    "about": "About Us",
+    "address": "No. 1, Alley 75, Ho Tung Mau, Cau Giay District, Hanoi",
+    "support": "Customer Support: 0989 471 727",
+    "partner": "Partnership: 0962 753 455",
+    "email": "chamsockhachhang.alloneads@gmail.com",
+    "payment": "Payment Methods"
   }
 }

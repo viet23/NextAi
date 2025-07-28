@@ -33,32 +33,47 @@ import Expanding from "../../assets/images/Expanding.png";
 import Frame from "../../assets/images/Frame.png";
 import Mail from "../../assets/images/mail.png";
 import Phone from "../../assets/images/phone.png";
-
+import { useTranslation } from "react-i18next";
 
 
 
 const LandingPage: React.FC = () => {
+    const { t } = useTranslation();
     const data = {
         img: Home_5,
-        title: "Tại sao chọn All One Ads",
         content: [
             {
-                heading: "AI dễ dùng – không cần kỹ thuật",
-                description: "Ai cũng dùng được – không cần học quảng cáo",
+                heading: t("whyChoose.features.0.heading"),
+                description: t("whyChoose.features.0.description"),
                 icon: Home_icon_5,
             },
             {
-                heading: "Tạo nội dung siêu nhanh",
-                description: "Không cần designer – AI lo tất cả",
+                heading: t("whyChoose.features.1.heading"),
+                description: t("whyChoose.features.1.description"),
                 icon: Home_icon_3,
             },
             {
-                heading: "Chạy quảng cáo thật",
-                description: "Không chỉ tạo nội dung mà còn thực thi hiệu quả",
+                heading: t("whyChoose.features.2.heading"),
+                description: t("whyChoose.features.2.description"),
                 icon: Home_icon_6,
             },
-        ],
+        ]
     };
+    const testimonials = t("testimonial.list", { returnObjects: true }) as {
+        name: string;
+        username: string;
+        text: string;
+        highlight?: boolean;
+    }[];
+
+    const avatars = [
+        "https://htmediagroup.vn/wp-content/uploads/2022/11/Anh-58-copy-min.jpg.webp",
+        "https://htmediagroup.vn/wp-content/uploads/2024/12/Anh-profile-nam-8-min.jpg.webp",
+        "https://sohanews.sohacdn.com/thumb_w/480/2017/15780713-1193573474058728-4385323881681449622-n-1486883057646.jpg",
+        "https://bizweb.dktcdn.net/100/175/849/files/chup-anh-phong-cach-cho-nam-gioi-trong-studio-nghe-thuat-o-ha-noi-18.jpg?v=1595935877803",
+        "https://danviet.ex-cdn.com/files/f1/296231569849192448/2021/7/29/12-16275551684732026163150.jpg",
+        "https://kenh14cdn.com/thumb_w/660/2017/6-1513528894695.png"
+    ];
     return (
         <div className="page">
 
@@ -119,86 +134,20 @@ const LandingPage: React.FC = () => {
 
 
             {/* Các khối nội dung */}
-            {[
-                {
-                    img: Home_1,
-                    title: "Phân tích fanpage và quảng cáo",
-                    content: [
-                        {
-                            heading: "Phân tích trang web",
-                            description: "Dựa trên URL bạn cung cấp",
-                            icon: Home_icon_1,
-                        },
-                        {
-                            heading: "Phân tích hiệu quả quảng cáo",
-                            description: "Theo ngành hàng, nội dung, CTA",
-                            icon: Home_icon_2,
-                        },
-                    ],
-                },
-                {
-                    img: Home_2,
-                    title: "Quảng cáo tự động",
-                    content: [
-                        {
-                            heading: "Sử dụng AI phân tích quảng cáo",
-                            description: "Tối ưu hoá nội dung hiệu quả",
-                            icon: Home_icon_3,
-                        },
-                        {
-                            heading: "Tự động gửi thông báo",
-                            description: "Thông báo thông minh dựa trên dữ liệu AI",
-                            icon: Home_icon_4,
-                        },
-                    ],
-                },
-                {
-                    img: Home_3,
-                    title: "Tạo video AI theo kịch bản",
-                    content: [
-                        {
-                            heading: "Ghép nhạc, cảnh quay",
-                            description: "Tạo video hoàn chỉnh trong vài phút",
-                            icon: Home_icon_1,
-                        },
-                        {
-                            heading: "Tự động hoàn chỉnh video",
-                            description: "Không cần kỹ thuật, chỉ cần nội dung",
-                            icon: Home_icon_2,
-                        },
-                    ],
-                },
-                {
-                    img: Home_4,
-                    title: "AI đánh giá hiệu quả quảng cáo",
-                    content: [
-                        {
-                            heading: "Sử dụng AI phân tích quảng cáo",
-                            description: "Hiệu quả theo hành vi và phản hồi",
-                            icon: Home_icon_3,
-                        },
-                        {
-                            heading: "Tự động gửi thông báo",
-                            description: "Đánh giá và nhắc nhở tối ưu thời gian thực",
-                            icon: Home_icon_4,
-                        },
-                    ],
-                },
-
-            ].map((block, i) => (
+            {[Home_1, Home_2, Home_3, Home_4].map((img, i) => (
                 <div className="feature-block" key={i}>
-                    <img className="feature-image" src={block.img} alt={block.title} />
+                    <img className="feature-image" src={img} alt={t(`features.${i}.title`)} />
                     <div className="feature-content">
-                        <h3>{block.title}</h3>
+                        <h3>{t(`features.${i}.title`)}</h3>
                         <div className="feature-items">
-                            {block.content.map((item: any, j) => (
+                            {[0, 1].map(j => (
                                 <div className="feature-item" key={j}>
                                     <div className="icon-wrapper">
-                                        <img src={item.icon} alt="icon" />
+                                        <img src={[Home_icon_1, Home_icon_2, Home_icon_3, Home_icon_4][(i * 2 + j) % 4]} alt="icon" />
                                     </div>
                                     <div>
-                                        <div className="item-heading">{item.heading}</div>
-                                        <div className="item-description">{item.description}</div>
+                                        <div className="item-heading">{t(`features.${i}.content.${j}.heading`)}</div>
+                                        <div className="item-description">{t(`features.${i}.content.${j}.description`)}</div>
                                     </div>
                                 </div>
                             ))}
@@ -218,7 +167,7 @@ const LandingPage: React.FC = () => {
                         color: "#fff",
                     }}
                 >
-                    {data.title}
+                    {t("whyChoose.title")}
                 </h2>
                 <p
                     style={{
@@ -229,7 +178,7 @@ const LandingPage: React.FC = () => {
                         margin: "0 auto",
                     }}
                 >
-                    All One Ads là công cụ hỗ trợ quảng cáo thế hệ mới, ứng dụng trí tuệ nhân tạo để tạo ra hình ảnh, video, nội dung và chiến dịch quảng cáo một cách tự động – giúp tiết kiệm thời gian, chi phí và tăng hiệu quả vượt trội trên nền tảng Facebook.
+                    {t("whyChoose.description")}
                 </p>
             </div>
 
