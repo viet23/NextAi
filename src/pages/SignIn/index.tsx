@@ -116,7 +116,9 @@ const SignIn = () => {
           <label>
             <input type="checkbox" style={{ marginRight: 4 }} /> {t("signin.remember")}
           </label>
-          <a href="#">{t("signin.forgot")}</a>
+
+          <Link to="/forgot">{t("signin.forgot")}</Link>
+
         </div>
 
         <Button className="signin-btn" onClick={handleLogin} block>

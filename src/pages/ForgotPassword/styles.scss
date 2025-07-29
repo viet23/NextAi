@@ -1,0 +1,123 @@
+.input-dark {
+  background-color: transparent !important;
+  border: 1px solid #334155 !important;
+  color: #ffffff !important;
+  border-radius: 12px !important;
+  padding: 10px 14px;
+  font-size: 14px;
+  height: 44px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.input-dark::placeholder,
+.input-dark input::placeholder,
+.input-dark textarea::placeholder {
+  color: #aaa !important;
+  opacity: 1;
+}
+
+.register-button {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: #ffffff;
+  font-weight: 600;
+  height: 44px;
+  border: 1px solid #3b82f6;
+  border-radius: 12px;
+  box-shadow: 0 0 8px 2px rgba(59, 130, 246, 0.4);
+  transition: all 0.3s ease;
+}
+
+.register-button:hover {
+  background: #1e293b;
+  box-shadow: 0 0 10px 3px rgba(59, 130, 246, 0.8);
+}
+
+.register-page {
+  height: 100vh;
+  width: 100vw;
+  background: radial-gradient(ellipse at bottom, #070719 0%, #000 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10px;
+  padding-bottom: 24px;
+  font-family: 'Inter', sans-serif;
+  color: white;
+}
+
+.register-logo {
+  width: 160px;
+  margin-bottom: 24px;
+}
+
+.register-form-box {
+  width: 80%;
+  max-width: 560px;
+  background-color: #070719;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.6);
+  color: #e5e7eb;
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.signin-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin-bottom: 8px;
+}
+
+.text-subtitle {
+  font-size: 14px;
+  color: #94a3b8 !important;
+}
+
+.register-header h2 {
+  color: #ffffff;
+  margin-bottom: 8px;
+  font-weight: 700;
+  font-size: 28px;
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+}
+
+.register-header p,
+.register-header .ant-typography {
+  color: #9ca3af;
+}
+
+.icon-wrapper {
+  width: auto;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  border-radius: 0;
+  background-color: transparent;
+}
+
+.reset-icon-img {
+  width: 64px !important;
+  height: 64px !important;
+  object-fit: contain;
+  display: block;
+  aspect-ratio: 1 / 1;
+}
+
+.input-button-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+
+
+
+

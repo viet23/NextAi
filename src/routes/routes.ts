@@ -25,6 +25,8 @@ import Dashboard from "src/pages/Dashboard";
 import RegisterForm from "src/pages/Register";
 import RegisterPage from "src/pages/Register";
 import MediaTreanding from "src/pages/MediaTreanding";
+import ForgotPasswordPage from "src/pages/ForgotPassword";
+import ResetPasswordPage from "src/pages/resetPassword";
 const HomeIntel = React.lazy(() => import("src/pages/HomeIntel"));
 const CreditsPage = React.lazy(() => import("src/pages/Credits"));
 const AccountDetailPage = React.lazy(() => import("src/pages/AccountDetail"));
@@ -37,7 +39,7 @@ const ImageAI = React.lazy(() => import("../pages/ImageAI"));
 const Video = React.lazy(() => import("../pages/VideoAI"));
 export const routes = [
   {
-    key: "unauthen",
+    key: "authen",
     layout: AuthenLayout,
     routes: [
       {
@@ -47,12 +49,6 @@ export const routes = [
         isProtect: false,
         component: SignIn,
       },
-    ],
-  },
-  {
-    key: "unauthen",
-    layout: AuthenLayout,
-    routes: [
       {
         path: "/register",
         name: "Register",
@@ -60,8 +56,16 @@ export const routes = [
         isProtect: false,
         component: RegisterPage,
       },
+      {
+        path: "/forgot",
+        name: "Forgot",
+        key: "forgot",
+        isProtect: false,
+        component: ForgotPasswordPage,
+      },
     ],
   },
+
   {
     key: "home",
     layout: HomeLayout,
@@ -118,8 +122,8 @@ export const routes = [
         name: "Customers",
         component: Customers,
       },
-      
-       {
+
+      {
         path: MEDIA_ROUTE,
         isProtect: true,
         key: "mediaList",

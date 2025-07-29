@@ -41,6 +41,11 @@ export const getMenuItems = (t: TFunction): IMenuItem[] => [
     icon: createElement(FacebookOutlined),
   },
   {
+    key: DASHBOARD_ROUTE,
+    label: t("menu.ads_dashboard"),
+    icon: createElement(TicketManageIcon),
+  },
+  {
     key: IMAGE_ROUTE,
     label: t("menu.image_generation"),
     icon: createElement(PictureOutlined),
@@ -55,11 +60,7 @@ export const getMenuItems = (t: TFunction): IMenuItem[] => [
     label: t("menu.media_list"),
     icon: createElement(TicketManageIcon),
   },
-  {
-    key: DASHBOARD_ROUTE,
-    label: t("menu.ads_dashboard"),
-    icon: createElement(TicketManageIcon),
-  },
+
   {
     key: ACCOUNT_ROUTE,
     icon: createElement(DotIcon),

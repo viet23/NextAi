@@ -96,11 +96,11 @@ const LandingPage: React.FC = () => {
             {/* Hero */}
             <div className="container hero">
                 <div className="hero-left">
-                    <p className="badge"> WE'VE ANNOUNCED AI+ 2.0. CHECK IT OUT</p>
-                    <h1>Quảng cáo tự động </h1>
-                    <h1> Hiệu quả tối đa</h1>
-                    <h1>Tất cả trong một</h1>
-                    <p>Nền tảng giúp bạn tạo hình ảnh, video, viết nội dung, chạy quảng cáo Facebook tự động bằng AI. Không cần kỹ năng thiết kế hay marketing.</p>
+                    <p className="badge"> {t("hero.subtitle")}</p>
+                    <h1>{t("hero.title1")}</h1>
+                    <h1>{t("hero.title2")}</h1>
+                    <h1>{t("hero.title3")}</h1>
+                    <p>{t("hero.description")}</p>
 
                     <Link to="/signin" className="btn-text" style={{ marginRight: "12px" }}>Bắt đầu</Link>
                     <Link to="/signin" className="btn-text-2">Khám phá</Link>
@@ -113,7 +113,7 @@ const LandingPage: React.FC = () => {
 
             {/* Customer Segment */}
             <div className="customer-segment">
-                <p className="customer-title">Đối tác hoặc khách hàng tiêu biểu</p>
+                <p className="customer-title">{t('partners.title')}</p>
 
                 <div className="logo-grid">
                     {[Logo_2, Logo_3, Logo_4, Logo_5, Logo_6, Logo_7].map((logo, index) => (

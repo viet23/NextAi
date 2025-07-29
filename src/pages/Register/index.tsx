@@ -116,10 +116,38 @@ const RegisterPage = () => {
               />
             </Form.Item>
           </div>
+          <div className="register-input-group">
+            <Form.Item
+              name="phone"
+              label={<Text style={{ color: "#ffffff" }}>{t("register.phone")}</Text>}
+              style={{ flex: 1, minWidth: 240 }}
+              rules={[
+                { required: true, message: t("register.phoneRequired") },
+              ]}
+            >
+              <Input
+                placeholder={t("register.phonePlaceholder")}
+                className="input-dark"
+              />
+            </Form.Item>
+            <Form.Item
+              name="zalo"
+              label={<Text style={{ color: "#ffffff" }}>{t("register.zalo")}</Text>}
+              style={{ flex: 1, minWidth: 240 }}
+              rules={[
+                { required: true,  message: t("register.zaloRequired") },
+              ]}
+            >
+              <Input
+                placeholder={t("register.zaloPlaceholder")}
+                className="input-dark"
+              />
+            </Form.Item>
+          </div>
 
           <Form.Item
             name="password"
-            label={<Text className="form-label">{t("register.password")}</Text>}
+            label={<Text style={{ color: "#ffffff" }}>{t("register.password")}</Text>}
             rules={[{ required: true, min: 6, message: t("register.passwordRequired") }]}
           >
             <Input

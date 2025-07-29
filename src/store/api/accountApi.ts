@@ -46,6 +46,26 @@ const AccountApi = api.injectEndpoints({
         return res;
       },
     }),
+     forgotPassword: build.mutation<any, any>({
+      query: body => ({
+        url: "/api/v1/users/forgot-password",
+        method: "POST",
+        body,
+      }),
+      transformResponse: (res: any) => {
+        return res;
+      },
+    }),
+     resetUserPassword: build.mutation<any, any>({
+      query: body => ({
+        url: "/api/v1/users/reset-password",
+        method: "POST",
+        body,
+      }),
+      transformResponse: (res: any) => {
+        return res;
+      },
+    }),
   }),
 });
 
@@ -55,5 +75,7 @@ export const {
   useUpdateAccountMutation,
   useUpdateAccountGroupMutation,
   useCreateAccountMutation,
+  useForgotPasswordMutation,
+  useResetUserPasswordMutation,
 } = AccountApi;
 export default AccountApi;

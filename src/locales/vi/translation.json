@@ -192,6 +192,12 @@
     "email": "Địa chỉ Email",
     "emailPlaceholder": "nguyenvana123@email.com",
     "emailRequired": "Vui lòng nhập đúng Email của bạn",
+    "phone": "Số điẹn thoại",
+    "phonePlaceholder": "nhập số điện thoại của bạn",
+    "phoneRequired": "Vui lòng nhập đúng số điện thoại của bạn",
+    "zalo": "Số Zalo",
+    "zaloPlaceholder": "nhập số Zalo của bạn",
+    "zaloRequired": "Vui lòng nhập đúng số Zalo của bạn",
     "password": "Mật khẩu",
     "passwordPlaceholder": "Nhập mật khẩu của bạn",
     "passwordRequired": "Vui lòng nhập mật khẩu từ 6 ký tự",
@@ -257,7 +263,7 @@
     "facebook_analysis": "Phân tích Facebook AI",
     "image_generation": "Tạo ảnh AI",
     "video_generation": "Tạo video AI",
-    "media_list": "Kho video",
+    "media_list": " Kho Media",
     "ads_dashboard": "Quảng cáo AI",
     "accounts": "Tài khoản",
     "user_account": "Tài khoản người dùng",
@@ -482,5 +488,13 @@
     "partner": "Đối tác: 0962 753 455",
     "email": "chamsockhachhang.alloneads@gmail.com",
     "payment": "Phương thức thanh toán"
+  },
+  "forgot": {
+    "title": "Quên mật khẩu",
+    "description": "Vui lòng nhập đúng email, chúng tôi sẽ gửi thông tin qua gmail mail của bạn, vui lòng kiểm tra cả spam",
+    "email": "Email",
+    "emailPlaceholder": "Nhập email của bạn",
+    "emailRequired": "Vui lòng nhập email hợp lệ",
+    "submit": "Gửi"
   }
 }

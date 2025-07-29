@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Layout, Typography, Card, Table, Image, Row, Col, Spin, Drawer } from "antd";
+import { Layout, Typography, Card, Table, Image, Row, Col, Spin, Drawer, Collapse } from "antd";
 import { Column } from "@ant-design/plots";
 import { useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
@@ -9,8 +9,10 @@ import dayjs from "dayjs";
 import DetailAds from "../DetailAds";
 import { useTranslation } from "react-i18next";
 import "./styles.scss";
-import { CloseOutlined } from "@ant-design/icons";
+import { CaretRightOutlined, CloseOutlined } from "@ant-design/icons";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { useGetFacebookadsQuery } from "src/store/api/ticketApi";
+const { Panel } = Collapse;
 
 const { Title } = Typography;
 
@@ -20,6 +22,12 @@ const Dashboard = () => {
   const { data: accountDetailData } = useGetAccountQuery(user?.id || "0", {
     skip: !user?.id,
   });
+  const [filter, setFilter] = useState<any>({ page: 1, pageSize: 3 });
+  // Gọi API ngay khi component render
+  const { data: adsData, isSuccess } = useGetFacebookadsQuery({ filter });
+
+  console.log("adsData", adsData, isSuccess);
+
 
   const [postData, setPostData] = useState<any[]>([]);
   const [barData, setBarData] = useState<{ date: string; quantity: number }[]>([]);
@@ -219,6 +227,8 @@ const Dashboard = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const dataSource = adsData?.data
+
   return (
     <Layout
       className="image-layout"
@@ -254,7 +264,88 @@ const Dashboard = () => {
             </Card>
           </Col>
 
+
           <Col xs={24}>
+            <Collapse
+              className="custom-collapse-content"
+              defaultActiveKey={["1"]}
+              ghost
+              expandIconPosition="start"
+              expandIcon={({ isActive }) => (
+                <CaretRightOutlined
+                  rotate={isActive ? 90 : 0}
+                  style={{ color: "#ffffff" }}
+                />
+              )}
+            >
+              <Panel
+                key="1"
+                header={
+                  <span style={{ color: "#ffffff", fontWeight: 600 }}>
+                    Báo cáo chiến dịch quảng cáo
+                  </span>
+                }
+              >
+                <Table
+                  className="table-scroll dark-header-table"
+                  rowKey="id"
+                  columns={[
+                    {
+                      title: "Ad ID",
+                      dataIndex: "adId",
+                      key: "adId",
+                    },
+                    {
+                      title: "Chiến dịch",
+                      dataIndex: "campaignName",
+                      key: "campaignName",
+                    },
+                    {
+                      title: "Hiển thị",
+                      dataIndex: ["data", "impressions"],
+                      key: "impressions",
+                      align: "right",
+                    },
+                    {
+                      title: "Clicks",
+                      dataIndex: ["data", "clicks"],
+                      key: "clicks",
+                      align: "right",
+                    },
+                    {
+                      title: "Chi phí (VNĐ)",
+                      dataIndex: ["data", "spend"],
+                      key: "spend",
+                      align: "right",
+
+                    },
+                    {
+                      title: "CTR (%)",
+                      dataIndex: ["data", "ctr"],
+                      key: "ctr",
+                      align: "right",
+
+                    },
+                    {
+                      title: "CPM (VNĐ)",
+                      dataIndex: ["data", "cpm"],
+                      key: "cpm",
+                      align: "right",
+                    
+                    },
+                  ]}
+                  dataSource={dataSource}
+                  // dataSource={paymentHistory.map((item, index) => ({ ...item, index: index + 1 }))}
+                  pagination={false}
+                  loading={false}
+                  scroll={{ x: 600, y: 380 }}
+                />
+              </Panel>
+            </Collapse>
+          </Col>
+
+          <Col xs={24}>
+
             <Title level={4} style={{ color: "#fff", marginBottom: 16, fontSize: "1.2rem" }}>
               {t("dashboard.post_list")}
             </Title>

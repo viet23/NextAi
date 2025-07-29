@@ -16,7 +16,7 @@ const TicketApi = api.injectEndpoints({
         return res;
       },
     }),
-     getCasesAll: build.query<any, any>({
+    getCasesAll: build.query<any, any>({
       query: filter => ({
         url: `/api/v1/case/all?${buildQueryString(filter)}`,
         method: "GET",
@@ -34,6 +34,16 @@ const TicketApi = api.injectEndpoints({
         return res;
       },
     }),
+    getFacebookads
+      : build.query<any, any>({
+        query: filter => ({
+          url: `/api/v1/case/facebookads?${buildQueryString(filter)}`,
+          method: "GET",
+        }),
+        transformResponse: (res: any) => {
+          return res;
+        },
+      }),
     getReportCases: build.query<any, any>({
       query: filter => ({
         url: `/api/v1/case/report?${buildQueryString(filter)}`,
@@ -152,5 +162,6 @@ export const {
   useLazyGetCaseStaffQuery,
   useLazyExportCaseExcelQuery,
   useLazyExportReportCaseExcelQuery,
+  useGetFacebookadsQuery
 } = TicketApi;
 export default TicketApi;

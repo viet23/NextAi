@@ -5,11 +5,14 @@ import { routes } from "./routes/routes";
 import PrivateRoute from "./components/PrivateRoute";
 import { useTranslation } from "react-i18next";
 import { ConfigProvider } from "antd";
+import ResetPasswordPage from "./pages/resetPassword";
+
 function App() {
   const { i18n } = useTranslation();
   useEffect(() => {
     i18n.changeLanguage("vi");
   }, []);
+
   return (
     <ConfigProvider
       theme={{
@@ -21,35 +24,29 @@ function App() {
     >
       <Router>
         <Routes>
-          {routes.map(item => {
-            if (!!item) {
-              return (
-                <Route element={<item.layout />} path="/" key={item.key}>
-                  {item.routes.map(i => {
-                    return (
-                      <Route
-                        index={i.path == "/" || false}
-                        element={
-                          i.isProtect ? (
-                            <PrivateRoute>
-                              <i.component />
-                            </PrivateRoute>
-                          ) : (
-                            <>
-                              <i.component />
-                            </>
-                          )
-                        }
-                        path={i.path}
-                        key={i.key}
-                      />
-                    );
-                  })}
-                </Route>
-              );
-            }
-          })}
-          {/* <Route path="*" element={<SignIn />} /> */}
+          {/* ✅ Route ĐẶC BIỆT đặt riêng */}
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+          {/* ✅ Các route còn lại dùng layout */}
+          {routes.map((group) => (
+            <Route key={group.key} element={<group.layout />}>
+              {group.routes.map((route) => (
+                <Route
+                  key={route.key}
+                  path={route.path}
+                  element={
+                    route.isProtect ? (
+                      <PrivateRoute>
+                        <route.component />
+                      </PrivateRoute>
+                    ) : (
+                      <route.component />
+                    )
+                  }
+                />
+              ))}
+            </Route>
+          ))}
         </Routes>
       </Router>
     </ConfigProvider>

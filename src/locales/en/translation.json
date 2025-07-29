@@ -470,5 +470,13 @@
     "partner": "Partnership: 0962 753 455",
     "email": "chamsockhachhang.alloneads@gmail.com",
     "payment": "Payment Methods"
+  },
+  "forgot": {
+    "title": "Forgot Password",
+    "description": "Please enter your email, we’ll send reset instructions. Check your spam too.",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "emailRequired": "Please enter a valid email",
+    "submit": "Send"
   }
 }
