@@ -80,8 +80,8 @@ const MediaTrending: React.FC = () => {
                     )}
                     <div className="media-info">
                       <p className="title">
-                        {(item.caption?.length > 50
-                          ? item.caption.slice(0, 50) + "..."
+                        {(item.caption?.length > 35
+                          ? item.caption.slice(0, 35) + "..."
                           : item.caption) || "(Không có mô tả)"}
                       </p>
 

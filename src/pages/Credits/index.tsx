@@ -98,9 +98,9 @@ const CreditsPage = () => {
             <Row gutter={[24, 16]} justify="space-between" align="middle">
               <Col>
                 <div style={{ fontSize: 32, fontWeight: 600, color: "#fff" }}>
-                  {credits?.toLocaleString("vi-VN")}
+                  {credits?.toLocaleString("vi-VN")} <span style={{ fontSize: 16, marginLeft: 6 }}>credits</span>
                 </div>
-                <div style={{ marginTop: 8 }}>
+                {/* <div style={{ marginTop: 8 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                     <span style={{ color: "#ffffff", fontWeight: 500 }}>
                       {t("credits.auto_payment")}
@@ -113,7 +113,7 @@ const CreditsPage = () => {
                   <span style={{ color: "#94a3b8", fontSize: 13 }}>
                     {t("credits.auto_payment_note")}
                   </span>
-                </div>
+                </div> */}
               </Col>
               <Col>
                 <Button

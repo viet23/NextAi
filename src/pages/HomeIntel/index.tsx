@@ -209,11 +209,11 @@ const HomePage: React.FC = () => {
                             </div>
 
                             {/* Right content */}
-                            <div style={{ flex: 1, minWidth: 250, maxWidth: 300 }}>
+                            <div style={{ flex: 1, minWidth: 250, maxWidth: 500 }}>
 
 
                                 {/* List of features */}
-                                <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+                                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                                     {data.content.map((item, index) => (
                                         <div
                                             key={index}
@@ -267,7 +267,7 @@ const HomePage: React.FC = () => {
                                     ALL ONE ADS
                                 </p>
 
-                                <h2 className="testimonial-heading">Đánh giá từ khách hàng</h2>
+                                <h2 className="testimonial-heading"> {t("testimonial.title")}</h2> 
 
                                 <div
                                     className="testimonial-grid"
