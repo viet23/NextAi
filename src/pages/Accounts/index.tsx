@@ -136,7 +136,11 @@ const AccountsPage = () => {
           );
         },
       },
-
+       {
+        title:"credits",
+        key: "credits",
+        dataIndex: "credits",
+      },
       {
         title: t("accounts.columns.actions"),
         key: "actions",

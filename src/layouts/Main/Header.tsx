@@ -1,8 +1,8 @@
-import { LogoutOutlined } from "@ant-design/icons";
+import { LogoutOutlined, UserOutlined, CreditCardOutlined, GlobalOutlined } from "@ant-design/icons";
 import { Menu, Layout, Avatar, Dropdown, Flex, Drawer, Button } from "antd";
 import { IMenuItem } from "src/routes/menu-item";
 import { useNavigate } from "react-router-dom";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Logo from "src/assets/images/next-logo.jpg";
 import { ReactComponent as NavbarIcon } from "src/assets/images/icon/ic-navbar.svg";
@@ -11,12 +11,9 @@ import { setCurrentUser, setIsLogin, setRefreshToken, setToken } from "src/store
 import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
-import {
-  UserOutlined,
-  CreditCardOutlined,
-  GlobalOutlined,
-} from "@ant-design/icons";
+import axios from "axios"; // ✅ Thêm axios để gọi API
 import { CREDITS_ROUTE } from "src/constants/routes.constants";
+import { useGetAccountQuery } from "src/store/api/accountApi";
 
 const { Header: AntHeader } = Layout;
 
@@ -28,12 +25,20 @@ export const Header = ({ menuItems }: IProps) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state: IRootState) => state.auth || { user: undefined });
+  const { data: accountDetailData } = useGetAccountQuery(user?.id || "0", {
+      skip: !user?.id,
+    });
   const screens = useBreakpoint();
   const isMobile = !screens.md;
-
   const [drawerOpen, setDrawerOpen] = useState(false);
-
   const { t } = useTranslation();
+
+  // ✅ Gọi API lấy user mỗi lần load trang
+ useEffect(() => {
+  if (accountDetailData) {
+    dispatch(setCurrentUser(accountDetailData));
+  }
+}, [accountDetailData, dispatch]);
 
   const handleLogout = useCallback(() => {
     dispatch(setToken(null));
@@ -55,64 +60,46 @@ export const Header = ({ menuItems }: IProps) => {
 
   const currentFlag = i18n.language === "vi" ? "/VN.png" : "/EN.png";
 
-  const userMenuItems = useMemo(
-    () => [
-      {
-        key: "profile",
-        label: (
-          <Flex align="center" gap={8}>
-            <UserOutlined />
-            <span>{t("accounts.profile") || "Thông tin cá nhân"}</span>
-          </Flex>
-        ),
-        // onClick: handleProfileClick,
-      },
-      {
-        key: "credits",
-        label: (
-          <Flex align="center" gap={8}>
-            <CreditCardOutlined />
-            <span>{t("accounts.credits") || "Mua credits"}</span>
-          </Flex>
-        ),
-        onClick: handleBuyCredits,
-      },
-      {
-        key: "language",
-        label: (
-          <Flex
-            align="center"
-            gap={8}
-            onClick={toggleLanguage}
-            style={{ cursor: "pointer" }} // 👈 để toàn khối có tay chuột
-          >
-            <img
-              src={currentFlag}
-              alt="flag"
-              style={{ width: 28, height: 28, borderRadius: "50%" }}
-            />
-            <span>{t("accounts.language") || "Ngôn ngữ"}</span>
-          </Flex>
-
-        ),
-      },
-      {
-        key: "logout",
-        label: (
-          <Flex align="center" gap={8}>
-            <LogoutOutlined />
-            <span>{t("accounts.sign_out") || "Đăng xuất"}</span>
-          </Flex>
-        ),
-        onClick: handleLogout,
-      },
-    ],
-    [t, handleLogout, handleBuyCredits,
-      //  handleProfileClick, , 
-    ]
-  );
-
-
+  const userMenuItems = useMemo(() => [
+    {
+      key: "profile",
+      label: (
+        <Flex align="center" gap={8}>
+          <UserOutlined />
+          <span>{t("accounts.profile") || "Thông tin cá nhân"}</span>
+        </Flex>
+      ),
+    },
+    {
+      key: "credits",
+      label: (
+        <Flex align="center" gap={8}>
+          <CreditCardOutlined />
+          <span>{t("accounts.credits") || "Mua credits"}</span>
+        </Flex>
+      ),
+      onClick: handleBuyCredits,
+    },
+    {
+      key: "language",
+      label: (
+        <Flex align="center" gap={8} onClick={toggleLanguage} style={{ cursor: "pointer" }}>
+          <img src={currentFlag} alt="flag" style={{ width: 28, height: 28, borderRadius: "50%" }} />
+          <span>{t("accounts.language") || "Ngôn ngữ"}</span>
+        </Flex>
+      ),
+    },
+    {
+      key: "logout",
+      label: (
+        <Flex align="center" gap={8}>
+          <LogoutOutlined />
+          <span>{t("accounts.sign_out") || "Đăng xuất"}</span>
+        </Flex>
+      ),
+      onClick: handleLogout,
+    },
+  ], [t, handleLogout, handleBuyCredits]);
 
   return (
     <AntHeader
@@ -126,7 +113,6 @@ export const Header = ({ menuItems }: IProps) => {
         height: 64,
       }}
     >
-      {/* Logo và icon navbar nếu là mobile */}
       <div className="left" style={{ display: "flex", alignItems: "center", gap: 12 }}>
         {isMobile && (
           <NavbarIcon style={{ fontSize: 24, cursor: "pointer" }} onClick={() => setDrawerOpen(true)} />
@@ -134,7 +120,6 @@ export const Header = ({ menuItems }: IProps) => {
         <img src={Logo} alt="logo" style={{ height: 80 }} />
       </div>
 
-      {/* Menu giữa nếu không phải mobile */}
       {!isMobile && (
         <Menu
           theme="dark"
@@ -148,10 +133,9 @@ export const Header = ({ menuItems }: IProps) => {
         />
       )}
 
-      {/* Bên phải: icon cờ + user */}
       <div style={{ display: "flex", alignItems: "center" }}>
         <Button className="credit-button">
-          <span role="img" aria-label="diamond">💎</span> 999 credits
+          {accountDetailData?.credits} <span role="img" aria-label="diamond">💎</span>
         </Button>
 
         <div style={{ marginLeft: 6 }}>
@@ -172,8 +156,6 @@ export const Header = ({ menuItems }: IProps) => {
         </div>
       </div>
 
-
-      {/* Drawer menu cho mobile */}
       <Drawer
         placement="left"
         onClose={() => setDrawerOpen(false)}

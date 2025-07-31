@@ -72,6 +72,7 @@ const AccountApi = api.injectEndpoints({
 export const {
   useGetAccountsQuery,
   useGetAccountQuery,
+  useLazyGetAccountQuery,
   useUpdateAccountMutation,
   useUpdateAccountGroupMutation,
   useCreateAccountMutation,

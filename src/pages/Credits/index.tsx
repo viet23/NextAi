@@ -25,16 +25,19 @@ import { useGetAccountQuery } from "src/store/api/accountApi";
 import { useGetRoleGroupsQuery } from "src/store/api/roleApi";
 import { useTranslation } from "react-i18next";
 import { Collapse } from "antd";
+import { useSelector } from "react-redux";
+import { IRootState } from "src/interfaces/app.interface";
 
 const { Panel } = Collapse;
 
 const CreditsPage = () => {
+  const { user } = useSelector((state: IRootState) => state.auth || { user: undefined });
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
   const [form] = Form.useForm();
   const [userGroups, setUserGroups] = useState<undefined | any[]>([]);
-  const [credits, setCredits] = useState<number>(4000); // Giả lập dữ liệu credits
+
   const [autoPayment, setAutoPayment] = useState<boolean>(false);
   const [paymentHistory, setPaymentHistory] = useState<any[]>([ // Giả lập dữ liệu thanh toán
     { id: 1, date: "Thứ sáu, 11/07/2025", amount: "1.000.000", credits: "2.000" },
@@ -47,6 +50,10 @@ const CreditsPage = () => {
   });
   const { data: roleGroupsData, isFetching: isRoleGroupsFetching } =
     useGetRoleGroupsQuery({});
+
+  const [credits, setCredits] = useState<number>(user?.credits); // Giả lập dữ liệu credits
+
+
 
   useEffect(() => {
     if (roleGroupsData && accountDetailData) {
@@ -98,7 +105,7 @@ const CreditsPage = () => {
             <Row gutter={[24, 16]} justify="space-between" align="middle">
               <Col>
                 <div style={{ fontSize: 32, fontWeight: 600, color: "#fff" }}>
-                  {credits?.toLocaleString("vi-VN")} <span style={{ fontSize: 16, marginLeft: 6 }}>credits</span>
+                  {credits?.toLocaleString("vi-VN")} <span style={{ fontSize: 16, marginLeft: 6 }}>💎</span>
                 </div>
                 {/* <div style={{ marginTop: 8 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>

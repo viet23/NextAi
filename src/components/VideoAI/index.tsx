@@ -32,7 +32,7 @@ import "./styles.scss";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
-import { useGetAccountQuery } from "src/store/api/accountApi";
+import { useGetAccountQuery, useLazyGetAccountQuery } from "src/store/api/accountApi";
 import AutoPostModal from "../AutoPostModal";
 import FullscreenLoader from "../FullscreenLoader";
 import { contentFetchOpportunityScore, contentGenerateCaption } from "src/utils/facebook-utild";
@@ -127,6 +127,7 @@ const VideoGenerator = () => {
   const [suggestion, setSuggestion] = useState<string | null>(null);
   const [resolution, setResolution] = useState("720p");
   const [ratio, setRatio] = useState("16:9");
+   const [getAccount] = useLazyGetAccountQuery();
 
   const [sceneCount, setSceneCount] = useState(30);
   const [productName, setProductName] = useState("");
@@ -665,6 +666,10 @@ const VideoGenerator = () => {
   };
 
   const generateSingleSceneVideo = async (index: any) => {
+   const accountDetail = await getAccount(user?.id || "0").unwrap();
+
+    accountDetail?.credits && accountDetail?.credits < 50 && message.error(t("video.not_enough_credits"));
+
     setLoading(true);
     if (!promptTexts[index] || !uploadedImageUrls[index]) {
       message.warning(`Please enter a description and photo for the Scene ${index + 1}`);
@@ -1139,6 +1144,9 @@ Please contact Admin`);
                           className="image-button image-button-large"
                         >
                           {t("video.generate_video_button")}
+                          <span style={{ marginLeft: 8 }}>
+                            50 <span role="img" aria-label="diamond">💎</span>
+                          </span>
                         </Button>
                       </div>
                     </Col>

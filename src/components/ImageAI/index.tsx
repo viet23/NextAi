@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import "./styles.scss";
 import { ReactComponent as RefetchIcon } from "src/assets/images/icon/ic-refetch.svg";
 import { IRootState } from "src/interfaces/app.interface";
-import { useGetAccountQuery } from "src/store/api/accountApi";
+import { useGetAccountQuery, useLazyGetAccountQuery } from "src/store/api/accountApi";
 import { useCreateCaseMutation, useGetCasesQuery } from "src/store/api/ticketApi";
 import AutoPostModal from "../AutoPostModal";
 import FullscreenLoader from "../FullscreenLoader";
@@ -41,7 +41,7 @@ const FullscreenSplitCard = () => {
   const [scoreLabel, setScoreLabel] = useState<string | null>(null);
   const [suggestion, setSuggestion] = useState<string | null>(null);
   const [showDetailInputs, setShowDetailInputs] = useState(false);
-
+  const [getAccount] = useLazyGetAccountQuery();
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -199,7 +199,9 @@ const FullscreenSplitCard = () => {
 
     console.log(`========moTaDayDu=====`, moTaDayDu);
 
+    const accountDetail = await getAccount(user?.id || "0").unwrap();
 
+    accountDetail?.credits && accountDetail?.credits < 8 && message.error(t("image.not_enough_credits"));
 
 
     setLoadingImage(true);
@@ -527,7 +529,11 @@ const FullscreenSplitCard = () => {
                 className="image-button image-button-large"
               >
                 {t("image.generate_image")}
+                <span style={{ marginLeft: 8 }}>
+                  8 <span role="img" aria-label="diamond">💎</span>
+                </span>
               </Button>
+
             </div>
           </div>
 
