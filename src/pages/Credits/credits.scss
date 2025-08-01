@@ -194,4 +194,50 @@
   }
 }
 
+/* Modal nền tối */
+/* Modal nền tối và chữ trắng */
+.modal-dark .ant-modal-content {
+  background-color: #334155; /* Tông xanh xám tối */
+  color: #ffffff !important; /* Toàn bộ chữ trắng */
+  border-radius: 12px;
+}
+
+/* Tiêu đề modal */
+.modal-title {
+  background-color: #334155 !important; /* Nền đồng bộ */
+  color: #ffffff !important;            /* Chữ trắng sáng */
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+  padding: 12px 0;
+}
+
+/* Label trong Form */
+.ant-form-item-label > label {
+  color: #f1f5f9 !important; /* Gần như trắng sáng */
+  font-weight: 500;
+}
+
+/* Input */
+.input-dark {
+  background-color: #1e293b !important; /* Màu nền input tối nhưng nổi bật hơn */
+  border: 1px solid #475569 !important;
+  color: #ffffff !important;
+}
+
+/* Input disabled */
+.input-dark[disabled] {
+  color: #cbd5e1 !important; /* Màu xám sáng, dễ đọc */
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+}
+
+/* Placeholder cũng phải trắng sáng */
+.input-dark::placeholder {
+  color: #94a3b8 !important;
+}
+
+
+
+
 

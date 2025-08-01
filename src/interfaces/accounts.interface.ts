@@ -20,6 +20,7 @@ export interface IAccount {
   groups: IRoleGroup[];
   isActive: boolean;
   credits: number;
+  zalo?: string;
 }
 
 export interface IAccountFilter {

@@ -12,7 +12,10 @@ import {
   DatePicker,
   Flex,
   Form,
+  Input,
   Layout,
+  message,
+  Modal,
   Row,
   Select,
   Switch,
@@ -27,16 +30,23 @@ import { useTranslation } from "react-i18next";
 import { Collapse } from "antd";
 import { useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
+import { useSendCreditsMutation } from "src/store/api/email";
 
 const { Panel } = Collapse;
+interface FormValues {
+  credits: string;
+  vnd: string;
+}
 
 const CreditsPage = () => {
   const { user } = useSelector((state: IRootState) => state.auth || { user: undefined });
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
-  const [form] = Form.useForm();
+  // const [form] = Form.useForm();
+  const [form] = Form.useForm<FormValues>();
   const [userGroups, setUserGroups] = useState<undefined | any[]>([]);
+  const [sendEmail, { isLoading }] = useSendCreditsMutation();
 
   const [autoPayment, setAutoPayment] = useState<boolean>(false);
   const [paymentHistory, setPaymentHistory] = useState<any[]>([ // Giả lập dữ liệu thanh toán
@@ -44,6 +54,7 @@ const CreditsPage = () => {
     { id: 2, date: "Thứ năm, 10/07/2025", amount: "1.000.000", credits: "2.000" },
   ]);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const { data: accountDetailData } = useGetAccountQuery(params.id || "0", {
     skip: !params.id,
@@ -66,23 +77,42 @@ const CreditsPage = () => {
     }
   }, [roleGroupsData, accountDetailData]);
 
-  useEffect(() => {
-    if (accountDetailData) {
-      form.setFieldsValue({
-        username: accountDetailData?.username,
-        email: accountDetailData?.email,
-        fullName: accountDetailData?.fullName,
-        extension: accountDetailData?.extension,
-        idPage: accountDetailData?.idPage,
-        accessToken: accountDetailData?.accessToken?.trim(),
-        accessTokenUser: accountDetailData?.accessTokenUser?.trim(),
-        accountAdsId: accountDetailData?.accountAdsId?.trim(),
-        isActive: accountDetailData?.isActive,
-      });
-    } else {
-      form.resetFields();
+
+
+  // useEffect(() => {
+  //   if (accountDetailData) {
+  //     form.setFieldsValue({
+  //       username: accountDetailData?.username,
+  //       email: accountDetailData?.email,
+  //       fullName: accountDetailData?.fullName,
+  //       extension: accountDetailData?.extension,
+  //       idPage: accountDetailData?.idPage,
+  //       accessToken: accountDetailData?.accessToken?.trim(),
+  //       accessTokenUser: accountDetailData?.accessTokenUser?.trim(),
+  //       accountAdsId: accountDetailData?.accountAdsId?.trim(),
+  //       isActive: accountDetailData?.isActive,
+  //     });
+  //   } else {
+  //     form.resetFields();
+  //   }
+  // }, [accountDetailData, form]);
+
+
+  const handleBuyCredits = async (values: FormValues) => {
+    try {
+      await sendEmail(values).unwrap();
+
+      console.log("Đã click Mua credits");
+
+      // Ví dụ giả lập:
+      message.success("Giao dịch thành công! Admin sẽ liên hệ thanh toán credits.");
+      setIsModalVisible(false);
+    } catch (err) {
+      console.error("❌ Failed to send form:", err);
+      message.error("Gửi thất bại. Vui lòng thử lại.");
     }
-  }, [accountDetailData, form]);
+  };
+
 
 
 
@@ -126,6 +156,7 @@ const CreditsPage = () => {
                 <Button
                   size="large"
                   className="btn-text"
+                  onClick={() => setIsModalVisible(true)}
                 >
                   {t("credits.buy_more")}
                 </Button>
@@ -133,7 +164,7 @@ const CreditsPage = () => {
             </Row>
           </Card>
 
-          <Card className="accountDetail">
+          {/* <Card className="accountDetail">
             <Collapse
               defaultActiveKey={["1"]}
               ghost
@@ -202,7 +233,44 @@ const CreditsPage = () => {
                 />
               </Panel>
             </Collapse>
-          </Card>
+          </Card> */}
+
+          {/* Modal mua credits */}
+          <Modal
+            title={
+              <div className="modal-title">
+                Mua credits
+              </div>
+            }
+            open={isModalVisible}  // ✅ Dùng 'open' thay vì 'visible' nếu đang dùng Ant Design 5+
+            footer={null}
+            centered
+            onCancel={() => setIsModalVisible(false)}
+            className="modal-dark" // ✅ Thêm class để dễ tùy biến giao diện
+          >
+            <Form layout="vertical" onFinish={handleBuyCredits}>
+              <Form.Item label="Credits" name="credits" initialValue="500">
+                <Input disabled className="input-dark" />
+              </Form.Item>
+
+              <Form.Item label="VNĐ" name="vnd" initialValue="179.000">
+                <Input disabled className="input-dark" />
+              </Form.Item>
+
+              <Form.Item>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="btn-text"
+                  style={{ width: "100%" }}
+                >
+                  Mua ngay
+                </Button>
+              </Form.Item>
+            </Form>
+
+          </Modal>
+
         </div>
       </Layout>
 

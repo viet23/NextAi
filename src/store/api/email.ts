@@ -12,7 +12,17 @@ const EmailApi = api.injectEndpoints({
         return res;
       },
     }),
+     sendCredits: build.mutation<any, any>({
+      query: body => ({
+        url: "/api/v1/email/send-credits",
+        method: "POST",
+        body,
+      }),
+      transformResponse: (res: any) => {
+        return res;
+      },
+    }),
   }),
 });
-export const { useSendEmailMutation } = EmailApi;
+export const { useSendEmailMutation,useSendCreditsMutation } = EmailApi;
 export default EmailApi;

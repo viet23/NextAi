@@ -103,9 +103,12 @@ const AccountDetailPage = () => {
     if (accountDetailData) {
       form.setFieldsValue({
         username: accountDetailData?.username,
+        phone: accountDetailData?.phone,
+        zalo: accountDetailData?.zalo,
         email: accountDetailData?.email,
         fullName: accountDetailData?.fullName,
         extension: accountDetailData?.extension,
+        credits: accountDetailData?.credits,
         idPage: accountDetailData?.idPage,
         accessToken: accountDetailData?.accessToken?.trim(),
         accessTokenUser: accountDetailData?.accessTokenUser?.trim(),
@@ -135,7 +138,10 @@ const AccountDetailPage = () => {
         const updatedData = {
           groupIds: userGroups?.filter((i: any) => i.checked).map(group => group.id),
           email: values.email,
+          phone: values.phone,
+          zalo: values.zalo,
           fullName: values.fullName,
+          credits: values.credits,
           extension: values.extension,
           idPage: values.idPage,
           accessToken: values?.accessToken?.trim(),
@@ -206,6 +212,16 @@ const AccountDetailPage = () => {
                         <Input size="middle" placeholder="Họ và tên" />
                       </Form.Item>
                     </Col>
+                     <Col xl={8}>
+                      <Form.Item
+                        label="Credits"
+                        name="credits"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      >
+                        <Input size="middle" placeholder="credits" />
+                      </Form.Item>
+                    </Col>
                     <Col xl={8}>
                       <Form.Item
                         label="Trạng thái tài khoản"
@@ -237,6 +253,26 @@ const AccountDetailPage = () => {
                             <span style={{ color: "#ffffff" }}>Ngừng hoạt động</span>
                           </Select.Option>
                         </Select>
+                      </Form.Item>
+                    </Col>
+                     <Col xl={8}>
+                      <Form.Item
+                        label="Phone"
+                        name="phone"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      >
+                        <Input size="middle" placeholder="phone" />
+                      </Form.Item>
+                    </Col>
+                     <Col xl={8}>
+                      <Form.Item
+                        label="Zalo"
+                        name="zalo"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      >
+                        <Input size="middle" placeholder="zalo" />
                       </Form.Item>
                     </Col>
                   </Row>
