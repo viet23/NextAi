@@ -173,7 +173,7 @@ const AccountDetailPage = () => {
     <PageTitleHOC title="Chi tiết tài khoản">
       <Layout style={{ minHeight: "100vh", background: "#0f172a" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <h3 style={{ textAlign: "center", color: "#fff", marginBottom: 12 , marginTop: 24 }}>
+          <h3 style={{ textAlign: "center", color: "#fff", marginBottom: 12, marginTop: 24 }}>
             {t("accounts.user_detail")}
           </h3>
           {/* Panel 1 */}
@@ -212,7 +212,7 @@ const AccountDetailPage = () => {
                         <Input size="middle" placeholder="Họ và tên" />
                       </Form.Item>
                     </Col>
-                     <Col xl={8}>
+                    <Col xl={8}>
                       <Form.Item
                         label="Credits"
                         name="credits"
@@ -255,7 +255,7 @@ const AccountDetailPage = () => {
                         </Select>
                       </Form.Item>
                     </Col>
-                     <Col xl={8}>
+                    <Col xl={8}>
                       <Form.Item
                         label="Phone"
                         name="phone"
@@ -265,7 +265,7 @@ const AccountDetailPage = () => {
                         <Input size="middle" placeholder="phone" />
                       </Form.Item>
                     </Col>
-                     <Col xl={8}>
+                    <Col xl={8}>
                       <Form.Item
                         label="Zalo"
                         name="zalo"
@@ -302,7 +302,7 @@ const AccountDetailPage = () => {
                         name="idPage"
                         labelCol={{ span: 24 }}
                         wrapperCol={{ span: 24 }}
-                        rules={[{ required: true, message: "Vui lòng nhập Id page" }]}
+                        // rules={[{ required: true, message: "Vui lòng nhập Id page" }]}
                       >
                         <Input size="middle" placeholder="Id page" />
                       </Form.Item>
@@ -315,7 +315,7 @@ const AccountDetailPage = () => {
                         name="extension"
                         labelCol={{ span: 24 }}
                         wrapperCol={{ span: 24 }}
-                        rules={[{ required: true, message: "Vui lòng nhập link đăng bài" }]}
+                      // rules={[{ required: true, message: "Vui lòng nhập link đăng bài" }]}
                       >
                         <Input
                           style={{ width: "100%", fontSize: 16 }}
@@ -332,7 +332,7 @@ const AccountDetailPage = () => {
                         name="accessToken"
                         labelCol={{ span: 24 }}
                         wrapperCol={{ span: 24 }}
-                        rules={[{ required: true, message: "Vui lòng nhập Access Token" }]}
+                      // rules={[{ required: true, message: "Vui lòng nhập Access Token" }]}
                       >
                         <Input
                           size="middle"
@@ -349,7 +349,7 @@ const AccountDetailPage = () => {
                         name="accountAdsId"
                         labelCol={{ span: 24 }}
                         wrapperCol={{ span: 24 }}
-                        rules={[{ required: true, message: "Vui lòng nhập Account Ads Id" }]}
+                      // rules={[{ required: true, message: "Vui lòng nhập Account Ads Id" }]}
                       >
                         <Input
                           size="middle"
@@ -366,7 +366,7 @@ const AccountDetailPage = () => {
                         name="accessTokenUser"
                         labelCol={{ span: 24 }}
                         wrapperCol={{ span: 24 }}
-                        rules={[{ required: true, message: "Vui lòng nhập Access Token User" }]}
+                      // rules={[{ required: true, message: "Vui lòng nhập Access Token User" }]}
                       >
                         <Input
                           size="middle"
@@ -383,19 +383,23 @@ const AccountDetailPage = () => {
 
           {/* Panel 3 */}
           <Card className="accountDetail">
-            <Collapse defaultActiveKey={["3"]} ghost expandIconPosition="start"
+            <Collapse
+              defaultActiveKey={["3"]}
+              ghost
+              expandIconPosition="start"
               expandIcon={({ isActive }) => (
                 <CaretRightOutlined
                   rotate={isActive ? 90 : 0}
-                  style={{ color: "#ffffff" }} // 👈 Đặt màu trắng tại đây
+                  className="collapse-icon"
                 />
-              )}>
+              )}
+            >
               <Panel
                 key="3"
-                header={<span style={{ color: "#ffffff", fontWeight: 600 }}>Phân quyền người dùng</span>}
+                header={<span className="panel-header">Phân quyền người dùng</span>}
               >
                 <Flex className="w-full" align="center" justify="space-between">
-                  <Typography.Title className="mb-0" level={5} style={{ color: "#ffffff" }}>
+                  <Typography.Title className="mb-0 section-title" level={5}>
                     Danh sách quyền (Chọn nhóm quyền)
                   </Typography.Title>
                   <Typography.Link strong underline className="link">
@@ -411,7 +415,7 @@ const AccountDetailPage = () => {
                   pagination={false}
                   loading={isRoleGroupsFetching}
                   locale={{
-                    emptyText: <Empty description="Vui lòng chọn nhóm quyền"></Empty>,
+                    emptyText: <Empty description="Vui lòng chọn nhóm quyền" />,
                   }}
                   scroll={{ x: 600, y: 380 }}
                 />
@@ -424,6 +428,7 @@ const AccountDetailPage = () => {
               </Panel>
             </Collapse>
           </Card>
+
         </div>
       </Layout>
     </PageTitleHOC>

@@ -1,8 +1,8 @@
 .accountDetail {
-  background-color: #0f172a; /* nền tối xanh đen */
+  background-color: #0f172a;
   color: #e2e8f0;
   border-radius: 6px;
-  padding: 6px; /* giảm khoảng cách viền trong */
+  padding: 6px;
   margin: 16px 0;
 
   span,
@@ -12,7 +12,7 @@
   }
 
   .ant-form-item {
-    margin-bottom: 12px; /* giảm khoảng cách giữa các input */
+    margin-bottom: 12px;
   }
 
   .ant-input,
@@ -22,8 +22,10 @@
     border: 1px solid #334155;
   }
 
-  .ant-input::placeholder {
+  .ant-input::placeholder,
+  .ant-select-selection-placeholder {
     color: #94a3b8 !important;
+    opacity: 1 !important;
   }
 
   .ant-form-item-label > label {
@@ -64,6 +66,11 @@
       background-color: #1e293b;
       color: #e2e8f0;
     }
+
+    // ✅ Bổ sung xử lý hover
+    .ant-table-tbody > tr:hover > td {
+      background-color: #334155 !important;
+    }
   }
 
   .ant-empty-description {
@@ -77,20 +84,39 @@
   .link:hover {
     color: #3b82f6 !important;
   }
+
+  .btn-text {
+    background: none;
+    border: 1px solid #00bfff;
+    color: #c5cbd8;
+    font-weight: 500;
+    font-size: 14px;
+    border-radius: 6px;
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-text:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+    border-color: #00bfff;
+    color: white;
+  }
+
+  // Collapse icon màu trắng
+  .ant-collapse .ant-collapse-expand-icon {
+    color: #ffffff !important;
+  }
+
+  // Collapse header custom (nếu bạn dùng class .panel-header)
+  .panel-header {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 16px;
+  }
 }
 
-/* Màu placeholder trong Select */
-.ant-select-selection-placeholder {
-  color: #ffffff !important;
-  opacity: 1 !important;
-}
-
-/* Đổi màu icon mũi tên trong Collapse */
-.ant-collapse .ant-collapse-expand-icon {
-  color: #ffffff !important;
-}
-
-/* Bảng header tối */
+// Bảng header dark
 .dark-header-table .ant-table-thead > tr > th {
   background-color: #1e293b !important;
   color: #e2e8f0 !important;
@@ -105,27 +131,12 @@
   color: #e2e8f0 !important;
 }
 
-/* Nút CTA */
-.btn-text {
-  background: none;
-  border: 1px solid #5a6789;
-  color: #c5cbd8;
-  font-weight: 500;
-  font-size: 14px;
-  border-radius: 6px;
-  padding: 10px 24px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border-color: #00bfff;
+// Hover cho bảng dòng (bổ sung ngoài media query)
+.dark-header-table .ant-table-tbody > tr:hover > td {
+  background-color: #334155 !important;
 }
 
-.btn-text:hover {
-  background-color: rgba(255, 255, 255, 0.06);
-  border-color: #00bfff;
-  color: white;
-}
-
-/* Responsive cho mobile */
+// Responsive
 @media (max-width: 768px) {
   .accountDetail {
     padding: 8px;
@@ -161,4 +172,3 @@
     font-size: 14px;
   }
 }
-
