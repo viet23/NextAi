@@ -72,8 +72,8 @@
     "label_desc": "Product/Service Description",
     "label_effect": "Visual Effect",
     "label_object": "Surrounding Objects",
-    "placeholder_name": "E.g.: A long-haired girl",
-    "placeholder_desc": "E.g.: In a vintage coffee shop",
+    "placeholder_name": "Ex: Shampoo/hotpot",
+    "placeholder_desc": "Ex: Natural shampoo, made from soapberry, orange, peach and lychee",
     "placeholder_effect": "E.g.: Soft afternoon sunlight",
     "placeholder_object": "E.g.: Sitting by the window"
   },
