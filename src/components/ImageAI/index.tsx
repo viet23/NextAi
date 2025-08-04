@@ -390,39 +390,11 @@ const FullscreenSplitCard = () => {
 
   const [isMobile, setIsMobile] = useState(false);
 
-  const callChatGPT = useCallback(async (idPage: string) => {
-    try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "gpt-4",
-          messages: [
-            {
-              role: "user",
-              content: `cho tôi phong cách hình ảnh (bỏ phong cách chữ) + tông màu chủ đạo : ${idPage}`
-            },
-          ],
-          temperature: 0.9,
-          max_tokens: 1000,
-        }),
-      });
-
-      const data = await response.json();
-      setPageAi(data?.choices?.[0]?.message?.content?.trim() || "");
-    } catch (err) {
-      console.error("Translation error:", err);
-    }
-  }, []);
-
 
  useEffect(() => {
   // 1. Gọi ChatGPT nếu có URL
-  if (analysisData?.urlPage) {
-    callChatGPT(analysisData.urlPage);
+  if (analysisData?.styleImage) {
+   setPageAi(analysisData?.styleImage);
   }
 
   // 2. Kiểm tra mobile và gắn listener
@@ -436,7 +408,7 @@ const FullscreenSplitCard = () => {
   return () => {
     window.removeEventListener("resize", checkMobile);
   };
-}, [analysisData?.urlPage, callChatGPT]);
+}, [analysisData?.urlPage]);
 
 console.log(`========pageAI`, pageAI);
 

@@ -828,57 +828,30 @@ Please contact Admin`);
     setIsOpen(false);
   };
 
-  const callChatGPT = useCallback(async (idPage: string) => {
-    try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "gpt-4",
-          messages: [
-            {
-              role: "user",
-              content: `cho tôi phong cách hình ảnh (bỏ phong cách chữ) + tông màu chủ đạo : ${idPage}`
-            },
-          ],
-          temperature: 0.9,
-          max_tokens: 1000,
-        }),
-      });
-
-      const data = await response.json();
-      setPageAi(data?.choices?.[0]?.message?.content?.trim() || "");
-    } catch (err) {
-      console.error("Translation error:", err);
-    }
-  }, []);
 
   const [isMobile, setIsMobile] = useState(false);
 
 
   useEffect(() => {
-  // Gọi ChatGPT nếu có urlPage
-  if (analysisData?.urlPage) {
-    callChatGPT(analysisData.urlPage);
-  }
+    // Gọi ChatGPT nếu có urlPage
+    if (analysisData?.styleImage) {
+      setPageAi(analysisData?.styleImage);
+    }
 
-  // Xử lý responsive: cập nhật isMobile theo width
-  const checkMobile = () => {
-    setIsMobile(window.innerWidth <= 768);
-  };
+    // Xử lý responsive: cập nhật isMobile theo width
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
 
-  checkMobile(); // gọi lần đầu khi mount
-  window.addEventListener("resize", checkMobile);
+    checkMobile(); // gọi lần đầu khi mount
+    window.addEventListener("resize", checkMobile);
 
-  return () => {
-    window.removeEventListener("resize", checkMobile);
-  };
-}, [analysisData?.urlPage, callChatGPT]);
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
+  }, [analysisData?.urlPage]);
 
-console.log(`========pageAI`, pageAI);
+  console.log(`========pageAI`, pageAI);
 
   return (
     <>
@@ -1004,8 +977,8 @@ console.log(`========pageAI`, pageAI);
                       style={inputStyle}
                     />
                   </Col>
-                 <Col span={24}>
-                  <label style={{ display: "block", marginBottom: 4 }}>
+                  <Col span={24}>
+                    <label style={{ display: "block", marginBottom: 4 }}>
                       {t("video.AIbel")}
                     </label>
                     <TextArea

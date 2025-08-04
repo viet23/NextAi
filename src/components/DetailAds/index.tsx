@@ -144,75 +144,15 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
 
 
 
-  const callChatGPT = useCallback(async (urlPage: string) => {
-    try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "gpt-4",
-          messages: [
-            {
-              role: "system",
-              content: `Bạn là chuyên gia chạy quảng cáo Facebook.`,
-            },
-            {
-              role: "user",
-              content: `
-Phân tích Fanpage sau: ${urlPage}
-Dựa trên nội dung và hình ảnh, hãy chọn ra các mục tiêu phù hợp nhất từ danh sách sau:
-
-- Nhân khẩu học: ["Học vấn", "Công việc", "Mối quan hệ", "Phụ huynh", "Sự kiện trong đời"]
-- Sở thích: ["Thời trang", "Công nghệ", "Ẩm thực", "Thể thao", "Sức khỏe", "Du lịch"]
-- Hành vi: ["Mua hàng online", "Dùng thiết bị iOS", "Người hay di chuyển"]
-
-Trả về JSON như sau:
-
-{
-  "Nhân khẩu học": [...],
-  "Sở thích": [...],
-  "Hành vi": [...]
-}
-            `.trim(),
-            },
-          ],
-          temperature: 0.7,
-          max_tokens: 1000,
-        }),
-      });
-
-      const data = await response.json();
-      const raw = data?.choices?.[0]?.message?.content?.trim() || "";
-
-      try {
-        const parsed = JSON.parse(raw);
-        const combined = [
-          ...(parsed["Nhân khẩu học"] || []),
-          ...(parsed["Sở thích"] || []),
-          ...(parsed["Hành vi"] || []),
-        ];
-        console.log("Parsed Interests:", combined);
-        
-        setInterests(combined); // ✅ Gán lại interests sau khi hỏi xong
-      } catch (e) {
-        console.error("Không thể parse JSON từ ChatGPT:", e);
-      }
-    } catch (err) {
-      console.error("ChatGPT API error:", err);
-    }
-  }, []);
-
+ 
 
   useEffect(() => {
     // Gọi ChatGPT nếu có urlPage
-    if (analysisData?.urlPage) {
-      callChatGPT(analysisData.urlPage);
-    }
+  if (analysisData?.targeting) {
+   setInterests(analysisData?.targeting);
+  }
 
-  }, [analysisData?.urlPage, callChatGPT]);
+  }, [analysisData?.targeting]);
 
 
 
@@ -311,7 +251,7 @@ Trả về JSON như sau:
             <label style={{ color: "#e2e8f0" }}>{t("ads.audience")}</label>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ color: "#e2e8f0" }}>👥 {t("ads.ai_targeting")}</span>
-              <Switch checked={aiTargeting} onChange={setAiTargeting} />
+              {/* <Switch checked={aiTargeting} onChange={setAiTargeting} /> */}
             </div>
           </div>
 

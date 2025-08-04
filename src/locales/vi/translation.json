@@ -19,13 +19,13 @@
     "subtitle": "Khám phá trang Facebook của bạn",
     "connect_page": "Kết nối page để xem thông tin",
     "views": "Lượt xem",
-    "follow_rate": "Tỉ lệ người theo dõi",
     "age_gender": "Tuổi và giới tính",
     "male": "Nam",
     "female": "Nữ",
     "city": "Thành phố",
-    "follow": "Theo dõi",
-    "unfollow": "Không theo dõi"
+    "follow_rate": "Lượng tương tác page",
+    "follow": "Đến từ người theo dõi",
+    "unfollow": "Đến từ người chưa theo dõi"
   },
   "dashboard": {
     "title": "Quảng cáo AI",
