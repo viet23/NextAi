@@ -168,3 +168,43 @@
 .input-dark textarea::placeholder {
   color: #aaa !important;
 }
+
+.password-input-dark.ant-input-affix-wrapper {
+  background-color: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  color: #e2e8f0;
+  padding: 6px 11px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.password-input-dark.ant-input-affix-wrapper-focused {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.password-input-dark .ant-input {
+  background-color: transparent;
+  color: #e2e8f0;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding-right: 32px;
+}
+
+.password-input-dark .ant-input::placeholder {
+  color: #e2e8f0;
+  opacity: 1;
+}
+
+.password-input-dark .ant-input-suffix {
+  padding-left: 8px;
+  color: #94a3b8;
+  border-left: none !important;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-dark .ant-input-suffix:hover {
+  color: #3b82f6;
+}

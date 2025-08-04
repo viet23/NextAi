@@ -115,6 +115,78 @@
   color: #777;
 }
 
+/* ✅ Giữ nguyên label */
+.signin-input-group {
+  text-align: left;
+  margin-bottom: 12px;
+}
+
+.signin-input-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #bbb;
+  margin-bottom: 6px;
+}
+
+/* ✅ Phần forgot password */
+.signin-forgot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  margin-bottom: 16px;
+  color: #777;
+}
+
+/* ✅ Input có viền ngoài, nền đồng bộ */
+.signin-input.ant-input-affix-wrapper {
+  background-color: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  color: #e2e8f0;
+  padding: 6px 11px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* ✅ Viền khi focus */
+.signin-input.ant-input-affix-wrapper-focused {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+/* ✅ Phần nhập nội dung */
+.signin-input .ant-input {
+  background-color: transparent;
+  color: #e2e8f0;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding-right: 32px;
+}
+
+/* ✅ Placeholder màu xám trắng */
+.signin-input .ant-input::placeholder {
+  color: #e2e8f0;
+  opacity: 1;
+}
+
+/* ✅ Icon con mắt */
+.signin-input .ant-input-suffix {
+  padding-left: 8px;
+  color: #94a3b8;
+  border-left: none !important;
+  display: flex;
+  align-items: center;
+}
+
+/* ✅ Hover icon sáng nhẹ */
+.signin-input .ant-input-suffix:hover {
+  color: #3b82f6;
+}
+
+
+
 .signin-forgot a {
   color: #5c9eff;
 }

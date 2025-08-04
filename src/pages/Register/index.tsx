@@ -153,7 +153,7 @@ const RegisterPage = () => {
             <Input
               type={showPassword ? "text" : "password"}
               placeholder={t("register.passwordPlaceholder")}
-              className="input-dark"
+              className="password-input-dark"
               autoComplete="off"
               suffix={
                 showPassword ? (
