@@ -1,0 +1,164 @@
+.accountDetail {
+  background-color: #0f172a; /* nền tối xanh đen */
+  color: #e2e8f0;
+  border-radius: 6px;
+  padding: 6px; /* giảm khoảng cách viền trong */
+  margin: 16px 0;
+
+  span,
+  label,
+  .ant-typography {
+    color: #e2e8f0;
+  }
+
+  .ant-form-item {
+    margin-bottom: 12px; /* giảm khoảng cách giữa các input */
+  }
+
+  .ant-input,
+  .ant-select-selector {
+    background-color: #1e293b !important;
+    color: #e2e8f0 !important;
+    border: 1px solid #334155;
+  }
+
+  .ant-input::placeholder {
+    color: #94a3b8 !important;
+  }
+
+  .ant-form-item-label > label {
+    color: #e2e8f0;
+  }
+
+  .ant-btn-primary {
+    background-color: #2563eb;
+    border-color: #2563eb;
+  }
+
+  .ant-btn-primary:hover {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+  }
+
+  .ant-btn-dangerous {
+    background-color: #dc2626;
+    border-color: #dc2626;
+  }
+
+  .ant-btn-dangerous:hover {
+    background-color: #b91c1c;
+    border-color: #b91c1c;
+  }
+
+  .table-scroll,
+  .table {
+    background-color: #1e293b;
+    color: #e2e8f0;
+
+    .ant-table-thead > tr > th {
+      background-color: #334155;
+      color: #f8fafc;
+    }
+
+    .ant-table-tbody > tr > td {
+      background-color: #1e293b;
+      color: #e2e8f0;
+    }
+  }
+
+  .ant-empty-description {
+    color: #94a3b8;
+  }
+
+  .link {
+    color: #60a5fa !important;
+  }
+
+  .link:hover {
+    color: #3b82f6 !important;
+  }
+}
+
+/* Màu placeholder trong Select */
+.ant-select-selection-placeholder {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+/* Đổi màu icon mũi tên trong Collapse */
+.ant-collapse .ant-collapse-expand-icon {
+  color: #ffffff !important;
+}
+
+/* Bảng header tối */
+.dark-header-table .ant-table-thead > tr > th {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 13px;
+  transition: none !important;
+}
+
+.dark-header-table .ant-table-thead > tr > th:hover {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+}
+
+/* Nút CTA */
+.btn-text {
+  background: none;
+  border: 1px solid #5a6789;
+  color: #c5cbd8;
+  font-weight: 500;
+  font-size: 14px;
+  border-radius: 6px;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-color: #00bfff;
+}
+
+.btn-text:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: #00bfff;
+  color: white;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+  .accountDetail {
+    padding: 8px;
+    margin: 12px 0;
+  }
+
+  .accountDetail .ant-form-item-label > label {
+    font-size: 13px;
+  }
+
+  .accountDetail .ant-input,
+  .accountDetail .ant-select-selector {
+    font-size: 14px;
+    height: 36px !important;
+  }
+
+  .accountDetail .ant-btn,
+  .accountDetail .btn-text {
+    width: 100%;
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .accountDetail .ant-table {
+    font-size: 13px;
+  }
+
+  .accountDetail .table-scroll {
+    overflow-x: auto;
+  }
+
+  .accountDetail .ant-typography {
+    font-size: 14px;
+  }
+}
+

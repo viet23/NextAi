@@ -18,7 +18,8 @@ import {
   VIDEO_ROUTE,
   DASHBOARD_ROUTE,
   CREDITS_ROUTE,
-  HOME_INTEL_ROUTE
+  HOME_INTEL_ROUTE,
+  ACCOUNT_DETAIL_USER_ROUTE
 } from "src/constants/routes.constants";
 import MediaList from "src/pages/MediaList";
 import Dashboard from "src/pages/Dashboard";
@@ -30,6 +31,8 @@ import ResetPasswordPage from "src/pages/resetPassword";
 const HomeIntel = React.lazy(() => import("src/pages/HomeIntel"));
 const CreditsPage = React.lazy(() => import("src/pages/Credits"));
 const AccountDetailPage = React.lazy(() => import("src/pages/AccountDetail"));
+const AccountDetailUserPage = React.lazy(() => import("src/pages/AccountDetailUser"));
+
 const AccountsPage = React.lazy(() => import("src/pages/Accounts"));
 const AuthorizationsPage = React.lazy(() => import("src/pages/Authorizations"));
 const RoleGroupCreatePage = React.lazy(() => import("src/pages/RoleGroupCreate"));
@@ -164,6 +167,13 @@ export const routes = [
         key: "accountDetail",
         name: "accountDetail",
         component: AccountDetailPage,
+      },
+       {
+        path: ACCOUNT_DETAIL_USER_ROUTE,
+        isProtect: true,
+        key: "accountDetail",
+        name: "accountDetail",
+        component: AccountDetailUserPage,
       },
       {
         path: CREDITS_ROUTE,

@@ -26,19 +26,19 @@ export const Header = ({ menuItems }: IProps) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state: IRootState) => state.auth || { user: undefined });
   const { data: accountDetailData } = useGetAccountQuery(user?.id || "0", {
-      skip: !user?.id,
-    });
+    skip: !user?.id,
+  });
   const screens = useBreakpoint();
   const isMobile = !screens.md;
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { t } = useTranslation();
 
   // ✅ Gọi API lấy user mỗi lần load trang
- useEffect(() => {
-  if (accountDetailData) {
-    dispatch(setCurrentUser(accountDetailData));
-  }
-}, [accountDetailData, dispatch]);
+  useEffect(() => {
+    if (accountDetailData) {
+      dispatch(setCurrentUser(accountDetailData));
+    }
+  }, [accountDetailData, dispatch]);
 
   const handleLogout = useCallback(() => {
     dispatch(setToken(null));
@@ -69,6 +69,11 @@ export const Header = ({ menuItems }: IProps) => {
           <span>{t("accounts.profile") || "Thông tin cá nhân"}</span>
         </Flex>
       ),
+      onClick: () => {
+        if (user?.id) {
+          navigate(`/user/${user.id}`);
+        }
+      },
     },
     {
       key: "credits",
@@ -99,7 +104,8 @@ export const Header = ({ menuItems }: IProps) => {
       ),
       onClick: handleLogout,
     },
-  ], [t, handleLogout, handleBuyCredits]);
+  ], [t, handleLogout, handleBuyCredits, toggleLanguage, currentFlag, navigate, user?.id]);
+
 
   return (
     <AntHeader
