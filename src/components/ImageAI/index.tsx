@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Layout, Input, Button, message, Progress, Typography, Modal, RadioChangeEvent, Row, Image, Col, Card, Radio, Table, Tooltip, Empty, Flex, Pagination, Drawer } from "antd";
 import { useSelector } from "react-redux";
 import "./styles.scss";
 import { ReactComponent as RefetchIcon } from "src/assets/images/icon/ic-refetch.svg";
 import { IRootState } from "src/interfaces/app.interface";
 import { useGetAccountQuery, useLazyGetAccountQuery } from "src/store/api/accountApi";
-import { useCreateCaseMutation, useGetCasesQuery } from "src/store/api/ticketApi";
+import { useCreateCaseMutation, useGetAnalysisQuery, useGetCasesQuery } from "src/store/api/ticketApi";
 import AutoPostModal from "../AutoPostModal";
 import FullscreenLoader from "../FullscreenLoader";
 import { contentFetchOpportunityScore, contentGenerateCaption } from "src/utils/facebook-utild";
@@ -42,6 +42,8 @@ const FullscreenSplitCard = () => {
   const [suggestion, setSuggestion] = useState<string | null>(null);
   const [showDetailInputs, setShowDetailInputs] = useState(false);
   const [getAccount] = useLazyGetAccountQuery();
+  const [pageAI, setPageAi] = useState("");
+  const { data: analysisData } = useGetAnalysisQuery({});
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -192,6 +194,14 @@ const FullscreenSplitCard = () => {
     }
     if (subInputs.object) {
       parts.push(`Vật thể xung quanh: ${subInputs.object}`);
+    }
+
+    if (pageAI) {
+      const keyword = "Tông màu chủ đạo";
+      const index = pageAI.indexOf(keyword);
+
+      const result = index !== -1 ? pageAI.slice(index) : "";
+      parts.push(` ${result}`);
     }
 
     // Ghép nội dung mô tả đầy đủ, xuống dòng giữa các phần
@@ -380,15 +390,56 @@ const FullscreenSplitCard = () => {
 
   const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
+  const callChatGPT = useCallback(async (idPage: string) => {
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "gpt-4",
+          messages: [
+            {
+              role: "user",
+              content: `cho tôi phong cách hình ảnh (bỏ phong cách chữ) + tông màu chủ đạo : ${idPage}`
+            },
+          ],
+          temperature: 0.9,
+          max_tokens: 1000,
+        }),
+      });
 
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+      const data = await response.json();
+      setPageAi(data?.choices?.[0]?.message?.content?.trim() || "");
+    } catch (err) {
+      console.error("Translation error:", err);
+    }
   }, []);
+
+
+ useEffect(() => {
+  // 1. Gọi ChatGPT nếu có URL
+  if (analysisData?.urlPage) {
+    callChatGPT(analysisData.urlPage);
+  }
+
+  // 2. Kiểm tra mobile và gắn listener
+  const checkMobile = () => {
+    setIsMobile(window.innerWidth <= 768);
+  };
+
+  checkMobile(); // gọi lần đầu
+  window.addEventListener("resize", checkMobile);
+
+  return () => {
+    window.removeEventListener("resize", checkMobile);
+  };
+}, [analysisData?.urlPage, callChatGPT]);
+
+console.log(`========pageAI`, pageAI);
+
 
   return (
     <Layout className="image-layout">
@@ -519,6 +570,16 @@ const FullscreenSplitCard = () => {
                 </div>
               </div>
             )}
+
+            <label style={{ display: "block", marginBottom: 4 }}>
+              {t("video.AIbel")}
+            </label>
+            <TextArea
+              rows={8}
+              value={pageAI}
+              className="image-textarea image-caption-textarea"
+            />
+
             {/* Nút upload và tạo ảnh */}
             <div style={{ display: "flex", justifyContent: "center", gap: 8, flexWrap: "wrap" }}>
               <Button

@@ -154,6 +154,7 @@
     "effects_label": "Special Effects",
     "effects_placeholder": "E.g. Sparkling light",
     "surrounding_label": "Surrounding Objects",
+    "AIbel": "AI Analysis",
     "surrounding_placeholder": "E.g. Fields, mountains, ocean",
     "create_script_button": "Generate Script",
     "required_fields_warning": "Please fill in all required information before generating.",

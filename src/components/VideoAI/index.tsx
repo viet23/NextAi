@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   Layout,
   Input,
@@ -24,7 +24,7 @@ import {
   Drawer,
   RadioChangeEvent,
 } from "antd";
-import { useCreateCaseMutation, useGetCasesQuery } from "src/store/api/ticketApi";
+import { useCreateCaseMutation, useGetAnalysisQuery, useGetCasesQuery } from "src/store/api/ticketApi";
 import { DownloadOutlined, EyeOutlined, UploadOutlined } from "@ant-design/icons";
 // import { Row, Col, Button, Modal, Radio, Typography, Spin, message } from 'antd';
 import axios from "axios";
@@ -127,13 +127,15 @@ const VideoGenerator = () => {
   const [suggestion, setSuggestion] = useState<string | null>(null);
   const [resolution, setResolution] = useState("720p");
   const [ratio, setRatio] = useState("16:9");
-   const [getAccount] = useLazyGetAccountQuery();
+  const [getAccount] = useLazyGetAccountQuery();
 
   const [sceneCount, setSceneCount] = useState(30);
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [productSurrounding, setProductSurrounding] = useState("");
   const [specialEffects, setSpecialEffects] = useState("");
+  const [pageAI, setPageAi] = useState("");
+  const { data: analysisData } = useGetAnalysisQuery({});
 
   const fetchOpportunityScore = async (captionText: string) => {
     try {
@@ -348,10 +350,12 @@ const VideoGenerator = () => {
     console.log(`scriptPrompt`, scriptPrompt);
     setLoadingScript(true);
 
+
     const promptContent = buildScriptPrompt({
       scriptPrompt: prompt,
       sceneCount,
       durationSceneMap,
+      pageAI
     });
 
     try {
@@ -666,7 +670,7 @@ const VideoGenerator = () => {
   };
 
   const generateSingleSceneVideo = async (index: any) => {
-   const accountDetail = await getAccount(user?.id || "0").unwrap();
+    const accountDetail = await getAccount(user?.id || "0").unwrap();
 
     accountDetail?.credits && accountDetail?.credits < 50 && message.error(t("video.not_enough_credits"));
 
@@ -824,17 +828,57 @@ Please contact Admin`);
     setIsOpen(false);
   };
 
+  const callChatGPT = useCallback(async (idPage: string) => {
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "gpt-4",
+          messages: [
+            {
+              role: "user",
+              content: `cho tôi phong cách hình ảnh (bỏ phong cách chữ) + tông màu chủ đạo : ${idPage}`
+            },
+          ],
+          temperature: 0.9,
+          max_tokens: 1000,
+        }),
+      });
+
+      const data = await response.json();
+      setPageAi(data?.choices?.[0]?.message?.content?.trim() || "");
+    } catch (err) {
+      console.error("Translation error:", err);
+    }
+  }, []);
+
   const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
 
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  useEffect(() => {
+  // Gọi ChatGPT nếu có urlPage
+  if (analysisData?.urlPage) {
+    callChatGPT(analysisData.urlPage);
+  }
+
+  // Xử lý responsive: cập nhật isMobile theo width
+  const checkMobile = () => {
+    setIsMobile(window.innerWidth <= 768);
+  };
+
+  checkMobile(); // gọi lần đầu khi mount
+  window.addEventListener("resize", checkMobile);
+
+  return () => {
+    window.removeEventListener("resize", checkMobile);
+  };
+}, [analysisData?.urlPage, callChatGPT]);
+
+console.log(`========pageAI`, pageAI);
 
   return (
     <>
@@ -960,6 +1004,15 @@ Please contact Admin`);
                       style={inputStyle}
                     />
                   </Col>
+                 <Col span={24}>
+                  <label style={{ display: "block", marginBottom: 4 }}>
+                      {t("video.AIbel")}
+                    </label>
+                    <TextArea
+                      rows={8}
+                      value={pageAI}
+                      className="image-textarea image-caption-textarea"
+                    /> </Col>
 
                   <Col span={24}>
                     <div style={{ textAlign: "center", marginTop: 24 }}>

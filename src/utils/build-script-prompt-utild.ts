@@ -35,16 +35,27 @@ export const buildScriptPrompt = ({
   scriptPrompt,
   sceneCount,
   durationSceneMap,
+  pageAI,
 }: {
   scriptPrompt: string;
   sceneCount: number;
   durationSceneMap: Record<number, number>;
+  pageAI?: string;
 }): string => {
+  let result =""
+   if (pageAI) {
+        const keyword = "Tông màu chủ đạo";
+        const index = pageAI.indexOf(keyword);
+  
+        result = index !== -1 ? pageAI.slice(index) : "";
+      
+      }
   return `${scriptPrompt}
 
 . Mỗi cảnh dài khoảng 10 giây, mô tả chi tiết cảnh quay với nhiều hoạt động và chuyển động sống động trong khung hình. Kết quả trả về dưới dạng JSON mảng các chuỗi, mỗi chuỗi là một cảnh.
 
 Yêu cầu:
+-${result}
 - Mỗi cảnh dài khoảng 10 giây, nhưng phải có **nhiều hoạt động và hiệu ứng liên tục, lồng ghép hoặc chuyển tiếp mượt mà**.
 - Mỗi cảnh cần có ít nhất **5 hoạt động hoặc hiệu ứng**, ví dụ:
   + Nguyên liệu rơi, xoay, lăn, va đập
