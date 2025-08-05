@@ -364,7 +364,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
           messages: [
             {
               role: "user",
-              content: `cho tôi phong cách hình ảnh (bỏ phong cách chữ) + tông màu chủ đạo : ${url}`
+              content: `Cho tôi phong cách thiết kế hình ảnh trong tương lai của fage này (bỏ phong cách chữ) + tông màu chủ đạo : ${url}`
             },
           ],
           temperature: 0.9,
