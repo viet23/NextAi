@@ -1,4 +1,3 @@
-// components/FullscreenLoader.tsx
 import React from "react";
 import { Spin } from "antd";
 
@@ -25,12 +24,17 @@ const FullscreenLoader: React.FC<FullscreenLoaderProps> = ({
         height: "100vh",
         backgroundColor,
         display: "flex",
+        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
         zIndex: 9999,
       }}
     >
       <Spin size="large" tip={tip} />
+      <div style={{ marginTop: 16, fontSize: 16, fontWeight: 500, color: "#1677ff" }}>
+        VUI LÒNG CHỜ AI PHÂN TÍCH TRONG GIÂY LÁT
+      </div>
+
     </div>
   );
 };
