@@ -154,8 +154,6 @@ Hãy đề xuất kế hoạch phát triển kênh Facebook Page này, gồm:
       strategy: "",
     });
 
-    await callChatGPT()
-    await callChatGPTImage();
 
     try {
       // 1. Crawl dữ liệu từ page
@@ -173,6 +171,9 @@ Hãy đề xuất kế hoạch phát triển kênh Facebook Page này, gồm:
       }
 
       const { name, description, bodyPreview } = crawlData.data;
+
+      await callChatGPT(name, description, bodyPreview)
+      await callChatGPTImage(name, description, bodyPreview);
 
       // 2. Gửi GPT để phân tích thành 4 phần
       const prompt = `
@@ -280,7 +281,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
     view1s: 0,
   });
 
-  const callChatGPT = async () => {
+  const callChatGPT = async (name: string, description: string, bodyPreview: string) => {
     if (!url) {
       message.warning("Please enter Facebook Page link.");
       return;
@@ -303,6 +304,10 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
               role: "user",
               content: `
   Phân tích Fanpage sau: ${url}
+  Tên fanpage: ${name}
+Mô tả ngắn: ${description}
+Nội dung gần đây:
+${bodyPreview}
   Dựa trên nội dung và hình ảnh, hãy chọn ra các mục tiêu phù hợp nhất từ danh sách sau:
   
   - Nhân khẩu học: ["Học vấn", "Công việc", "Mối quan hệ", "Phụ huynh", "Sự kiện trong đời"]
@@ -347,7 +352,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
     }
   }
 
-  const callChatGPTImage = async () => {
+  const callChatGPTImage = async (name: string, description: string, bodyPreview: string) => {
     if (!url) {
       message.warning("Please enter Facebook Page link.");
       return;
@@ -364,7 +369,8 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
           messages: [
             {
               role: "user",
-              content: `Cho tôi phong cách thiết kế hình ảnh trong tương lai của fage này (bỏ phong cách chữ) + tông màu chủ đạo : ${url}`
+              content: ` Phân tích Fanpage sau: ${url} .Tôi đang xây dựng hình ảnh cho fanpage Facebook như sau:\n\nTên: ${name}\nMô tả: ${description}\nNội dung hiển thị:\n${bodyPreview}\n\nDựa trên đó, bạn hãy đề xuất phong cách thiết kế hình ảnh hiện đại, sáng tạo (bỏ phần chữ), và tông màu chủ đạo phù hợp với thương hiệu này.`
+
             },
           ],
           temperature: 0.9,
@@ -644,7 +650,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
       (async () => {
         const body = { analysis, channelPlan, urlPage: url, targeting: interests, styleImage: pageAI };
 
-        console.log(`body-------------` ,body);
+        console.log(`body-------------`, body);
 
         await createAnalysis(body).unwrap();
       })();
