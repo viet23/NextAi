@@ -21,6 +21,7 @@ export interface IAccount {
   isActive: boolean;
   credits: number;
   zalo?: string;
+  creditsData?: any;
 }
 
 export interface IAccountFilter {

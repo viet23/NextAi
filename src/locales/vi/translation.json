@@ -317,7 +317,13 @@
       "index": "STT",
       "payment_date": "Ngày thanh toán",
       "amount_paid": "Số tiền đã thanh toán (VND)",
-      "credits_bought": "Credits đã mua"
+      "credits_bought": "Credits đã mua",
+      "status": "Trạng thái",
+       "confirm": "Xác nhận"
+    },
+    "status": {
+      "pending": "Chờ xử lý",
+      "done": "Hoàn tất"
     }
   },
   "auth_groups": {

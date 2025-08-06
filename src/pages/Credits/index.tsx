@@ -31,6 +31,8 @@ import { Collapse } from "antd";
 import { useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
 import { useSendCreditsMutation } from "src/store/api/email";
+import { useGetCreditQuery } from "src/store/api/ticketApi";
+import dayjs from "dayjs";
 
 const { Panel } = Collapse;
 interface FormValues {
@@ -47,12 +49,17 @@ const CreditsPage = () => {
   const [form] = Form.useForm<FormValues>();
   const [userGroups, setUserGroups] = useState<undefined | any[]>([]);
   const [sendEmail, { isLoading }] = useSendCreditsMutation();
+  const { data: creditData } = useGetCreditQuery({});
+  console.log("Credit Data:", creditData);
 
-  const [autoPayment, setAutoPayment] = useState<boolean>(false);
-  const [paymentHistory, setPaymentHistory] = useState<any[]>([ // Giả lập dữ liệu thanh toán
-    { id: 1, date: "Thứ sáu, 11/07/2025", amount: "1.000.000", credits: "2.000" },
-    { id: 2, date: "Thứ năm, 10/07/2025", amount: "1.000.000", credits: "2.000" },
-  ]);
+  const paymentHistory = creditData?.map((item: any) => ({
+    status: item.status,
+    id: item.id,
+    date: dayjs(item.paymentDate).format("HH:mm - DD/MM/YYYY"),
+    amount: item.amountPaidVnd.toLocaleString("vi-VN"),
+    credits: item.creditsPurchased.toLocaleString("vi-VN")
+  }))
+
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -107,6 +114,9 @@ const CreditsPage = () => {
       // Ví dụ giả lập:
       message.success("Giao dịch thành công! Admin sẽ liên hệ thanh toán credits.");
       setIsModalVisible(false);
+
+      window.location.reload()
+
     } catch (err) {
       console.error("❌ Failed to send form:", err);
       message.error("Gửi thất bại. Vui lòng thử lại.");
@@ -164,7 +174,7 @@ const CreditsPage = () => {
             </Row>
           </Card>
 
-          {/* <Card className="accountDetail">
+          <Card className="accountDetail">
             <Collapse
               defaultActiveKey={["1"]}
               ghost
@@ -189,11 +199,15 @@ const CreditsPage = () => {
                   align="center"
                   style={{ marginBottom: 16 }}
                 >
-                  <DatePicker.RangePicker
+                  {/* <DatePicker.RangePicker
                     picker="month"
                     className="custom-date-picker"
                     style={{ backgroundColor: "#1e293b", borderRadius: 6 }}
-                  />
+                  /> */}
+
+                  <span style={{ color: "#ffffff", fontWeight: 600 }}>
+                    Thông tin thanh toán
+                  </span>
 
                   <Select defaultValue="3_months" style={{ width: 160 }}>
                     <Select.Option value="3_months">
@@ -225,15 +239,27 @@ const CreditsPage = () => {
                       key: "credits",
                       align: "right",
                     },
+                    {
+                      title: t("credits.table.status"),
+                      dataIndex: "status",
+                      key: "status",
+                      align: "center",
+                      render: (status: string) => {
+                        const color = status === "done" ? "green" : "orange"
+                        const label = status === "done" ? t("credits.status.done") : t("credits.status.pending")
+                        return <span style={{ color, fontWeight: 500 }}>{label}</span>
+                      }
+                    }
                   ]}
-                  dataSource={paymentHistory.map((item, index) => ({ ...item, index: index + 1 }))}
+
+                  dataSource={paymentHistory?.map((item: any, index: any) => ({ ...item, index: index + 1 }))}
                   pagination={false}
                   loading={false}
                   scroll={{ x: 600, y: 380 }}
                 />
               </Panel>
             </Collapse>
-          </Card> */}
+          </Card>
 
           {/* Modal mua credits */}
           <Modal

@@ -25,10 +25,13 @@ import { useGetAccountQuery, useUpdateAccountGroupMutation } from "src/store/api
 import { useGetRoleGroupsQuery } from "src/store/api/roleApi";
 import { useTranslation } from "react-i18next";
 import { Collapse } from "antd";
+import dayjs from "dayjs";
+import { useLazyDetailCreditQuery } from "src/store/api/ticketApi";
 const { Panel } = Collapse;
 
 const AccountDetailPage = () => {
   const { t } = useTranslation();
+   const [getDetailTicket] = useLazyDetailCreditQuery();
 
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
@@ -52,6 +55,14 @@ const AccountDetailPage = () => {
       })
     );
   };
+
+  const paymentHistory = accountDetailData?.creditsData?.map((item: any) => ({
+    status: item.status,
+    id: item.id,
+    date: dayjs(item.paymentDate).format("HH:mm - DD/MM/YYYY"),
+    amount: item.amountPaidVnd.toLocaleString("vi-VN"),
+    credits: item.creditsPurchased.toLocaleString("vi-VN")
+  }));
 
   const columns = useMemo<ColumnsType<any>>(
     () => [
@@ -167,6 +178,18 @@ const AccountDetailPage = () => {
         message.error("Vui lòng kiểm tra lại các trường nhập liệu!");
       });
   };
+
+  const handleConfirm = async (record: any) => {
+  try {
+    getDetailTicket(record.id)
+    window.location.reload()
+
+    // reload lại data nếu cần
+  } catch (err) {
+    message.error("Có lỗi xảy ra khi xác nhận")
+  }
+}
+
 
 
   return (
@@ -302,7 +325,7 @@ const AccountDetailPage = () => {
                         name="idPage"
                         labelCol={{ span: 24 }}
                         wrapperCol={{ span: 24 }}
-                        // rules={[{ required: true, message: "Vui lòng nhập Id page" }]}
+                      // rules={[{ required: true, message: "Vui lòng nhập Id page" }]}
                       >
                         <Input size="middle" placeholder="Id page" />
                       </Form.Item>
@@ -425,6 +448,117 @@ const AccountDetailPage = () => {
                     Cập nhật tài khoản
                   </Button>
                 </Flex>
+              </Panel>
+            </Collapse>
+          </Card>
+
+          <Card className="accountDetail">
+            <Collapse
+              defaultActiveKey={["4"]}
+              ghost
+              expandIconPosition="start"
+              expandIcon={({ isActive }) => (
+                <CaretRightOutlined
+                  rotate={isActive ? 90 : 0}
+                  style={{ color: "#ffffff" }}
+                />
+              )}
+            >
+              <Panel
+                key="4"
+                header={
+                  <span style={{ color: "#ffffff", fontWeight: 600 }}>
+                    {t("credits.payment_history")}
+                  </span>
+                }
+              >
+                <Flex
+                  justify="space-between"
+                  align="center"
+                  style={{ marginBottom: 16 }}
+                >
+                  {/* <DatePicker.RangePicker
+                              picker="month"
+                              className="custom-date-picker"
+                              style={{ backgroundColor: "#1e293b", borderRadius: 6 }}
+                            /> */}
+
+                  <span style={{ color: "#ffffff", fontWeight: 600 }}>
+                    Thông tin thanh toán
+                  </span>
+
+                  <Select defaultValue="3_months" style={{ width: 160 }}>
+                    <Select.Option value="3_months">
+                      {t("credits.last_3_months")}
+                    </Select.Option>
+                    <Select.Option value="6_months">
+                      {t("credits.last_6_months")}
+                    </Select.Option>
+                    <Select.Option value="12_months">
+                      {t("credits.last_12_months")}
+                    </Select.Option>
+                  </Select>
+                </Flex>
+                <Table
+                  className="table-scroll dark-header-table"
+                  rowKey="id"
+                  columns={[
+                    { title: t("credits.table.index"), dataIndex: "index", key: "index", width: 80 },
+                    { title: t("credits.table.payment_date"), dataIndex: "date", key: "date" },
+                    {
+                      title: t("credits.table.amount_paid"),
+                      dataIndex: "amount",
+                      key: "amount",
+                      align: "right",
+                    },
+                    {
+                      title: t("credits.table.credits_bought"),
+                      dataIndex: "credits",
+                      key: "credits",
+                      align: "right",
+                    },
+                    {
+                      title: t("credits.table.status"),
+                      dataIndex: "status",
+                      key: "status",
+                      align: "center",
+                      render: (status: string, record: any) => {
+                        const isPending = status === "pending"
+                        const color = isPending ? "orange" : "green"
+                        const label = isPending ? t("credits.status.pending") : t("credits.status.done")
+
+                        return isPending ? (
+                          <div>
+                            <span style={{ color, fontWeight: 500 }}>{label}</span>
+                            <br />
+                            <button
+                              onClick={() => handleConfirm(record)}
+                              style={{
+                                marginTop: 4,
+                                padding: "4px 8px",
+                                backgroundColor: "#1677ff",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: 4,
+                                cursor: "pointer",
+                              }}
+                            >
+                              {t("credits.table.confirm")}
+                            </button>
+                          </div>
+                        ) : (
+                          <span style={{ color, fontWeight: 500 }}>{label}</span>
+                        )
+                      }
+                    }
+
+                  ]}
+
+                  dataSource={paymentHistory?.map((item: any, index: any) => ({ ...item, index: index + 1 }))}
+                  pagination={false}
+                  loading={false}
+                  scroll={{ x: 600, y: 380 }}
+                />
               </Panel>
             </Collapse>
           </Card>

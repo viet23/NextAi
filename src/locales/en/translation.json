@@ -258,7 +258,13 @@
       "index": "No.",
       "payment_date": "Payment Date",
       "amount_paid": "Amount Paid (VND)",
-      "credits_bought": "Credits Purchased"
+      "credits_bought": "Credits Purchased",
+      "status": "Status",
+      "confirm": "confirm"
+    },
+    "status": {
+      "pending": "Pending",
+      "done": "Completed"
     }
   },
   "auth_groups": {
