@@ -1,0 +1,158 @@
+/* ========== Reset & base ========== */
+:root{
+  --bg-page: #f3f4f6;          /* xám nền */
+  --bg-card: #ffffff;          /* nền khối tài liệu */
+  --text: #374151;             /* màu chữ chính */
+  --text-dark: #111827;        /* tiêu đề */
+  --muted: #6b7280;            /* mô tả phụ */
+  --primary: #0ea5e9;          /* xanh điểm nhấn */
+  --border: #e5e7eb;           /* viền nhạt */
+  --shadow: 0 10px 30px rgba(0,0,0,.06);
+}
+
+html, body{
+  background: var(--bg-page);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol";
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ========== Khối tài liệu trắng ========== */
+.wrap-container{
+  padding: 40px 16px;
+}
+.container-fluid{
+  max-width: 980px;      /* giống layout trong ảnh */
+  margin: 0 auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  padding: 32px 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Watermark logo mờ giữa trang */
+.container-fluid::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("../img/logo-vnpay.svg") no-repeat center 35%;
+  background-size: 520px auto;
+  opacity: .05;           /* độ mờ watermark */
+  pointer-events: none;
+}
+
+/* ========== Header: logo trái – thông tin phải ========== */
+.row.gy-4.align-items-center.mb-5{
+  margin-bottom: 28px !important;
+}
+.img-fluid{
+  max-height: 150px;      /* logo vừa mắt */
+  width: auto;
+}
+h3.text-uppercase{
+  font-size: 18px;
+  letter-spacing: .3px;
+  color: var(--text-dark);
+  margin-bottom: 6px;
+}
+.row .col-12.col-md-6{
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ========== Tiêu đề tài liệu ========== */
+h1{
+  text-align: center;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-dark);
+  line-height: 1.35;
+  margin: 8px 0 24px;
+  letter-spacing: .2px;
+  text-transform: uppercase;
+}
+
+/* Đoạn văn */
+p{
+  margin: 0 0 14px;
+  text-align: justify;              /* căn đều như ảnh */
+  text-justify: inter-word;
+  orphans: 2;
+  widows: 2;
+  color: var(--text);
+  font-size: 15.5px;
+}
+
+/* ========== Heading cấp 2 (mục số) ========== */
+h2{
+  margin: 26px 0 12px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-dark);
+  text-transform: uppercase;
+  position: relative;
+  padding-left: 12px;
+}
+h2::before{
+  content: "";
+  position: absolute;
+  left: 0; top: 50%;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  transform: translateY(-50%);
+}
+
+/* Danh sách, bảng (nếu có) */
+ul, ol{ padding-left: 22px; margin-bottom: 14px; }
+table{
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 14.5px;
+}
+th, td{ border: 1px solid var(--border); padding: 10px 12px; }
+th{ background: #f9fafb; color: var(--text-dark); }
+
+/* Link & emphasis */
+a{ color: #2563eb; text-decoration: none; }
+a:hover{ text-decoration: underline; }
+strong{ color: var(--text-dark); }
+
+/* ========== Nút scroll-top ========== */
+.scroll-top{
+  position: fixed;
+  right: 20px; bottom: 24px;
+  width: 44px; height: 44px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: #0f172a;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(15,23,42,.25);
+  opacity: 0; visibility: hidden;
+  transform: translateY(8px);
+  transition: .25s ease;
+  cursor: pointer;
+  z-index: 20;
+}
+.scroll-top.show{
+  opacity: 1; visibility: visible; transform: translateY(0);
+}
+.ic-arrow{ transform: rotate(-90deg); }
+
+/* ========== Responsive ========== */
+@media (max-width: 768px){
+  .container-fluid{
+    padding: 20px 16px;
+    border-radius: 8px;
+  }
+  h1{ font-size: 22px; }
+  h3.text-uppercase{ font-size: 16px; }
+  .img-fluid{ max-height: 66px; }
+}

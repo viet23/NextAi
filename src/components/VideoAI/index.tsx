@@ -672,14 +672,18 @@ const VideoGenerator = () => {
   const generateSingleSceneVideo = async (index: any) => {
     const accountDetail = await getAccount(user?.id || "0").unwrap();
 
-    accountDetail?.credits && accountDetail?.credits < 50 && message.error(t("video.not_enough_credits"));
-
-    setLoading(true);
-    if (!promptTexts[index] || !uploadedImageUrls[index]) {
-      message.warning(`Please enter a description and photo for the Scene ${index + 1}`);
-      setLoading(false);
+    if (accountDetail?.credits && accountDetail?.credits < 50) {
+      message.error(t("video.not_enough_credits"));
       return;
     }
+
+     if (!promptTexts[index] || !uploadedImageUrls[index]) {
+      message.warning(`Please enter a description and photo for the Scene ${index + 1}`);
+      return;
+    }
+
+    setLoading(true);
+   
 
     let time = 5;
     if (videoDuration > 5) {

@@ -452,52 +452,63 @@ const LandingPage: React.FC = () => {
                             >
                                 Về chúng tôi
                             </h4>
+                            <ul style={{
+                                listStyle: "none",
+                                padding: 0,
+                                margin: 0,
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: 10,
+                                width: 673,
+                                color: "#94a3b8",
+                                fontSize: 14,
+                                lineHeight: 1.8,
+                            }}>
+                                <li style={{ display: "flex", alignItems: "center" }}>
+                                    <img src={Frame} alt="address" style={{ width: 18, height: 18, marginRight: 8 }} />
+                                    {t("footer.address")}
+                                </li>
+                                <li style={{ display: "flex", alignItems: "center" }}>
+                                    <img src={Phone} alt="support" style={{ width: 18, height: 18, marginRight: 8 }} />
+                                    {t("footer.support")}
+                                </li>
+                                <li style={{ display: "flex", alignItems: "center" }}>
+                                    <img src={Phone} alt="partner" style={{ width: 18, height: 18, marginRight: 8 }} />
+                                    {t("footer.partner")}
+                                </li>
+                                <li style={{ display: "flex", alignItems: "center" }}>
+                                    <img src={Mail} alt="email" style={{ width: 18, height: 18, marginRight: 8 }} />
+                                    {t("footer.email")}
+                                </li>
 
-                            <ul
-                                style={{
-                                    listStyle: "none",
-                                    padding: 0,
-                                    margin: 0,
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    gap: 10,
-                                    width: 673,
-                                    color: "#94a3b8",
-                                    fontSize: 14,
-                                    lineHeight: 1.8,
-                                }}
-                            >
-                                <li style={{ display: "flex", alignItems: "center" }}>
-                                    <img src={Frame} alt="Địa chỉ" style={{ width: 18, height: 18, marginRight: 8 }} />
-                                    Số 1 ngõ 75 Hồ Tùng Mậu, Quận Cầu Giấy, Hà Nội
-                                </li>
-                                <li style={{ display: "flex", alignItems: "center" }}>
-                                    <img src={Phone} alt="CSKH" style={{ width: 18, height: 18, marginRight: 8 }} />
-                                    CSKH: 0989 471 727
-                                </li>
-                                <li style={{ display: "flex", alignItems: "center" }}>
-                                    <img src={Phone} alt="Đối tác" style={{ width: 18, height: 18, marginRight: 8 }} />
-                                    Đối tác: 0962 753 455
-                                </li>
-                                <li style={{ display: "flex", alignItems: "center" }}>
-                                    <img src={Mail} alt="Email" style={{ width: 18, height: 18, marginRight: 8 }} />
-                                    chamsockhachhang.alloneads@gmail.com
-                                </li>
+
                             </ul>
-                            <h4
-                                style={{
-                                    fontFamily: "Inter, sans-serif",
-                                    fontWeight: 500,
-                                    fontSize: 24,
-                                    lineHeight: "18px",
-                                    letterSpacing: "0",
-                                    marginTop: 24,
-                                    marginBottom: 12,
-                                    color: "#e2e8f0",
-                                    verticalAlign: "middle",
-                                }}
-                            >
-                                Phương thức thanh toán
+
+                            <h5 style={{
+                                fontFamily: "Inter, sans-serif",
+                                fontWeight: 500,
+                                fontSize: 18,
+                                marginTop: 24,
+                                marginBottom: 12,
+                                color: "#e2e8f0",
+                            }}>
+                                <a
+                                    href="/policy-page"
+                                    style={{ color: "inherit", textDecoration: "none" }}
+                                >
+                                    {t("footer.contact")}
+                                </a>
+                            </h5>
+
+                            <h4 style={{
+                                fontFamily: "Inter, sans-serif",
+                                fontWeight: 500,
+                                fontSize: 24,
+                                marginTop: 24,
+                                marginBottom: 12,
+                                color: "#e2e8f0",
+                            }}>
+                                {t("footer.payment")}
                             </h4>
 
                             <div

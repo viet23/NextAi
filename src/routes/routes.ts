@@ -28,6 +28,7 @@ import RegisterPage from "src/pages/Register";
 import MediaTreanding from "src/pages/MediaTreanding";
 import ForgotPasswordPage from "src/pages/ForgotPassword";
 import ResetPasswordPage from "src/pages/resetPassword";
+import PolicyPage from "src/pages/PolicyPage";
 const HomeIntel = React.lazy(() => import("src/pages/HomeIntel"));
 const CreditsPage = React.lazy(() => import("src/pages/Credits"));
 const AccountDetailPage = React.lazy(() => import("src/pages/AccountDetail"));
@@ -80,8 +81,16 @@ export const routes = [
         name: "home",
         component: Home,
       },
+       {
+        path: "/policy-page",
+        isProtect: false,
+        key: "home",
+        name: "home",
+        component: PolicyPage,
+      },
     ],
   },
+  
   {
     key: "main",
     layout: MainLayout,

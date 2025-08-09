@@ -267,7 +267,7 @@ const HomePage: React.FC = () => {
                                     ALL ONE ADS
                                 </p>
 
-                                <h2 className="testimonial-heading"> {t("testimonial.title")}</h2> 
+                                <h2 className="testimonial-heading"> {t("testimonial.title")}</h2>
 
                                 <div
                                     className="testimonial-grid"
@@ -404,7 +404,24 @@ const HomePage: React.FC = () => {
                                                 <img src={Mail} alt="email" style={{ width: 18, height: 18, marginRight: 8 }} />
                                                 {t("footer.email")}
                                             </li>
+
                                         </ul>
+                                        <h5 style={{
+                                            fontFamily: "Inter, sans-serif",
+                                            fontWeight: 500,
+                                            fontSize: 18,
+                                            marginTop: 24,
+                                            marginBottom: 12,
+                                            color: "#e2e8f0",
+                                        }}>
+                                            <a
+                                                href="/policy-page"
+                                                style={{ color: "inherit", textDecoration: "none" }}
+                                            >
+                                                {t("footer.contact")}
+                                            </a>
+                                        </h5>
+
 
                                         <h4 style={{
                                             fontFamily: "Inter, sans-serif",
