@@ -1,3 +1,4 @@
+
 /* ========== Reset & base ========== */
 :root{
   --bg-page: #f3f4f6;          /* xám nền */
@@ -27,23 +28,12 @@ html, body{
   max-width: 980px;      /* giống layout trong ảnh */
   margin: 0 auto;
   background: var(--bg-card);
-  border: 1px solid var(--border);
+  // border: 1px solid var(--border);
   border-radius: 10px;
   box-shadow: var(--shadow);
   padding: 32px 28px;
   position: relative;
   overflow: hidden;
-}
-
-/* Watermark logo mờ giữa trang */
-.container-fluid::before{
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: url("../img/logo-vnpay.svg") no-repeat center 35%;
-  background-size: 520px auto;
-  opacity: .05;           /* độ mờ watermark */
-  pointer-events: none;
 }
 
 /* ========== Header: logo trái – thông tin phải ========== */
