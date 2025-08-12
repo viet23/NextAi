@@ -19,7 +19,8 @@ import {
   DASHBOARD_ROUTE,
   CREDITS_ROUTE,
   HOME_INTEL_ROUTE,
-  ACCOUNT_DETAIL_USER_ROUTE
+  ACCOUNT_DETAIL_USER_ROUTE,
+  AI_ADS_ROUTE
 } from "src/constants/routes.constants";
 import MediaList from "src/pages/MediaList";
 import Dashboard from "src/pages/Dashboard";
@@ -29,6 +30,7 @@ import MediaTreanding from "src/pages/MediaTreanding";
 import ForgotPasswordPage from "src/pages/ForgotPassword";
 import ResetPasswordPage from "src/pages/resetPassword";
 import PolicyPage from "src/pages/PolicyPage";
+import CampaignReportss from "src/pages/CampaignReport";
 const HomeIntel = React.lazy(() => import("src/pages/HomeIntel"));
 const CreditsPage = React.lazy(() => import("src/pages/Credits"));
 const AccountDetailPage = React.lazy(() => import("src/pages/AccountDetail"));
@@ -156,6 +158,15 @@ export const routes = [
         name: "Dashboard",
         component: Dashboard,
       },
+      {
+        path: AI_ADS_ROUTE,
+        isProtect: true,
+        key: "aiAdsReport",
+        name: "aiAdsReport",
+        component: CampaignReportss,
+      },
+
+      
       {
         path: USER_ROUTE,
         isProtect: true,

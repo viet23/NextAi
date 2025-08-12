@@ -12,6 +12,7 @@ import {
   DASHBOARD_ROUTE,
   CREDITS_ROUTE,
   HOME_INTEL_ROUTE,
+  AI_ADS_ROUTE,
 } from "src/constants/routes.constants";
 
 import { TicketManageIcon } from "src/components/MenuItemIcon/TicketIcon";
@@ -45,6 +46,12 @@ export const getMenuItems = (t: TFunction): IMenuItem[] => [
     label: t("menu.ads_dashboard"),
     icon: createElement(TicketManageIcon),
   },
+  //   {
+  //   key: AI_ADS_ROUTE,
+  //   label: t("menu.ads_report"),
+  //   icon: createElement(TicketManageIcon),
+  // },
+
   {
     key: IMAGE_ROUTE,
     label: t("menu.image_generation"),

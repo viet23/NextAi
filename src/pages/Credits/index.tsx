@@ -20,6 +20,7 @@ import {
   Select,
   Switch,
   Table,
+  Radio, // ⬅️ thêm
 } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -35,9 +36,10 @@ import { useGetCreditQuery } from "src/store/api/ticketApi";
 import dayjs from "dayjs";
 
 const { Panel } = Collapse;
+
 interface FormValues {
-  credits: string;
-  vnd: string;
+  credits: string | number;
+  vnd: string | number;
 }
 
 const CreditsPage = () => {
@@ -45,7 +47,6 @@ const CreditsPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
-  // const [form] = Form.useForm();
   const [form] = Form.useForm<FormValues>();
   const [userGroups, setUserGroups] = useState<undefined | any[]>([]);
   const [sendEmail, { isLoading }] = useSendCreditsMutation();
@@ -53,12 +54,12 @@ const CreditsPage = () => {
   console.log("Credit Data:", creditData);
 
   const paymentHistory = creditData?.map((item: any) => ({
-    status: item.status,
-    id: item.id,
-    date: dayjs(item.paymentDate).format("HH:mm - DD/MM/YYYY"),
-    amount: item.amountPaidVnd.toLocaleString("vi-VN"),
-    credits: item.creditsPurchased.toLocaleString("vi-VN")
-  }))
+    status: item?.status,
+    id: item?.id,
+    date: item?.paymentDate ? dayjs(item.paymentDate).format("HH:mm - DD/MM/YYYY") : "",
+    amount: typeof item?.amountPaidVnd === "number" ? item.amountPaidVnd.toLocaleString("vi-VN") : "",
+    credits: typeof item?.creditsPurchased === "number" ? item.creditsPurchased.toLocaleString("vi-VN") : ""
+  }));
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -69,62 +70,64 @@ const CreditsPage = () => {
   const { data: roleGroupsData, isFetching: isRoleGroupsFetching } =
     useGetRoleGroupsQuery({});
 
-  const [credits, setCredits] = useState<number>(user?.credits); // Giả lập dữ liệu credits
-
-
+  const [credits, setCredits] = useState<number | undefined>(user?.credits); // hiển thị tổng credits
 
   useEffect(() => {
     if (roleGroupsData && accountDetailData) {
       setUserGroups(
         roleGroupsData?.map((group: any) => ({
           ...group,
-          checked: accountDetailData?.groups.some((i) => i?.id === group.id),
+          checked: accountDetailData?.groups?.some((i: any) => i?.id === group.id),
         }))
       );
     }
   }, [roleGroupsData, accountDetailData]);
 
+  // ====== Giá động từ gói chuẩn 500 credits = 179.000đ ======
+  const BASE_CREDITS = 500;
+  const BASE_PRICE = 179_000; // VND
 
+  const priceForCredits = (c: number) => {
+    const unit = BASE_PRICE / BASE_CREDITS; // đơn giá theo credit
+    // làm tròn đến 1.000đ cho đẹp
+    return Math.round((unit * c) / 1000) * 1000;
+  };
 
-  // useEffect(() => {
-  //   if (accountDetailData) {
-  //     form.setFieldsValue({
-  //       username: accountDetailData?.username,
-  //       email: accountDetailData?.email,
-  //       fullName: accountDetailData?.fullName,
-  //       extension: accountDetailData?.extension,
-  //       idPage: accountDetailData?.idPage,
-  //       accessToken: accountDetailData?.accessToken?.trim(),
-  //       accessTokenUser: accountDetailData?.accessTokenUser?.trim(),
-  //       accountAdsId: accountDetailData?.accountAdsId?.trim(),
-  //       isActive: accountDetailData?.isActive,
-  //     });
-  //   } else {
-  //     form.resetFields();
-  //   }
-  // }, [accountDetailData, form]);
+  const creditPackages = [200, 500, 1000, 2000, 3000].map((c) => ({
+    credits: c,
+    price: c === 500 ? BASE_PRICE : priceForCredits(c),
+  }));
 
+  const [selectedPackage, setSelectedPackage] = useState(creditPackages.find(p => p.credits === 500)!);
 
-  const handleBuyCredits = async (values: FormValues) => {
+  // đồng bộ vào form mỗi khi đổi gói
+  useEffect(() => {
+    form.setFieldsValue({
+      credits: selectedPackage.credits,
+      vnd: selectedPackage.price.toLocaleString("vi-VN"),
+    });
+  }, [selectedPackage, form]);
+
+  const handleBuyCredits = async () => {
+    // Lấy giá trị thực (không format) để gửi backend
+    const payload = {
+      credits: String(selectedPackage.credits),
+      vnd: String(selectedPackage.price),
+    };
+
     try {
-      await sendEmail(values).unwrap();
+      await sendEmail(payload as any).unwrap();
 
-      console.log("Đã click Mua credits");
+      console.log("Đã click Mua credits", payload);
 
-      // Ví dụ giả lập:
       message.success("Giao dịch thành công! Admin sẽ liên hệ thanh toán credits.");
       setIsModalVisible(false);
-
-      window.location.reload()
-
+      window.location.reload();
     } catch (err) {
       console.error("❌ Failed to send form:", err);
       message.error("Gửi thất bại. Vui lòng thử lại.");
     }
   };
-
-
-
 
   return (
     <PageTitleHOC title="Chi tiết tài khoản Credits">
@@ -145,22 +148,8 @@ const CreditsPage = () => {
             <Row gutter={[24, 16]} justify="space-between" align="middle">
               <Col>
                 <div style={{ fontSize: 32, fontWeight: 600, color: "#fff" }}>
-                  {credits?.toLocaleString("vi-VN")} <span style={{ fontSize: 16, marginLeft: 6 }}>💎</span>
+                  {typeof credits === "number" ? credits.toLocaleString("vi-VN") : 0} <span style={{ fontSize: 16, marginLeft: 6 }}>💎</span>
                 </div>
-                {/* <div style={{ marginTop: 8 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                    <span style={{ color: "#ffffff", fontWeight: 500 }}>
-                      {t("credits.auto_payment")}
-                    </span>
-                    <Switch
-                      checked={autoPayment}
-                      onChange={setAutoPayment}
-                    />
-                  </div>
-                  <span style={{ color: "#94a3b8", fontSize: 13 }}>
-                    {t("credits.auto_payment_note")}
-                  </span>
-                </div> */}
               </Col>
               <Col>
                 <Button
@@ -199,12 +188,6 @@ const CreditsPage = () => {
                   align="center"
                   style={{ marginBottom: 16 }}
                 >
-                  {/* <DatePicker.RangePicker
-                    picker="month"
-                    className="custom-date-picker"
-                    style={{ backgroundColor: "#1e293b", borderRadius: 6 }}
-                  /> */}
-
                   <span style={{ color: "#ffffff", fontWeight: 600 }}>
                     Thông tin thanh toán
                   </span>
@@ -245,14 +228,13 @@ const CreditsPage = () => {
                       key: "status",
                       align: "center",
                       render: (status: string) => {
-                        const color = status === "done" ? "green" : "orange"
-                        const label = status === "done" ? t("credits.status.done") : t("credits.status.pending")
-                        return <span style={{ color, fontWeight: 500 }}>{label}</span>
+                        const color = status === "done" ? "green" : "orange";
+                        const label = status === "done" ? t("credits.status.done") : t("credits.status.pending");
+                        return <span style={{ color, fontWeight: 500 }}>{label}</span>;
                       }
                     }
                   ]}
-
-                  dataSource={paymentHistory?.map((item: any, index: any) => ({ ...item, index: index + 1 }))}
+                  dataSource={paymentHistory?.map((item: any, index: number) => ({ ...item, index: index + 1 }))}
                   pagination={false}
                   loading={false}
                   scroll={{ x: 600, y: 380 }}
@@ -263,43 +245,58 @@ const CreditsPage = () => {
 
           {/* Modal mua credits */}
           <Modal
-            title={
-              <div className="modal-title">
-                Mua credits
-              </div>
-            }
-            open={isModalVisible}  // ✅ Dùng 'open' thay vì 'visible' nếu đang dùng Ant Design 5+
+            title={<div className="modal-title">Mua credits</div>}
+            open={isModalVisible}
             footer={null}
             centered
             onCancel={() => setIsModalVisible(false)}
-            className="modal-dark" // ✅ Thêm class để dễ tùy biến giao diện
+            className="modal-dark"
           >
-            <Form layout="vertical" onFinish={handleBuyCredits}>
-              <Form.Item label="Credits" name="credits" initialValue="500">
-                <Input disabled className="input-dark" />
+            <Form layout="vertical" form={form} onFinish={handleBuyCredits}>
+              <Form.Item
+                // label={<span style={{ color: "#fff" }}>Chọn gói Credits</span>}
+                style={{ textAlign: "center" }}
+              >
+                <div style={{ display: "inline-block", textAlign: "left", color: "#fff" }}>
+                  <Radio.Group
+                    onChange={(e) => {
+                      const pkg = creditPackages.find(p => p.credits === e.target.value)!;
+                      setSelectedPackage(pkg);
+                    }}
+                    value={selectedPackage.credits}
+                  >
+                    {creditPackages.map((pkg) => (
+                      <Radio
+                        key={pkg.credits}
+                        value={pkg.credits}
+                        style={{
+                          display: "block",
+                          lineHeight: "28px",
+                          color: "#fff"
+                        }}
+                      >
+                        {pkg.credits.toLocaleString("vi-VN")} credits – {pkg.price.toLocaleString("vi-VN")} VNĐ
+                      </Radio>
+                    ))}
+                  </Radio.Group>
+                </div>
               </Form.Item>
-
-              <Form.Item label="VNĐ" name="vnd" initialValue="179.000">
-                <Input disabled className="input-dark" />
-              </Form.Item>
-
-              <Form.Item>
+              <Form.Item style={{ textAlign: "center" }}>
                 <Button
                   type="primary"
                   htmlType="submit"
                   className="btn-text"
-                  style={{ width: "100%" }}
+                  style={{ width: "80%" }}
+                  loading={isLoading}
                 >
                   Mua ngay
                 </Button>
               </Form.Item>
+
             </Form>
-
           </Modal>
-
         </div>
       </Layout>
-
     </PageTitleHOC>
   );
 };

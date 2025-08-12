@@ -71,6 +71,17 @@ const TicketApi = api.injectEndpoints({
         return res;
       },
     }),
+     detailAds: build.query<any, any>({
+      query: id => ({
+        url: `/api/v1/case/ads/${id}`,
+        method: "GET",
+      }),
+      transformResponse: (res: any) => {
+        return res;
+      },
+    }),
+
+    
     detailCredit: build.query<any, any>({
       query: id => ({
         url: `/api/v1/case/credit/${id}`,
@@ -183,5 +194,6 @@ export const {
   useGetFacebookadsQuery,
   useGetCreditQuery,
   useLazyDetailCreditQuery,
+  useLazyDetailAdsQuery
 } = TicketApi;
 export default TicketApi;

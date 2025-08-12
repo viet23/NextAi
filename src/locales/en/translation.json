@@ -28,8 +28,9 @@
     "city": "City"
   },
   "dashboard": {
-    "title": "AI ADS",
+    "title": "Posts Ads",
     "posts": "Posts",
+    "ads_report": "Ads Report",
     "post_list": "Post list",
     "no": "No.",
     "media": "Media",
@@ -218,6 +219,7 @@
     "video_generation": "AI Video Generation",
     "media_list": "Media List",
     "ads_dashboard": "AI ADS",
+    "ads_report": "AI ADS Report",
     "accounts": "Accounts",
     "user_account": "User Account",
     "user_authorization": "User Authorization"

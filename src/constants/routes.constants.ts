@@ -6,6 +6,7 @@ export const CREDITS_ROUTE = "/credits";
 export const CUSTOMER_ROUTE = "/quan-ly-khach-hang";
 export const MEDIA_ROUTE = "/media";
 export const DASHBOARD_ROUTE = "/ai-ads";
+export const AI_ADS_ROUTE = "/ai-ads-report";
 export const USER_ROUTE = "/quan-ly-nguoi-dung";
 export const ACCOUNT_ROUTE = "/tai-khoan";
 export const ACCOUNT_DETAIL_ROUTE = ACCOUNT_ROUTE + "/:id";

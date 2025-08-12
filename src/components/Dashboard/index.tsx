@@ -1,5 +1,20 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Layout, Typography, Card, Table, Image, Row, Col, Spin, Drawer, Collapse } from "antd";
+import {
+  Layout,
+  Typography,
+  Card,
+  Table,
+  Image,
+  Row,
+  Col,
+  Spin,
+  Drawer,
+  Collapse,
+  Segmented,
+  Space,
+  Switch,
+  message,
+} from "antd";
 import { Column } from "@ant-design/plots";
 import { useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
@@ -12,6 +27,7 @@ import "./styles.scss";
 import { CaretRightOutlined, CloseOutlined } from "@ant-design/icons";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { useGetFacebookadsQuery } from "src/store/api/ticketApi";
+import DetailAdsReport from "../DetailAdsReport";
 const { Panel } = Collapse;
 
 const { Title } = Typography;
@@ -22,29 +38,51 @@ const Dashboard = () => {
   const { data: accountDetailData } = useGetAccountQuery(user?.id || "0", {
     skip: !user?.id,
   });
+
+  // === NEW: Chế độ hiển thị: 'posts' | 'ads' ===
+  const [viewMode, setViewMode] = useState<"posts" | "ads">("posts");
+
   const [filter, setFilter] = useState<any>({ page: 1, pageSize: 3 });
   // Gọi API ngay khi component render
   const { data: adsData, isSuccess } = useGetFacebookadsQuery({ filter });
 
   console.log("adsData", adsData, isSuccess);
 
-
   const [postData, setPostData] = useState<any[]>([]);
   const [barData, setBarData] = useState<{ date: string; quantity: number }[]>([]);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [detailId, setDetailId] = useState(null);
+  const [isOpenReport, setIsOpenReport] = useState(false);
+  const [detailId, setDetailId] = useState<string | null>(null);
   const [pageId, setPageId] = useState<string | undefined>(undefined);
 
   const handleOnClickDetail = (record: any) => {
-    setDetailId(record?.id);
+    setDetailId(record?.id ?? null);
     setPageId(accountDetailData?.idPage);
     setIsOpen(true);
   };
+
+
   const handleOnCloseDrawer = () => {
     setDetailId(null);
     setIsOpen(false);
   };
+
+  const handleOnClickDetailReport = (record: any) => {
+    console.log("handleOnClickDetailReport", record);
+
+    setDetailId(record?.adId ?? null);
+    setPageId(accountDetailData?.idPage);
+    setIsOpenReport(true);
+  };
+
+
+  const handleOnCloseDrawerReport = () => {
+    setDetailId(null);
+    setIsOpenReport(false);
+  };
+
+
 
   const fetchFacebookPosts = useCallback(async () => {
     if (!accountDetailData?.idPage || !accountDetailData?.accessToken) return;
@@ -120,7 +158,6 @@ const Dashboard = () => {
 
       console.log(`------------monthlyCount`, monthlyCount);
 
-
       setBarData(monthlyCount);
     } catch (err) {
       console.error("❌ Lỗi khi gọi Facebook API:", err);
@@ -133,7 +170,8 @@ const Dashboard = () => {
     fetchFacebookPosts();
   }, [fetchFacebookPosts]);
 
-  const columns: ColumnsType<any> = [
+  // ===== Cột cho danh sách bài viết (giữ như cũ) =====
+  const postColumns: ColumnsType<any> = [
     {
       title: t("dashboard.no"),
       dataIndex: "key",
@@ -141,7 +179,6 @@ const Dashboard = () => {
       width: 30,
       responsive: ["md"],
     },
-
     {
       title: t("dashboard.media"),
       dataIndex: "media",
@@ -149,7 +186,6 @@ const Dashboard = () => {
       width: 70,
       align: "center",
     },
-
     {
       title: t("dashboard.caption"),
       dataIndex: "caption",
@@ -157,11 +193,7 @@ const Dashboard = () => {
       width: typeof window !== "undefined" && window.innerWidth < 768 ? 180 : 250,
       render: (text: string) => {
         const shortText = text?.length > 100 ? text.slice(0, 100) + "..." : text;
-        return (
-          <span title={text}>
-            {shortText}
-          </span>
-        );
+        return <span title={text}>{shortText}</span>;
       },
     },
     {
@@ -205,15 +237,105 @@ const Dashboard = () => {
       width: 100,
       align: "center",
       render: (_, record) => (
-        <button
-          className="ads-button-glow"
-          onClick={() => handleOnClickDetail(record)}
-        >
+        <button className="ads-button-glow" onClick={() => handleOnClickDetail(record)}>
           {t("dashboard.ads_button")}
         </button>
       ),
     },
   ];
+
+  // ===== NEW: Cột cho Báo cáo quảng cáo =====
+  const adsColumns: ColumnsType<any> = [
+    {
+    title: "Trạng thái",
+    dataIndex: "isActive",
+    key: "isActive",
+    align: "center",
+    width: 100,
+    render: (isActive: boolean, record) => (
+      <Switch
+        checked={isActive}
+        checkedChildren="Bật"
+        unCheckedChildren="Tắt"
+        onChange={(checked) => {
+          // TODO: Gọi API cập nhật trạng thái tại đây
+          console.log(`Ad ${record.adId} chuyển trạng thái:`, checked);
+          message.success(
+            checked ? "Đã bật chiến dịch" : "Đã tắt chiến dịch"
+          );
+        }}
+        style={{
+          backgroundColor: isActive ? "#52c41a" : undefined, // Xanh khi bật
+        }}
+      />
+    ),
+  },
+    {
+      title: "Ad ID",
+      dataIndex: "adId",
+      key: "adId",
+      width: 120, // đủ hiển thị ID dài
+    },
+    {
+      title: "Chiến dịch",
+      dataIndex: "campaignName",
+      key: "campaignName",
+      width: 200, // tên chiến dịch dài hơn
+      ellipsis: true,
+    },
+    {
+      title: "Hiển thị",
+      dataIndex: ["data", "impressions"],
+      key: "impressions",
+      align: "right",
+      width: 90,
+    },
+    {
+      title: "Clicks",
+      dataIndex: ["data", "clicks"],
+      key: "clicks",
+      align: "right",
+      width: 80,
+    },
+    {
+      title: "Chi phí (VNĐ)",
+      dataIndex: ["data", "spend"],
+      key: "spend",
+      align: "right",
+      width: 110,
+    },
+    {
+      title: "CTR (%)",
+      dataIndex: ["data", "ctr"],
+      key: "ctr",
+      align: "right",
+      width: 80,
+    },
+    {
+      title: "CPM (VNĐ)",
+      dataIndex: ["data", "cpm"],
+      key: "cpm",
+      align: "right",
+      width: 90,
+    },
+    {
+      title: t("dashboard.action"),
+      key: "action",
+      width: 100,
+      align: "center",
+      render: (_, record) => (
+        <button
+          className="ads-button-glow"
+          onClick={() => handleOnClickDetailReport(record)}
+        >
+          Chi tiết
+        </button>
+      ),
+    },
+  ];
+
+
+  const dataSource = adsData?.data
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -222,26 +344,19 @@ const Dashboard = () => {
       setIsMobile(window.innerWidth <= 768);
     };
     handleResize(); // gọi ngay khi load
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const dataSource = adsData?.data
-
   return (
-    <Layout
-      className="image-layout"
-    >
+    <Layout className="image-layout">
       <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
         <h3 style={{ textAlign: "center", color: "#fff", marginBottom: 12 }}>
           {t("dashboard.title")}
         </h3>
         <Row gutter={[16, 16]}>
+
           <Col xs={24}>
-            {/* <Title level={4} style={{ color: "#fff", marginBottom: 16, fontSize: "1.2rem" }}>
-              {t("dashboard.posts")}
-            </Title> */}
 
             <Card
               style={{
@@ -263,163 +378,126 @@ const Dashboard = () => {
               </ResponsiveContainer>
             </Card>
           </Col>
-
-
           <Col xs={24}>
-            <Collapse
-              className="custom-collapse-content"
-              defaultActiveKey={["1"]}
-              ghost
-              expandIconPosition="start"
-              expandIcon={({ isActive }) => (
-                <CaretRightOutlined
-                  rotate={isActive ? 90 : 0}
-                  style={{ color: "#ffffff" }}
-                />
-              )}
-            >
-              <Panel
-                key="1"
-                header={
-                  <span style={{ color: "#ffffff", fontWeight: 600 }}>
-                    Báo cáo chiến dịch quảng cáo
-                  </span>
-                }
-              >
-                <Table
-                  className="table-scroll dark-header-table"
-                  rowKey="id"
-                  columns={[
-                    {
-                      title: "Ad ID",
-                      dataIndex: "adId",
-                      key: "adId",
-                    },
-                    {
-                      title: "Chiến dịch",
-                      dataIndex: "campaignName",
-                      key: "campaignName",
-                    },
-                    {
-                      title: "Hiển thị",
-                      dataIndex: ["data", "impressions"],
-                      key: "impressions",
-                      align: "right",
-                    },
-                    {
-                      title: "Clicks",
-                      dataIndex: ["data", "clicks"],
-                      key: "clicks",
-                      align: "right",
-                    },
-                    {
-                      title: "Chi phí (VNĐ)",
-                      dataIndex: ["data", "spend"],
-                      key: "spend",
-                      align: "right",
-
-                    },
-                    {
-                      title: "CTR (%)",
-                      dataIndex: ["data", "ctr"],
-                      key: "ctr",
-                      align: "right",
-
-                    },
-                    {
-                      title: "CPM (VNĐ)",
-                      dataIndex: ["data", "cpm"],
-                      key: "cpm",
-                      align: "right",
-                    
-                    },
-                  ]}
-                  dataSource={dataSource}
-                  // dataSource={paymentHistory.map((item, index) => ({ ...item, index: index + 1 }))}
-                  pagination={false}
-                  loading={false}
-                  scroll={{ x: 600, y: 380 }}
-                />
-              </Panel>
-            </Collapse>
-          </Col>
-
-          <Col xs={24}>
-
-            <Title level={4} style={{ color: "#fff", marginBottom: 16, fontSize: "1.2rem" }}>
-              {t("dashboard.post_list")}
-            </Title>
-            <div style={{ overflowX: "auto" }}>
-              <Spin spinning={loading}>
-
-                {isMobile ? (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: "100%", overflowX: "hidden" }}>
-                    {postData.map((item) => (
-                      <Card
-                        key={item.id}
-                        style={{
-                          background: "#1e293b",
-                          border: "1px solid #334155",
-                          borderRadius: 12,
-                          color: "#e2e8f0",
-                          fontSize: 13,
-                          maxWidth: "100%", // Ngăn Card tràn màn hình
-                        }}
-                        bodyStyle={{ padding: 12 }}
-                      >
-                        <Row gutter={[8, 8]}>
-                          <Col span={24}>
-                            <div style={{ marginBottom: 8 }}>
-                              <strong>{t("dashboard.media")}:</strong><br />
-                              <Image
-                                src={item.url}
-                                alt="media"
-                                style={{
-                                  borderRadius: 8,
-                                  width: "100%",     // Cho ảnh co giãn theo card
-                                  maxWidth: 350,     // Giới hạn kích thước tối đa
-                                  height: "auto",
-                                }}
-                              />
-                            </div>
-                            <div style={{ marginBottom: 4 }}>
-                              <strong>{t("dashboard.caption")}:</strong>
-                              <div style={{ paddingLeft: 8, maxWidth: 350, wordWrap: "break-word" }}>
-                                {item.caption.length > 100 ? item.caption.slice(0, 100) + "..." : item.caption}
-                              </div>
-                            </div>
-
-
-                            <div><strong>{t("dashboard.reach")}:</strong> {item.reach}</div>
-                            <div><strong>{t("dashboard.react")}:</strong> {item.react}</div>
-                            <div><strong>{t("dashboard.comment")}:</strong> {item.comment}</div>
-                            <div><strong>{t("dashboard.share")}:</strong> {item.share}</div>
-                            <div><strong>{t("dashboard.created_time")}:</strong> {item.createdTime}</div>
-                            <div style={{ marginTop: 8, display: "flex", justifyContent: "center" }}>
-                              <button className="ads-button-glow" onClick={() => handleOnClickDetail(item)}>
-                                {t("dashboard.ads_button")}
-                              </button>
-                            </div>
-                          </Col>
-                        </Row>
-                      </Card>
-                    ))}
-                  </div>
-
-                ) : (
-                  <Table
-                    columns={columns}
-                    dataSource={postData}
-                    pagination={{ pageSize: 5 }}
-                    bordered
-                    scroll={{ x: "max-content" }}
-                    className="dark-header-table"
-                  />
-                )}
-              </Spin>
+            {/* Header: Title + Segmented trên cùng một dòng */}
+            {/* Header: Title + Segmented */}
+            <div className="dash-header only-segmented">
+              <Segmented
+                className="segFix"
+                size="large"
+                value={viewMode}
+                onChange={(val) => setViewMode(val as "posts" | "ads")}
+                options={[
+                  { label: t("dashboard.post_list") || "Danh sách bài viết", value: "posts" },
+                  { label: t("dashboard.ads_report") || "Báo cáo quảng cáo", value: "ads" },
+                ]}
+              />
             </div>
 
 
+            {/* === Hiển thị theo chế độ === */}
+            {viewMode === "posts" ? (
+              <div style={{ overflowX: "auto" }}>
+                <Spin spinning={loading}>
+                  {isMobile ? (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 12,
+                        maxWidth: "100%",
+                        overflowX: "hidden",
+                      }}
+                    >
+                      {postData.map((item) => (
+                        <Card
+                          key={item.id}
+                          style={{
+                            background: "#1e293b",
+                            border: "1px solid #334155",
+                            borderRadius: 12,
+                            color: "#e2e8f0",
+                            fontSize: 13,
+                            maxWidth: "100%",
+                          }}
+                          bodyStyle={{ padding: 12 }}
+                        >
+                          <Row gutter={[8, 8]}>
+                            <Col span={24}>
+                              <div style={{ marginBottom: 8 }}>
+                                <strong>{t("dashboard.media")}:</strong>
+                                <br />
+                                <Image
+                                  src={item.url}
+                                  alt="media"
+                                  style={{
+                                    borderRadius: 8,
+                                    width: "100%",
+                                    maxWidth: 350,
+                                    height: "auto",
+                                  }}
+                                />
+                              </div>
+                              <div style={{ marginBottom: 4 }}>
+                                <strong>{t("dashboard.caption")}:</strong>
+                                <div style={{ paddingLeft: 8, maxWidth: 350, wordWrap: "break-word" }}>
+                                  {item.caption.length > 100
+                                    ? item.caption.slice(0, 100) + "..."
+                                    : item.caption}
+                                </div>
+                              </div>
+
+                              <div>
+                                <strong>{t("dashboard.reach")}:</strong> {item.reach}
+                              </div>
+                              <div>
+                                <strong>{t("dashboard.react")}:</strong> {item.react}
+                              </div>
+                              <div>
+                                <strong>{t("dashboard.comment")}:</strong> {item.comment}
+                              </div>
+                              <div>
+                                <strong>{t("dashboard.share")}:</strong> {item.share}
+                              </div>
+                              <div>
+                                <strong>{t("dashboard.created_time")}:</strong> {item.createdTime}
+                              </div>
+                              <div style={{ marginTop: 8, display: "flex", justifyContent: "center" }}>
+                                <button className="ads-button-glow" onClick={() => handleOnClickDetail(item)}>
+                                  {t("dashboard.ads_button")}
+                                </button>
+                              </div>
+                            </Col>
+                          </Row>
+                        </Card>
+                      ))}
+                    </div>
+                  ) : (
+                    <Table
+                      columns={postColumns}
+                      dataSource={postData}
+                      pagination={{ pageSize: 5 }}
+                      bordered
+                      scroll={{ x: "max-content" }}
+                      className="dark-header-table"
+                    />
+                  )}
+                </Spin>
+              </div>
+            ) : (
+              // === NEW: Bảng Báo cáo quảng cáo ===
+              <div style={{ overflowX: "auto" }}>
+                <Table
+                  columns={adsColumns}
+                  dataSource={dataSource}
+                  rowKey={(r) => r.id}
+                  pagination={{ pageSize: 10 }}
+                  bordered
+                  scroll={{ x: "max-content" }}
+                  className="dark-header-table"
+                />
+              </div>
+            )}
           </Col>
         </Row>
 
@@ -435,21 +513,48 @@ const Dashboard = () => {
             header: {
               backgroundColor: "#070719",
               color: "#f8fafc",
-              borderBottom: "1px solid #334155"
+              borderBottom: "1px solid #334155",
             },
             body: {
               backgroundColor: "#070719",
               color: "#e2e8f0",
               padding: 24,
               maxHeight: "calc(100vh - 108px)",
-              overflowY: "auto"
-            }
+              overflowY: "auto",
+            },
           }}
         >
           <DetailAds id={detailId} pageId={pageId ?? null} />
         </Drawer>
 
+        <Drawer
+          open={isOpenReport}
+          onClose={handleOnCloseDrawerReport}
+          width="80%"
+          maskClosable={false}
+          closeIcon={<CloseOutlined style={{ color: "#e2e8f0", fontSize: 18 }} />}
+          title={detailId ? t("dashboard.ads") : t("dashboard.ads_new")}
+          className="custom-dark-drawer"
+          styles={{
+            header: {
+              backgroundColor: "#070719",
+              color: "#f8fafc",
+              borderBottom: "1px solid #334155",
+            },
+            body: {
+              backgroundColor: "#070719",
+              color: "#e2e8f0",
+              padding: 24,
+              maxHeight: "calc(100vh - 108px)",
+              overflowY: "auto",
+            },
+          }}
+        >
+          <DetailAdsReport id={detailId} pageId={pageId ?? null} />
+        </Drawer>
       </div>
+
+
     </Layout>
   );
 };

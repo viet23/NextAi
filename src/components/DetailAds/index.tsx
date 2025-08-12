@@ -12,6 +12,8 @@ import {
   InputNumber,
   message,
   Card,
+  Radio,
+  Modal,
 } from "antd";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -99,6 +101,7 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
   const [budget, setBudget] = useState(2);
   const [campaignName, setCampaignName] = useState("Generated Campaign");
   const [createAds, { isLoading: creatingCase }] = useCreateAdsMutation();
+  const [analysisOpen, setAnalysisOpen] = useState(false);
 
   const handlePublish = async () => {
     try {
@@ -141,16 +144,16 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
       console.error("🛑 Create Ads Error:", err);
     }
   };
+  const [locationMode, setLocationMode] = useState("nationwide");
 
 
 
- 
 
   useEffect(() => {
     // Gọi ChatGPT nếu có urlPage
-  if (analysisData?.targeting) {
-   setInterests(analysisData?.targeting);
-  }
+    if (analysisData?.targeting) {
+      setInterests(analysisData?.targeting);
+    }
 
   }, [analysisData?.targeting]);
 
@@ -187,22 +190,75 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
 
           <div style={{ marginBottom: 12 }}>
             <label style={{ color: "#e2e8f0" }}>🎯 {t("ads.ads_goal")}</label>
-            <Select
-              value={goal}
-              onChange={setGoal}
-              style={{
-                width: "100%",
-                backgroundColor: "#1e293b",
-                color: "#e2e8f0",
-                borderColor: "#334155"
-              }}
-              dropdownStyle={{ backgroundColor: "#1e293b", color: "#e2e8f0" }}
-            >
-              <Select.Option value="message">{t("ads.goal.message")}</Select.Option>
-              <Select.Option value="engagement">{t("ads.goal.engagement")}</Select.Option>
-              <Select.Option value="leads">{t("ads.goal.leads")}</Select.Option>
-              <Select.Option value="traffic">{t("ads.goal.traffic")}</Select.Option>
-            </Select>
+            {/* CSS nhúng thẳng vào code để xoá gạch trắng & bo góc */}
+            <style>
+              {`
+  /* Ẩn vạch ngăn giữa các Radio.Button của AntD */
+  #goal-group .ant-radio-button-wrapper::before {
+    display: none !important;
+  }
+
+  /* Không cần border-left mặc định khi các nút tách rời nhau */
+  #goal-group .ant-radio-button-wrapper:not(:first-child) {
+    border-left: 1px solid transparent !important;
+  }
+
+  /* Bo góc đồng đều cho mọi nút (AntD mặc định chỉ bo nút đầu/cuối) */
+  #goal-group .ant-radio-button-wrapper,
+  #goal-group .ant-radio-button-wrapper:first-child,
+  #goal-group .ant-radio-button-wrapper:last-child {
+    border-radius: 8px !important;
+  }
+`}
+            </style>
+
+            <div id="goal-group">
+              <Radio.Group
+                value={goal}
+                onChange={(e) => setGoal(e.target.value)}
+                style={{ display: "flex", flexWrap: "wrap", gap: "8px", width: "100%" }}
+              >
+                {[
+                  { value: "message", label: t("ads.goal.message") },
+                  { value: "engagement", label: t("ads.goal.engagement") },
+                  { value: "leads", label: t("ads.goal.leads") },
+                  { value: "traffic", label: t("ads.goal.traffic") },
+                ].map((item) => {
+                  const isSelected = goal === item.value;
+                  return (
+                    <Radio.Button
+                      key={item.value}
+                      value={item.value}
+                      style={{
+                        flex: "0 0 calc(23% - 8px)",   // 4 nút / 1 hàng khi đủ rộng
+                        minWidth: "120px",
+                        textAlign: "center",
+                        whiteSpace: "normal",
+                        wordBreak: "break-word",
+                        height: "auto",
+                        lineHeight: "1.2",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: "#0f172a",
+                        border: isSelected ? "1px solid #4cc0ff" : "1px solid #2a3446",
+                        padding: "2px 8px",
+                        margin: "2px",
+                        fontSize: "14px",
+                        color: "#ffffff",
+                        fontWeight: 500,
+                        cursor: "pointer",
+                        boxShadow: isSelected ? "0 0 6px #4cc0ff" : "none",
+                        borderRadius: "8px",
+                      }}
+                    >
+                      {item.label}
+                    </Radio.Button>
+                  );
+                })}
+              </Radio.Group>
+            </div>
+
           </div>
 
           {goal === "leads" && (
@@ -291,16 +347,40 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
                   />
                 </Col>
               </Row>
+              <br />
 
-              <div style={{ marginBottom: 12 }}>
-                <LocationPicker
-                  location={location}
-                  setLocation={setLocation}
-                  radius={radius}
-                  setRadius={setRadius}
-                />
-              </div>
+               <label style={{ color: "#e2e8f0" }}>🎯 Phạm vi quảng cáo</label>
 
+              <Radio.Group
+                value={locationMode}
+                onChange={(e) => setLocationMode(e.target.value)}
+                style={{
+                  display: "flex",
+                  gap: "16px",
+                  marginBottom: "12px",
+                  color: "#fff",
+                }}
+              >
+                <Radio value="nationwide" style={{ color: "#fff" }}>
+                  🌏 Toàn quốc
+                </Radio>
+                <Radio value="custom" style={{ color: "#fff" }}>
+                  📍 Theo vị trí
+                </Radio>
+              </Radio.Group>
+
+              {locationMode === "custom" && (
+                <div style={{ marginBottom: 12 }}>
+                  <LocationPicker
+                    location={location}
+                    setLocation={setLocation}
+                    radius={radius}
+                    setRadius={setRadius}
+                  />
+                </div>
+              )}
+
+              <br />
               <div style={{ marginBottom: 12 }}>
                 <label style={{ color: "#e2e8f0" }}>🎯 {t("ads.detailed_targeting")}</label>
                 <Select
@@ -345,21 +425,52 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
                 }}
               />
             </Col>
+            <style>{`
+  /* Chỉ áp dụng cho InputNumber nằm trong Col Daily Budget */
+  .ant-input-number,
+  .ant-input-number-input {
+    background-color: #1e293b;
+    color: #f8fafc; /* chữ sáng hơn */
+  }
+  .ant-input-number {
+    border-color: #334155;
+  }
+  .ant-input-number:hover,
+  .ant-input-number-focused {
+    border-color: #4cc0ff;
+    box-shadow: 0 0 0 2px rgba(76,192,255,0.15);
+  }
+`}</style>
+
             <Col span={12}>
-              <label style={{ color: "#e2e8f0" }}>💰 {t("ads.daily_budget")}</label>
+              <label style={{ color: "#f8fafc" }}>
+                💰 {t("ads.daily_budget")}
+              </label>
               <InputNumber
+                className="daily-budget-input"
                 value={budget}
-                onChange={val => setBudget(val!)}
+                onChange={(val) => setBudget(val ?? 0)}
                 min={1}
-                formatter={value => `$ ${value}`}
+                formatter={(value) => `$ ${value ?? ""}`}
                 style={{
                   width: "100%",
                   backgroundColor: "#1e293b",
-                  color: "#e2e8f0",
-                  borderColor: "#334155"
+                  borderColor: "#334155",
                 }}
               />
+
+              <style>{`
+  .daily-budget-input .ant-input-number-input {
+    color: #ffffff !important; /* chữ trắng sáng */
+  }
+  .daily-budget-input .ant-input-number-input::placeholder {
+    color: #94a3b8 !important; /* placeholder sáng hơn */
+  }
+`}</style>
+
             </Col>
+
+
           </Row>
 
           <Button
@@ -368,13 +479,22 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
             onClick={handlePublish}
             loading={creatingCase}
             style={{
-              backgroundColor: "#2563eb",
-              borderColor: "#2563eb"
+              backgroundColor: "#0f172a",
+              border: "1px solid #4cc0ff",
+              borderRadius: "8px",
+              padding: "2px 8px",
+              margin: "2px",
+              fontSize: "14px",
+              color: "#ffffff",
+              fontWeight: 500,
+              boxShadow: "0 0 6px #4cc0ff",
+              cursor: "pointer",
             }}
           >
             {t("ads.publish")}
           </Button>
         </Col>
+
 
         <Col xs={24} md={12}>
           <Card
@@ -384,7 +504,7 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
               backgroundColor: "#070719",
               borderRadius: 12,
               marginTop: 0,
-              color: "#e2e8f0"
+              color: "#e2e8f0",
             }}
             headStyle={{ color: "#e2e8f0", borderBottom: "1px solid #334155" }}
           >
@@ -397,7 +517,7 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
                   border: "none",
                   overflow: "hidden",
                   borderRadius: 8,
-                  backgroundColor: "#e2e8f0"
+                  backgroundColor: "#e2e8f0",
                 }}
                 scrolling="no"
                 frameBorder="0"
@@ -405,8 +525,151 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
                 allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
               />
             </div>
+
+            {/* Nút phân tích bài viết ngay dưới iframe */}
+            <div style={{ textAlign: "right", padding: "10px" }}>
+              <button
+                style={{
+                  backgroundColor: "#0f172a",
+                  border: "1px solid #4cc0ff",
+                  borderRadius: "8px",
+                  padding: "2px 8px",
+                  margin: "2px",
+                  fontSize: "20px",
+                  color: "#ffffff",
+                  fontWeight: 500,
+                  boxShadow: "0 0 6px #4cc0ff",
+                  cursor: "pointer",
+                }}
+                onClick={() => setAnalysisOpen(true)}
+              >
+                📊 Phân tích bài viết
+              </button>
+
+            </div>
           </Card>
         </Col>
+
+
+        {/* Modal phân tích */}
+        <Modal
+          open={analysisOpen}
+          centered
+          title={
+            <div style={{ textAlign: "center", width: "100%", fontSize: "20px", color: "#000102ff" }}>
+              📊 Phân tích bài viết
+            </div>
+          }
+          onCancel={() => setAnalysisOpen(false)}
+          footer={null}
+          width={820}
+          styles={{
+            body: { background: "#fff", padding: 0 },
+            header: { background: "#fff", textAlign: "center", borderBottom: "1px solid #334155" }
+          }}
+        >
+          <div
+            style={{
+              background: "#fff",
+              color: "#010811ff",
+              padding: "12px 16px 16px",
+              borderRadius: "12px",
+              fontFamily: "Inter, sans-serif",
+            }}
+          >
+            {/* Header bảng */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1.2fr 1fr 1fr 1.6fr",
+                gap: "12px",
+                alignItems: "center",
+                position: "sticky",
+                top: 0,
+                background: "#fff",
+                padding: "10px 12px",
+                borderBottom: "1px solid #334155",
+                fontWeight: 600,
+                color: "#000205ff",
+                zIndex: 1,
+              }}
+            >
+              <div>Tiêu chí</div>
+              <div>Đánh giá</div>
+              <div>Điểm (Tối đa)</div>
+              <div>Nhận xét gợi ý</div>
+            </div>
+
+            {/* Body bảng */}
+            <div style={{ maxHeight: "460px", overflow: "auto", padding: "4px 12px 0" }}>
+              {[
+                "Từ khóa",
+                "Số ký tự",
+                "CTA",
+                "Giọng văn / Tone",
+                "Ngữ pháp / lỗi chính tả",
+                "Tương thích landing page",
+                "Màu sắc",
+                "Độ sáng",
+                "Tỷ lệ văn bản trên ảnh",
+                "Khuôn mặt / Người",
+                "Sản phẩm",
+                "Kích thước / độ phân giải",
+                "Match audience",
+                "Lịch sử campaign / xu hướng"
+              ].map((label, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1.2fr 1fr 1fr 1.6fr",
+                    gap: "12px",
+                    alignItems: "center",
+                    padding: "12px 0",
+                    borderBottom: "1px solid #2a3446",
+                    color: "#000000ff",
+                  }}
+                >
+                  <div style={{ fontWeight: 600, color: "#000000ff" }}>{label}</div>
+                  <div style={{ fontWeight: 500, color: "#000000ff" }}>Đánh giá</div>
+                  <div style={{ fontWeight: 500, color: "#000000ff" }}>Điểm (Tối đa)</div>
+                  <div style={{ fontWeight: 500, color: "#000000ff" }}>Nhận xét gợi ý</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Footer ghi chú */}
+            <div
+              style={{
+                marginTop: "12px",
+                borderTop: "1px solid #334155",
+                padding: "12px 12px 4px",
+                color: "#000000ff",
+              }}
+            >
+              <ul style={{ margin: "0 0 8px 18px" }}>
+                <li>Text: 36/40 → 90% → đóng góp 40 × 0.9 = 36</li>
+                <li>Image: 40/40 → 100% → đóng góp 40 × 1.0 = 40</li>
+                <li>Performance: 17/20 → 85% → đóng góp 85 × 0.2 = 17</li>
+              </ul>
+              <div
+                style={{
+                  background: "#fff",
+                  border: "1px solid #fff",
+                  borderRadius: "10px",
+                  padding: "10px 12px",
+                  color: "#000205ff",
+                }}
+              >
+                <strong>
+                  Final Score = 36 + 40 + 17 = 93 / 100 → Xuất sắc, có thể chạy và scale ngay.
+                </strong>
+              </div>
+            </div>
+          </div>
+        </Modal>
+
+
       </Row>
     </Card>
 

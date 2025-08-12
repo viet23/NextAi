@@ -30,13 +30,13 @@
 }
 
 /* Nút quảng cáo phát sáng */
-.ads-button-glow {
+.image-layout .ads-button-glow {
   background-color: #0f172a;
   border: 1px solid #4cc0ff;
   border-radius: 8px;
-  padding: 2px 8px;
+  padding: 1px 4px;
   margin: 2px;
-  font-size: 14px;
+  font-size: 12px;
   color: #ffffff;
   font-weight: 500;
   box-shadow: 0 0 6px #4cc0ff;
@@ -142,60 +142,4 @@
 .custom-collapse-content .ant-collapse-content-box {
   padding-left: 0 !important;
   padding-right: 0 !important;
-}
-
-/* Chỉ còn segmented, căn giữa */
-.dash-header.only-segmented {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-/* Biến màu */
-.segFix.ant-segmented {
-  --seg-bg: #0f172a;          /* nền nút chưa chọn */
-  --seg-text: #e2e8f0;        /* chữ nút chưa chọn */
-  --seg-blue: #2f7fff;        /* nền nút chọn (xanh dịu) */
-  --seg-glow-1: rgba(47,127,255,.28);
-  --seg-glow-2: rgba(47,127,255,.16);
-  --seg-glow-3: rgba(47,127,255,.08);
-  background: transparent;
-  border: none;
-}
-
-/* Ẩn thumb để tô nền trực tiếp item */
-.segFix.ant-segmented .ant-segmented-thumb { display: none !important; }
-
-/* Nút KHÔNG chọn */
-.segFix.ant-segmented .ant-segmented-item{
-  background: var(--seg-bg);
-  color: var(--seg-text);
-  border: 1px solid #263349;
-  border-radius: 12px;
-  padding: 8px 16px;
-  transition: background .2s ease, color .2s ease, box-shadow .2s ease, border-color .2s ease;
-  box-shadow: none !important;
-  opacity: .95;
-}
-.segFix.ant-segmented .ant-segmented-item:not(:last-child){ margin-right: 10px; }
-.segFix.ant-segmented .ant-segmented-item:hover{
-  border-color: #35507a;
-  color: #fff;
-}
-
-/* Label của nút ĐƯỢC CHỌN */
-.segFix.ant-segmented .ant-segmented-item-selected .ant-segmented-item-label,
-.segFix.ant-segmented .ant-segmented-item[aria-checked="true"] .ant-segmented-item-label{
-  color: #fff !important;
-  font-weight: 700;
-  text-shadow: 0 1px 0 rgba(0,0,0,.16);
-}
-
-/* Đảm bảo nút KHÔNG chọn luôn tắt glow, kể cả khi mất class selected */
-.segFix.ant-segmented .ant-segmented-item:not(.ant-segmented-item-selected):not([aria-checked="true"]){
-  box-shadow: none !important;
-  background: var(--seg-bg);
-  color: var(--seg-text);
-  border-color: #263349;
 }

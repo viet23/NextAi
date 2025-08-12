@@ -28,8 +28,9 @@
     "unfollow": "Đến từ người chưa theo dõi"
   },
   "dashboard": {
-    "title": "Quảng cáo AI",
+    "title": "Bài viết Quảng cáo",
     "posts": "Bài viết",
+    "ads_report": "Báo cáo Quảng cáo",
     "post_list": "Danh sách bài viết",
     "no": "STT",
     "media": "Hình ảnh",
@@ -268,6 +269,7 @@
     "video_generation": "Tạo video AI",
     "media_list": " Kho Media",
     "ads_dashboard": "Quảng cáo AI",
+    "ads_report": "Báo cáo AI Ads",
     "accounts": "Tài khoản",
     "user_account": "Tài khoản người dùng",
     "user_authorization": "Phân quyền người dùng"
