@@ -527,7 +527,7 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
             </div>
 
             {/* Nút phân tích bài viết ngay dưới iframe */}
-            <div style={{ textAlign: "right", padding: "10px" }}>
+            {/* <div style={{ textAlign: "right", padding: "10px" }}>
               <button
                 style={{
                   backgroundColor: "#0f172a",
@@ -546,7 +546,7 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
                 📊 Phân tích bài viết
               </button>
 
-            </div>
+            </div> */}
           </Card>
         </Col>
 

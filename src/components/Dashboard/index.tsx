@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Layout,
-  Typography,
   Card,
   Table,
   Image,
@@ -9,13 +8,11 @@ import {
   Col,
   Spin,
   Drawer,
-  Collapse,
   Segmented,
-  Space,
   Switch,
   message,
 } from "antd";
-import { Column } from "@ant-design/plots";
+
 import { useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
 import { useGetAccountQuery } from "src/store/api/accountApi";
@@ -24,13 +21,15 @@ import dayjs from "dayjs";
 import DetailAds from "../DetailAds";
 import { useTranslation } from "react-i18next";
 import "./styles.scss";
-import { CaretRightOutlined, CloseOutlined } from "@ant-design/icons";
+import { CloseOutlined } from "@ant-design/icons";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { useGetFacebookadsQuery } from "src/store/api/ticketApi";
 import DetailAdsReport from "../DetailAdsReport";
-const { Panel } = Collapse;
+import DetailAnalysis from "../DetailAnalysis";
+import qs from "qs";
+import axios from "axios";
 
-const { Title } = Typography;
+
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -42,7 +41,7 @@ const Dashboard = () => {
   // === NEW: Chế độ hiển thị: 'posts' | 'ads' ===
   const [viewMode, setViewMode] = useState<"posts" | "ads">("posts");
 
-  const [filter, setFilter] = useState<any>({ page: 1, pageSize: 3 });
+  const [filter, setFilter] = useState<any>({ page: 1, pageSize: 5 });
   // Gọi API ngay khi component render
   const { data: adsData, isSuccess } = useGetFacebookadsQuery({ filter });
 
@@ -52,8 +51,10 @@ const Dashboard = () => {
   const [barData, setBarData] = useState<{ date: string; quantity: number }[]>([]);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenAnl, setIsOpenAnl] = useState(false);
   const [isOpenReport, setIsOpenReport] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
+  const [detailRecord, setDetailRecord] = useState<string | null>(null);
   const [pageId, setPageId] = useState<string | undefined>(undefined);
 
   const handleOnClickDetail = (record: any) => {
@@ -68,9 +69,21 @@ const Dashboard = () => {
     setIsOpen(false);
   };
 
+  const handleOnClickDetailAnl = (record: any) => {
+    setDetailId(record?.id ?? null);
+    setPageId(accountDetailData?.idPage);
+    setIsOpenAnl(true);
+  };
+
+
+  const handleOnCloseDrawerAnl = () => {
+    setDetailId(null);
+    setIsOpenAnl(false);
+  };
+
   const handleOnClickDetailReport = (record: any) => {
     console.log("handleOnClickDetailReport", record);
-
+    setDetailRecord(record);
     setDetailId(record?.adId ?? null);
     setPageId(accountDetailData?.idPage);
     setIsOpenReport(true);
@@ -78,9 +91,51 @@ const Dashboard = () => {
 
 
   const handleOnCloseDrawerReport = () => {
+    setDetailRecord(null);
     setDetailId(null);
     setIsOpenReport(false);
   };
+
+
+  // Gọi Graph API để bật/tắt Ad theo adId
+  async function setAdStatus(adId: string, isActive: boolean) {
+    try {
+      if (!accountDetailData?.accessTokenUser) {
+        message.error("Thiếu access token");
+        return false;
+      }
+
+      const url = `https://graph.facebook.com/v19.0/${adId}`;
+      const body = qs.stringify({
+        status: isActive ? "ACTIVE" : "PAUSED",
+        access_token: accountDetailData.accessTokenUser,
+      });
+
+      const res = await axios.post(url, body, {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      });
+
+      const data = res.data as { success?: boolean };
+
+      if (data.success === true) {
+        message.success(isActive ? "Đã bật quảng cáo" : "Đã tắt quảng cáo");
+        return true;
+      } else {
+        message.error("Facebook API không trả về thành công");
+        return false;
+      }
+    } catch (error: any) {
+      console.error(
+        "❌ Lỗi khi đổi trạng thái quảng cáo:",
+        error?.response?.data || error.message
+      );
+      message.error(
+        error?.response?.data?.error?.message || "Không thể cập nhật trạng thái quảng cáo"
+      );
+      return false;
+    }
+  }
+
 
 
 
@@ -225,11 +280,15 @@ const Dashboard = () => {
       align: "center",
     },
     {
-      title: t("dashboard.created_time"),
-      dataIndex: "createdTime",
-      key: "createdTime",
-      width: 120,
+      title: "Phân tích bài viết",
+      key: "action",
+      width: 100,
       align: "center",
+      render: (_, record) => (
+        <button className="ads-button-glow" onClick={() => handleOnClickDetailAnl(record)}>
+          Phân tích
+        </button>
+      ),
     },
     {
       title: t("dashboard.action"),
@@ -242,34 +301,54 @@ const Dashboard = () => {
         </button>
       ),
     },
+    {
+      title: t("dashboard.created_time"),
+      dataIndex: "createdTime",
+      key: "createdTime",
+      width: 120,
+      align: "center",
+    },
   ];
 
   // ===== NEW: Cột cho Báo cáo quảng cáo =====
   const adsColumns: ColumnsType<any> = [
     {
-    title: "Trạng thái",
-    dataIndex: "isActive",
-    key: "isActive",
-    align: "center",
-    width: 100,
-    render: (isActive: boolean, record) => (
-      <Switch
-        checked={isActive}
-        checkedChildren="Bật"
-        unCheckedChildren="Tắt"
-        onChange={(checked) => {
-          // TODO: Gọi API cập nhật trạng thái tại đây
-          console.log(`Ad ${record.adId} chuyển trạng thái:`, checked);
-          message.success(
-            checked ? "Đã bật chiến dịch" : "Đã tắt chiến dịch"
-          );
-        }}
-        style={{
-          backgroundColor: isActive ? "#52c41a" : undefined, // Xanh khi bật
-        }}
-      />
-    ),
-  },
+      title: "Trạng thái",
+      dataIndex: "status", // có thể không có
+      key: "status",
+      align: "center",
+      width: 110,
+      render: (_: any, record: any) => {
+        // ACTIVE => bật; thiếu status hoặc khác ACTIVE => tắt
+        const checked = record?.status?.toUpperCase?.() === "ACTIVE";
+
+        const onToggle = async (nextChecked: boolean) => {
+          try {
+            await setAdStatus(record.adId, nextChecked);
+            // Cập nhật UI:
+            record.status = nextChecked ? "ACTIVE" : "PAUSED";
+            message.success(nextChecked ? "Đã bật quảng cáo" : "Đã tắt quảng cáo");
+
+            // Nếu có hàm refetch() thì nên gọi để đồng bộ dữ liệu:
+            // await refetch?.();
+          } catch (err: any) {
+            console.error(err);
+            message.error(err?.response?.data?.error?.message || "Không thể cập nhật trạng thái quảng cáo");
+          }
+        };
+
+        return (
+          <Switch
+            checked={checked}
+            checkedChildren="Bật"
+            unCheckedChildren="Tắt"
+            onChange={onToggle}
+            style={{ backgroundColor: checked ? "#52c41a" : undefined }}
+          />
+        );
+      },
+    },
+
     {
       title: "Ad ID",
       dataIndex: "adId",
@@ -504,7 +583,7 @@ const Dashboard = () => {
         <Drawer
           open={isOpen}
           onClose={handleOnCloseDrawer}
-          width="98%"
+          width="88%"
           maskClosable={false}
           closeIcon={<CloseOutlined style={{ color: "#e2e8f0", fontSize: 18 }} />}
           title={detailId ? t("dashboard.ads") : t("dashboard.ads_new")}
@@ -528,12 +607,12 @@ const Dashboard = () => {
         </Drawer>
 
         <Drawer
-          open={isOpenReport}
-          onClose={handleOnCloseDrawerReport}
-          width="80%"
+          open={isOpenAnl}
+          onClose={handleOnCloseDrawerAnl}
+          width="88%"
           maskClosable={false}
           closeIcon={<CloseOutlined style={{ color: "#e2e8f0", fontSize: 18 }} />}
-          title={detailId ? t("dashboard.ads") : t("dashboard.ads_new")}
+          title={detailId ? t("dashboard.analysis") : t("dashboard.ads_new")}
           className="custom-dark-drawer"
           styles={{
             header: {
@@ -550,7 +629,35 @@ const Dashboard = () => {
             },
           }}
         >
-          <DetailAdsReport id={detailId} pageId={pageId ?? null} />
+          <DetailAnalysis id={detailId} pageId={pageId ?? null} />
+        </Drawer>
+
+
+
+        <Drawer
+          open={isOpenReport}
+          onClose={handleOnCloseDrawerReport}
+          width="88%"
+          maskClosable={false}
+          closeIcon={<CloseOutlined style={{ color: "#e2e8f0", fontSize: 18 }} />}
+          title={detailId ? t("dashboard.ads_report") : t("dashboard.ads_new")}
+          className="custom-dark-drawer"
+          styles={{
+            header: {
+              backgroundColor: "#070719",
+              color: "#f8fafc",
+              borderBottom: "1px solid #334155",
+            },
+            body: {
+              backgroundColor: "#070719",
+              color: "#e2e8f0",
+              padding: 24,
+              maxHeight: "calc(100vh - 108px)",
+              overflowY: "auto",
+            },
+          }}
+        >
+          <DetailAdsReport id={detailId} detailRecord={detailRecord} pageId={pageId ?? null} />
         </Drawer>
       </div>
 

@@ -44,6 +44,7 @@
     "share": "Chia sẻ",
     "ads": "AI Quảng cáo",
     "ads_new": "Tạo mới AI Quảng cáo",
+    "analysis": "Phân tích bài viết",
     "chart": {
       "x_axis": "Tháng",
       "y_axis": "Số bài viết"
@@ -321,7 +322,7 @@
       "amount_paid": "Số tiền đã thanh toán (VND)",
       "credits_bought": "Credits đã mua",
       "status": "Trạng thái",
-       "confirm": "Xác nhận"
+      "confirm": "Xác nhận"
     },
     "status": {
       "pending": "Chờ xử lý",

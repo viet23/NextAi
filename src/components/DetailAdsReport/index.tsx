@@ -4,9 +4,16 @@ import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
 import { useLazyDetailAdsQuery } from "src/store/api/ticketApi";
 import "./styles.scss";
+import { useSelector } from "react-redux";
+import { useGetAccountQuery } from "src/store/api/accountApi";
+import { IRootState } from "src/interfaces/app.interface";
+import qs from "qs";
+import axios from "axios";
+import { useUpdateAdInsightMutation } from "src/store/api/facebookApi";
 
 interface AdsFormProps {
   id: string | null;
+  detailRecord: any; // Thêm prop này để nhận record chi tiết từ Dashboard
   pageId: string | null;
 }
 
@@ -43,8 +50,16 @@ const fmtInt = (v: any) => num(v).toLocaleString("vi-VN");
 const fmtCurrency = (v: any) => num(v).toLocaleString("vi-VN");
 const fmtPercent = (v: any, digits = 2) => `${num(v).toFixed(digits)}%`;
 
-const DetailAdsReport: React.FC<AdsFormProps> = ({ id, pageId }) => {
+const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) => {
   const { t } = useTranslation();
+  const { user } = useSelector((state: IRootState) => state.auth);
+  const { data: accountDetailData } = useGetAccountQuery(user?.id || "0", {
+    skip: !user?.id,
+  });
+
+
+  const [updateAccountGroup, { isSuccess: isUpdateSuccess }] = useUpdateAdInsightMutation();
+
 
   const [getDetailTicket] = useLazyDetailAdsQuery();
   const [dataSource, setDataSource] = useState<RowType[]>([]);
@@ -89,6 +104,78 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, pageId }) => {
     };
   }, [id, getDetailTicket]);
 
+
+  // Gọi Graph API để bật/tắt Ad theo adId
+  async function setAdStatus(adId: string, isActive: boolean) {
+    try {
+      if (!accountDetailData?.accessTokenUser) {
+        message.error("Thiếu access token");
+        return false;
+      }
+
+      const url = `https://graph.facebook.com/v19.0/${adId}`;
+      const body = qs.stringify({
+        status: isActive ? "ACTIVE" : "PAUSED",
+        access_token: accountDetailData.accessTokenUser,
+      });
+
+      const res = await axios.post(url, body, {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      });
+
+      const data = res.data as { success?: boolean };
+
+      if (data.success === true) {
+        message.success(isActive ? "Đã bật quảng cáo" : "Đã tắt quảng cáo");
+        return true;
+      } else {
+        message.error("Facebook API không trả về thành công");
+        return false;
+      }
+    } catch (error: any) {
+      console.error(
+        "❌ Lỗi khi đổi trạng thái quảng cáo:",
+        error?.response?.data || error.message
+      );
+      message.error(
+        error?.response?.data?.error?.message || "Không thể cập nhật trạng thái quảng cáo"
+      );
+      return false;
+    }
+  }
+
+const handleApply = (id?: string | number) => {
+    Modal.confirm({
+      title: "Xác nhận đồng ý?",
+      content: "Hành động này sẽ được thực hiện ngay.",
+      okText: "Đồng ý",
+      cancelText: "Hủy",
+      async onOk() {
+        try {
+
+          updateAccountGroup({
+            id: id,
+            body: {isActive:true},
+          })
+            .unwrap()
+            .then(() => {
+              message.success("Cập nhật tài khoản thành công!");
+            })
+            .catch(() => {
+              message.error("Đã xảy ra lỗi khi cập nhật tài khoản!");
+            });
+          message.success("Đã thực thi khuyến nghị!");
+          // Ví dụ cập nhật UI:
+          // setCurrent(p => ({ ...p, isActive: true }));
+          setOpen(false);
+        } catch {
+          message.error("Thao tác thất bại. Vui lòng thử lại!");
+        }
+      },
+    });
+  };
+
+
   return (
     <>
       <Card
@@ -108,6 +195,17 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, pageId }) => {
               r.id || r.adId || Math.random().toString(36).slice(2)
             }
             columns={[
+              {
+                title: "Ngày Báo cáo",
+                dataIndex: "createdAt",
+                key: "createdAt",
+                width: 180,
+                render: (text) => {
+                  if (!text) return "";
+                  return dayjs(text).format("HH:mm:ss DD/MM/YYYY");
+                },
+              },
+
               {
                 title: t("dashboard.action"),
                 key: "action",
@@ -201,7 +299,7 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, pageId }) => {
             {/* Nút Tạm dừng chiến dịch */}
             <button
               style={{
-                backgroundColor: "#f5222d",
+                backgroundColor: detailRecord?.status === "ACTIVE" ? "#f5222d" : "#52c41a",
                 border: "none",
                 color: "#fff",
                 padding: "8px 16px",
@@ -211,57 +309,46 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, pageId }) => {
               }}
               onClick={() => {
                 Modal.confirm({
-                  title: "Bạn có chắc muốn tạm dừng chiến dịch này?",
-                  content: "Chiến dịch sẽ bị tạm dừng ngay lập tức.",
+                  title:
+                    detailRecord?.status === "ACTIVE"
+                      ? "Tạm dừng chiến dịch?"
+                      : "Bật lại chiến dịch?",
+                  content:
+                    detailRecord?.status === "ACTIVE"
+                      ? "Chiến dịch sẽ bị tạm dừng ngay."
+                      : "Chiến dịch sẽ được bật lại.",
                   okText: "Xác nhận",
                   cancelText: "Hủy",
-                  okButtonProps: { danger: true },
+                  okButtonProps: { danger: detailRecord?.status === "ACTIVE" },
                   async onOk() {
-                    try {
-                      // TODO: gọi API tạm dừng chiến dịch tại đây, ví dụ:
-                      // await pauseCampaign(current?.adId)
-                      message.success("Đã tạm dừng chiến dịch!");
-                      setOpen(false);
-                    } catch (e) {
-                      message.error("Tạm dừng thất bại. Vui lòng thử lại!");
-                    }
+                    const ok = await setAdStatus(
+                      detailRecord?.adId,
+                      detailRecord?.status !== "ACTIVE" // nếu đang ACTIVE thì sẽ tắt, ngược lại thì bật
+                    );
+                    if (ok) setOpen(false);
                   }
                 });
               }}
             >
-              ⏸ Tạm dừng chiến dịch
+              {detailRecord?.status === "ACTIVE" ? "⏸ Tạm dừng" : "▶ Bật lại"} chiến dịch
             </button>
+
 
             {/* Nút Đồng ý */}
             <button
+              disabled={current?.isActive}
               style={{
-                backgroundColor: "#4cc0ff",
+                backgroundColor: current?.isActive ? "#d9d9d9" : "#52c41a",
                 border: "none",
                 color: "#fff",
                 padding: "8px 16px",
                 borderRadius: "6px",
                 fontWeight: 500,
-                cursor: "pointer"
+                cursor: current?.isActive ? "not-allowed" : "pointer",
               }}
-              onClick={() => {
-                Modal.confirm({
-                  title: "Xác nhận đồng ý?",
-                  content: "Hành động này sẽ được thực hiện ngay.",
-                  okText: "Đồng ý",
-                  cancelText: "Hủy",
-                  async onOk() {
-                    try {
-                      // TODO: xử lý đồng ý ở đây, ví dụ cập nhật trạng thái...
-                      message.success("Đã thực thi khuyến nghị!");
-                      setOpen(false);
-                    } catch (e) {
-                      message.error("Thao tác thất bại. Vui lòng thử lại!");
-                    }
-                  }
-                });
-              }}
+             onClick={!current?.isActive ? () => handleApply(current?.id) : undefined}
             >
-              ✔ Đồng ý
+              {current?.isActive ? "✔ Đã áp dụng" : "✔ Áp dụng khuyến nghị"}
             </button>
           </div>
         }

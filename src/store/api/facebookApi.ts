@@ -12,7 +12,17 @@ const facebookApi = api.injectEndpoints({
         return res;
       },
     }),
+     updateAdInsight: build.mutation<any, any>({
+      query: ({ id, body }) => ({
+        url: `/api/v1/facebook-ads/${id}`,
+        method: "PUT",
+        body,
+      }),
+      transformResponse: (res: any) => {
+        return res;
+      },
+    }),
   }),
 });
-export const { useCreateAdsMutation } = facebookApi;
+export const { useCreateAdsMutation, useUpdateAdInsightMutation } = facebookApi;
 export default facebookApi;
