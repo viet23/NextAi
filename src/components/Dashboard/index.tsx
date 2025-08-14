@@ -497,7 +497,7 @@ const Dashboard = () => {
                             borderRadius: 12,
                             color: "#e2e8f0",
                             fontSize: 13,
-                            maxWidth: "100%",
+                            maxWidth: 380
                           }}
                           bodyStyle={{ padding: 12 }}
                         >
@@ -526,7 +526,7 @@ const Dashboard = () => {
                                 </div>
                               </div>
 
-                              <div>
+                              {/* <div>
                                 <strong>{t("dashboard.reach")}:</strong> {item.reach}
                               </div>
                               <div>
@@ -540,8 +540,11 @@ const Dashboard = () => {
                               </div>
                               <div>
                                 <strong>{t("dashboard.created_time")}:</strong> {item.createdTime}
-                              </div>
+                              </div> */}
                               <div style={{ marginTop: 8, display: "flex", justifyContent: "center" }}>
+                                <button className="ads-button-glow" onClick={() => handleOnClickDetailAnl(item)}>
+                                  Phân tích
+                                </button>
                                 <button className="ads-button-glow" onClick={() => handleOnClickDetail(item)}>
                                   {t("dashboard.ads_button")}
                                 </button>
@@ -583,7 +586,7 @@ const Dashboard = () => {
         <Drawer
           open={isOpen}
           onClose={handleOnCloseDrawer}
-          width="88%"
+          width="98%"
           maskClosable={false}
           closeIcon={<CloseOutlined style={{ color: "#e2e8f0", fontSize: 18 }} />}
           title={detailId ? t("dashboard.ads") : t("dashboard.ads_new")}
@@ -609,7 +612,7 @@ const Dashboard = () => {
         <Drawer
           open={isOpenAnl}
           onClose={handleOnCloseDrawerAnl}
-          width="88%"
+          width="98%"
           maskClosable={false}
           closeIcon={<CloseOutlined style={{ color: "#e2e8f0", fontSize: 18 }} />}
           title={detailId ? t("dashboard.analysis") : t("dashboard.ads_new")}
@@ -637,7 +640,7 @@ const Dashboard = () => {
         <Drawer
           open={isOpenReport}
           onClose={handleOnCloseDrawerReport}
-          width="88%"
+          width="98%"
           maskClosable={false}
           closeIcon={<CloseOutlined style={{ color: "#e2e8f0", fontSize: 18 }} />}
           title={detailId ? t("dashboard.ads_report") : t("dashboard.ads_new")}

@@ -6,8 +6,6 @@ import {
   Button,
   Row,
   Col,
-  Slider,
-  Switch,
   DatePicker,
   InputNumber,
   message,
@@ -303,71 +301,61 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
             </div>
           )}
 
-          <div style={{ marginBottom: 12 }}>
-            <label style={{ color: "#e2e8f0" }}>{t("ads.audience")}</label>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ color: "#e2e8f0" }}>👥 {t("ads.ai_targeting")}</span>
-              {/* <Switch checked={aiTargeting} onChange={setAiTargeting} /> */}
-            </div>
-          </div>
-
-          <Paragraph type="secondary" style={{ margin: "4px 0 12px", color: "#94a3b8" }}>
-            {t("ads.ai_targeting_note")}
-          </Paragraph>
-
           {!aiTargeting && (
             <>
-              <Row gutter={12} style={{ marginBottom: 12 }}>
-                <Col span={12}>
-                  <label style={{ color: "#e2e8f0" }}>{t("ads.gender")}</label>
-                  <Select
-                    value={gender}
-                    onChange={setGender}
-                    style={{
-                      width: "100%",
-                      backgroundColor: "#e2e8f0",
-                      color: "#1e293b",
-                      borderColor: "#334155"
-                    }}
-                    dropdownStyle={{ backgroundColor: "#e2e8f0", color: "#1e293b" }}
-                  >
-                    <Select.Option value="all">{t("ads.gender_all")}</Select.Option>
-                    <Select.Option value="male">{t("ads.gender_male")}</Select.Option>
-                    <Select.Option value="female">{t("ads.gender_female")}</Select.Option>
-                  </Select>
-                </Col>
-                <Col span={12}>
-                  <label style={{ color: "#e2e8f0" }}>{t("ads.age")}</label>
-                  <Slider
-                    range
-                    value={age}
-                    onChange={val => setAge(val as [number, number])}
-                    min={13}
-                    max={65}
-                  />
-                </Col>
-              </Row>
               <br />
 
-               <label style={{ color: "#e2e8f0" }}>🎯 Phạm vi quảng cáo</label>
+              <label style={{ color: "#e2e8f0" }}>🎯 Phạm vi quảng cáo</label>
 
               <Radio.Group
                 value={locationMode}
                 onChange={(e) => setLocationMode(e.target.value)}
                 style={{
                   display: "flex",
-                  gap: "16px",
-                  marginBottom: "12px",
-                  color: "#fff",
+                  gap: "8px",
+                  width: "100%",
+                  flexWrap: "wrap",
                 }}
               >
-                <Radio value="nationwide" style={{ color: "#fff" }}>
-                  🌏 Toàn quốc
-                </Radio>
-                <Radio value="custom" style={{ color: "#fff" }}>
-                  📍 Theo vị trí
-                </Radio>
+                {[
+                  { value: "nationwide", label: "🌏 Toàn quốc" },
+                  { value: "custom", label: "📍 Theo vị trí" },
+                ].map((item) => {
+                  const isSelected = locationMode === item.value;
+                  return (
+                    <Radio.Button
+                      key={item.value}
+                      value={item.value}
+                      style={{
+                        flex: "0 0 calc(25% - 8px)", // 4 nút / 1 hàng nếu đủ rộng
+                        minWidth: "140px",
+                        textAlign: "center",
+                        whiteSpace: "normal",
+                        wordBreak: "break-word",
+                        height: "auto",
+                        lineHeight: "1.2",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: "#0f172a",
+                        border: isSelected ? "1px solid #4cc0ff" : "1px solid #2a3446",
+                        padding: "6px 12px",
+                        margin: "2px",
+                        fontSize: "14px",
+                        color: "#ffffff",
+                        fontWeight: 500,
+                        cursor: "pointer",
+                        boxShadow: isSelected ? "0 0 6px #4cc0ff" : "none",
+                        borderRadius: "8px",
+                        transition: "all 0.2s ease",
+                      }}
+                    >
+                      {item.label}
+                    </Radio.Button>
+                  );
+                })}
               </Radio.Group>
+
 
               {locationMode === "custom" && (
                 <div style={{ marginBottom: 12 }}>
@@ -525,150 +513,8 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
                 allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
               />
             </div>
-
-            {/* Nút phân tích bài viết ngay dưới iframe */}
-            {/* <div style={{ textAlign: "right", padding: "10px" }}>
-              <button
-                style={{
-                  backgroundColor: "#0f172a",
-                  border: "1px solid #4cc0ff",
-                  borderRadius: "8px",
-                  padding: "2px 8px",
-                  margin: "2px",
-                  fontSize: "20px",
-                  color: "#ffffff",
-                  fontWeight: 500,
-                  boxShadow: "0 0 6px #4cc0ff",
-                  cursor: "pointer",
-                }}
-                onClick={() => setAnalysisOpen(true)}
-              >
-                📊 Phân tích bài viết
-              </button>
-
-            </div> */}
           </Card>
         </Col>
-
-
-        {/* Modal phân tích */}
-        <Modal
-          open={analysisOpen}
-          centered
-          title={
-            <div style={{ textAlign: "center", width: "100%", fontSize: "20px", color: "#000102ff" }}>
-              📊 Phân tích bài viết
-            </div>
-          }
-          onCancel={() => setAnalysisOpen(false)}
-          footer={null}
-          width={820}
-          styles={{
-            body: { background: "#fff", padding: 0 },
-            header: { background: "#fff", textAlign: "center", borderBottom: "1px solid #334155" }
-          }}
-        >
-          <div
-            style={{
-              background: "#fff",
-              color: "#010811ff",
-              padding: "12px 16px 16px",
-              borderRadius: "12px",
-              fontFamily: "Inter, sans-serif",
-            }}
-          >
-            {/* Header bảng */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1.2fr 1fr 1fr 1.6fr",
-                gap: "12px",
-                alignItems: "center",
-                position: "sticky",
-                top: 0,
-                background: "#fff",
-                padding: "10px 12px",
-                borderBottom: "1px solid #334155",
-                fontWeight: 600,
-                color: "#000205ff",
-                zIndex: 1,
-              }}
-            >
-              <div>Tiêu chí</div>
-              <div>Đánh giá</div>
-              <div>Điểm (Tối đa)</div>
-              <div>Nhận xét gợi ý</div>
-            </div>
-
-            {/* Body bảng */}
-            <div style={{ maxHeight: "460px", overflow: "auto", padding: "4px 12px 0" }}>
-              {[
-                "Từ khóa",
-                "Số ký tự",
-                "CTA",
-                "Giọng văn / Tone",
-                "Ngữ pháp / lỗi chính tả",
-                "Tương thích landing page",
-                "Màu sắc",
-                "Độ sáng",
-                "Tỷ lệ văn bản trên ảnh",
-                "Khuôn mặt / Người",
-                "Sản phẩm",
-                "Kích thước / độ phân giải",
-                "Match audience",
-                "Lịch sử campaign / xu hướng"
-              ].map((label, idx) => (
-                <div
-                  key={idx}
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "1.2fr 1fr 1fr 1.6fr",
-                    gap: "12px",
-                    alignItems: "center",
-                    padding: "12px 0",
-                    borderBottom: "1px solid #2a3446",
-                    color: "#000000ff",
-                  }}
-                >
-                  <div style={{ fontWeight: 600, color: "#000000ff" }}>{label}</div>
-                  <div style={{ fontWeight: 500, color: "#000000ff" }}>Đánh giá</div>
-                  <div style={{ fontWeight: 500, color: "#000000ff" }}>Điểm (Tối đa)</div>
-                  <div style={{ fontWeight: 500, color: "#000000ff" }}>Nhận xét gợi ý</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Footer ghi chú */}
-            <div
-              style={{
-                marginTop: "12px",
-                borderTop: "1px solid #334155",
-                padding: "12px 12px 4px",
-                color: "#000000ff",
-              }}
-            >
-              <ul style={{ margin: "0 0 8px 18px" }}>
-                <li>Text: 36/40 → 90% → đóng góp 40 × 0.9 = 36</li>
-                <li>Image: 40/40 → 100% → đóng góp 40 × 1.0 = 40</li>
-                <li>Performance: 17/20 → 85% → đóng góp 85 × 0.2 = 17</li>
-              </ul>
-              <div
-                style={{
-                  background: "#fff",
-                  border: "1px solid #fff",
-                  borderRadius: "10px",
-                  padding: "10px 12px",
-                  color: "#000205ff",
-                }}
-              >
-                <strong>
-                  Final Score = 36 + 40 + 17 = 93 / 100 → Xuất sắc, có thể chạy và scale ngay.
-                </strong>
-              </div>
-            </div>
-          </div>
-        </Modal>
-
 
       </Row>
     </Card>
