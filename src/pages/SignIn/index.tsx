@@ -136,14 +136,14 @@ const SignIn = () => {
           {t("signin.google")}
         </Button>
 
-        <Button
+        {/* <Button
           icon={<img src={FaceBookLogo} alt="fb" width={20} />}
           onClick={() => handleSocialLogin("facebook")}
           className="signin-social-btn facebook"
           block
         >
           {t("signin.facebook")}
-        </Button>
+        </Button> */}
 
         <Text className="signin-footer">
           {t("signin.noAccount")} <Link to="/register">{t("signin.signupNow")}</Link>

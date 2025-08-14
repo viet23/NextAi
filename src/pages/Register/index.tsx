@@ -205,7 +205,7 @@ const RegisterPage = () => {
             {t("register.withGoogle")}
           </Button>
 
-          <Button
+          {/* <Button
             block
             icon={<img src={FaceBookLogo} alt="fb" />}
             className="register-social-btn"
@@ -213,7 +213,7 @@ const RegisterPage = () => {
             onClick={() => handleSocialLogin("facebook")}
           >
             {t("register.withFacebook")}
-          </Button>
+          </Button> */}
 
           <div className="register-footer">
             {t("register.alreadyHaveAccount")}{" "}
