@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
-import { Modal, Input, Button, Form, message } from "antd";
-import { useSendEmailMutation } from "src/store/api/email";
+import { Modal, Button, Form } from "antd";
 
 interface AutoPostModalProps {
   visible: boolean;
@@ -14,51 +13,27 @@ interface FormValues {
   zalo?: string;
 }
 
-// Style input
-const inputStyle: React.CSSProperties = {
-  background: "#0F172A",
-  border: "1px solid #334155",
-  color: "#F1F5F9",
-  height: 38,
-  borderRadius: 6,
-  padding: "0 12px",
-};
-
-// Style label
-const labelStyle: React.CSSProperties = {
-  color: "#F1F5F9",
-  fontWeight: 500,
-};
+const ZALO_LINK = "https://zalo.me/g/bshljq750";
+const YT_URL = "https://www.youtube.com/watch?v=bb-DW0W5-6s";
+const YT_EMBED = "https://www.youtube.com/embed/bb-DW0W5-6s?start=1";
 
 const AutoPostModal = ({ visible, onClose }: AutoPostModalProps) => {
   const [form] = Form.useForm<FormValues>();
-  const [sendEmail, { isLoading }] = useSendEmailMutation();
 
-  const handleSubmit = async (values: FormValues) => {
-    try {
-      await sendEmail(values).unwrap();
-      message.success("Thông tin của bạn đã được gửi thành công!");
-      form.resetFields();
-      onClose();
-    } catch (err) {
-      console.error("❌ Failed to send form:", err);
-      message.error("Gửi thất bại. Vui lòng thử lại.");
-    }
-  };
-
-  // 👉 Ghi đè modal AntD để đổi nền trắng
   useEffect(() => {
-    const modalElements = document.querySelectorAll(".ant-modal-content");
-    modalElements.forEach(el => {
-      (el as HTMLElement).style.backgroundColor = "#1E293B";
-      (el as HTMLElement).style.color = "#F1F5F9";
-      (el as HTMLElement).style.borderRadius = "12px";
+    const modalContent = document.querySelectorAll(".ant-modal-content");
+    modalContent.forEach((el) => {
+      const e = el as HTMLElement;
+      e.style.backgroundColor = "#1E293B";
+      e.style.color = "#F1F5F9";
+      e.style.borderRadius = "12px";
     });
 
     const header = document.querySelector(".ant-modal-header");
     if (header) {
-      (header as HTMLElement).style.backgroundColor = "#1E293B";
-      (header as HTMLElement).style.borderBottom = "none";
+      const e = header as HTMLElement;
+      e.style.backgroundColor = "#1E293B";
+      e.style.borderBottom = "none";
     }
 
     const closeBtn = document.querySelector(".ant-modal-close");
@@ -66,7 +41,6 @@ const AutoPostModal = ({ visible, onClose }: AutoPostModalProps) => {
       (closeBtn as HTMLElement).style.color = "#CBD5E1";
     }
 
-    // ✅ Set màu placeholder (toàn cục)
     const style = document.createElement("style");
     style.innerHTML = `
       input::placeholder {
@@ -80,6 +54,10 @@ const AutoPostModal = ({ visible, onClose }: AutoPostModalProps) => {
     };
   }, [visible]);
 
+  const handleZaloClick = () => {
+    window.open(ZALO_LINK, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <Modal
       title={
@@ -91,71 +69,55 @@ const AutoPostModal = ({ visible, onClose }: AutoPostModalProps) => {
       onCancel={onClose}
       footer={null}
       centered
+      width="80%"
       style={{
         background: "#0F172A",
         boxShadow: "none",
+        maxWidth: "1200px",
+        maxHeight: "90vh",
       }}
       bodyStyle={{
         background: "#1E293B",
         padding: 24,
+        overflowY: "auto",
       }}
     >
-      <Form layout="vertical" form={form} onFinish={handleSubmit}>
-        <Form.Item
-          name="fullName"
-          label={
-            <span style={labelStyle}>
-              Họ và tên
-            </span>
-          }
-          rules={[{ required: true, message: "Vui lòng nhập họ và tên" }]}
-        >
-          <Input placeholder="Nhập họ và tên" style={inputStyle} />
-        </Form.Item>
+      {/* Preview video responsive */}
+      <div style={{ position: "relative", paddingTop: "56.25%", marginBottom: 20 }}>
+        <iframe
+          src={YT_EMBED}
+          title="YouTube video player"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            border: 0,
+          }}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        ></iframe>
+      </div>
 
-        <Form.Item
-          name="email"
-          label={<span style={labelStyle}> Email</span>}
-          rules={[
-            { required: true, message: "Vui lòng nhập email" },
-            { type: "email", message: "Email không hợp lệ" },
-          ]}
-        >
-          <Input placeholder="Nhập email" style={inputStyle} />
-        </Form.Item>
 
-        <Form.Item
-          name="phone"
-          label={
-            <span style={labelStyle}>
-              Số điện thoại
-            </span>
-          }
-          rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
-        >
-          <Input placeholder="+84  Nhập số điện thoại" style={inputStyle} />
-        </Form.Item>
-
-        <Form.Item name="zalo" label={<span style={labelStyle}>Số Zalo</span>}>
-          <Input placeholder="Nhập số Zalo" style={inputStyle} />
-        </Form.Item>
-
+      <Form layout="vertical" form={form}>
         <div style={{ fontSize: 13, color: "#CBD5E1", marginBottom: 16 }}>
-          Bạn cần hỗ trợ nhanh hơn? Liên hệ với chúng tôi trên{" "}
+          Bạn cần hỗ trợ nhanh hơn? Liên hệ với chúng tôi trên Zalo{" "}
           <a
-            href="https://www.facebook.com/profile.php?id=61577170059261"
+            href={ZALO_LINK}
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: "#3B82F6" }}
+            style={{ color: "#3B82F6", textDecoration: "underline" }}
           >
-            Facebook
+            tại đây
           </a>
         </div>
 
         <Form.Item style={{ marginBottom: 0 }}>
           <Button
-            htmlType="submit"
-            loading={isLoading}
+            htmlType="button"
+            onClick={handleZaloClick}
             block
             style={{
               background: "#0F172A",
@@ -168,7 +130,7 @@ const AutoPostModal = ({ visible, onClose }: AutoPostModalProps) => {
               boxShadow: "0 0 6px #3B82F6",
             }}
           >
-            Liên hệ Admin
+            Liên hệ Admin qua Zalo
           </Button>
         </Form.Item>
       </Form>
