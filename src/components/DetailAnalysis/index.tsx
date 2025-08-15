@@ -3,11 +3,13 @@ import { Typography, Row, Col, message as AntMessage, Card, Modal, Spin } from "
 import TextArea from "antd/es/input/TextArea";
 import { useTranslation } from "react-i18next";
 import { useGetAnalysisQuery } from "src/store/api/ticketApi";
+import FullscreenLoader from "../FullscreenLoader";
 
 const { Title } = Typography;
 
 interface AdsFormProps {
   id: string | null;
+  postRecot:any
   pageId: string | null;
 }
 
@@ -18,15 +20,13 @@ type ReviewRow = {
   "Nhận xét & Gợi ý": string;
 };
 
-const DetailAnalysis: React.FC<AdsFormProps> = ({ id, pageId }) => {
+const DetailAnalysis: React.FC<AdsFormProps> = ({ id,postRecot, pageId }) => {
   const { t } = useTranslation();
 
   const [interests, setInterests] = useState<string[]>([]);
   const { data: analysisData } = useGetAnalysisQuery({});
-  const [crawlLoading, setCrawlLoading] = useState(false);
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [rewriteLoading, setRewriteLoading] = useState(false);
-  const [crawlResult, setCrawlResult] = useState<any>({});
   const [analysisResult, setAnalysisResult] = useState<ReviewRow[]>([]);
   const [descDraft, setDescDraft] = useState<string>("");
 
@@ -41,40 +41,6 @@ const DetailAnalysis: React.FC<AdsFormProps> = ({ id, pageId }) => {
   useEffect(() => {
     if (analysisData?.targeting) setInterests(analysisData.targeting);
   }, [analysisData?.targeting]);
-
-  const callAnalyze = async () => {
-    if (!postUrl) {
-      AntMessage.error("Thiếu pageId hoặc postId.");
-      return;
-    }
-    try {
-      setCrawlLoading(true);
-      const crawlRes = await fetch(`${process.env.REACT_APP_URL}/fb-post`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: postUrl }),
-      });
-      if (!crawlRes.ok) throw new Error(`/fb-post trả lỗi ${crawlRes.status}`);
-      const crawlData = await crawlRes.json();
-
-      const payload = crawlData || {};
-      setCrawlResult(payload);
-
-      const fallback = {
-        mainImage: payload.mainImage,
-        message: payload.message || "",
-      };
-
-      if (fallback.message) setDescDraft(fallback.message);
-
-      AntMessage.success("Đã lấy nội dung từ /fb-post.");
-      await callOpenAIAnalyze(fallback);
-    } catch (err: any) {
-      AntMessage.error(err?.message || "Lỗi khi gọi /fb-post");
-    } finally {
-      setCrawlLoading(false);
-    }
-  };
 
   // ========= HÀM PHỤ: Tóm tắt gợi ý từ bảng điểm để feed cho prompt viết lại
   const buildSuggestionSummary = (rows: ReviewRow[]) => {
@@ -107,7 +73,7 @@ const DetailAnalysis: React.FC<AdsFormProps> = ({ id, pageId }) => {
 
   // ========= GỌI OPENAI VIẾT LẠI CONTENT THEO GỢI Ý
   const callOpenAIRewrite = async (
-    fallback: { mainImage?: string; message: string },
+    fallback:any,
     rows: ReviewRow[]
   ) => {
     try {
@@ -135,7 +101,7 @@ YÊU CẦU ĐẦU RA:
 - Không trả lời giải thích; chỉ in ra NỘI DUNG CUỐI CÙNG ở dạng văn bản thuần.
 
 Bài gốc:
-${fallback.message || "(trống)"}
+${fallback.caption || "(trống)"}
 
 Gợi ý tóm tắt từ phân tích:
 - Từ khóa: ${s.keyword || "-"}
@@ -182,7 +148,10 @@ Từ khóa tham khảo (không bắt buộc phải dùng hết): ${kw}
   };
 
   // ========= PHÂN TÍCH
-  const callOpenAIAnalyze = async (fallback: { mainImage?: string; message: string }) => {
+  const callOpenAIAnalyze = async (fallback:any) => {
+
+    console.log(`fallback========`,fallback);
+    
     try {
       setAnalysisLoading(true);
 
@@ -251,8 +220,8 @@ YÊU CẦU BẮT BUỘC VỀ CẤU TRÚC KẾT QUẢ:
 3) Có hàng "Final Score" với "Đánh giá" = "ĐiểmCuối/100" và "Nhận xét & Gợi ý" nêu "Tốt" / "Trung bình" / "Yếu" theo quy ước.
 4) Không trả thêm bất cứ text nào ngoài MẢNG JSON.
 
-Content: ${fallback.message}
-Image URL: ${fallback.mainImage || "Không có"}
+Content: ${fallback.caption}
+Image URL: ${fallback.url || "Không có"}
 `;
 
       const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -317,9 +286,9 @@ Image URL: ${fallback.mainImage || "Không có"}
   };
 
   useEffect(() => {
-    if (postUrl) callAnalyze();
+    if (postRecot) callOpenAIAnalyze(postRecot); 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [postUrl]);
+  }, [postRecot]);
 
   const finalScore = useMemo(() => {
     const row = analysisResult.find((r) => r["Tiêu chí"] === "Final Score");
@@ -329,92 +298,67 @@ Image URL: ${fallback.mainImage || "Không có"}
   }, [analysisResult]);
 
   return (
-    <Card style={{ backgroundColor: "#070719", borderRadius: 16, padding: 24, color: "#e2e8f0" }} bodyStyle={{ padding: 0 }}>
-      <Row gutter={32}>
-        <Col xs={24} md={12}>
-          <div style={{ background: "#fff", color: "#000", padding: "12px 16px", borderRadius: "12px", minHeight: 760 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              {(analysisLoading || rewriteLoading) && <Spin size="small" />}
-              <Title level={4} style={{ margin: 0 }}>
-                Phân tích & gợi ý nội dung
-              </Title>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr 1.6fr", gap: "12px", fontWeight: 600 }}>
-              <div>Tiêu chí</div>
-              <div>Đánh giá</div>
-              <div>Điểm (Tối đa)</div>
-              <div>Nhận xét gợi ý</div>
-            </div>
-            <div style={{ maxHeight: 660, overflow: "auto", padding: "4px 12px 0" }}>
-              {analysisLoading ? (
-                <div style={{ display: "flex", gap: 12, padding: 16 }}>
-                  <Spin /> <span>Đang phân tích bằng AI…</span>
-                </div>
-              ) : analysisResult.length > 0 ? (
-                analysisResult.map((item, idx) => (
-                  <div key={idx} style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr 1.6fr", gap: "12px", padding: "12px 0", borderBottom: "1px solid #ccc" }}>
-                    <div>{item["Tiêu chí"]}</div>
-                    <div>{item["Đánh giá"]}</div>
-                    <div>{item["Điểm (tối đa)"]}</div>
-                    <div>{item["Nhận xét & Gợi ý"]}</div>
+
+    <><FullscreenLoader
+      spinning={analysisLoading} /><Card style={{ backgroundColor: "#070719", borderRadius: 16, padding: 24, color: "#e2e8f0" }} bodyStyle={{ padding: 0 }}>
+        <Row gutter={32}>
+          <Col xs={24} md={12}>
+            <div style={{ background: "#fff", color: "#000", padding: "12px 16px", borderRadius: "12px", minHeight: 760 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                <Title level={4} style={{ margin: 0 }}>
+                  Phân tích & gợi ý nội dung
+                </Title>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr 1.6fr", gap: "12px", fontWeight: 600 }}>
+                <div>Tiêu chí</div>
+                <div>Đánh giá</div>
+                <div>Điểm (Tối đa)</div>
+                <div>Nhận xét gợi ý</div>
+              </div>
+              <div style={{ maxHeight: 660, overflow: "auto", padding: "4px 12px 0" }}>
+                {analysisLoading ? (
+                  <div style={{ display: "flex", gap: 12, padding: 16 }}>
+                    <Spin /> <span>Đang phân tích bằng AI…</span>
                   </div>
-                ))
-              ) : (
-                <div style={{ padding: 16, color: "#666" }}>Chưa có dữ liệu phân tích</div>
+                ) : analysisResult.length > 0 ? (
+                  analysisResult.map((item, idx) => (
+                    <div key={idx} style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr 1.6fr", gap: "12px", padding: "12px 0", borderBottom: "1px solid #ccc" }}>
+                      <div>{item["Tiêu chí"]}</div>
+                      <div>{item["Đánh giá"]}</div>
+                      <div>{item["Điểm (tối đa)"]}</div>
+                      <div>{item["Nhận xét & Gợi ý"]}</div>
+                    </div>
+                  ))
+                ) : (
+                  <div style={{ padding: 16, color: "#666" }}>Chưa có dữ liệu phân tích</div>
+                )}
+              </div>
+              {finalScore !== null && (
+                <div style={{ marginTop: 12, background: "#fff", padding: 10, borderRadius: 10 }}>
+                  <strong>Final Score = {finalScore} / 100</strong>
+                </div>
               )}
             </div>
-            {finalScore !== null && (
-              <div style={{ marginTop: 12, background: "#fff", padding: 10, borderRadius: 10 }}>
-                <strong>Final Score = {finalScore} / 100</strong>
-              </div>
-            )}
-          </div>
-        </Col>
-        <Col xs={24} md={12}>
-          <div style={{ padding: 10 }}>
-            {iframeSrc ? (
-              <iframe src={iframeSrc} width="100%" height="560" style={{ border: "none", borderRadius: 8, backgroundColor: "#e2e8f0" }} />
-            ) : (
-              <div style={{ height: 500, borderRadius: 8, background: "#0b1220", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                Chưa có preview post
-              </div>
-            )}
-          </div>
-          <div style={{ marginBottom: 16 }}>
-            <label style={{ color: "#f8fafc" }}>
-              Gợi ý mô tả cho bài viết {rewriteLoading && <Spin size="small" style={{ marginLeft: 8 }} />}
-            </label>
-            <TextArea rows={5} value={descDraft} onChange={(e) => setDescDraft(e.target.value)} placeholder={t("image.enter_description")} />
-          </div>
-        </Col>
-      </Row>
-      <Modal
-        open={crawlLoading}
-        maskClosable={false}
-        footer={null}
-        closable={false}
-        centered
-        maskStyle={{ background: "transparent" }}
-        modalRender={(node) => (
-          <div style={{ background: "transparent", boxShadow: "none" }}>
-            {node}
-          </div>
-        )}
-        style={{
-          background: "transparent",
-          boxShadow: "none"
-        }}
-        bodyStyle={{
-          background: "transparent",
-          padding: 0
-        }}
-      >
-        <div style={{ padding: 24, borderRadius: 12, textAlign: "center" }}>
-          <Spin />
-          <div>Đang lấy nội dung bài viết…</div>
-        </div>
-      </Modal>
-    </Card>
+          </Col>
+          <Col xs={24} md={12}>
+            <div style={{ padding: 10 }}>
+              {iframeSrc ? (
+                <iframe src={iframeSrc} width="100%" height="560" style={{ border: "none", borderRadius: 8, backgroundColor: "#e2e8f0" }} />
+              ) : (
+                <div style={{ height: 500, borderRadius: 8, background: "#0b1220", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  Chưa có preview post
+                </div>
+              )}
+            </div>
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ color: "#f8fafc" }}>
+                Gợi ý mô tả cho bài viết {rewriteLoading && <Spin size="small" style={{ marginLeft: 8 }} />}
+              </label>
+              <TextArea rows={5} value={descDraft} onChange={(e) => setDescDraft(e.target.value)} placeholder={t("image.enter_description")} />
+            </div>
+          </Col>
+        </Row>
+      </Card></>
   );
 };
 

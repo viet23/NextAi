@@ -12,6 +12,7 @@ import {
   Card,
   Radio,
   Modal,
+  Spin,
 } from "antd";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -19,65 +20,20 @@ import { useCreateAdsMutation } from "src/store/api/facebookApi";
 import LocationPicker from "./location";
 import { useTranslation } from "react-i18next";
 import { useGetAnalysisQuery } from "src/store/api/ticketApi";
+import FullscreenLoader from "../FullscreenLoader";
 const { Option, OptGroup } = Select;
 
 const { Title, Paragraph } = Typography;
 const { RangePicker } = DatePicker;
 const usdToVndRate = 25000;
 
-const DETAILED_TARGETING_OPTIONS = [
-  {
-    category: "Nhân khẩu học",
-    values: ["Học vấn", "Công việc", "Mối quan hệ", "Phụ huynh", "Sự kiện trong đời"],
-  },
-  {
-    category: "Sở thích",
-    values: ["Thời trang", "Công nghệ", "Ẩm thực", "Thể thao", "Sức khỏe", "Du lịch"],
-  },
-  {
-    category: "Hành vi",
-    values: ["Mua hàng online", "Dùng thiết bị iOS", "Người hay di chuyển"],
-  },
-];
-
-const languages = [
-  { label: "English (US)", value: "en" },
-  { label: "English (UK)", value: "en-uk" },
-  { label: "Français (France)", value: "fr" },
-  { label: "Español (Spain)", value: "es" },
-  { label: "Español (Latin America)", value: "es-la" },
-  { label: "Italiano (Italian)", value: "it" },
-  { label: "Português (Brazil)", value: "pt-br" },
-  { label: "Português (Latin America)", value: "pt-la" },
-  { label: "Deutsch (German)", value: "de" },
-  { label: "Tiếng Việt (Vietnamese)", value: "vi" },
-  { label: "العربية (Arabic)", value: "ar" },
-  { label: "Čeština (Czech)", value: "cs" },
-  { label: "Dansk (Danish)", value: "da" },
-  { label: "Ελληνικά (Greek)", value: "el" },
-  { label: "ภาษาไทย (Thai)", value: "th" },
-  { label: "中文(台灣) (Chinese – Taiwan)", value: "zh-tw" },
-  { label: "Magyar (Hungarian)", value: "hu" },
-  { label: "Nederlands (Dutch)", value: "nl" },
-  { label: "Norsk (Norwegian)", value: "no" },
-  { label: "Polski (Polish)", value: "pl" },
-  { label: "Română (Romanian)", value: "ro" },
-  { label: "Русский (Russian)", value: "ru" },
-  { label: "Suomi (Finnish)", value: "fi" },
-  { label: "Svenska (Swedish)", value: "sv" },
-  { label: "Türkçe (Turkish)", value: "tr" },
-  { label: "Українська (Ukrainian)", value: "uk" },
-  { label: "日本語 (Japanese)", value: "ja" },
-  { label: "한국어 (Korean)", value: "ko" },
-  { label: "עברית (Hebrew)", value: "he" },
-];
-
 interface AdsFormProps {
   id: string | null;
+  postRecot: any;
   pageId: string | null;
 }
 
-const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
+const DetailAds: React.FC<AdsFormProps> = ({ id, postRecot, pageId }) => {
   // Form state
   const { t } = useTranslation();
   const [goal, setGoal] = useState("message");
@@ -93,13 +49,13 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
   const [radius, setRadius] = useState(16000); // 16km
   const postIdOnly = id?.split("_")[1];
   const { data: analysisData } = useGetAnalysisQuery({});
+  const [analysisLoading, setAnalysisLoading] = useState(false);
 
   const iframeSrc = `https://www.facebook.com/plugins/post.php?href=https://www.facebook.com/${pageId}/posts/${postIdOnly}&show_text=true&width=500`;
 
   const [budget, setBudget] = useState(2);
   const [campaignName, setCampaignName] = useState("Generated Campaign");
   const [createAds, { isLoading: creatingCase }] = useCreateAdsMutation();
-  const [analysisOpen, setAnalysisOpen] = useState(false);
 
   const handlePublish = async () => {
     try {
@@ -146,6 +102,126 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
 
 
 
+  const buildPrompt = (content: string, imageUrl: string) => `
+Bạn là hệ thống phân tích Facebook post để xây dựng TARGETING cho Facebook Ads.
+NHIỆM VỤ: Đọc "Content" và "Image URL", suy luận sản phẩm/chủ đề trong post và trả về DUY NHẤT MỘT MẢNG JSON.
+
+YÊU CẦU BẮT BUỘC:
+1) CHỈ TRẢ VỀ MẢNG JSON (không text, không chú thích, không \`\`\`json).
+2) Mỗi phần tử trong mảng đại diện cho 1 cụm sản phẩm/chủ đề tìm thấy trong post.
+3) Điền đầy đủ các trường theo SCHEMA sau. Nếu thiếu dữ liệu, để chuỗi rỗng hoặc mảng rỗng.
+4) "keywordsForInterestSearch" dùng TIẾNG ANH để gọi Facebook Targeting Search API (type=adinterest).
+5) "sampleTargetingJson" là OBJECT gợi ý body targeting (thay ID sau khi search), KHÔNG chứa text giải thích.
+
+SCHEMA:
+[
+  {
+    "product": "Tên sản phẩm/chủ đề (ví dụ: Samsung Galaxy S25 Edge 5G, Dầu xả hoa bưởi, Plum wine)",
+    "signals": ["Các tín hiệu nổi bật trong content (tốc độ, 5G, organic, thảo dược, quà biếu... )"],
+    "persona": {
+      "age_min": 0,
+      "age_max": 0,
+      "genders": [0],
+      "locations": ["VN"],
+      "notes": "Mô tả ngắn về nhóm khách hàng (thu nhập, thói quen, bối cảnh mua... nếu suy luận được)"
+    },
+    "behaviors": [
+      { "id": "6007101597783", "name": "Engaged Shoppers" }
+    ],
+    "keywordsForInterestSearch": [
+      "Các từ khóa TIẾNG ANH để gọi /search?type=adinterest (vd: Samsung Galaxy, Smartphones, Hair care, Organic cosmetics, Plum wine, Alcoholic beverage)"
+    ],
+    "complianceNotes": "Lưu ý chính sách (vd: đồ uống có cồn → age_min >= 25)",
+    "sampleTargetingJson": {
+      "age_min": 0,
+      "age_max": 0,
+      "genders": [0],
+      "geo_locations": { "countries": ["VN"] },
+      "interests": [
+        { "id": "ID_PLACEHOLDER_1", "name": "REPLACE_WITH_INTEREST_NAME_1" },
+        { "id": "ID_PLACEHOLDER_2", "name": "REPLACE_WITH_INTEREST_NAME_2" }
+      ],
+      "behaviors": [
+        { "id": "6007101597783", "name": "Engaged Shoppers" }
+      ]
+    }
+  }
+]
+
+Content: ${content || ""}
+Image URL: ${imageUrl || "Không có"}
+`;
+
+
+  async function analyzePostForTargeting(caption: string, url: string) {
+    const prompt = buildPrompt(caption, url);
+
+    setAnalysisLoading(true);
+
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "gpt-4", // có thể đổi "gpt-4o-mini" để nhanh/rẻ hơn
+          messages: [
+            {
+              role: "system",
+              content:
+                "Bạn là máy phân tích targeting. Chỉ trả về JSON HỢP LỆ (DUY NHẤT MỘT MẢNG). Không trả thêm ký tự nào khác."
+            },
+            { role: "user", content: prompt },
+          ],
+          temperature: 0,
+          max_tokens: 2000,
+        }),
+      });
+
+      const data = await response.json();
+      let raw = data?.choices?.[0]?.message?.content ?? "[]";
+
+      // Làm sạch mọi khả năng model trả về kèm ```json ... ```
+      raw = raw.trim();
+      if (raw.startsWith("```")) {
+        raw = raw.replace(/^```[a-zA-Z]*\n?/, "").replace(/```$/, "").trim();
+      }
+
+      // Một số model có thể trả xuống dạng object => ép về array
+      let parsed;
+      try {
+        parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) parsed = [parsed];
+      } catch {
+        // Thử tìm JSON array trong chuỗi (phòng trường hợp có ký tự rác)
+        const match = raw.match(/\[[\s\S]*\]$/);
+        parsed = match ? JSON.parse(match[0]) : [];
+      }
+
+      // Đảm bảo đúng cấu trúc mảng
+      if (!Array.isArray(parsed)) parsed = [];
+
+      console.log(`parsed==========`, parsed);
+      setInterests(parsed[0]?.keywordsForInterestSearch)
+
+      setAnalysisLoading(false);
+      return parsed;
+    } catch (err) {
+      console.error("OpenAI error:", err);
+      setAnalysisLoading(false);
+      return [];
+    }
+  }
+
+  useEffect(() => {
+    if (postRecot) analyzePostForTargeting(postRecot.caption, postRecot.url);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [postRecot]);
+
+
+
 
   useEffect(() => {
     // Gọi ChatGPT nếu có urlPage
@@ -158,39 +234,40 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
 
 
   return (
-    <Card
-      style={{
-        backgroundColor: "#070719",
-        borderRadius: 16,
-        padding: 24,
-        color: "#e2e8f0",
-        fontFamily: "Inter, sans-serif"
-      }}
-      bodyStyle={{ padding: 0 }}
-    >
-      <Row gutter={32}>
-        <Col xs={24} md={12}>
-          <Title level={4} style={{ color: "#e2e8f0" }}>{t("ads.create_ads")}</Title>
+    <><FullscreenLoader
+      spinning={analysisLoading} /><Card
+        style={{
+          backgroundColor: "#070719",
+          borderRadius: 16,
+          padding: 24,
+          color: "#e2e8f0",
+          fontFamily: "Inter, sans-serif"
+        }}
+        bodyStyle={{ padding: 0 }}
+      >
+        <Row gutter={32}>
+          <Col xs={24} md={12}>
+            {/* {(analysisLoading) && <Spin size="small" />} */}
+            <Title level={4} style={{ color: "#e2e8f0" }}>{t("ads.create_ads")}</Title>
 
-          <div style={{ marginBottom: 12 }}>
-            <label style={{ color: "#e2e8f0" }}>📛 {t("ads.campaign_name")}</label>
-            <Input
-              value={campaignName}
-              onChange={e => setCampaignName(e.target.value)}
-              placeholder={t("ads.placeholder.campaign_name")}
-              style={{
-                backgroundColor: "#1e293b",
-                color: "#e2e8f0",
-                borderColor: "#334155"
-              }}
-            />
-          </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ color: "#e2e8f0" }}>📛 {t("ads.campaign_name")}</label>
+              <Input
+                value={campaignName}
+                onChange={e => setCampaignName(e.target.value)}
+                placeholder={t("ads.placeholder.campaign_name")}
+                style={{
+                  backgroundColor: "#1e293b",
+                  color: "#e2e8f0",
+                  borderColor: "#334155"
+                }} />
+            </div>
 
-          <div style={{ marginBottom: 12 }}>
-            <label style={{ color: "#e2e8f0" }}>🎯 {t("ads.ads_goal")}</label>
-            {/* CSS nhúng thẳng vào code để xoá gạch trắng & bo góc */}
-            <style>
-              {`
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ color: "#e2e8f0" }}>🎯 {t("ads.ads_goal")}</label>
+              {/* CSS nhúng thẳng vào code để xoá gạch trắng & bo góc */}
+              <style>
+                {`
   /* Ẩn vạch ngăn giữa các Radio.Button của AntD */
   #goal-group .ant-radio-button-wrapper::before {
     display: none !important;
@@ -208,212 +285,185 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
     border-radius: 8px !important;
   }
 `}
-            </style>
+              </style>
 
-            <div id="goal-group">
-              <Radio.Group
-                value={goal}
-                onChange={(e) => setGoal(e.target.value)}
-                style={{ display: "flex", flexWrap: "wrap", gap: "8px", width: "100%" }}
-              >
-                {[
-                  { value: "message", label: t("ads.goal.message") },
-                  { value: "engagement", label: t("ads.goal.engagement") },
-                  { value: "leads", label: t("ads.goal.leads") },
-                  { value: "traffic", label: t("ads.goal.traffic") },
-                ].map((item) => {
-                  const isSelected = goal === item.value;
-                  return (
-                    <Radio.Button
-                      key={item.value}
-                      value={item.value}
-                      style={{
-                        flex: "0 0 calc(23% - 8px)",   // 4 nút / 1 hàng khi đủ rộng
-                        minWidth: "120px",
-                        textAlign: "center",
-                        whiteSpace: "normal",
-                        wordBreak: "break-word",
-                        height: "auto",
-                        lineHeight: "1.2",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        backgroundColor: "#0f172a",
-                        border: isSelected ? "1px solid #4cc0ff" : "1px solid #2a3446",
-                        padding: "2px 8px",
-                        margin: "2px",
-                        fontSize: "14px",
-                        color: "#ffffff",
-                        fontWeight: 500,
-                        cursor: "pointer",
-                        boxShadow: isSelected ? "0 0 6px #4cc0ff" : "none",
-                        borderRadius: "8px",
-                      }}
-                    >
-                      {item.label}
-                    </Radio.Button>
-                  );
-                })}
-              </Radio.Group>
+              <div id="goal-group">
+                <Radio.Group
+                  value={goal}
+                  onChange={(e) => setGoal(e.target.value)}
+                  style={{ display: "flex", flexWrap: "wrap", gap: "8px", width: "100%" }}
+                >
+                  {[
+                    { value: "message", label: t("ads.goal.message") },
+                    { value: "engagement", label: t("ads.goal.engagement") },
+                    { value: "leads", label: t("ads.goal.leads") },
+                    { value: "traffic", label: t("ads.goal.traffic") },
+                  ].map((item) => {
+                    const isSelected = goal === item.value;
+                    return (
+                      <Radio.Button
+                        key={item.value}
+                        value={item.value}
+                        style={{
+                          flex: "0 0 calc(23% - 8px)", // 4 nút / 1 hàng khi đủ rộng
+                          minWidth: "120px",
+                          textAlign: "center",
+                          whiteSpace: "normal",
+                          wordBreak: "break-word",
+                          height: "auto",
+                          lineHeight: "1.2",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          backgroundColor: "#0f172a",
+                          border: isSelected ? "1px solid #4cc0ff" : "1px solid #2a3446",
+                          padding: "2px 8px",
+                          margin: "2px",
+                          fontSize: "14px",
+                          color: "#ffffff",
+                          fontWeight: 500,
+                          cursor: "pointer",
+                          boxShadow: isSelected ? "0 0 6px #4cc0ff" : "none",
+                          borderRadius: "8px",
+                        }}
+                      >
+                        {item.label}
+                      </Radio.Button>
+                    );
+                  })}
+                </Radio.Group>
+              </div>
+
             </div>
 
-          </div>
 
-          {goal === "leads" && (
-            <div style={{ marginBottom: 12 }}>
-              <label style={{ color: "#e2e8f0" }}>🌐 {t("ads.form_language")}</label>
-              <Select
-                value={language}
-                onChange={setLanguage}
-                style={{
-                  width: "100%",
-                  backgroundColor: "#1e293b",
-                  color: "#e2e8f0",
-                  borderColor: "#334155"
-                }}
-                showSearch
-                optionFilterProp="label"
-                dropdownStyle={{ backgroundColor: "#1e293b", color: "#e2e8f0" }}
-              >
-                {languages.map(lang => (
-                  <Option key={lang.value} value={lang.value} label={lang.label}>
-                    {lang.label}
-                  </Option>
-                ))}
-              </Select>
-            </div>
-          )}
-
-          {goal === "traffic" && (
-            <div style={{ marginBottom: 12 }}>
-              <label style={{ color: "#e2e8f0" }}>📝 {t("ads.website_link")}</label>
-              <Input.TextArea
-                rows={1}
-                value={urlWebsite}
-                onChange={e => setUrleWbsite(e.target.value)}
-                placeholder={t("ads.placeholder.website")}
-                style={{
-                  backgroundColor: "#1e293b",
-                  color: "#e2e8f0",
-                  borderColor: "#334155"
-                }}
-              />
-            </div>
-          )}
-
-          {!aiTargeting && (
-            <>
-              <br />
-
-              <label style={{ color: "#e2e8f0" }}>🎯 Phạm vi quảng cáo</label>
-
-              <Radio.Group
-                value={locationMode}
-                onChange={(e) => setLocationMode(e.target.value)}
-                style={{
-                  display: "flex",
-                  gap: "8px",
-                  width: "100%",
-                  flexWrap: "wrap",
-                }}
-              >
-                {[
-                  { value: "nationwide", label: "🌏 Toàn quốc" },
-                  { value: "custom", label: "📍 Theo vị trí" },
-                ].map((item) => {
-                  const isSelected = locationMode === item.value;
-                  return (
-                    <Radio.Button
-                      key={item.value}
-                      value={item.value}
-                      style={{
-                        flex: "0 0 calc(25% - 8px)", // 4 nút / 1 hàng nếu đủ rộng
-                        minWidth: "140px",
-                        textAlign: "center",
-                        whiteSpace: "normal",
-                        wordBreak: "break-word",
-                        height: "auto",
-                        lineHeight: "1.2",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        backgroundColor: "#0f172a",
-                        border: isSelected ? "1px solid #4cc0ff" : "1px solid #2a3446",
-                        padding: "6px 12px",
-                        margin: "2px",
-                        fontSize: "14px",
-                        color: "#ffffff",
-                        fontWeight: 500,
-                        cursor: "pointer",
-                        boxShadow: isSelected ? "0 0 6px #4cc0ff" : "none",
-                        borderRadius: "8px",
-                        transition: "all 0.2s ease",
-                      }}
-                    >
-                      {item.label}
-                    </Radio.Button>
-                  );
-                })}
-              </Radio.Group>
-
-
-              {locationMode === "custom" && (
-                <div style={{ marginBottom: 12 }}>
-                  <LocationPicker
-                    location={location}
-                    setLocation={setLocation}
-                    radius={radius}
-                    setRadius={setRadius}
-                  />
-                </div>
-              )}
-
-              <br />
+            {goal === "traffic" && (
               <div style={{ marginBottom: 12 }}>
-                <label style={{ color: "#e2e8f0" }}>🎯 {t("ads.detailed_targeting")}</label>
-                <Select
-                  mode="multiple"
+                <label style={{ color: "#e2e8f0" }}>📝 {t("ads.website_link")}</label>
+                <Input.TextArea
+                  rows={1}
+                  value={urlWebsite}
+                  onChange={e => setUrleWbsite(e.target.value)}
+                  placeholder={t("ads.placeholder.website")}
+                  style={{
+                    backgroundColor: "#1e293b",
+                    color: "#e2e8f0",
+                    borderColor: "#334155"
+                  }} />
+              </div>
+            )}
+
+            {!aiTargeting && (
+              <>
+                <br />
+
+                <label style={{ color: "#e2e8f0" }}>🎯 Phạm vi quảng cáo</label>
+
+                <Radio.Group
+                  value={locationMode}
+                  onChange={(e) => setLocationMode(e.target.value)}
+                  style={{
+                    display: "flex",
+                    gap: "8px",
+                    width: "100%",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  {[
+                    { value: "nationwide", label: "🌏 Toàn quốc" },
+                    { value: "custom", label: "📍 Theo vị trí" },
+                  ].map((item) => {
+                    const isSelected = locationMode === item.value;
+                    return (
+                      <Radio.Button
+                        key={item.value}
+                        value={item.value}
+                        style={{
+                          flex: "0 0 calc(25% - 8px)", // 4 nút / 1 hàng nếu đủ rộng
+                          minWidth: "140px",
+                          textAlign: "center",
+                          whiteSpace: "normal",
+                          wordBreak: "break-word",
+                          height: "auto",
+                          lineHeight: "1.2",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          backgroundColor: "#0f172a",
+                          border: isSelected ? "1px solid #4cc0ff" : "1px solid #2a3446",
+                          padding: "6px 12px",
+                          margin: "2px",
+                          fontSize: "14px",
+                          color: "#ffffff",
+                          fontWeight: 500,
+                          cursor: "pointer",
+                          boxShadow: isSelected ? "0 0 6px #4cc0ff" : "none",
+                          borderRadius: "8px",
+                          transition: "all 0.2s ease",
+                        }}
+                      >
+                        {item.label}
+                      </Radio.Button>
+                    );
+                  })}
+                </Radio.Group>
+
+
+                {locationMode === "custom" && (
+                  <div style={{ marginBottom: 12 }}>
+                    <LocationPicker
+                      location={location}
+                      setLocation={setLocation}
+                      radius={radius}
+                      setRadius={setRadius} />
+                  </div>
+                )}
+
+                <br />
+                <div style={{ marginBottom: 12 }}>
+                  <label style={{ color: "#e2e8f0" }}>
+                    🎯 {t("ads.detailed_targeting")}
+                  </label>
+                  <Select
+                    mode="multiple"
+                    style={{
+                      width: "100%",
+                      backgroundColor: "#e2e8f0",
+                      color: "#1e293b",
+                      borderColor: "#334155"
+                    }}
+                    placeholder={t("ads.select_targeting_group")}
+                    value={interests}
+                    onChange={setInterests}
+                    optionLabelProp="label"
+                    dropdownStyle={{ backgroundColor: "#e2e8f0", color: "#1e293b" }}
+                  >
+                    {interests.map(value => (
+                      <Option key={value} value={value} label={t(value)}>
+                        {t(value)}
+                      </Option>
+                    ))}
+                  </Select>
+                </div>
+
+
+              </>
+            )}
+
+            <Row gutter={12} style={{ marginBottom: 12 }}>
+              <Col span={12}>
+                <label style={{ color: "#e2e8f0" }}>📆 {t("ads.duration")}</label>
+                <RangePicker
+                  value={range}
+                  onChange={val => setRange(val as [dayjs.Dayjs, dayjs.Dayjs])}
                   style={{
                     width: "100%",
-                    backgroundColor: "#e2e8f0",
-                    color: "#1e293b",
+                    backgroundColor: "#1e293b",
+                    color: "#e2e8f0",
                     borderColor: "#334155"
-                  }}
-                  placeholder={t("ads.select_targeting_group")}
-                  value={interests}
-                  onChange={setInterests}
-                  optionLabelProp="label"
-                  dropdownStyle={{ backgroundColor: "#e2e8f0", color: "#1e293b" }}
-                >
-                  {DETAILED_TARGETING_OPTIONS.map(group => (
-                    <OptGroup key={group.category} label={t(group.category)}>
-                      {group.values.map(value => (
-                        <Option key={value} value={value} label={t(value)}>
-                          {t(value)}
-                        </Option>
-                      ))}
-                    </OptGroup>
-                  ))}
-                </Select>
-              </div>
-            </>
-          )}
-
-          <Row gutter={12} style={{ marginBottom: 12 }}>
-            <Col span={12}>
-              <label style={{ color: "#e2e8f0" }}>📆 {t("ads.duration")}</label>
-              <RangePicker
-                value={range}
-                onChange={val => setRange(val as [dayjs.Dayjs, dayjs.Dayjs])}
-                style={{
-                  width: "100%",
-                  backgroundColor: "#1e293b",
-                  color: "#e2e8f0",
-                  borderColor: "#334155"
-                }}
-              />
-            </Col>
-            <style>{`
+                  }} />
+              </Col>
+              <style>{`
   /* Chỉ áp dụng cho InputNumber nằm trong Col Daily Budget */
   .ant-input-number,
   .ant-input-number-input {
@@ -430,24 +480,23 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
   }
 `}</style>
 
-            <Col span={12}>
-              <label style={{ color: "#f8fafc" }}>
-                💰 {t("ads.daily_budget")}
-              </label>
-              <InputNumber
-                className="daily-budget-input"
-                value={budget}
-                onChange={(val) => setBudget(val ?? 0)}
-                min={1}
-                formatter={(value) => `$ ${value ?? ""}`}
-                style={{
-                  width: "100%",
-                  backgroundColor: "#1e293b",
-                  borderColor: "#334155",
-                }}
-              />
+              <Col span={12}>
+                <label style={{ color: "#f8fafc" }}>
+                  💰 {t("ads.daily_budget")}
+                </label>
+                <InputNumber
+                  className="daily-budget-input"
+                  value={budget}
+                  onChange={(val) => setBudget(val ?? 0)}
+                  min={1}
+                  formatter={(value) => `$ ${value ?? ""}`}
+                  style={{
+                    width: "100%",
+                    backgroundColor: "#1e293b",
+                    borderColor: "#334155",
+                  }} />
 
-              <style>{`
+                <style>{`
   .daily-budget-input .ant-input-number-input {
     color: #ffffff !important; /* chữ trắng sáng */
   }
@@ -456,68 +505,67 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, pageId }) => {
   }
 `}</style>
 
-            </Col>
+              </Col>
 
 
-          </Row>
+            </Row>
 
-          <Button
-            type="primary"
-            block
-            onClick={handlePublish}
-            loading={creatingCase}
-            style={{
-              backgroundColor: "#0f172a",
-              border: "1px solid #4cc0ff",
-              borderRadius: "8px",
-              padding: "2px 8px",
-              margin: "2px",
-              fontSize: "14px",
-              color: "#ffffff",
-              fontWeight: 500,
-              boxShadow: "0 0 6px #4cc0ff",
-              cursor: "pointer",
-            }}
-          >
-            {t("ads.publish")}
-          </Button>
-        </Col>
+            <Button
+              type="primary"
+              block
+              onClick={handlePublish}
+              loading={creatingCase}
+              style={{
+                backgroundColor: "#0f172a",
+                border: "1px solid #4cc0ff",
+                borderRadius: "8px",
+                padding: "2px 8px",
+                margin: "2px",
+                fontSize: "14px",
+                color: "#ffffff",
+                fontWeight: 500,
+                boxShadow: "0 0 6px #4cc0ff",
+                cursor: "pointer",
+              }}
+            >
+              {t("ads.publish")}
+            </Button>
+          </Col>
 
 
-        <Col xs={24} md={12}>
-          <Card
-            title={t("ads.preview")}
-            bordered={false}
-            style={{
-              backgroundColor: "#070719",
-              borderRadius: 12,
-              marginTop: 0,
-              color: "#e2e8f0",
-            }}
-            headStyle={{ color: "#e2e8f0", borderBottom: "1px solid #334155" }}
-          >
-            <div style={{ padding: 10 }}>
-              <iframe
-                src={iframeSrc}
-                width="100%"
-                height="570"
-                style={{
-                  border: "none",
-                  overflow: "hidden",
-                  borderRadius: 8,
-                  backgroundColor: "#e2e8f0",
-                }}
-                scrolling="no"
-                frameBorder="0"
-                allowFullScreen
-                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-              />
-            </div>
-          </Card>
-        </Col>
+          <Col xs={24} md={12}>
+            <Card
+              title={t("ads.preview")}
+              bordered={false}
+              style={{
+                backgroundColor: "#070719",
+                borderRadius: 12,
+                marginTop: 0,
+                color: "#e2e8f0",
+              }}
+              headStyle={{ color: "#e2e8f0", borderBottom: "1px solid #334155" }}
+            >
+              <div style={{ padding: 10 }}>
+                <iframe
+                  src={iframeSrc}
+                  width="100%"
+                  height="570"
+                  style={{
+                    border: "none",
+                    overflow: "hidden",
+                    borderRadius: 8,
+                    backgroundColor: "#e2e8f0",
+                  }}
+                  scrolling="no"
+                  frameBorder="0"
+                  allowFullScreen
+                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" />
+              </div>
+            </Card>
+          </Col>
 
-      </Row>
-    </Card>
+        </Row>
+      </Card></>
 
   );
 };

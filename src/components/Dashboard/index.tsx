@@ -56,8 +56,10 @@ const Dashboard = () => {
   const [detailId, setDetailId] = useState<string | null>(null);
   const [detailRecord, setDetailRecord] = useState<string | null>(null);
   const [pageId, setPageId] = useState<string | undefined>(undefined);
+  const [postRecot, setPostRecot] = useState<any[]>([]);
 
   const handleOnClickDetail = (record: any) => {
+     setPostRecot(record)
     setDetailId(record?.id ?? null);
     setPageId(accountDetailData?.idPage);
     setIsOpen(true);
@@ -70,6 +72,7 @@ const Dashboard = () => {
   };
 
   const handleOnClickDetailAnl = (record: any) => {
+    setPostRecot(record)
     setDetailId(record?.id ?? null);
     setPageId(accountDetailData?.idPage);
     setIsOpenAnl(true);
@@ -606,7 +609,7 @@ const Dashboard = () => {
             },
           }}
         >
-          <DetailAds id={detailId} pageId={pageId ?? null} />
+          <DetailAds id={detailId} postRecot={postRecot} pageId={pageId ?? null} />
         </Drawer>
 
         <Drawer
@@ -632,7 +635,7 @@ const Dashboard = () => {
             },
           }}
         >
-          <DetailAnalysis id={detailId} pageId={pageId ?? null} />
+          <DetailAnalysis id={detailId}  postRecot={postRecot} pageId={pageId ?? null} />
         </Drawer>
 
 

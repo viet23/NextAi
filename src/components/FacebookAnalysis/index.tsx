@@ -21,22 +21,6 @@ import FullscreenLoader from "../FullscreenLoader";
 const { Content } = Layout;
 const { Title } = Typography;
 const { TextArea } = Input;
-const { Option, OptGroup } = Select;
-
-const DETAILED_TARGETING_OPTIONS = [
-  {
-    category: "Nhân khẩu học",
-    values: ["Học vấn", "Công việc", "Mối quan hệ", "Phụ huynh", "Sự kiện trong đời"],
-  },
-  {
-    category: "Sở thích",
-    values: ["Thời trang", "Công nghệ", "Ẩm thực", "Thể thao", "Sức khỏe", "Du lịch"],
-  },
-  {
-    category: "Hành vi",
-    values: ["Mua hàng online", "Dùng thiết bị iOS", "Người hay di chuyển"],
-  },
-];
 
 const styles = {
   container: {
@@ -172,7 +156,7 @@ Hãy đề xuất kế hoạch phát triển kênh Facebook Page này, gồm:
 
       const { name, description, bodyPreview } = crawlData.data;
 
-      await callChatGPT(name, description, bodyPreview)
+      // await callChatGPT(name, description, bodyPreview)
       await callChatGPTImage(name, description, bodyPreview);
 
       // 2. Gửi GPT để phân tích thành 4 phần
@@ -280,77 +264,6 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
     view3s: 0,
     view1s: 0,
   });
-
-  const callChatGPT = async (name: string, description: string, bodyPreview: string) => {
-    if (!url) {
-      message.warning("Please enter Facebook Page link.");
-      return;
-    }
-    try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "gpt-4",
-          messages: [
-            {
-              role: "system",
-              content: `Bạn là chuyên gia chạy quảng cáo Facebook.`,
-            },
-            {
-              role: "user",
-              content: `
-  Phân tích Fanpage sau: ${url}
-  Tên fanpage: ${name}
-Mô tả ngắn: ${description}
-Nội dung gần đây:
-${bodyPreview}
-  Dựa trên nội dung và hình ảnh, hãy chọn ra các mục tiêu phù hợp nhất từ danh sách sau:
-  
-  - Nhân khẩu học: ["Học vấn", "Công việc", "Mối quan hệ", "Phụ huynh", "Sự kiện trong đời"]
-  - Sở thích: ["Thời trang", "Công nghệ", "Ẩm thực", "Thể thao", "Sức khỏe", "Du lịch"]
-  - Hành vi: ["Mua hàng online", "Dùng thiết bị iOS", "Người hay di chuyển"]
-  
- Chỉ trả về JSON đúng định dạng, không giải thích gì thêm. Ví dụ:
-  
-  {
-    "Nhân khẩu học": [...],
-    "Sở thích": [...],
-    "Hành vi": [...]
-  }
-              `.trim(),
-            },
-          ],
-          temperature: 0.7,
-          max_tokens: 1000,
-        }),
-      });
-
-      const data = await response.json();
-      const raw = data?.choices?.[0]?.message?.content?.trim() || "";
-
-      try {
-        const parsed = JSON.parse(raw);
-        const combined = [
-          ...(parsed["Nhân khẩu học"] || []),
-          ...(parsed["Sở thích"] || []),
-          ...(parsed["Hành vi"] || []),
-        ];
-        console.log("Parsed Interests:", combined);
-
-
-        setInterests(combined); // ✅ Gán lại interests sau khi hỏi xong
-
-      } catch (e) {
-        console.error("Không thể parse JSON từ ChatGPT:", e);
-      }
-    } catch (err) {
-      console.error("ChatGPT API error:", err);
-    }
-  }
 
   const callChatGPTImage = async (name: string, description: string, bodyPreview: string) => {
     if (!url) {
@@ -625,23 +538,6 @@ ${bodyPreview}
   };
 
 
-
-
-  console.log(`=========dataChart`, dataChart);
-  console.log(`=========genderAgeData`, genderAgeData);
-  console.log(`=========cityData`, cityData);
-
-  // const dataChart = [
-  //   { name: "01/07", views: 0 },
-  //   { name: "02/07", views: 5 },
-  //   { name: "03/07", views: 10 },
-  //   { name: "04/07", views: 20 },
-  //   { name: "05/07", views: 25 },
-  //   { name: "06/07", views: 30 },
-  //   { name: "07/07", views: 40 },
-  // ];
-
-  // const percentageFollow = 0;
   const percentageContact = 0;
 
 
@@ -1026,53 +922,6 @@ ${bodyPreview}
                     lineHeight: 1.6,
                   }}
                 />
-
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ color: "#e2e8f0" }}>🎯 {t("ads.detailed_targeting")}</label>
-                  <Select
-                    mode="multiple"
-                    style={{
-                      width: "100%",
-                      backgroundColor: "#e2e8f0",
-                      color: "#1e293b",
-                      borderColor: "#334155"
-                    }}
-                    placeholder={t("ads.select_targeting_group")}
-                    value={interests}
-                    onChange={setInterests}
-                    optionLabelProp="label"
-                    dropdownStyle={{ backgroundColor: "#e2e8f0", color: "#1e293b" }}
-                  >
-                    {DETAILED_TARGETING_OPTIONS.map(group => (
-                      <OptGroup key={group.category} label={t(group.category)}>
-                        {group.values.map(value => (
-                          <Option key={value} value={value} label={t(value)}>
-                            {t(value)}
-                          </Option>
-                        ))}
-                      </OptGroup>
-                    ))}
-                  </Select>
-                </div>
-
-                {/* <button
-                  onClick={() => setShowModal(true)}
-                  style={{
-                    background: "#0F172A",
-                    border: "1px solid #3B82F6",
-                    color: "#E0F2FE",
-                    borderRadius: 6,
-                    height: 30,
-                    padding: "0 16px",
-                    width: "100%",
-                    boxShadow: "0 0 6px #3B82F6",
-                    fontWeight: 500,
-                    fontSize: 14,
-                    cursor: "pointer",
-                  }}
-                >
-                  {t("image.auto_post_setting")}
-                </button> */}
               </Card>
             </div>
           </div>

@@ -301,7 +301,7 @@ const CampaignReport = () => {
             }
           }}
         >
-          <DetailAds id={detailId} pageId={pageId ?? null} />
+          <DetailAds id={detailId} postRecot={""} pageId={pageId ?? null} />
         </Drawer>
 
       </div>
