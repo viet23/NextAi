@@ -50,6 +50,8 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, postRecot, pageId }) => {
   const postIdOnly = id?.split("_")[1];
   const { data: analysisData } = useGetAnalysisQuery({});
   const [analysisLoading, setAnalysisLoading] = useState(false);
+  const [targetingAI, setTargetingAI] = useState({});
+  const isMessage = goal === 'message'
 
   const iframeSrc = `https://www.facebook.com/plugins/post.php?href=https://www.facebook.com/${pageId}/posts/${postIdOnly}&show_text=true&width=500`;
 
@@ -76,8 +78,18 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, postRecot, pageId }) => {
         startTime: range[0].toISOString(),
         endTime: range[1].toISOString(),
         dailyBudget: Math.round(Number(budget) * usdToVndRate),
-        postId: id?.toString(),
-      };
+        targetingAI,
+        // ---- CTM fields ----
+        ...(isMessage && {
+          imageUrl: postRecot.url,
+          // optional:
+          messageDestination: 'MESSENGER',           // hoặc 'WHATSAPP' | 'INSTAGRAM_DIRECT'
+          // whatsappNumber: '84xxxxxxxxx',          // bật nếu dùng WHATSAPP
+          // linkUrl: 'https://your-site.com',       // tuỳ chọn, mặc định fb.com
+        }),
+        // ---- postId chỉ cho non-MESSAGE ----
+        ...(!isMessage && { postId: id?.toString() }),
+      }
 
       if (!aiTargeting) {
         body.gender = gender;
@@ -154,6 +166,8 @@ Image URL: ${imageUrl || "Không có"}
 
 
   async function analyzePostForTargeting(caption: string, url: string) {
+    console.log(`utl----------`, url);
+
     const prompt = buildPrompt(caption, url);
 
     setAnalysisLoading(true);
@@ -205,6 +219,8 @@ Image URL: ${imageUrl || "Không có"}
 
       console.log(`parsed==========`, parsed);
       setInterests(parsed[0]?.keywordsForInterestSearch)
+      setAge([parsed[0]?.persona.age_min, parsed[0]?.persona.age_max])
+      setTargetingAI(parsed[0])
 
       setAnalysisLoading(false);
       return parsed;
@@ -223,13 +239,13 @@ Image URL: ${imageUrl || "Không có"}
 
 
 
-  useEffect(() => {
-    // Gọi ChatGPT nếu có urlPage
-    if (analysisData?.targeting) {
-      setInterests(analysisData?.targeting);
-    }
+  // useEffect(() => {
+  //   // Gọi ChatGPT nếu có urlPage
+  //   if (analysisData?.targeting) {
+  //     setInterests(analysisData?.targeting);
+  //   }
 
-  }, [analysisData?.targeting]);
+  // }, [analysisData?.targeting]);
 
 
 
