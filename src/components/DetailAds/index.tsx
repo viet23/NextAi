@@ -21,6 +21,7 @@ import LocationPicker from "./location";
 import { useTranslation } from "react-i18next";
 import { useGetAnalysisQuery } from "src/store/api/ticketApi";
 import FullscreenLoader from "../FullscreenLoader";
+import { useOpenaiTargetingMutation } from "src/store/api/openaiApi";
 const { Option, OptGroup } = Select;
 
 const { Title, Paragraph } = Typography;
@@ -57,6 +58,10 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, postRecot, pageId }) => {
 
   const [budget, setBudget] = useState(2);
   const [campaignName, setCampaignName] = useState("Generated Campaign");
+
+  const [openaiTargeting, { isLoading: isTargeting }] = useOpenaiTargetingMutation();
+
+
   const [createAds, { isLoading: creatingCase }] = useCreateAdsMutation();
 
   const handlePublish = async () => {
@@ -173,54 +178,33 @@ Image URL: ${imageUrl || "Không có"}
     setAnalysisLoading(true);
 
     try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "gpt-4", // có thể đổi "gpt-4o-mini" để nhanh/rẻ hơn
-          messages: [
-            {
-              role: "system",
-              content:
-                "Bạn là máy phân tích targeting. Chỉ trả về JSON HỢP LỆ (DUY NHẤT MỘT MẢNG). Không trả thêm ký tự nào khác."
-            },
-            { role: "user", content: prompt },
-          ],
-          temperature: 0,
-          max_tokens: 2000,
-        }),
-      });
+      const body: any = { prompt }
+      const response = await openaiTargeting(body).unwrap();
 
-      const data = await response.json();
-      let raw = data?.choices?.[0]?.message?.content ?? "[]";
-
-      // Làm sạch mọi khả năng model trả về kèm ```json ... ```
+      let raw: string = response.raw ?? "[]";   // ✅ lấy string gốc
+      
+      // Làm sạch code fence ```json ... ```
       raw = raw.trim();
       if (raw.startsWith("```")) {
         raw = raw.replace(/^```[a-zA-Z]*\n?/, "").replace(/```$/, "").trim();
       }
 
-      // Một số model có thể trả xuống dạng object => ép về array
-      let parsed;
+      let parsed: any[] = [];
       try {
-        parsed = JSON.parse(raw);
-        if (!Array.isArray(parsed)) parsed = [parsed];
+        const json = JSON.parse(raw);
+        parsed = Array.isArray(json) ? json : [json];
       } catch {
-        // Thử tìm JSON array trong chuỗi (phòng trường hợp có ký tự rác)
-        const match = raw.match(/\[[\s\S]*\]$/);
-        parsed = match ? JSON.parse(match[0]) : [];
+        // fallback: nếu parse fail thì dùng luôn response.result (BE đã parse thành mảng)
+        parsed = Array.isArray(response.result) ? response.result : [];
       }
 
-      // Đảm bảo đúng cấu trúc mảng
-      if (!Array.isArray(parsed)) parsed = [];
+      console.log("parsed==========", parsed);
 
-      console.log(`parsed==========`, parsed);
-      setInterests(parsed[0]?.keywordsForInterestSearch)
-      setAge([parsed[0]?.persona.age_min, parsed[0]?.persona.age_max])
-      setTargetingAI(parsed[0])
+      // Lấy item đầu tiên nếu có
+      const first = parsed[0] || {};
+      setInterests(first.keywordsForInterestSearch || []);
+      setAge([first?.persona?.age_min || 18, first?.persona?.age_max || 65]);
+      setTargetingAI(first);
 
       setAnalysisLoading(false);
       return parsed;

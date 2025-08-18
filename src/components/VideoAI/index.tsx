@@ -41,6 +41,7 @@ import { buildScriptPrompt } from "src/utils/build-script-prompt-utild";
 import { genres, headersMusic, reverseSceneMap } from "src/utils/common-utils";
 import { ReactComponent as RefetchIcon } from "src/assets/images/icon/ic-refetch.svg";
 import DetailTicket from "../DetailTicket";
+import { useOpenaiGenerateCaptionMutation, useOpenaiPromptChatMutation, useOpenaiScoreCaptionMutation } from "src/store/api/openaiApi";
 
 const { Content } = Layout;
 const { TextArea } = Input;
@@ -136,33 +137,43 @@ const VideoGenerator = () => {
   const [specialEffects, setSpecialEffects] = useState("");
   const [pageAI, setPageAi] = useState("");
   const { data: analysisData } = useGetAnalysisQuery({});
+  const [openaiScoreCaption, { isLoading: isScoreCaption }] = useOpenaiScoreCaptionMutation();
+  const [openaiGenerateCaption, { isLoading: isGenerateCaption }] = useOpenaiGenerateCaptionMutation();
+  const [openaiPromptChat, { isLoading: isPromptChat }] = useOpenaiPromptChatMutation();
 
   const fetchOpportunityScore = async (captionText: string) => {
     try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: "gpt-4",
-          temperature: 0.3,
-          messages: [
-            {
-              role: "system",
-              content: contentFetchOpportunityScore,
-            },
-            {
-              role: "user",
-              content: `${captionText}\n\nChấm theo thang 100 điểm. Chỉ trả lời bằng một con số.`,
-            },
-          ],
-        }),
-      });
+      // const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
+      //   },
+      //   body: JSON.stringify({
+      //     model: "gpt-4",
+      //     temperature: 0.3,
+      //     messages: [
+      //       {
+      //         role: "system",
+      //         content: contentFetchOpportunityScore,
+      //       },
+      //       {
+      //         role: "user",
+      //         content: `${captionText}\n\nChấm theo thang 100 điểm. Chỉ trả lời bằng một con số.`,
+      //       },
+      //     ],
+      //   }),
+      // });
 
-      const data = await response.json();
-      const content = data?.choices?.[0]?.message?.content || "";
+      // const data = await response.json();
+      // const content = data?.choices?.[0]?.message?.content || "";
+
+      const body: any = {
+        contentFetchOpportunityScore: contentFetchOpportunityScore,
+        captionText: captionText,
+      }
+      const response = await openaiScoreCaption(body).unwrap();
+      const content = response?.raw || "";
 
       // Tách dữ liệu từ phản hồi
       const scoreMatch = content.match(/Điểm:\s*(\d+)/i);
@@ -359,27 +370,30 @@ const VideoGenerator = () => {
     });
 
     try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "gpt-4",
-          messages: [
-            {
-              role: "user",
-              content: promptContent,
-            },
-          ],
-          temperature: 0.8,
-          max_tokens: 1000,
-        }),
-      });
+      // const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      //   method: "POST",
+      //   headers: {
+      //     Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     model: "gpt-4",
+      //     messages: [
+      //       {
+      //         role: "user",
+      //         content: promptContent,
+      //       },
+      //     ],
+      //     temperature: 0.8,
+      //     max_tokens: 1000,
+      //   }),
+      // });
 
-      const data = await response.json();
-      const content = data?.choices?.[0]?.message?.content;
+      // const data = await response.json();
+      // const content = data?.choices?.[0]?.message?.content;
+
+      const res = await openaiPromptChat({ promptContent }).unwrap();
+      const content = res.text || '';
 
       if (!content) {
         message.error("Không nhận được phản hồi từ GPT.");
@@ -677,13 +691,13 @@ const VideoGenerator = () => {
       return;
     }
 
-     if (!promptTexts[index] || !uploadedImageUrls[index]) {
+    if (!promptTexts[index] || !uploadedImageUrls[index]) {
       message.warning(`Please enter a description and photo for the Scene ${index + 1}`);
       return;
     }
 
     setLoading(true);
-   
+
 
     let time = 5;
     if (videoDuration > 5) {
@@ -736,38 +750,45 @@ Please contact Admin`);
 
     setLoadingCaption(true);
     try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "gpt-4",
-          messages: [
-            {
-              role: "system",
-              content: contentGenerateCaption,
-            },
-            {
-              role: "user",
-              content: `Mô tả hình ảnh sản phẩm: "${description}". Hãy viết một caption quảng cáo theo đúng 10 tiêu chí trên.`,
-            },
-          ],
-          temperature: 0.8,
-          max_tokens: 1000,
-        }),
-      });
+      // const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      //   method: "POST",
+      //   headers: {
+      //     Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     model: "gpt-4",
+      //     messages: [
+      //       {
+      //         role: "system",
+      //         content: contentGenerateCaption,
+      //       },
+      //       {
+      //         role: "user",
+      //         content: `Mô tả hình ảnh sản phẩm: "${description}". Hãy viết một caption quảng cáo theo đúng 10 tiêu chí trên.`,
+      //       },
+      //     ],
+      //     temperature: 0.8,
+      //     max_tokens: 1000,
+      //   }),
+      // });
 
-      const data = await response.json();
-      if (data?.choices?.[0]?.message?.content) {
-        setCaption(data.choices[0].message.content.trim().replace(/^"|"$/g, ""));
+      // const data = await response.json();
+      const body = {
+        contentGenerateCaption, // prompt system 10 tiêu chí của bạn
+        description,            // mô tả hình ảnh sản phẩm
+      };
+
+      const res = await openaiGenerateCaption(body).unwrap();
+      const caption = res.caption || "";
+      if (caption != "") {
+        setCaption(caption);
 
 
         if (videoSrc) {
           const body = {
             urlVideo: videoSrc,
-            caption: `Generate caption : ${data.choices[0].message.content.trim().replace(/^"|"$/g, "")}`, action: "generate_video_caption",
+            caption: `Generate caption : ${caption}`, action: "generate_video_caption",
           };
           await createCase(body).unwrap();
         }

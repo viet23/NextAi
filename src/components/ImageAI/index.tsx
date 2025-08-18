@@ -12,6 +12,7 @@ import { contentFetchOpportunityScore, contentGenerateCaption } from "src/utils/
 import { useTranslation } from "react-i18next";
 import { CloseCircleOutlined, DownloadOutlined, EyeOutlined, UploadOutlined } from "@ant-design/icons";
 import DetailTicket from "../DetailTicket";
+import { useOpenaiGenerateCaptionMutation, useOpenaiScoreCaptionMutation, useOpenaiTranslateExpandMutation } from "src/store/api/openaiApi";
 const { Title, Text } = Typography;
 
 const { Content } = Layout;
@@ -44,6 +45,9 @@ const FullscreenSplitCard = () => {
   const [getAccount] = useLazyGetAccountQuery();
   const [pageAI, setPageAi] = useState("");
   const { data: analysisData } = useGetAnalysisQuery({});
+  const [openaiScoreCaption, { isLoading: isTargeting }] = useOpenaiScoreCaptionMutation();
+  const [openaiTranslateExpand, { isLoading: isTranslating }] = useOpenaiTranslateExpandMutation();
+  const [openaiGenerateCaption, { isLoading }] = useOpenaiGenerateCaptionMutation();
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -81,30 +85,12 @@ const FullscreenSplitCard = () => {
 
   const fetchOpportunityScore = async (captionText: string) => {
     try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: "gpt-4",
-          temperature: 0.3,
-          messages: [
-            {
-              role: "system",
-              content: contentFetchOpportunityScore,
-            },
-            {
-              role: "user",
-              content: `${captionText}\n\nChấm theo thang 100 điểm. Chỉ trả lời bằng một con số.`,
-            },
-          ],
-        }),
-      });
-
-      const data = await response.json();
-      const content = data?.choices?.[0]?.message?.content || "";
+      const body: any = {
+        contentFetchOpportunityScore,
+        captionText,
+      }
+      const response = await openaiScoreCaption(body).unwrap();
+      const content = response?.raw || "";
 
       // Tách dữ liệu từ phản hồi
       const scoreMatch = content.match(/Điểm:\s*(\d+)/i);
@@ -148,27 +134,14 @@ const FullscreenSplitCard = () => {
 
   const translatePromptToEnglish = async (text: string) => {
     try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "gpt-4",
-          messages: [
-            {
-              role: "user",
-              content: `Translate and expand into detailed English prompt: "${text}"`,
-            },
-          ],
-          temperature: 0.9,
-          max_tokens: 1000,
-        }),
-      });
+      const body: any = {
+        text,   // 👈 đoạn tiếng Việt gốc mà bạn muốn dịch & mở rộng
+      };
 
-      const data = await response.json();
-      return data?.choices?.[0]?.message?.content?.trim() || "";
+      const response = await openaiTranslateExpand(body).unwrap();
+      const content = response?.prompt || "";
+
+      return content
     } catch (err) {
       console.error("Translation error:", err);
       return "";
@@ -260,35 +233,18 @@ const FullscreenSplitCard = () => {
 
     setLoadingCaption(true);
     try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "gpt-4",
-          messages: [
-            {
-              role: "system",
-              content: contentGenerateCaption,
-            },
-            {
-              role: "user",
-              content: `Mô tả hình ảnh sản phẩm: "${description}". Hãy viết một caption quảng cáo theo đúng 10 tiêu chí trên.`,
-            },
-          ],
-          temperature: 0.7,
-          max_tokens: 500,
-        }),
-      });
+      const body = {
+        contentGenerateCaption, // prompt system 10 tiêu chí của bạn
+        description,            // mô tả hình ảnh sản phẩm
+      };
 
-      const data = await response.json();
-      setCaption(data?.choices?.[0]?.message?.content?.trim().replace(/^"|"$/g, "") || "");
+      const res = await openaiGenerateCaption(body).unwrap();
+      const caption = res.caption || "";
+      setCaption(caption || "");
       if (imageUrl) {
         const body = {
           urlVideo: imageUrl,
-          caption: `Generate caption : ${data?.choices?.[0]?.message?.content?.trim().replace(/^"|"$/g, "") || ""}`,
+          caption: `Generate caption : ${caption || ""}`,
           taskId: taskId || "",
           action: "generate_image_caption",
         };
@@ -391,26 +347,26 @@ const FullscreenSplitCard = () => {
   const [isMobile, setIsMobile] = useState(false);
 
 
- useEffect(() => {
-  // 1. Gọi ChatGPT nếu có URL
-  if (analysisData?.styleImage) {
-   setPageAi(analysisData?.styleImage);
-  }
+  useEffect(() => {
+    // 1. Gọi ChatGPT nếu có URL
+    if (analysisData?.styleImage) {
+      setPageAi(analysisData?.styleImage);
+    }
 
-  // 2. Kiểm tra mobile và gắn listener
-  const checkMobile = () => {
-    setIsMobile(window.innerWidth <= 768);
-  };
+    // 2. Kiểm tra mobile và gắn listener
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
 
-  checkMobile(); // gọi lần đầu
-  window.addEventListener("resize", checkMobile);
+    checkMobile(); // gọi lần đầu
+    window.addEventListener("resize", checkMobile);
 
-  return () => {
-    window.removeEventListener("resize", checkMobile);
-  };
-}, [analysisData?.urlPage]);
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
+  }, [analysisData?.urlPage]);
 
-console.log(`========pageAI`, pageAI);
+  console.log(`========pageAI`, pageAI);
 
 
   return (

@@ -4,12 +4,13 @@ import TextArea from "antd/es/input/TextArea";
 import { useTranslation } from "react-i18next";
 import { useGetAnalysisQuery } from "src/store/api/ticketApi";
 import FullscreenLoader from "../FullscreenLoader";
+import { useOpenaiRewriteMutation, useOpenaiScoreAdMutation } from "src/store/api/openaiApi";
 
 const { Title } = Typography;
 
 interface AdsFormProps {
   id: string | null;
-  postRecot:any
+  postRecot: any
   pageId: string | null;
 }
 
@@ -20,7 +21,7 @@ type ReviewRow = {
   "Nhận xét & Gợi ý": string;
 };
 
-const DetailAnalysis: React.FC<AdsFormProps> = ({ id,postRecot, pageId }) => {
+const DetailAnalysis: React.FC<AdsFormProps> = ({ id, postRecot, pageId }) => {
   const { t } = useTranslation();
 
   const [interests, setInterests] = useState<string[]>([]);
@@ -29,6 +30,9 @@ const DetailAnalysis: React.FC<AdsFormProps> = ({ id,postRecot, pageId }) => {
   const [rewriteLoading, setRewriteLoading] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<ReviewRow[]>([]);
   const [descDraft, setDescDraft] = useState<string>("");
+  const [openaiRewrite, { isLoading: isRewrite }] = useOpenaiRewriteMutation();
+  const [openaiScoreAd, { isLoading: isScoreAd }] = useOpenaiScoreAdMutation();
+
 
   const postIdOnly = id?.split("_")[1] || "";
   const postUrl =
@@ -73,7 +77,7 @@ const DetailAnalysis: React.FC<AdsFormProps> = ({ id,postRecot, pageId }) => {
 
   // ========= GỌI OPENAI VIẾT LẠI CONTENT THEO GỢI Ý
   const callOpenAIRewrite = async (
-    fallback:any,
+    fallback: any,
     rows: ReviewRow[]
   ) => {
     try {
@@ -114,27 +118,15 @@ Gợi ý tóm tắt từ phân tích:
 
 Từ khóa tham khảo (không bắt buộc phải dùng hết): ${kw}
 `;
+      const body: any = { prompt: rewritePrompt }
+      const response = await openaiRewrite(body).unwrap();
 
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "gpt-4",
-          messages: [
-            { role: "system", content: "Bạn là copywriter. Hãy chỉ trả về đoạn nội dung cuối cùng, không kèm giải thích." },
-            { role: "user", content: rewritePrompt },
-          ],
-          temperature: 0.4,
-          max_tokens: 600,
-        }),
-      });
+      const data = await response;
 
-      const data = await response.json();
+      console.log(`data openaiRewrite--------`, data);
+
       const newText =
-        data?.choices?.[0]?.message?.content?.trim() ||
+        data?.text?.trim() ||
         "【Không tạo được nội dung gợi ý】";
 
       setDescDraft(newText);
@@ -148,10 +140,10 @@ Từ khóa tham khảo (không bắt buộc phải dùng hết): ${kw}
   };
 
   // ========= PHÂN TÍCH
-  const callOpenAIAnalyze = async (fallback:any) => {
+  const callOpenAIAnalyze = async (fallback: any) => {
 
-    console.log(`fallback========`,fallback);
-    
+    console.log(`fallback========`, fallback);
+
     try {
       setAnalysisLoading(true);
 
@@ -223,26 +215,13 @@ YÊU CẦU BẮT BUỘC VỀ CẤU TRÚC KẾT QUẢ:
 Content: ${fallback.caption}
 Image URL: ${fallback.url || "Không có"}
 `;
+      const body: any = { prompt }
+      const response = await openaiScoreAd(body).unwrap();
 
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "gpt-4",
-          messages: [
-            { role: "system", content: "Bạn là máy chấm điểm quảng cáo. Chỉ trả về JSON hợp lệ (một MẢNG), không thêm chữ nào khác." },
-            { role: "user", content: prompt },
-          ],
-          temperature: 0,
-          max_tokens: 1800,
-        }),
-      });
+      const data = await response?.result;
 
-      const data = await response.json();
-      let jsonText = data?.choices?.[0]?.message?.content?.trim() || "[]";
+      console.log(`data openaiScoreAd--------`, data);
+      let jsonText = data?.trim() || "[]";
 
       // Lấy phần mảng nếu lỡ kèm text ngoài
       if (!jsonText.startsWith("[")) {
@@ -286,7 +265,7 @@ Image URL: ${fallback.url || "Không có"}
   };
 
   useEffect(() => {
-    if (postRecot) callOpenAIAnalyze(postRecot); 
+    if (postRecot) callOpenAIAnalyze(postRecot);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postRecot]);
 

@@ -16,6 +16,7 @@ import page2 from "../../assets/images/page2.png";
 import page3 from "../../assets/images/page3.png";
 import page4 from "../../assets/images/page4.png";
 import FullscreenLoader from "../FullscreenLoader";
+import { useOpenaiCreativeChatMutation, useOpenaiGenerateMutation, useOpenaiSimpleChatMutation } from "src/store/api/openaiApi";
 
 
 const { Content } = Layout;
@@ -65,6 +66,14 @@ const FacebookPageAnalysis = () => {
   const [interests, setInterests] = useState(["Sức khỏe"]);
   const [pageAI, setPageAi] = useState("");
 
+  const [openaiGenerate, { isLoading: isTargeting }] = useOpenaiGenerateMutation();
+
+  const [openaiSimpleChat, { isLoading: isSimpleChat }] = useOpenaiSimpleChatMutation();
+
+  const [openaiiCreativeChat, { isLoading: isiCreativeChat }] = useOpenaiCreativeChatMutation();
+
+
+
   // Gọi API ngay khi component render
   const { data, isSuccess } = useGetAnalysisQuery({});
 
@@ -85,38 +94,23 @@ const FacebookPageAnalysis = () => {
   }, [data, isSuccess]);
 
   const getChannelPlan = async (rawAnalysis: string) => {
+
     try {
-      const res = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "gpt-4",
-          messages: [
-            {
-              role: "user",
-              content: `
-Đây là phân tích nội dung một Fanpage Facebook:
 
-${rawAnalysis}
-
+      const prompt = `Đây là phân tích nội dung một Fanpage Facebook:${rawAnalysis}
 Hãy đề xuất kế hoạch phát triển kênh Facebook Page này, gồm:
 1. Mục tiêu kênh
 2. Định vị nội dung gợi ý (tỷ lệ %)
 3. Lịch đăng bài mẫu tuần
 4. Gợi ý định dạng nội dung + Ý tưởng viral
-(Trình bày rõ ràng theo bố cục 2 cột giống bản kế hoạch truyền thông)`,
-            },
-          ],
-          temperature: 0.7,
-          max_tokens: 1000,
-        }),
-      });
+(Trình bày rõ ràng theo bố cục 2 cột giống bản kế hoạch truyền thông)`
 
-      const data = await res.json();
-      const content = data?.choices?.[0]?.message?.content || "";
+      const body: any = { prompt }
+      const response = await openaiGenerate(body).unwrap();
+
+
+      console.log(`data openaiRewrite--------`, response);
+      const content = response?.text || "";
       setChannelPlan(content);
     } catch (err) {
       console.error("❌ GPT channel development error:", err);
@@ -174,22 +168,10 @@ Hãy phân tích nội dung thành 4 phần:
 4. CHIẾN LƯỢC TRUYỀN THÔNG
 `;
 
-      const gptRes = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "gpt-4",
-          messages: [{ role: "user", content: prompt }],
-          temperature: 0.7,
-          max_tokens: 1000,
-        }),
-      });
+      const body: any = { prompt: prompt }
+      const response = await openaiSimpleChat(body).unwrap();
 
-      const gptData = await gptRes.json();
-      const content = gptData?.choices?.[0]?.message?.content;
+      const content = response?.text || "";
 
       if (content) {
         const sections = content.split(/\n{2,}/);
@@ -270,29 +252,15 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
       message.warning("Please enter Facebook Page link.");
       return;
     }
+    const prompt = ` Phân tích Fanpage sau: ${url} .Tôi đang xây dựng hình ảnh cho fanpage Facebook như sau:\n\nTên: ${name}\nMô tả: ${description}\nNội dung hiển thị:\n${bodyPreview}\n\nDựa trên đó, bạn hãy đề xuất phong cách thiết kế hình ảnh hiện đại, sáng tạo (bỏ phần chữ), và tông màu chủ đạo phù hợp với thương hiệu này.`
     try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "gpt-4",
-          messages: [
-            {
-              role: "user",
-              content: ` Phân tích Fanpage sau: ${url} .Tôi đang xây dựng hình ảnh cho fanpage Facebook như sau:\n\nTên: ${name}\nMô tả: ${description}\nNội dung hiển thị:\n${bodyPreview}\n\nDựa trên đó, bạn hãy đề xuất phong cách thiết kế hình ảnh hiện đại, sáng tạo (bỏ phần chữ), và tông màu chủ đạo phù hợp với thương hiệu này.`
+     
+      const body: any = { prompt: prompt }
+      const response = await openaiiCreativeChat(body).unwrap();
 
-            },
-          ],
-          temperature: 0.9,
-          max_tokens: 1000,
-        }),
-      });
+      const content = response?.text || "";
 
-      const data = await response.json();
-      setPageAi(data?.choices?.[0]?.message?.content?.trim() || "");
+      setPageAi(content);
     } catch (err) {
       console.error("Translation error:", err);
     }
