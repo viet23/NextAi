@@ -16,7 +16,7 @@ import {
 } from "antd";
 import axios from "axios";
 import dayjs from "dayjs";
-import { useCreateAdsMutation } from "src/store/api/facebookApi";
+import { useCreateAdsMutation, useCreateFacebookPostMutation, useDetailFacebookPostQuery } from "src/store/api/facebookApi";
 import LocationPicker from "./location";
 import { useTranslation } from "react-i18next";
 import { useGetAnalysisQuery } from "src/store/api/ticketApi";
@@ -49,10 +49,15 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, postRecot, pageId }) => {
   const [location, setLocation] = useState({ lat: 21.024277327355822, lng: 105.77426048583983 }); // Default to Hanoi, Vietnam
   const [radius, setRadius] = useState(16000); // 16km
   const postIdOnly = id?.split("_")[1];
-  const { data: analysisData } = useGetAnalysisQuery({});
+  // const { data: analysisData } = useGetAnalysisQuery({});
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [targetingAI, setTargetingAI] = useState({});
   const isMessage = goal === 'message'
+  const { data, isSuccess, isError } = useDetailFacebookPostQuery(id, { skip: !id, });
+
+  const [createPost, { isLoading: creatingPost }] = useCreateFacebookPostMutation();
+
+
 
   const iframeSrc = `https://www.facebook.com/plugins/post.php?href=https://www.facebook.com/${pageId}/posts/${postIdOnly}&show_text=true&width=500`;
 
@@ -63,6 +68,7 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, postRecot, pageId }) => {
 
 
   const [createAds, { isLoading: creatingCase }] = useCreateAdsMutation();
+
 
   const handlePublish = async () => {
     try {
@@ -182,7 +188,7 @@ Image URL: ${imageUrl || "Không có"}
       const response = await openaiTargeting(body).unwrap();
 
       let raw: string = response.raw ?? "[]";   // ✅ lấy string gốc
-      
+
       // Làm sạch code fence ```json ... ```
       raw = raw.trim();
       if (raw.startsWith("```")) {
@@ -207,6 +213,10 @@ Image URL: ${imageUrl || "Không có"}
       setTargetingAI(first);
 
       setAnalysisLoading(false);
+
+      const res = await createPost({ postId: id, urlPost: iframeSrc, dataTargeting: first }).unwrap();
+      message.success(t("ads.success"));
+      console.log("Ad Created:", res.data);
       return parsed;
     } catch (err) {
       console.error("OpenAI error:", err);
@@ -216,9 +226,29 @@ Image URL: ${imageUrl || "Không có"}
   }
 
   useEffect(() => {
-    if (postRecot) analyzePostForTargeting(postRecot.caption, postRecot.url);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [postRecot]);
+    if (isSuccess && data) {
+      console.log("facebookPost++++++++++++", data);
+
+      if (
+        data?.dataTargeting?.keywordsForInterestSearch?.length > 0
+      ) {
+        setInterests(data.dataTargeting.keywordsForInterestSearch);
+        setAge([
+          data.dataTargeting?.persona?.age_min || 18,
+          data.dataTargeting?.persona?.age_max || 65,
+        ]);
+        setTargetingAI(data.dataTargeting);
+      } else if (postRecot) {
+        // API thành công nhưng không có dataTargeting
+        analyzePostForTargeting(postRecot.caption, postRecot.url);
+      }
+    }
+
+    if (isError && postRecot) {
+      // API lỗi thì fallback sang postRecot
+      analyzePostForTargeting(postRecot.caption, postRecot.url);
+    }
+  }, [isSuccess, isError, data, postRecot]);
 
 
 
