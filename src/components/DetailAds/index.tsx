@@ -215,8 +215,8 @@ Image URL: ${imageUrl || "Không có"}
       setAnalysisLoading(false);
 
       const res = await createPost({ postId: id, urlPost: iframeSrc, dataTargeting: first }).unwrap();
-      message.success(t("ads.success"));
-      console.log("Ad Created:", res.data);
+      message.success(`Tạo taget thành công `);
+      console.log("Tạo taget:", res.data);
       return parsed;
     } catch (err) {
       console.error("OpenAI error:", err);
