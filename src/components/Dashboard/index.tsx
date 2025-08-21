@@ -41,7 +41,7 @@ const Dashboard = () => {
   // === NEW: Chế độ hiển thị: 'posts' | 'ads' ===
   const [viewMode, setViewMode] = useState<"posts" | "ads">("posts");
 
-  const [filter, setFilter] = useState<any>({ page: 1, pageSize: 5 });
+  const [filter, setFilter] = useState<any>({ page: 1, pageSize: 20 });
   // Gọi API ngay khi component render
   const { data: adsData, isSuccess } = useGetFacebookadsQuery({ filter });
 
@@ -201,6 +201,7 @@ const Dashboard = () => {
         createdTime: dayjs(post.created_time).format("YYYY-MM-DD HH:mm:ss") || "",
         reach: post.reach || 0,
         url: post.full_picture,
+        permalink_url: post.permalink_url
       }));
 
       setPostData(formattedPosts);
