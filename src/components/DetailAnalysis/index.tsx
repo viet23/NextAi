@@ -1,23 +1,23 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Typography, Row, Col, message as AntMessage, Card, Modal, Spin } from "antd";
+import { Typography, Row, Col, message as AntMessage, Card, Spin, Button } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useTranslation } from "react-i18next";
 import { useGetAnalysisQuery } from "src/store/api/ticketApi";
 import FullscreenLoader from "../FullscreenLoader";
 import { useOpenaiRewriteMutation, useOpenaiScoreAdMutation } from "src/store/api/openaiApi";
 
-const { Title } = Typography;
+const { Title, Paragraph } = Typography;
 
 interface AdsFormProps {
   id: string | null;
-  postRecot: any
+  postRecot: any;
   pageId: string | null;
 }
 
 type ReviewRow = {
   "Tiêu chí": string;
   "Đánh giá": string;
-  "Điểm (tối đa)": string; // để an toàn khi model trả "8/10"
+  "Điểm (tối đa)": string; // phòng khi model trả "8/10"
   "Nhận xét & Gợi ý": string;
 };
 
@@ -30,17 +30,26 @@ const DetailAnalysis: React.FC<AdsFormProps> = ({ id, postRecot, pageId }) => {
   const [rewriteLoading, setRewriteLoading] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<ReviewRow[]>([]);
   const [descDraft, setDescDraft] = useState<string>("");
-  const [openaiRewrite, { isLoading: isRewrite }] = useOpenaiRewriteMutation();
-  const [openaiScoreAd, { isLoading: isScoreAd }] = useOpenaiScoreAdMutation();
 
+  const [openaiRewrite] = useOpenaiRewriteMutation();
+  const [openaiScoreAd] = useOpenaiScoreAdMutation();
 
   const postIdOnly = id?.split("_")[1] || "";
   const postUrl =
     pageId && postIdOnly ? `https://www.facebook.com/${pageId}/posts/${postIdOnly}` : "";
 
-  const iframeSrc = postUrl
-    ? `https://www.facebook.com/plugins/post.php?href=${encodeURIComponent(postUrl)}&show_text=true&width=500`
-    : "";
+  // ---- Preview (thay cho iframe) ----
+  const previewImg =
+    postRecot?.media?.props?.src ||
+    postRecot?.url ||
+    "https://via.placeholder.com/720x720?text=Image+not+available";
+
+  const previewAlt = postRecot?.media?.props?.alt || "facebook post media";
+
+  const previewCaption = postRecot?.caption || "";
+
+  const previewPermalink =
+    postRecot?.permalink_url || (postUrl ? postUrl : undefined);
 
   useEffect(() => {
     if (analysisData?.targeting) setInterests(analysisData.targeting);
@@ -49,11 +58,11 @@ const DetailAnalysis: React.FC<AdsFormProps> = ({ id, postRecot, pageId }) => {
   // ========= HÀM PHỤ: Tóm tắt gợi ý từ bảng điểm để feed cho prompt viết lại
   const buildSuggestionSummary = (rows: ReviewRow[]) => {
     const pick = (name: string) =>
-      rows.find(r => r["Tiêu chí"].toLowerCase().includes(name.toLowerCase()));
+      rows.find((r) => r["Tiêu chí"].toLowerCase().includes(name.toLowerCase()));
     const getNote = (name: string) =>
       rows
-        .filter(r => r["Tiêu chí"].toLowerCase().includes(name.toLowerCase()))
-        .map(r => r["Nhận xét & Gợi ý"])
+        .filter((r) => r["Tiêu chí"].toLowerCase().includes(name.toLowerCase()))
+        .map((r) => r["Nhận xét & Gợi ý"])
         .filter(Boolean)
         .join(" | ");
 
@@ -70,21 +79,22 @@ const DetailAnalysis: React.FC<AdsFormProps> = ({ id, postRecot, pageId }) => {
         getNote("Text ratio"),
         getNote("Khuôn mặt"),
         getNote("Sản phẩm"),
-      ].filter(Boolean).join(" | "),
-      final: (pick("Final Score")?.["Nhận xét & Gợi ý"] || "").trim()
+      ]
+        .filter(Boolean)
+        .join(" | "),
+      final: (pick("Final Score")?.["Nhận xét & Gợi ý"] || "").trim(),
     };
   };
 
   // ========= GỌI OPENAI VIẾT LẠI CONTENT THEO GỢI Ý
-  const callOpenAIRewrite = async (
-    fallback: any,
-    rows: ReviewRow[]
-  ) => {
+  const callOpenAIRewrite = async (fallback: any, rows: ReviewRow[]) => {
     try {
       setRewriteLoading(true);
 
       // tự động lấy vài keyword từ sở thích + fallback
-      const kw = Array.from(new Set([...(interests || []).slice(0, 5), "Best Mall", "thực phẩm chức năng", "huyết áp"]))
+      const kw = Array.from(
+        new Set([...(interests || []).slice(0, 5), "Best Mall", "thực phẩm chức năng", "huyết áp"])
+      )
         .filter(Boolean)
         .join(", ");
 
@@ -118,17 +128,8 @@ Gợi ý tóm tắt từ phân tích:
 
 Từ khóa tham khảo (không bắt buộc phải dùng hết): ${kw}
 `;
-      const body: any = { prompt: rewritePrompt }
-      const response = await openaiRewrite(body).unwrap();
-
-      const data = await response;
-
-      console.log(`data openaiRewrite--------`, data);
-
-      const newText =
-        data?.text?.trim() ||
-        "【Không tạo được nội dung gợi ý】";
-
+      const response = await openaiRewrite({ prompt: rewritePrompt }).unwrap();
+      const newText = response?.text?.trim() || "【Không tạo được nội dung gợi ý】";
       setDescDraft(newText);
       AntMessage.success("Đã viết lại nội dung theo gợi ý.");
     } catch (err) {
@@ -141,9 +142,6 @@ Từ khóa tham khảo (không bắt buộc phải dùng hết): ${kw}
 
   // ========= PHÂN TÍCH
   const callOpenAIAnalyze = async (fallback: any) => {
-
-    console.log(`fallback========`, fallback);
-
     try {
       setAnalysisLoading(true);
 
@@ -215,13 +213,9 @@ YÊU CẦU BẮT BUỘC VỀ CẤU TRÚC KẾT QUẢ:
 Content: ${fallback.caption}
 Image URL: ${fallback.url || "Không có"}
 `;
-      const body: any = { prompt }
-      const response = await openaiScoreAd(body).unwrap();
-
+      const response = await openaiScoreAd({ prompt }).unwrap();
       const data = await response?.result;
-
-      console.log(`data openaiScoreAd--------`, data);
-      let jsonText = data?.trim() || "[]";
+      let jsonText = (data || "").trim() || "[]";
 
       // Lấy phần mảng nếu lỡ kèm text ngoài
       if (!jsonText.startsWith("[")) {
@@ -233,18 +227,20 @@ Image URL: ${fallback.url || "Không có"}
       let parsed: ReviewRow[] = [];
       try {
         const raw = JSON.parse(jsonText);
-        const arr = Array.isArray(raw) ? raw : (raw?.rows ?? []);
+        const arr = Array.isArray(raw) ? raw : raw?.rows ?? [];
         parsed = (arr || []).map((it: any) => ({
           "Tiêu chí": String(it["Tiêu chí"] ?? ""),
           "Đánh giá": String(it["Đánh giá"] ?? ""),
           "Điểm (tối đa)": String(
             it["Điểm (tối đa)"] ??
-            it["Điểm tối đa"] ??
-            it["Diem (toi da)"] ??
-            it["max"] ??
-            ""
+              it["Điểm tối đa"] ??
+              it["Diem (toi da)"] ??
+              it["max"] ??
+              ""
           ),
-          "Nhận xét & Gợi ý": String(it["Nhận xét & Gợi ý"] ?? it["Nhận xét"] ?? it["Gợi ý"] ?? ""),
+          "Nhận xét & Gợi ý": String(
+            it["Nhận xét & Gợi ý"] ?? it["Nhận xét"] ?? it["Gợi ý"] ?? ""
+          ),
         }));
       } catch (e) {
         console.error("Parse JSON error:", e);
@@ -255,7 +251,6 @@ Image URL: ${fallback.url || "Không có"}
 
       // >>> Sau khi có gợi ý, tự động viết lại content và set vào descDraft:
       await callOpenAIRewrite(fallback, parsed);
-
     } catch (error) {
       console.error("Analyze error:", error);
       AntMessage.error("Lỗi khi phân tích bằng AI.");
@@ -277,23 +272,45 @@ Image URL: ${fallback.url || "Không có"}
   }, [analysisResult]);
 
   return (
+    <>
+      <FullscreenLoader spinning={analysisLoading} />
 
-    <><FullscreenLoader
-      spinning={analysisLoading} /><Card style={{ backgroundColor: "#070719", borderRadius: 16, padding: 24, color: "#e2e8f0" }} bodyStyle={{ padding: 0 }}>
+      <Card
+        style={{ backgroundColor: "#070719", borderRadius: 16, padding: 24, color: "#e2e8f0" }}
+        bodyStyle={{ padding: 0 }}
+      >
         <Row gutter={32}>
+          {/* Bảng phân tích */}
           <Col xs={24} md={12}>
-            <div style={{ background: "#fff", color: "#000", padding: "12px 16px", borderRadius: "12px", minHeight: 760 }}>
+            <div
+              style={{
+                background: "#fff",
+                color: "#000",
+                padding: "12px 16px",
+                borderRadius: "12px",
+                minHeight: 760,
+              }}
+            >
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                 <Title level={4} style={{ margin: 0 }}>
                   Phân tích & gợi ý nội dung
                 </Title>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr 1.6fr", gap: "12px", fontWeight: 600 }}>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1.2fr 1fr 1fr 1.6fr",
+                  gap: "12px",
+                  fontWeight: 600,
+                }}
+              >
                 <div>Tiêu chí</div>
                 <div>Đánh giá</div>
                 <div>Điểm (Tối đa)</div>
                 <div>Nhận xét gợi ý</div>
               </div>
+
               <div style={{ maxHeight: 660, overflow: "auto", padding: "4px 12px 0" }}>
                 {analysisLoading ? (
                   <div style={{ display: "flex", gap: 12, padding: 16 }}>
@@ -301,7 +318,16 @@ Image URL: ${fallback.url || "Không có"}
                   </div>
                 ) : analysisResult.length > 0 ? (
                   analysisResult.map((item, idx) => (
-                    <div key={idx} style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr 1.6fr", gap: "12px", padding: "12px 0", borderBottom: "1px solid #ccc" }}>
+                    <div
+                      key={idx}
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "1.2fr 1fr 1fr 1.6fr",
+                        gap: "12px",
+                        padding: "12px 0",
+                        borderBottom: "1px solid #ccc",
+                      }}
+                    >
                       <div>{item["Tiêu chí"]}</div>
                       <div>{item["Đánh giá"]}</div>
                       <div>{item["Điểm (tối đa)"]}</div>
@@ -312,6 +338,7 @@ Image URL: ${fallback.url || "Không có"}
                   <div style={{ padding: 16, color: "#666" }}>Chưa có dữ liệu phân tích</div>
                 )}
               </div>
+
               {finalScore !== null && (
                 <div style={{ marginTop: 12, background: "#fff", padding: 10, borderRadius: 10 }}>
                   <strong>Final Score = {finalScore} / 100</strong>
@@ -319,25 +346,70 @@ Image URL: ${fallback.url || "Không có"}
               )}
             </div>
           </Col>
+
+          {/* Preview KHÔNG dùng iframe + khu vực viết lại */}
           <Col xs={24} md={12}>
             <div style={{ padding: 10 }}>
-              {iframeSrc ? (
-                <iframe src={iframeSrc} width="100%" height="560" style={{ border: "none", borderRadius: 8, backgroundColor: "#e2e8f0" }} />
-              ) : (
-                <div style={{ height: 500, borderRadius: 8, background: "#0b1220", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  Chưa có preview post
+              <div
+                style={{
+                  background: "#0f172a",
+                  border: "1px solid #2a3446",
+                  borderRadius: 12,
+                  overflow: "hidden",
+                }}
+              >
+                {/* Ảnh */}
+                <a
+                  href={previewPermalink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: "block" }}
+                >
+                  <img
+                    src={previewImg}
+                    alt={previewAlt}
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src =
+                        "https://via.placeholder.com/720x720?text=Image+not+available";
+                    }}
+                  />
+                </a>
+
+                {/* Caption + nút mở Facebook */}
+                <div style={{ padding: 12 }}>
+                  <Paragraph style={{ margin: 0, color: "#e2e8f0" }}>{previewCaption}</Paragraph>
+                  {previewPermalink && (
+                    <Button
+                      type="link"
+                      href={previewPermalink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ paddingLeft: 0 }}
+                    >
+                      Xem trên Facebook
+                    </Button>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
+
             <div style={{ marginBottom: 16 }}>
               <label style={{ color: "#f8fafc" }}>
                 Gợi ý mô tả cho bài viết {rewriteLoading && <Spin size="small" style={{ marginLeft: 8 }} />}
               </label>
-              <TextArea rows={5} value={descDraft} onChange={(e) => setDescDraft(e.target.value)} placeholder={t("image.enter_description")} />
+              <TextArea
+                rows={5}
+                value={descDraft}
+                onChange={(e) => setDescDraft(e.target.value)}
+                placeholder={t("image.enter_description")}
+              />
             </div>
           </Col>
         </Row>
-      </Card></>
+      </Card>
+    </>
   );
 };
 
