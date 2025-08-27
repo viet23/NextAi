@@ -299,8 +299,8 @@ const HomePage: React.FC = () => {
                                                     style={{ width: 40, height: 40, borderRadius: '50%', marginRight: 12 }}
                                                 />
                                                 <div>
-                                                    <p style={{ margin: 0, fontWeight: 'bold' }}>{item.name}</p>
-                                                    <p style={{ margin: 0, opacity: 0.7 }}>{item.username}</p>
+                                                    <p style={{ margin: 0, fontWeight: 'bold', color: 'white' }}>{item.name}</p>
+                                                    <p style={{ margin: 0, opacity: 0.7, color: 'white' }}>{item.username}</p>
                                                 </div>
                                                 <img
                                                     src="https://cdn-icons-png.flaticon.com/512/733/733579.png"
@@ -308,7 +308,10 @@ const HomePage: React.FC = () => {
                                                     style={{ width: 20, height: 20, marginLeft: 'auto' }}
                                                 />
                                             </div>
-                                            <p style={{ margin: 0, fontStyle: 'italic' }}>"{item.text}"</p>
+                                            <p style={{ margin: 0, fontStyle: 'italic', color: 'white' }}>
+                                                "{item.text}"
+                                            </p>
+
                                         </div>
                                     ))}
 
