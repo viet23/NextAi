@@ -31,6 +31,7 @@ import ForgotPasswordPage from "src/pages/ForgotPassword";
 import ResetPasswordPage from "src/pages/resetPassword";
 import PolicyPage from "src/pages/PolicyPage";
 import CampaignReportss from "src/pages/CampaignReport";
+import PrivacyPolicy from "src/pages/PrivacyPolicy";
 const HomeIntel = React.lazy(() => import("src/pages/HomeIntel"));
 const CreditsPage = React.lazy(() => import("src/pages/Credits"));
 const AccountDetailPage = React.lazy(() => import("src/pages/AccountDetail"));
@@ -83,16 +84,23 @@ export const routes = [
         name: "home",
         component: Home,
       },
-       {
+      {
         path: "/policy-page",
         isProtect: false,
         key: "home",
         name: "home",
         component: PolicyPage,
       },
+      {
+        path: "/privacy-policy",
+        isProtect: false,
+        key: "privacy",
+        name: "privacy",
+        component: PrivacyPolicy,
+      },
     ],
   },
-  
+
   {
     key: "main",
     layout: MainLayout,
@@ -166,7 +174,7 @@ export const routes = [
         component: CampaignReportss,
       },
 
-      
+
       {
         path: USER_ROUTE,
         isProtect: true,
@@ -188,7 +196,7 @@ export const routes = [
         name: "accountDetail",
         component: AccountDetailPage,
       },
-       {
+      {
         path: ACCOUNT_DETAIL_USER_ROUTE,
         isProtect: true,
         key: "accountDetail",

@@ -17,29 +17,61 @@ interface AdsFormProps {
   pageId: string | null;
 }
 
-type RowType = {
+const onAcceptRecommendation = undefined; // hoặc một no-op: () => {}
+
+
+// types.ts (hoặc đặt ngay trên component)
+export type RowType = {
   id?: string;
   adId?: string;
   campaignName?: string;
   createdAt?: string;
   createdByEmail?: string;
-  // metrics phẳng theo backend mới
+
+  // metrics phẳng (backend mới)
   impressions?: string | number;
   reach?: string | number;
   frequency?: string | number;
   clicks?: string | number;
-  inlineLinkClicks?: string | number;
+  inlineLinkClicks?: string | number;  // ✅ tên mới
   spendVnd?: string | number;
-  ctrPercent?: string | number; // ví dụ "0.140384" (đơn vị: %)
+  ctrPercent?: string | number;        // vd "0.140384" -> 0.14%
   cpmVnd?: string | number;
   cpcVnd?: string | number;
   totalEngagement?: string | number;
-  engagementDetails?: string; // html <li>...</li>
-  recommendation?: string; // text
-  htmlReport?: string; // html đầy đủ
+
+  engagementDetails?: string;          // html <li>...</li>
+  recommendation?: string;             // text
+  htmlReport?: string;                 // html đầy đủ
   userId?: string;
   isActive?: boolean;
+
+  // ====== BỔ SUNG để hết lỗi TS2339 ======
+  // alias cũ để code không vỡ (giữ tùy chọn)
+  linkClicks?: string | number;
+
+  // Chỉ số kinh doanh (nếu backend có trả)
+  conversions?: string | number;
+  purchaseValueVnd?: string | number;
+  cpaVnd?: string | number;
+  roas?: string | number;
+
+  // Phần mở rộng cho layout báo cáo
+  reportDate?: string;
+  aiKpis?: Array<{
+    kpi?: string;
+    level?: "Tốt" | "Trung bình" | "Kém" | string;
+    comment?: string;
+    action?: string;
+    reason?: string;
+  }>;
+  breakdownAgeGenderHtml?: string;
+  breakdownRegionHtml?: string;
+  breakdownPlacementHtml?: string;
+  summary?: string;
 };
+
+
 
 const num = (v: any) => {
   const n = Number(String(v ?? 0).replace(/[^\d.-]/g, ""));
@@ -144,7 +176,7 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
     }
   }
 
-const handleApply = (id?: string | number) => {
+  const handleApply = (id?: string | number) => {
     Modal.confirm({
       title: "Xác nhận đồng ý?",
       content: "Hành động này sẽ được thực hiện ngay.",
@@ -155,7 +187,7 @@ const handleApply = (id?: string | number) => {
 
           updateAccountGroup({
             id: id,
-            body: {isActive:true},
+            body: { isActive: true },
           })
             .unwrap()
             .then(() => {
@@ -278,130 +310,283 @@ const handleApply = (id?: string | number) => {
         </Row>
       </Card>
 
-
-
-      <Modal
-        open={open}
-        centered
-        title={
-          <div style={{ textAlign: "center", width: "100%" }}>
-            Báo cáo quảng cáo - {current?.adId ?? "-"}
-          </div>
-        }
-        onCancel={() => setOpen(false)}
-        width={800}
-        styles={{
-          body: { background: "#ffffff" }, // đổi thành #070719 nếu muốn tối
-          header: { textAlign: "center" }
+<Modal
+  open={open}
+  centered
+  title={
+    <div style={{ textAlign: "center", width: "100%" }}>
+      All One Ads – Báo cáo quảng cáo (Daily Report) – {current?.adId ?? "-"}
+    </div>
+  }
+  onCancel={() => setOpen(false)}
+  width={900}
+  styles={{
+    body: { background: "#ffffff" }, // đổi thành #070719 nếu muốn dark
+    header: { textAlign: "center" },
+  }}
+  footer={
+    <div style={{ display: "flex", justifyContent: "space-between", padding: "0 16px" }}>
+      {/* Nút Tạm dừng/Bật lại chiến dịch: giữ nguyên logic cũ */}
+      <button
+        style={{
+          backgroundColor: detailRecord?.status === "ACTIVE" ? "#f5222d" : "#52c41a",
+          border: "none",
+          color: "#fff",
+          padding: "8px 16px",
+          borderRadius: "6px",
+          fontWeight: 500,
+          cursor: "pointer",
         }}
-        footer={
-          <div style={{ display: "flex", justifyContent: "space-between", padding: "0 16px" }}>
-            {/* Nút Tạm dừng chiến dịch */}
-            <button
-              style={{
-                backgroundColor: detailRecord?.status === "ACTIVE" ? "#f5222d" : "#52c41a",
-                border: "none",
-                color: "#fff",
-                padding: "8px 16px",
-                borderRadius: "6px",
-                fontWeight: 500,
-                cursor: "pointer"
-              }}
-              onClick={() => {
-                Modal.confirm({
-                  title:
-                    detailRecord?.status === "ACTIVE"
-                      ? "Tạm dừng chiến dịch?"
-                      : "Bật lại chiến dịch?",
-                  content:
-                    detailRecord?.status === "ACTIVE"
-                      ? "Chiến dịch sẽ bị tạm dừng ngay."
-                      : "Chiến dịch sẽ được bật lại.",
-                  okText: "Xác nhận",
-                  cancelText: "Hủy",
-                  okButtonProps: { danger: detailRecord?.status === "ACTIVE" },
-                  async onOk() {
-                    const ok = await setAdStatus(
-                      detailRecord?.adId,
-                      detailRecord?.status !== "ACTIVE" // nếu đang ACTIVE thì sẽ tắt, ngược lại thì bật
-                    );
-                    if (ok) setOpen(false);
-                  }
-                });
-              }}
-            >
-              {detailRecord?.status === "ACTIVE" ? "⏸ Tạm dừng" : "▶ Bật lại"} chiến dịch
-            </button>
-
-
-            {/* Nút Đồng ý */}
-            <button
-              disabled={current?.isActive}
-              style={{
-                backgroundColor: current?.isActive ? "#d9d9d9" : "#52c41a",
-                border: "none",
-                color: "#fff",
-                padding: "8px 16px",
-                borderRadius: "6px",
-                fontWeight: 500,
-                cursor: current?.isActive ? "not-allowed" : "pointer",
-              }}
-             onClick={!current?.isActive ? () => handleApply(current?.id) : undefined}
-            >
-              {current?.isActive ? "✔ Đã áp dụng" : "✔ Áp dụng khuyến nghị"}
-            </button>
-          </div>
-        }
+        onClick={() => {
+          Modal.confirm({
+            title: detailRecord?.status === "ACTIVE" ? "Tạm dừng chiến dịch?" : "Bật lại chiến dịch?",
+            content:
+              detailRecord?.status === "ACTIVE"
+                ? "Chiến dịch sẽ bị tạm dừng ngay."
+                : "Chiến dịch sẽ được bật lại.",
+            okText: "Xác nhận",
+            cancelText: "Hủy",
+            okButtonProps: { danger: detailRecord?.status === "ACTIVE" },
+            async onOk() {
+              const ok = await setAdStatus(
+                detailRecord?.adId,
+                detailRecord?.status !== "ACTIVE" // nếu đang ACTIVE thì sẽ tắt, ngược lại thì bật
+              );
+              if (ok) setOpen(false);
+            },
+          });
+        }}
       >
-        {/* Ưu tiên htmlReport nếu backend trả sẵn; fallback render nhanh các trường chính */}
-        {current?.htmlReport ? (
-          <div
-            className="prose prose-invert"
-            dangerouslySetInnerHTML={{ __html: current.htmlReport }}
-          />
-        ) : (
-          <div style={{ lineHeight: 1.7 }}>
-            <p><strong>Ad ID:</strong> {current?.adId}</p>
-            <p><strong>Chiến dịch:</strong> {current?.campaignName}</p>
-            <p><strong>Người tạo:</strong> {current?.createdByEmail}</p>
-            <p><strong>👁 Hiển thị:</strong> {fmtInt(current?.impressions)}</p>
-            <p><strong>🖱 Click:</strong> {fmtInt(current?.clicks)}</p>
-            <p>
-              <strong>💸 Chi phí:</strong> {fmtCurrency(current?.spendVnd)} VNĐ
-            </p>
-            <p>
-              <strong>📊 CTR:</strong> {fmtPercent(current?.ctrPercent)} —{" "}
-              <strong>CPM:</strong> {fmtCurrency(current?.cpmVnd)} VNĐ —{" "}
-              <strong>CPC:</strong> {fmtCurrency(current?.cpcVnd)} VNĐ
-            </p>
-            {current?.engagementDetails && (
-              <>
-                <p><strong>📌 Tổng tương tác:</strong> {fmtInt(current?.totalEngagement)}</p>
-                <ul
-                  dangerouslySetInnerHTML={{
-                    __html: current.engagementDetails,
-                  }}
-                />
-              </>
-            )}
-            {current?.recommendation && (
-              <>
-                <hr />
-                <h4>📈 Gợi ý tối ưu hóa:</h4>
-                <pre
-                  style={{
-                    whiteSpace: "pre-wrap",
-                    fontFamily: "inherit",
-                    margin: 0,
-                  }}
-                >
-                  {current.recommendation}
-                </pre>
-              </>
-            )}
+        {detailRecord?.status === "ACTIVE" ? "⏸ Tạm dừng" : "▶ Bật lại"} chiến dịch
+      </button>
+
+      {/* Nút Áp dụng khuyến nghị: giữ nguyên logic cũ */}
+      <button
+        disabled={current?.isActive}
+        style={{
+          backgroundColor: current?.isActive ? "#d9d9d9" : "#52c41a",
+          border: "none",
+          color: "#fff",
+          padding: "8px 16px",
+          borderRadius: "6px",
+          fontWeight: 500,
+          cursor: current?.isActive ? "not-allowed" : "pointer",
+        }}
+        onClick={!current?.isActive ? () => handleApply(current?.id) : undefined}
+      >
+        {current?.isActive ? "✔ Đã áp dụng" : "✔ Áp dụng khuyến nghị"}
+      </button>
+    </div>
+  }
+>
+  {/* Nếu có htmlReport thì ưu tiên render sẵn */}
+  {current?.htmlReport ? (
+    <div className="prose prose-invert" dangerouslySetInnerHTML={{ __html: current?.htmlReport }} />
+  ) : (
+    <div style={{ lineHeight: 1.7 }}>
+      {/* ===== Thông tin chiến dịch ===== */}
+      <div style={{ marginBottom: 12, textAlign: "center" }}>
+        <span
+          style={{
+            display: "inline-block",
+            padding: "4px 10px",
+            borderRadius: 14,
+            background: "#f0f5ff",
+            color: "#1d39c4",
+            fontWeight: 600,
+          }}
+        >
+          Ngày báo cáo: {current?.reportDate ?? "-"}
+        </span>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
+        <div>
+          <strong>Ad ID:</strong> {current?.adId ?? "-"}
+        </div>
+        <div>
+          <strong>Chiến dịch:</strong> {current?.campaignName ?? "-"}
+        </div>
+        <div>
+          <strong>Người tạo:</strong> {current?.createdByEmail ?? "-"}
+        </div>
+        <div>
+          <strong>Trạng thái:</strong> {detailRecord?.status ?? "-"}
+        </div>
+      </div>
+
+      <hr />
+
+      {/* ===== Chỉ số cơ bản ===== */}
+      <h4 style={{ marginTop: 12, marginBottom: 8 }}>📊 Chỉ số cơ bản</h4>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 10 }}>
+        <div>
+          <strong>Hiển thị:</strong> {fmtInt?.(current?.impressions) ?? "-"}
+        </div>
+        <div>
+          <strong>Reach:</strong> {fmtInt?.(current?.reach) ?? "-"}
+        </div>
+        <div>
+          <strong>Tần suất:</strong> {current?.frequency ?? "-"}
+        </div>
+
+        <div>
+          <strong>Clicks:</strong> {fmtInt?.(current?.clicks) ?? "-"}
+        </div>
+        <div>
+          <strong>Link Clicks:</strong> {fmtInt?.(current?.inlineLinkClicks ?? current?.linkClicks) ?? "-"}
+        </div>
+        <div>
+          <strong>Chi phí:</strong> {fmtCurrency?.(current?.spendVnd)} VNĐ
+        </div>
+
+        <div>
+          <strong>CTR:</strong> {fmtPercent?.(current?.ctrPercent) ?? "-"}
+        </div>
+        <div>
+          <strong>CPM:</strong> {fmtCurrency?.(current?.cpmVnd)} VNĐ
+        </div>
+        <div>
+          <strong>CPC:</strong> {fmtCurrency?.(current?.cpcVnd)} VNĐ
+        </div>
+
+        {current?.totalEngagement != null && (
+          <div style={{ gridColumn: "span 3" }}>
+            <strong>📌 Tổng tương tác:</strong> {fmtInt?.(current?.totalEngagement)}
           </div>
         )}
-      </Modal>
+      </div>
+
+      {/* ===== Chỉ số kinh doanh (nếu có) ===== */}
+      {(current?.conversions != null ||
+        current?.purchaseValueVnd != null ||
+        current?.cpaVnd != null ||
+        current?.roas != null) && (
+        <>
+          <h4 style={{ marginTop: 16, marginBottom: 8 }}>💰 Chỉ số kinh doanh (Pixel/CAPI)</h4>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0,1fr))", gap: 10 }}>
+            {current?.conversions != null && (
+              <div>
+                <strong>Conversions:</strong> {fmtInt?.(current?.conversions)}
+              </div>
+            )}
+            {current?.purchaseValueVnd != null && (
+              <div>
+                <strong>Doanh thu:</strong> {fmtCurrency?.(current?.purchaseValueVnd)} VNĐ
+              </div>
+            )}
+            {current?.cpaVnd != null && (
+              <div>
+                <strong>CPA:</strong> {fmtCurrency?.(current?.cpaVnd)} VNĐ
+              </div>
+            )}
+            {current?.roas != null && (
+              <div>
+                <strong>ROAS:</strong> {Number(current?.roas).toFixed(2)}
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* ===== Breakdown (nếu có) ===== */}
+      {(current?.breakdownAgeGenderHtml || current?.breakdownRegionHtml || current?.breakdownPlacementHtml) && (
+        <>
+          <h4 style={{ marginTop: 16, marginBottom: 8 }}>🔍 Phân tích chi tiết (Breakdown)</h4>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 10 }}>
+            {current?.breakdownAgeGenderHtml && (
+              <div style={{ border: "1px solid #f0f0f0", borderRadius: 8, padding: 10 }}>
+                <strong>Theo độ tuổi/giới tính</strong>
+                <div dangerouslySetInnerHTML={{ __html: current?.breakdownAgeGenderHtml }} />
+              </div>
+            )}
+            {current?.breakdownRegionHtml && (
+              <div style={{ border: "1px solid #f0f0f0", borderRadius: 8, padding: 10 }}>
+                <strong>Theo khu vực</strong>
+                <div dangerouslySetInnerHTML={{ __html: current?.breakdownRegionHtml }} />
+              </div>
+            )}
+            {current?.breakdownPlacementHtml && (
+              <div style={{ border: "1px solid #f0f0f0", borderRadius: 8, padding: 10 }}>
+                <strong>Theo vị trí hiển thị</strong>
+                <div dangerouslySetInnerHTML={{ __html: current?.breakdownPlacementHtml }} />
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* ===== Gợi ý tối ưu từ AI ===== */}
+      <h4 style={{ marginTop: 16, marginBottom: 8 }}>🧠 Đánh giá & Gợi ý tối ưu từ AI</h4>
+      {(() => {
+        const aiKpis = Array.isArray(current?.aiKpis) ? current?.aiKpis! : [];
+        if (aiKpis.length > 0) {
+          return (
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+              <thead>
+                <tr>
+                  {["Chỉ số / KPI", "Mức", "Nhận xét AI", "Hành động gợi ý", "Lý do (KPI)", "Nút"].map((h) => (
+                    <th key={h} style={{ textAlign: "left", padding: 8, borderBottom: "1px solid #f0f0f0" }}>
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {aiKpis.map((row: any, idx: number) => {
+                  const lvl = row?.level;
+                  const badgeColor = lvl === "Tốt" ? "#52c41a" : lvl === "Trung bình" ? "#faad14" : "#f5222d";
+                  return (
+                    <tr key={row?.key ?? row?.kpi ?? idx}>
+                      <td style={{ padding: 8, borderBottom: "1px solid #f5f5f5" }}>{row?.kpi ?? "-"}</td>
+                      <td style={{ padding: 8, borderBottom: "1px solid #f5f5f5" }}>
+                        <span style={{ background: badgeColor, color: "#fff", padding: "2px 8px", borderRadius: 12 }}>
+                          {row?.level ?? "-"}
+                        </span>
+                      </td>
+                      <td style={{ padding: 8, borderBottom: "1px solid #f5f5f5" }}>{row?.comment ?? "-"}</td>
+                      <td style={{ padding: 8, borderBottom: "1px solid #f5f5f5" }}>{row?.action ?? "-"}</td>
+                      <td style={{ padding: 8, borderBottom: "1px solid #f5f5f5" }}>{row?.reason ?? "-"}</td>
+                      <td style={{ padding: 8, borderBottom: "1px solid #f5f5f5" }}>
+                        <button
+                          style={{
+                            backgroundColor: "#1677ff",
+                            border: "none",
+                            color: "#fff",
+                            padding: "6px 10px",
+                            borderRadius: "6px",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => handleApply?.(current?.id)}
+                        >
+                          Chấp nhận
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          );
+        }
+        if (current?.recommendation) {
+          return <pre style={{ whiteSpace: "pre-wrap", fontFamily: "inherit", margin: 0 }}>{current?.recommendation}</pre>;
+        }
+        return <p style={{ fontStyle: "italic", color: "#8c8c8c" }}>Chưa có bảng khuyến nghị chi tiết.</p>;
+      })()}
+
+      {/* ===== Kết luận ===== */}
+      {current?.summary && (
+        <>
+          <hr />
+          <h4 style={{ marginTop: 12, marginBottom: 8 }}>✅ Kết luận & Khuyến nghị tổng quan</h4>
+          <div>{current?.summary}</div>
+        </>
+      )}
+    </div>
+  )}
+</Modal>
+
 
 
     </>
