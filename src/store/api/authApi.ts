@@ -36,6 +36,19 @@ const AuthApi = api.injectEndpoints({
         return response;
       },
     }),
+    registerRrial: build.mutation<any, any>({
+      query: body => ({
+        url: "/api/v1/auth/register-trial",
+        method: "POST",
+        body,
+      }),
+      transformResponse: (res: any) => {
+        localStorage.clear();
+        store.dispatch(setCurrentUser({}));
+        store.dispatch(setIsLogin(false));
+        return res;
+      },
+    }),
     signOut: build.query<any, any>({
       query: () => ({
         url: "api/v1/authentication/logout",
@@ -113,5 +126,6 @@ export const {
   useLazyUserDetailMerchantQuery,
   useSamlSigninMutation,
   useGetAuthRolesQuery,
+  useRegisterRrialMutation
 } = AuthApi;
 export default AuthApi;

@@ -373,68 +373,96 @@
     "preview": "Xem trước"
   },
   "hero": {
-    "subtitle": "Công cụ AI ưu việt cho bạn",
-    "title1": "Quảng cáo tự động",
+    "subtitle": "Tối ưu nhanh – Ra đơn đều – Giảm chi phí 30 đến 50%",
+    "title1": "NỀN TẢNG AI SETUP QUẢNG CÁO FACEBOOK",
     "title2": "Hiệu quả tối đa",
     "title3": "Tất cả trong một",
-    "description": "Nền tảng giúp bạn tạo hình ảnh, video, viết nội dung, chạy quảng cáo Facebook tự động bằng AI. Không cần kỹ năng thiết kế hay marketing."
+    "description": "✅ Tự động setup & tối ưu chiến dịch trong 5 phút, kể cả khi bạn không rành kỹ thuật",
+    "description2": "✅ Target chuẩn – Chạm đúng khách hàng tiềm năng, giảm lãng phí ngân sách",
+    "description3": "✅ Theo dõi & điều chỉnh real-time dựa trên CPC, CTR, ROAS"
   },
   "partners": {
     "title": "Đối tác hoặc khách hàng tiêu biểu"
   },
   "section": {
-    "title": "AI quảng cáo Facebook mạnh mẽ, hỗ trợ tạo ảnh và video lên đến 60 giây"
+    "title": "Trải nghiệm các tính năng"
   },
   "features": [
     {
-      "title": "AI Quảng Cáo Tự Động – Nhanh, Chuẩn, Hiệu Quả - Như Chuyên gia thực thụ",
+      "title": "Quảng cáo tự động",
       "content": [
         {
-          "heading": "Phân tích fanpage của bạn",
-          "description": "Hệ thống AI thông minh không chỉ giúp bạn viết nội dung cuốn hút, tạo hình ảnh và video chuyên nghiệp, mà còn tự động phân tích fanpage, xác định điểm mạnh – điểm yếu, đề xuất hướng cải thiện và tối ưu chiến dịch theo từng ngành hàng, đối tượng và mục tiêu cụ thể."
+          "heading": "Tự động lên chiến dịch trong 5 phút",
+          "description": "Target chuẩn xác dựa trên dữ liệu ngành & lịch sử chiến dịch.\nTối ưu real-time: CPC, CTR, ROAS – không cần theo dõi thủ công."
         },
         {
-          "heading": "Phân tích hiệu quả quảng cáo",
-          "description": "Tất cả quy trình — từ sáng tạo đến dự đoán hiệu quả — đều được xử lý hoàn toàn bằng AI, tiết kiệm thời gian và nâng cao hiệu suất gấp nhiều lần so với cách làm thủ công"
+          "heading": "Tự động bật/điều chỉnh",
+          "description": "Theo dõi hiệu quả chiến dịch quảng cáo 24/7\nPhân tích các chỉ số để đưa ra đề xuất tối ưu quảng cáo, nhằm đúng đối tượng khách hàng mục tiêu."
         }
       ]
     },
     {
-      "title": "Phân tích Fanpage tự động bằng AI — nhanh, sâu và chính xác.",
+      "title": "Phân tích Fanpage",
       "content": [
         {
-          "heading": "Sử dụng AI phân tích quảng cáo",
-          "description": "Chỉ cần nhập link Fanpage, hệ thống AI sẽ tự động đánh giá toàn diện các yếu tố: nội dung, tần suất đăng bài, độ hiệu quả tương tác,tỷ lệ phản hồi, hình ảnh thương hiệu và mức độ thu hút của từng bài viết. AI sẽ chỉ ra điểm mạnh, điểm yếu và gợi ý tối ưu hoá nội dung theo từng ngành hàng, từng nhóm khách hàng và mục tiêu marketing cụ thể."
+          "heading": "Phân tích dữ liệu & gợi ý cải thiện",
+          "description": "AI phân tích dữ liệu Fanpage, xác định chân dung khách hàng theo đúng ngành hàng.\nGợi ý cải thiện nội dung, hình ảnh đăng bài giúp tăng tương tác và độ tin tưởng."
         },
         {
-          "heading": "Tự động gửi thông báo",
-          "description": "Không còn phân tích thủ công rời rạc — giờ đây bạn có thể hiểu rõ Fanpage của mình đang ở đâu, cần cải thiện gì và nên làm gì tiếp theo, tất cả chỉ trong vài giây."
+          "heading": "Xây dựng thương hiệu bền vững",
+          "description": "Gợi ý cải thiện tần suất đăng bài – nội dung hàng tuần.\nXây dựng hình ảnh thương hiệu chuyên nghiệp, đáng tin cậy."
         }
       ]
     },
     {
-      "title": "Tạo video bằng AI - Dễ như viết một câu mô tả.",
+      "title": "Phân tích hiệu quả bài viết",
       "content": [
         {
-          "heading": "Chỉ cần nhập ý tưởng bằng văn bản",
-          "description": "AI sẽ tự động tạo nên video sinh động, chuyên nghiệp với hình ảnh chuyển động, nhạc nền và nhịp dựng mượt mà."
+          "heading": "Trình điểm hiệu quả bài viết",
+          "description": "Phân tích chi tiết hiệu quả nội dung & ads.\nGiúp nhanh chóng đưa ra quyết định."
         },
         {
-          "heading": "Tự động hoàn chỉnh video",
-          "description": "Bạn không cần phần mềm dựng phim hay đội ngũ hậu kỳ — video dài đến 60 giây sẽ được dựng tự động, phục vụ cho quảng cáo, giới thiệu sản phẩm, hay truyền thông mạng xã hội.Tùy chọn phong cách, âm thanh và nhịp dựng theo mục tiêu, AI giúp bạn biến mọi ý tưởng thành video hoàn chỉnh chỉ trong vài phút."
+          "heading": "Tự động tối ưu nội dung",
+          "description": "Đề xuất cải thiện các bài viết chưa nổi bật – từ nội dung, hình ảnh, CTA.\nGiúp tối đa hóa lượt click và chuyển đổi."
         }
       ]
     },
     {
-      "title": "Tạo hình ảnh chuyên nghiệp bằng AI chỉ trong vài giây.",
+      "title": "Tạo hình ảnh bằng AI",
       "content": [
         {
-          "heading": "Sử dụng AI thông minh tạo ảnh",
-          "description": " Nhập ý tưởng bằng văn bản, hệ thống sẽ tự động biến chúng thành những hình ảnh ấn tượng, sáng tạo và đúng mục tiêu truyền thông."
+          "heading": "Tạo hình ảnh tự động chỉ trong vài giây",
+          "description": "AI sẽ tự động tạo ra hình ảnh đẹp mắt dựa trên chủ đề, ngành nghề, sản phẩm.\nTùy chỉnh các chi tiết về màu sắc, phong cách và cách thể hiện để hình ảnh độc đáo."
         },
         {
-          "heading": " Ghép khung hình thông minh",
-          "description": "Không cần kỹ năng thiết kế, bạn vẫn có thể tạo ra hình ảnh cho quảng cáo, bài đăng, sản phẩm hoặc thương hiệu – với đầy đủ phong cách từ thực tế đến hoạt hình, từ tối giản đến điện ảnh. AI sẽ gợi ý bố cục, màu sắc và phong cách phù hợp, giúp bạn tiết kiệm hàng giờ đồng hồ làm việc mà vẫn đảm bảo tính thẩm mỹ và hiệu quả thị giác cao nhất."
+          "heading": "Hình ảnh/nhân vật xuyên suốt video",
+          "description": "AI giữ nhân vật sản phẩm từ ảnh, đảm bảo xuất hiện xuyên suốt video, mượt mà và chuyên nghiệp."
+        }
+      ]
+    },
+    {
+      "title": "Tạo video quảng cáo bằng AI",
+      "content": [
+        {
+          "heading": "Tự tạo kịch bản theo sản phẩm",
+          "description": "Không cần viết kịch bản phức tạp, AI tự động xây dựng nội dung video từ nội dung bài viết có sẵn."
+        },
+        {
+          "heading": "Hình ảnh/nhân vật xuyên suốt video",
+          "description": "AI giữ nhân vật sản phẩm & nhân vật, đảm bảo xuất hiện xuyên suốt video, mượt mà và chuyên nghiệp."
+        }
+      ]
+    },
+    {
+      "title": "Quản lý & Tối ưu real-time",
+      "content": [
+        {
+          "heading": "Theo dõi CPC, CTR, ROAS liên tục",
+          "description": "Gửi báo cáo và cảnh báo liên tục sau 24h."
+        },
+        {
+          "heading": "AI gợi ý tối ưu",
+          "description": "AI gợi ý điều chỉnh nội dung, target, ngân sách để cải thiện hiệu quả ads."
         }
       ]
     }
@@ -461,34 +489,34 @@
     "title": "Đánh giá từ khách hàng",
     "list": [
       {
-        "name": "Anh Tiến",
-        "username": "Chủ chuỗi lẩu Hotpot Kingdom",
-        "text": "Tôi không rành công nghệ, nhưng nhờ All One Ads tôi có thể tự tạo video món ăn cực hấp dẫn chỉ với vài cú nhấp. Khách đến quán đông hơn hẳn sau mỗi video đăng!"
+        "name": "Minh Hùng",
+        "username": "Chủ shop thời trang",
+        "text": "Trước tôi chạy ads tốn cả đống tiền mà đơn chẳng thấy đâu. Dùng All One Ads xong, đơn về đều mỗi ngày, chi phí lại giảm hẳn. Thật sự nhẹ cả đầu."
       },
       {
-        "name": "Anh Linh",
-        "username": "COO BestMall",
-        "text": "Chúng tôi tích hợp All One Ads vào hệ thống marketing của BestMall. Nhờ đó, đội ngũ tiết kiệm được hàng chục giờ mỗi tuần mà vẫn đảm bảo chất lượng hình ảnh và nội dung vượt chuẩn."
+        "name": "Thu Hà",
+        "username": "Người kinh doanh mỹ phẩm online",
+        "text": "Ngày trước cứ phải ngồi canh quảng cáo liên tục, vừa mệt vừa rối. Giờ hệ thống tự tối ưu, tôi có nhiều thời gian tập trung cho sản phẩm hơn."
       },
       {
-        "name": "Chị Huệ",
-        "username": "Trung tâm tiếng Anh",
-        "text": "Trước đây tôi phải thuê cả đội media làm video tuyển sinh. Giờ thì chỉ cần nhập nội dung, All One Ads lo hết. Video chuyên nghiệp, phụ đề đẹp, học viên inbox về liên tục!"
+        "name": "Thế Anh",
+        "username": "Người kinh doanh điện tử",
+        "text": "Ban đầu sợ AI lắm bây, mất kiểm soát. Nhưng All One Ads không dùng vào tài khoản, tôi vẫn an toàn quyền, chi khác là có thêm “trợ lý” thông minh hỗ trợ."
       },
       {
-        "name": "Anh Giang",
-        "username": "Admin Cộng đồng AI Agent Vietnam",
-        "text": "All One Ads đúng nghĩa là AI hỗ trợ toàn diện. Chúng tôi dùng để tạo nội dung cho cộng đồng mỗi ngày – từ ảnh, video, caption cho đến chạy quảng cáo – tất cả tự động hóa!"
+        "name": "Quang Huy",
+        "username": "Chủ cửa hàng đồ gia dụng",
+        "text": "Ngày trước cứ phải ngồi canh quảng cáo liên tục, vừa mệt vừa rối. Giờ hệ thống tự tối ưu, tôi có nhiều thời gian tập trung cho sản phẩm hơn."
       },
       {
-        "name": "Anh Việt",
-        "username": "Admin Cộng đồng B.A và Những Người Bạn",
-        "text": "Chúng tôi dùng All One Ads để quảng bá các sự kiện, khóa học. Chất lượng video AI tạo ra rất ổn, nội dung rõ ràng, tiết kiệm thời gian mà vẫn chuyên nghiệp."
+        "name": "Hệ thống Mỹ Phẩm Xanh",
+        "username": "Doanh nghiệp mỹ phẩm",
+        "text": "All One Ads có báo cáo rất chi tiết. Tôi có thể xem tất cả các chỉ số, biết chính xác tiền mình đang tiêu vào đâu và thu về được bao nhiêu. Mọi thứ đều minh bạch và trong tầm kiểm soát của mình."
       },
       {
-        "name": "Chị Ngọc",
-        "username": "Product Design, All One Ads",
-        "text": "Tôi đồng hành từ ngày đầu thiết kế trải nghiệm người dùng cho All One Ads. Giờ chính tôi cũng đang dùng nó mỗi ngày để tạo video mô phỏng và thiết kế nội dung cho khách hàng nhanh gấp 5 lần!"
+        "name": "Shop Đồ Gia Dụng Tiện Ích",
+        "username": "Cửa hàng đồ gia dụng",
+        "text": "Đầu tháng nào cũng đau đầu nghĩ xem chạy quảng cáo gì, giờ thì khỏe re. Hệ thống tự động gợi ý chiến dịch, tôi chỉ việc duyệt thôi."
       }
     ]
   },

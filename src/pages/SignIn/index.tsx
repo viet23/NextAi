@@ -11,6 +11,7 @@ import EmailLogo from "../../assets/images/logo-gmail.png";
 import FaceBookLogo from "../../assets/images/logo-facebook.png";
 import Logo from "../../assets/images/next-logo.jpg";
 import "./styles.scss";
+import Home_2 from "../../assets/images/home_2.png";
 
 const { Title, Text } = Typography;
 
@@ -71,14 +72,14 @@ const SignIn = () => {
 
   return (
     <div className="signin-wrapper">
-      <div className="signin-header">
-        <img className="signin-logo" src={Logo} alt="Logo" />
-        <Title level={2} className="signin-title">{title}</Title>
-        <Text className="signin-sub">{t("signin.welcomeSub")}</Text>
-      </div>
+      {/* <div className="signin-header"> */}
+      <img className="signin-logo" src={Logo} alt="Logo" />
+      <Title level={2} className="signin-title">{title}</Title>
+      <Text className="signin-sub">{t("signin.welcomeSub")}</Text>
+      {/* </div> */}
 
       <div className="signin-box">
-        <div className="signin-input-group">
+        {/* <div className="signin-input-group">
           <label className="signin-input-label">{t("signin.emailLabel")}</label>
           <Input
             className="signin-input"
@@ -119,14 +120,16 @@ const SignIn = () => {
 
           <Link to="/forgot">{t("signin.forgot")}</Link>
 
-        </div>
+        </div> */}
 
-        <Button className="signin-btn" onClick={handleLogin} block>
+        {/* <Button className="signin-btn" onClick={handleLogin} block>
           {t("signin.login")}
         </Button>
 
-        <div className="signin-divider">{t("signin.or")}</div>
+        <div className="signin-divider">{t("signin.or")}</div> */}
 
+        <img src={Home_2} />
+        <br />
         <Button
           icon={<img src={EmailLogo} alt="gmail" width={20} />}
           onClick={() => handleSocialLogin("google")}
@@ -144,10 +147,10 @@ const SignIn = () => {
         >
           {t("signin.facebook")}
         </Button> */}
-
+        {/* 
         <Text className="signin-footer">
           {t("signin.noAccount")} <Link to="/register">{t("signin.signupNow")}</Link>
-        </Text>
+        </Text> */}
       </div>
     </div>
   );

@@ -355,68 +355,96 @@
     "loginNow": "Log in"
   },
   "hero": {
-    "subtitle": "The ultimate AI tool for you",
-    "title1": "Automated Advertising",
+    "subtitle": "Fast optimization - Consistent orders - Reduce costs by 30 to 50%",
+    "title1": "AI PLATFORM SETUP FACEBOOK ADVERTISING",
     "title2": "Maximum Efficiency",
     "title3": "All-in-One Solution",
-    "description": "A platform that helps you create images, videos, content, and run Facebook ads automatically using AI. No design or marketing skills needed."
+    "description": "✅ Auto setup & optimize campaigns in just 5 minutes, even if you have no technical skills",
+    "description2": "✅ Accurate targeting – Reach the right potential customers and reduce wasted budget",
+    "description3": "✅ Monitor & adjust in real time based on CPC, CTR, ROAS"
   },
   "partners": {
     "title": "Key Partners and Clients"
   },
   "section": {
-    "title": "Powerful Facebook Ads AI, Supports Creating Photos and Videos Up to 60 Seconds"
+    "title": "Experience the Features"
   },
   "features": [
     {
-      "title": "Automated AI Advertising – Fast, Precise, Effective – Like a True Expert",
+      "title": "Automatic Advertising",
       "content": [
         {
-          "heading": "Analyze Your Fanpage",
-          "description": "Our intelligent AI system not only helps you write engaging content, create professional images and videos, but also automatically analyzes your fanpage, identifies strengths and weaknesses, and suggests improvements and campaign optimizations tailored to your industry, audience, and goals."
+          "heading": "Automatically create campaigns in 5 minutes",
+          "description": "Accurate targeting based on industry data & campaign history.\nReal-time optimization: CPC, CTR, ROAS – no manual tracking needed."
         },
         {
-          "heading": "Ad Performance Analysis",
-          "description": "Every step — from content creation to performance prediction — is fully handled by AI, saving time and boosting efficiency far beyond traditional manual methods."
+          "heading": "Automatic activation/adjustment",
+          "description": "Monitor ad campaign performance 24/7\nAnalyze metrics and provide optimization suggestions to reach the right target customers."
         }
       ]
     },
     {
-      "title": "AI-Powered Fanpage Analysis — Fast, Deep, and Accurate.",
+      "title": "Fanpage Analysis",
       "content": [
         {
-          "heading": "Use AI to Analyze Your Ads",
-          "description": "Simply enter your Fanpage link and our AI system will automatically evaluate all key factors: content quality, posting frequency, engagement effectiveness, response rate, brand visuals, and the appeal of each post. It will identify strengths and weaknesses and provide content optimization suggestions for specific industries, customer segments, and marketing objectives."
+          "heading": "Data analysis & improvement suggestions",
+          "description": "AI analyzes Fanpage data to identify customer profiles according to the right industry.\nSuggests improvements for content and post images to increase engagement and trust."
         },
         {
-          "heading": "Automatic Notifications",
-          "description": "No more scattered manual analysis — now you can clearly understand your fanpage’s current status, what needs improvement, and what to do next, all in just seconds."
+          "heading": "Sustainable brand building",
+          "description": "Recommends improving posting frequency – weekly content.\nHelps build a professional and reliable brand image."
         }
       ]
     },
     {
-      "title": "AI Video Creation – As Easy As Writing a Sentence.",
+      "title": "Post Performance Analysis",
       "content": [
         {
-          "heading": "Just Enter Your Idea in Text",
-          "description": "AI will automatically generate a dynamic, professional video with motion visuals, background music, and seamless editing."
+          "heading": "Post performance scoring",
+          "description": "Detailed analysis of content & ad performance.\nHelps you quickly make decisions."
         },
         {
-          "heading": "Fully Automated Video Editing",
-          "description": "No need for editing software or a post-production team — videos up to 60 seconds long will be auto-generated for ads, product introductions, or social media. With customizable styles, sound, and editing pace, AI transforms any idea into a complete video in just a few minutes."
+          "heading": "Automatic content optimization",
+          "description": "Suggests improvements for underperforming posts – from content, images, CTA.\nHelps maximize clicks and conversions."
         }
       ]
     },
     {
-      "title": "Create Professional Images with AI in Just Seconds.",
+      "title": "Create Images with AI",
       "content": [
         {
-          "heading": "Use Smart AI to Generate Images",
-          "description": "Enter your idea in text, and the system will automatically transform it into impressive, creative visuals aligned with your communication goals."
+          "heading": "Automatically generate images in seconds",
+          "description": "AI automatically creates beautiful images based on topics, industries, and products.\nCustomize details such as colors, styles, and presentation to make images unique."
         },
         {
-          "heading": "Smart Layout and Framing",
-          "description": "No design skills needed — you can still produce images for ads, posts, products, or branding with a variety of styles from realistic to animated, minimalist to cinematic. AI will suggest layouts, colors, and visual styles to save you hours of work while ensuring high aesthetics and visual impact."
+          "heading": "Consistent characters/images across videos",
+          "description": "AI keeps product characters from images consistent throughout the video, smooth and professional."
+        }
+      ]
+    },
+    {
+      "title": "Create Ad Videos with AI",
+      "content": [
+        {
+          "heading": "Automatically generate scripts based on products",
+          "description": "No need for complex scripting, AI automatically builds video content from existing posts."
+        },
+        {
+          "heading": "Consistent characters/images across videos",
+          "description": "AI keeps product & character visuals consistent throughout the video, smooth and professional."
+        }
+      ]
+    },
+    {
+      "title": "Real-time Management & Optimization",
+      "content": [
+        {
+          "heading": "Continuously track CPC, CTR, ROAS",
+          "description": "Send reports and alerts continuously every 24h."
+        },
+        {
+          "heading": "AI optimization suggestions",
+          "description": "AI suggests adjustments to content, targeting, and budget to improve ad performance."
         }
       ]
     }
@@ -493,5 +521,3 @@
     "submit": "Send"
   }
 }
-
-                                        

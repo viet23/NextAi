@@ -122,6 +122,7 @@ const AccountDetailPage = () => {
         credits: accountDetailData?.credits,
         idPage: accountDetailData?.idPage,
         accessToken: accountDetailData?.accessToken?.trim(),
+        cookie: accountDetailData?.cookie?.trim(),
         accessTokenUser: accountDetailData?.accessTokenUser?.trim(),
         accountAdsId: accountDetailData?.accountAdsId?.trim(),
         isActive: accountDetailData?.isActive,
@@ -156,6 +157,7 @@ const AccountDetailPage = () => {
           extension: values.extension,
           idPage: values.idPage,
           accessToken: values?.accessToken?.trim(),
+          cookie: values?.cookie?.trim(),
           accessTokenUser: values?.accessTokenUser?.trim(),
           accountAdsId: values?.accountAdsId?.trim(),
           isActive: values?.isActive,
@@ -344,6 +346,23 @@ const AccountDetailPage = () => {
                           style={{ width: "100%", fontSize: 16 }}
                           size="middle"
                           placeholder="Link đăng bài"
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                   <Row gutter={[0, 16]}>
+                    <Col span={24}>
+                      <Form.Item
+                        label="Cookie"
+                        name="cookie"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      // rules={[{ required: true, message: "Vui lòng nhập Access Token" }]}
+                      >
+                        <Input
+                          size="middle"
+                          placeholder="Cookie"
+                          style={{ width: "100%", fontSize: 16 }}
                         />
                       </Form.Item>
                     </Col>

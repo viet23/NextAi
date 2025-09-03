@@ -6,6 +6,8 @@ import Home_1 from "../../assets/images/home_1.png";
 import Home_2 from "../../assets/images/home_2.png";
 import Home_3 from "../../assets/images/home_3.png";
 import Home_4 from "../../assets/images/home_4.png";
+import Home_6 from "../../assets/images/home_6.png";
+import Home_7 from "../../assets/images/home_7.png";
 import Home_5 from "../../assets/images/home_5.png";
 import Home_icon_1 from "../../assets/images/home_icon_1.png";
 import Home_icon_2 from "../../assets/images/home_icon_2.png";
@@ -88,11 +90,11 @@ const HomePage: React.FC = () => {
                         {/* Hero */}
                         <div className="container hero">
                             <div className="hero-left">
-                                <p className="badge"> {t("hero.subtitle")}</p>
                                 <h1>{t("hero.title1")}</h1>
-                                <h1>{t("hero.title2")}</h1>
-                                <h1>{t("hero.title3")}</h1>
+                                <p className="badge">{t("hero.subtitle")}</p>
                                 <p>{t("hero.description")}</p>
+                                <p>{t("hero.description2")}</p>
+                                <p>{t("hero.description3")}</p>
 
 
                                 {/* <Link to="/signin" className="btn-text" style={{ marginRight: "12px" }}>Bắt đầu</Link>
@@ -145,7 +147,7 @@ const HomePage: React.FC = () => {
 
 
 
-                        {[Home_1, Home_2, Home_3, Home_4].map((img, i) => (
+                        {[Home_1, Home_2, Home_3, Home_4, Home_6, Home_7].map((img, i) => (
                             <div className="feature-block" key={i}>
                                 <img className="feature-image" src={img} alt={t(`features.${i}.title`)} />
                                 <div className="feature-content">
@@ -247,27 +249,10 @@ const HomePage: React.FC = () => {
                         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                             <div className="container tutorials-section">
 
-                                <p
-                                    style={{
-                                        display: 'inline-block',
-                                        padding: '8px 22px',
-                                        borderRadius: '999px',
-                                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                                        background: 'rgba(255, 255, 255, 0.05)',
-                                        color: '#ffffff',
-                                        fontSize: '12px',
-                                        letterSpacing: '1px',
-                                        fontWeight: 400,
-                                        textTransform: 'uppercase',
-                                        fontFamily: "'Inter', sans-serif",
-                                        boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.1) inset',
-                                        marginBottom: '24px',
-                                    }}
-                                >
-                                    ALL ONE ADS
-                                </p>
+                                <h2 className="testimonial-heading">Đánh giá từ khách hàng</h2>
+                                <p className="badge">   Lắng nghe những trải nghiệm chân thực từ khách hàng của chúng tôi. Sự hài lòng của khách hàng là thành công của chúng tôi</p>
 
-                                <h2 className="testimonial-heading"> {t("testimonial.title")}</h2>
+
 
                                 <div
                                     className="testimonial-grid"
@@ -399,10 +384,10 @@ const HomePage: React.FC = () => {
                                                 <img src={Phone} alt="support" style={{ width: 18, height: 18, marginRight: 8 }} />
                                                 {t("footer.support")}
                                             </li>
-                                            <li style={{ display: "flex", alignItems: "center" }}>
+                                            {/* <li style={{ display: "flex", alignItems: "center" }}>
                                                 <img src={Phone} alt="partner" style={{ width: 18, height: 18, marginRight: 8 }} />
                                                 {t("footer.partner")}
-                                            </li>
+                                            </li> */}
                                             <li style={{ display: "flex", alignItems: "center" }}>
                                                 <img src={Mail} alt="email" style={{ width: 18, height: 18, marginRight: 8 }} />
                                                 {t("footer.email")}
@@ -426,7 +411,7 @@ const HomePage: React.FC = () => {
                                         </h5>
 
 
-                                        <h4 style={{
+                                        {/* <h4 style={{
                                             fontFamily: "Inter, sans-serif",
                                             fontWeight: 500,
                                             fontSize: 24,
@@ -449,7 +434,7 @@ const HomePage: React.FC = () => {
                                             <img src={image_51} style={{ width: 50, height: 39 }} />
                                             <img src={Frame_699} style={{ width: 50, height: 39 }} />
                                             <img src={image_54} style={{ width: 39, height: 39 }} />
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
                             </div>
