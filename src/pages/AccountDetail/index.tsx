@@ -320,7 +320,7 @@ const AccountDetailPage = () => {
                 header={<span style={{ color: "#ffffff", fontWeight: 600 }}>Thông tin kết nối trang</span>}
               >
                 <Form form={form}>
-                  <Row gutter={[0, 16]}>
+                  {/* <Row gutter={[0, 16]}>
                     <Col span={24}>
                       <Form.Item
                         label="Cookie"
@@ -336,7 +336,7 @@ const AccountDetailPage = () => {
                         />
                       </Form.Item>
                     </Col>
-                  </Row>
+                  </Row> */}
                   <Row gutter={[24, 0]}>
                     <Col span={24}>
                       <Form.Item
