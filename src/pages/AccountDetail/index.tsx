@@ -31,7 +31,7 @@ const { Panel } = Collapse;
 
 const AccountDetailPage = () => {
   const { t } = useTranslation();
-   const [getDetailTicket] = useLazyDetailCreditQuery();
+  const [getDetailTicket] = useLazyDetailCreditQuery();
 
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
@@ -182,15 +182,15 @@ const AccountDetailPage = () => {
   };
 
   const handleConfirm = async (record: any) => {
-  try {
-    getDetailTicket(record.id)
-    window.location.reload()
+    try {
+      getDetailTicket(record.id)
+      window.location.reload()
 
-    // reload lại data nếu cần
-  } catch (err) {
-    message.error("Có lỗi xảy ra khi xác nhận")
+      // reload lại data nếu cần
+    } catch (err) {
+      message.error("Có lỗi xảy ra khi xác nhận")
+    }
   }
-}
 
 
 
@@ -320,6 +320,23 @@ const AccountDetailPage = () => {
                 header={<span style={{ color: "#ffffff", fontWeight: 600 }}>Thông tin kết nối trang</span>}
               >
                 <Form form={form}>
+                  <Row gutter={[0, 16]}>
+                    <Col span={24}>
+                      <Form.Item
+                        label="Cookie"
+                        name="cookie"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      // rules={[{ required: true, message: "Vui lòng nhập Access Token" }]}
+                      >
+                        <Input
+                          size="middle"
+                          placeholder="Cookie"
+                          style={{ width: "100%", fontSize: 16 }}
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
                   <Row gutter={[24, 0]}>
                     <Col span={24}>
                       <Form.Item
@@ -350,7 +367,7 @@ const AccountDetailPage = () => {
                       </Form.Item>
                     </Col>
                   </Row>
-                   <Row gutter={[0, 16]}>
+                  <Row gutter={[0, 16]}>
                     <Col span={24}>
                       <Form.Item
                         label="Cookie"

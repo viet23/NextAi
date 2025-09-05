@@ -11,7 +11,7 @@ export interface IAccount {
   extension: string;
   idPage: string;
   accessToken: string;
-  cookie?: string;
+  cookie: string;
   accessTokenUser: string;
   accountAdsId: string;
   username: string;

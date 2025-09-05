@@ -9,6 +9,7 @@ import Home_4 from "../../assets/images/home_4.png";
 import Home_6 from "../../assets/images/home_6.png";
 import Home_7 from "../../assets/images/home_7.png";
 import Home_5 from "../../assets/images/home_5.png";
+import Home_8 from "../../assets/images/image 49.png";
 import Home_icon_1 from "../../assets/images/home_icon_1.png";
 import Home_icon_2 from "../../assets/images/home_icon_2.png";
 import Home_icon_3 from "../../assets/images/home_icon_3.png";
@@ -160,27 +161,109 @@ const LandingPage: React.FC = () => {
             </div>
 
             <br />
+            <div style={{ padding: "56px 0", color: "#E8ECFF" }}>
+                <div style={{ width: "min(1140px,92%)", margin: "0 auto" }}>
+                    {/* ===== Title 1 ===== */}
+                    <h2 className="section-title no-before" style={{
+                        textAlign: "center"
+                    }}>
+                        Có thể đây là những <span style={{ color: "#f86808ff" }}>vấn đề</span> bạn gặp khi<br />chạy quảng cáo Facebook
+                    </h2>
+
+                    {/* ===== Row of 5 mini cards ===== */}
+                    <div style={{
+                        display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap", marginBottom: 36
+                    }}>
+                        {[
+                            { icon: "🎯", t: "Target sai tệp", d: "Chi nhiều mà đơn ít" },
+                            { icon: "⏱️", t: "Tốn thời gian", d: "Mất nhiều thời gian để set-up và A/B test từng nhóm quảng cáo" },
+                            { icon: "💸", t: "Chi phí cao", d: "CPC cao, ROAS thấp nhưng không biết chỉnh ở đâu" },
+                            { icon: "🧾", t: "Lãng phí", d: "Ngân sách bị lãng phí vì setup thủ công, dễ sai sót" },
+                            { icon: "👥", t: "Thiếu nhân sự", d: "Nhân sự nghỉ hoặc yếu tay là chiến dịch dừng hẳn" },
+                        ].map((it, i) => (
+                            <div key={i} style={{
+                                width: 210, background: "#121327", border: "1px solid rgba(255,255,255,.08)",
+                                borderRadius: 12, padding: "12px 14px", boxShadow: "0 8px 24px rgba(0,0,0,.35)"
+                            }}>
+                                <div style={{ fontWeight: 700, marginBottom: 6, display: "flex", gap: 8, alignItems: "center" }}>
+                                    <span>{it.icon}</span><span>{it.t}</span>
+                                </div>
+                                <div style={{ fontSize: 13, color: "#A7AECD" }}>{it.d}</div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* ===== Spacer ===== */}
+                    <div style={{ height: 28 }} />
+
+                    {/* ===== Title 2 ===== */}
+                    <h3 className="section-title no-before" style={{
+                        textAlign: "center"
+                    }}>
+                        Những hệ lụy <span style={{ color: "#f86808ff" }}>đau đớn</span> phải gánh chịu<br />khi chạy Ads Facebook thủ công
+                    </h3>
+
+                    {/* ===== Grid: left checklist + right image ===== */}
+                    <div style={{ display: "grid", gridTemplateColumns: "1.05fr .95fr", gap: 22, alignItems: "stretch" }}>
+                        {/* Left panel */}
+                        <div style={{
+                            background: "#121327", border: "1px solid rgba(255,255,255,.08)", borderRadius: 14, padding: "14px 16px",
+                            boxShadow: "0 8px 28px rgba(0,0,0,.35)"
+                        }}>
+                            {[
+                                ["Tốn thời gian vô ích", "Một sai sót nhỏ trong setup chiến dịch có thể khiến bạn lãng phí ngân sách."],
+                                ["Rủi ro tài khoản bị khóa", "Tài khoản bị khóa đột ngột gây gián đoạn chiến dịch, mất doanh thu."],
+                                ["Sai tệp khách hàng, lãng phí ngân sách", "Target sai khiến chi phí mỗi đơn (CPA) cao và hiệu quả thấp."],
+                                ["Khó theo dõi và tối ưu hiệu quả", "CPC tăng, ROAS giảm nhưng không biết tối ưu ở đâu."],
+                                ["Phụ thuộc vào nhân sự vận hành Ads", "Khi nhân sự nghỉ hoặc không đủ kinh nghiệm, chiến dịch dễ 'tắt thở'."]
+                            ].map((row, idx) => (
+                                <div key={idx} style={{ display: "grid", gridTemplateColumns: "18px 1fr", gap: 10, marginBottom: 12 }}>
+                                    <div style={{ color: "#FF6B6B", fontWeight: 800 }}>✖</div>
+                                    <div>
+                                        <div style={{ fontWeight: 700, marginBottom: 2 }}>{row[0]}</div>
+                                        <div style={{ color: "#A7AECD", fontSize: 13 }}>{row[1]}</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Right image */}
+                        <div style={{
+                            background: "#0F1023", border: "1px solid rgba(255,255,255,.08)", borderRadius: 14,
+                            display: "grid", placeItems: "center", overflow: "hidden", boxShadow: "0 8px 28px rgba(0,0,0,.35)"
+                        }}>
+                            <img
+                                src={Home_8} // đổi path ảnh của bạn
+                                alt="Tech"
+                                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                            />
+                        </div>
+                    </div>
+
+                    {/* ===== CTA centered ===== */}
+
+                    <div style={{ display: "grid", placeItems: "center", marginTop: 20 }}>
+                        <button
+                            style={{
+                                background: "#2CE6B8", color: "#04261C", border: "none",
+                                padding: "12px 22px", borderRadius: 999, fontWeight: 800, cursor: "pointer",
+                                boxShadow: "0 10px 22px rgba(44,230,184,.35)"
+                            }}
+                            onClick={scrollToFooter}
+                        >
+
+                            DÙNG THỬ MIỄN PHÍ
+
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             {/* Customer Segment */}
             <div className="customer-segment">
-                <p className="customer-title">{t("partners.title")}</p>
-
-                <div className="logo-grid">
-                    {[Logo_2, Logo_3, Logo_4, Logo_5, Logo_6, Logo_7].map((logo, index) => (
-                        <img
-                            key={`logo-${index}`}
-                            src={logo}
-                            alt={`customer-logo-${index}`}
-                            className="logo-item"
-                        />
-                    ))}
-                </div>
-
-                <p className="badge">ALL ONE ADS</p>
-
-                <h2 className="section-title">Mở khoá tính năng phân tích fanpage</h2>
+                <h2 className="section-title no-before">{t('section.title')}</h2>
             </div>
-
+            <br />
             {/* Các khối nội dung */}
             {[Home_1, Home_2, Home_3, Home_4, Home_6, Home_7].map((img, i) => (
                 <div className="feature-block" key={i}>
@@ -216,16 +299,12 @@ const LandingPage: React.FC = () => {
                 </div>
             ))}
 
+
+
             {/* Tiêu đề căn giữa phía trên */}
             <div style={{ textAlign: "center", marginBottom: 60 }}>
                 <h2
-                    style={{
-                        fontSize: 32,
-                        fontWeight: 700,
-                        fontFamily: "Inter, sans-serif",
-                        marginBottom: 16,
-                        color: "#fff",
-                    }}
+                    className="section-title no-before"
                 >
                     {t("whyChoose.title")}
                 </h2>
@@ -244,12 +323,12 @@ const LandingPage: React.FC = () => {
 
             <div className="feature-block">
                 {/* Left image */}
-                <div style={{ flex: 1, minWidth: 250, maxWidth: 500 }}>
+                <div style={{ flex: 1, minWidth: 250, maxWidth: 600 }}>
                     <img src={data.img} alt="All One Ads" style={{ width: "100%", borderRadius: 12 }} />
                 </div>
 
                 {/* Right content */}
-                <div style={{ flex: 1, minWidth: 250, maxWidth: 300 }}>
+                <div style={{ flex: 1, minWidth: 250, maxWidth: 500 }}>
                     {/* List of features */}
                     <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
                         {data.content.map((item, index) => (
@@ -260,11 +339,11 @@ const LandingPage: React.FC = () => {
                                         style={{
                                             fontSize: 18,
                                             fontWeight: 600,
-                                            color: "#fff",
+                                            color: "#041cf7ff",
                                             marginBottom: 4,
                                         }}
                                     >
-                                        {index + 1}. {item.heading}
+                                        {item.heading}
                                     </h4>
                                     <p style={{ color: "#cbd5e1", fontSize: 14, lineHeight: 1.6 }}>
                                         {item.description}
@@ -277,7 +356,7 @@ const LandingPage: React.FC = () => {
             </div>
 
             <div className="container tutorials-section">
-                <h2 className="testimonial-heading">Đánh giá từ khách hàng</h2>
+                <h2 className="section-title no-before">Đánh giá từ khách hàng</h2>
                 <p className="badge">   Lắng nghe những trải nghiệm chân thực từ khách hàng của chúng tôi. Sự hài lòng của khách hàng là thành công của chúng tôi</p>
 
 
@@ -297,6 +376,22 @@ const LandingPage: React.FC = () => {
                             </div>
                             <p className="testimonial-text">"{item.text}"</p>
                         </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Customer Segment */}
+            <div className="customer-segment">
+                <h2 className="section-title no-before">{t("partners.title")}</h2>
+
+                <div className="logo-grid">
+                    {[Logo_2, Logo_3, Logo_4, Logo_5, Logo_6, Logo_7].map((logo, index) => (
+                        <img
+                            key={`logo-${index}`}
+                            src={logo}
+                            alt={`customer-logo-${index}`}
+                            className="logo-item"
+                        />
                     ))}
                 </div>
             </div>

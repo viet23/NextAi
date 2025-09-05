@@ -319,11 +319,9 @@
  }
 
  .feature-content h3 {
-     color: #ffffff;
-     font-size: 20px;
+     color: rgb(14, 117, 235);
+     font-size: 30px;
      margin-bottom: 14px;
-     font-weight: 600;
-     line-height: 1.4;
  }
 
  .feature-content p,
@@ -518,7 +516,6 @@
 
 
  .footer {
-     background-color: #0f172a;
      border-top: 1px solid rgba(255, 255, 255, 0.05);
      color: #e2e8f0;
      padding: 8px 0 10px;
@@ -901,3 +898,11 @@
     max-width: 100%;
   }
 }
+
+.section-title.no-before::before {
+  content: none !important;
+}
+
+
+
+
