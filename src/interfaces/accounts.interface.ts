@@ -13,6 +13,7 @@ export interface IAccount {
   accessToken: string;
   cookie: string;
   accessTokenUser: string;
+  pageInformation: any;
   accountAdsId: string;
   username: string;
   phone: string;

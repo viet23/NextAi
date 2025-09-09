@@ -302,6 +302,8 @@
       "no": "STT",
       "username": "Tên đăng nhập",
       "full_name": "Họ và tên",
+      "phone": "Số điện thoại",
+      "email": "Email",
       "created": "Ngày tạo",
       "status": "Trạng thái",
       "actions": "Hành động"

@@ -104,6 +104,16 @@ const AccountsPage = () => {
         key: "fullName",
         dataIndex: "fullName",
       },
+       {
+        title: t("accounts.columns.phone"),
+        key: "phone",
+        dataIndex: "phone",
+      },
+      //  {
+      //   title: t("accounts.columns.email"),
+      //   key: "email",
+      //   dataIndex: "email",
+      // },
       {
         title: t("accounts.columns.created"),
         key: "createdAt",
