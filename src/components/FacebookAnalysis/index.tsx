@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Input, Button, Typography, Card, message, Select } from "antd";
 import { useCreateAnalysisMutation, useGetAnalysisQuery } from "src/store/api/ticketApi";
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
 import AutoPostModal from "../AutoPostModal";
-import { DatePicker, Progress, Row, Col } from "antd";
+import { DatePicker, Row, Col } from "antd";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
@@ -16,9 +16,12 @@ import page2 from "../../assets/images/page2.png";
 import page3 from "../../assets/images/page3.png";
 import page4 from "../../assets/images/page4.png";
 import FullscreenLoader from "../FullscreenLoader";
-import { useOpenaiCreativeChatMutation, useOpenaiGenerateMutation, useOpenaiSimpleChatMutation } from "src/store/api/openaiApi";
+import {
+  useOpenaiCreativeChatMutation,
+  useOpenaiGenerateMutation,
+  useOpenaiSimpleChatMutation,
+} from "src/store/api/openaiApi";
 import { useGetFacebookPageViewsQuery } from "src/store/api/facebookApi";
-
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -45,7 +48,7 @@ const styles = {
   },
   column: {
     flex: 1,
-    minWidth: 320, // phù hợp cả iPhone chiều ngang
+    minWidth: 320,
     maxWidth: 600,
   },
 };
@@ -63,22 +66,19 @@ const FacebookPageAnalysis = () => {
   const [createAnalysis, { isLoading: createAnaly }] = useCreateAnalysisMutation();
   const [showModal, setShowModal] = useState(false);
   const [channelPlan, setChannelPlan] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [interests, setInterests] = useState(["Sức khỏe"]);
   const [pageAI, setPageAi] = useState("");
 
   const [openaiGenerate, { isLoading: isTargeting }] = useOpenaiGenerateMutation();
-
   const [openaiSimpleChat, { isLoading: isSimpleChat }] = useOpenaiSimpleChatMutation();
-
   const [openaiiCreativeChat, { isLoading: isiCreativeChat }] = useOpenaiCreativeChatMutation();
-
-
 
   // Gọi API ngay khi component render
   const { data, isSuccess } = useGetAnalysisQuery({});
 
-  // Khi có dữ liệu, cập nhật vào state
+  // Khi có dữ liệu, cập nhật vào state (để hiển thị lại)
   useEffect(() => {
     if (isSuccess && data) {
       setUrl(data.urlPage || "");
@@ -94,30 +94,58 @@ const FacebookPageAnalysis = () => {
     }
   }, [data, isSuccess]);
 
-  const getChannelPlan = async (rawAnalysis: string) => {
-
+  // ===== Helpers: trả về nội dung mới nhất (đồng thời setState để UI hiển thị) =====
+  const getChannelPlan = async (rawAnalysis: string): Promise<string> => {
     try {
-
       const prompt = `Đây là phân tích nội dung một Fanpage Facebook:${rawAnalysis}
 Hãy đề xuất kế hoạch phát triển kênh Facebook Page này, gồm:
 1. Mục tiêu kênh
 2. Định vị nội dung gợi ý (tỷ lệ %)
 3. Lịch đăng bài mẫu tuần
 4. Gợi ý định dạng nội dung + Ý tưởng viral
-(Trình bày rõ ràng theo bố cục 2 cột giống bản kế hoạch truyền thông)`
+(Trình bày rõ ràng theo bố cục 2 cột giống bản kế hoạch truyền thông)`;
 
-      const body: any = { prompt }
-      const response = await openaiGenerate(body).unwrap();
-
-
-      console.log(`data openaiRewrite--------`, response);
+      const response = await openaiGenerate({ prompt } as any).unwrap();
       const content = response?.text || "";
       setChannelPlan(content);
+      return content;
     } catch (err) {
       console.error("❌ GPT channel development error:", err);
+      return "";
     }
   };
 
+  const getImageStyleIdea = async (
+    pageUrl: string,
+    name: string,
+    description: string,
+    bodyPreview: string
+  ): Promise<string> => {
+    if (!pageUrl) {
+      message.warning("Please enter Facebook Page link.");
+      return "";
+    }
+    const prompt = `Phân tích Fanpage sau: ${pageUrl}.
+Tôi đang xây dựng hình ảnh cho fanpage Facebook như sau:
+Tên: ${name}
+Mô tả: ${description}
+Nội dung hiển thị:
+${bodyPreview}
+
+Dựa trên đó, bạn hãy đề xuất phong cách thiết kế hình ảnh hiện đại, sáng tạo (bỏ phần chữ), và tông màu chủ đạo phù hợp với thương hiệu này.`;
+
+    try {
+      const resp = await openaiiCreativeChat({ prompt } as any).unwrap();
+      const content = resp?.text || "";
+      setPageAi(content);
+      return content;
+    } catch (err) {
+      console.error("❌ Creative image style error:", err);
+      return "";
+    }
+  };
+
+  // ===== Quy trình chính: Crawl -> GPT phân tích -> GPT kế hoạch & style ảnh -> LƯU 1 LẦN =====
   const analyzeFacebookPage = async () => {
     if (!url) {
       message.warning("Please enter Facebook Page link.");
@@ -126,16 +154,9 @@ Hãy đề xuất kế hoạch phát triển kênh Facebook Page này, gồm:
 
     setLoading(true);
     setChannelPlan("");
-    setAnalysis({
-      overview: "",
-      products: "",
-      engagement: "",
-      strategy: "",
-    });
-
 
     try {
-      // 1. Crawl dữ liệu từ page
+      // 1) Crawl dữ liệu từ page
       const crawlRes = await fetch(`${process.env.REACT_APP_URL}/analyze-facebook`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -143,18 +164,13 @@ Hãy đề xuất kế hoạch phát triển kênh Facebook Page này, gồm:
       });
 
       const crawlData = await crawlRes.json();
-      if (!crawlData.success) {
+      if (!crawlData?.success) {
         message.error("Unable to get data from Facebook Page.");
-        setLoading(false);
         return;
       }
-
       const { name, description, bodyPreview } = crawlData.data;
 
-      // await callChatGPT(name, description, bodyPreview)
-      await callChatGPTImage(name, description, bodyPreview);
-
-      // 2. Gửi GPT để phân tích thành 4 phần
+      // 2) Gửi GPT để phân tích thành 4 phần
       const prompt = `
 Đây là nội dung của một Fanpage Facebook:
 
@@ -168,34 +184,46 @@ Hãy phân tích nội dung thành 4 phần:
 3. TƯƠNG TÁC KHÁCH HÀNG
 4. CHIẾN LƯỢC TRUYỀN THÔNG
 `;
+      const resp = await openaiSimpleChat({ prompt } as any).unwrap();
+      const content = resp?.text || "";
 
-      const body: any = { prompt: prompt }
-      const response = await openaiSimpleChat(body).unwrap();
-
-      const content = response?.text || "";
-
-      if (content) {
-        const sections = content.split(/\n{2,}/);
-        const result = {
-          overview: sections.find((s: string) => s.toLowerCase().includes("thông tin chung")) || "",
-          products: sections.find((s: string) => s.toLowerCase().includes("sản phẩm")) || "",
-          engagement: sections.find((s: string) => s.toLowerCase().includes("tương tác")) || "",
-          strategy: sections.find((s: string) => s.toLowerCase().includes("chiến lược")) || "",
-        };
-        setAnalysis(result);
-
-        // 3. Gửi GPT tiếp để đề xuất phát triển kênh
-        const rawAnalysis = `
-THÔNG TIN CHUNG: ${result.overview}
-SẢN PHẨM/DỊCH VỤ: ${result.products}
-TƯƠNG TÁC KHÁCH HÀNG: ${result.engagement}
-CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
-`;
-        await getChannelPlan(rawAnalysis);
-        await saveAnalyzeFacebookPage();
-      } else {
+      if (!content) {
         message.error("GPT cannot parse the content.");
+        return;
       }
+
+      const sections = content.split(/\n{2,}/);
+      const analysisNow = {
+        overview: sections.find((s: string) => s.toLowerCase().includes("thông tin chung")) || "",
+        products: sections.find((s: string) => s.toLowerCase().includes("sản phẩm")) || "",
+        engagement: sections.find((s: string) => s.toLowerCase().includes("tương tác")) || "",
+        strategy: sections.find((s: string) => s.toLowerCase().includes("chiến lược")) || "",
+      };
+      setAnalysis(analysisNow); // cập nhật UI
+
+      // 3) Lấy kế hoạch kênh & gợi ý style ảnh (chạy song song)
+      const rawAnalysis = `
+THÔNG TIN CHUNG: ${analysisNow.overview}
+SẢN PHẨM/DỊCH VỤ: ${analysisNow.products}
+TƯƠNG TÁC KHÁCH HÀNG: ${analysisNow.engagement}
+CHIẾN LƯỢC TRUYỀN THÔNG: ${analysisNow.strategy}
+`;
+      const [channelPlanNow, pageAiNow] = await Promise.all([
+        getChannelPlan(rawAnalysis),
+        getImageStyleIdea(url, name, description, bodyPreview),
+      ]);
+
+      // 4) LƯU 1 LẦN bằng dữ liệu cục bộ mới nhất
+      const body = {
+        analysis: analysisNow,
+        channelPlan: channelPlanNow,
+        urlPage: url,
+        targeting: interests, // snapshot tại thời điểm lưu
+        styleImage: pageAiNow,
+      };
+
+      await createAnalysis(body as any).unwrap();
+      message.success("Saved analysis successfully!");
     } catch (err) {
       console.error("❌ Whole process error:", err);
       message.error("An error occurred while parsing.");
@@ -204,41 +232,16 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
     }
   };
 
-  /////
-  const saveAnalyzeFacebookPage = async () => {
-    if (!url) {
-      message.warning("Please enter Facebook Page link.");
-      return;
-    }
-    if (!analysis) {
-      message.warning("No information yet Facebook Page Analysis.");
-      return;
-    }
-    if (!channelPlan) {
-      message.warning("No information yet Suggested Facebook Page Channel.");
-      return;
-    }
-    try {
-      const body = { analysis, channelPlan, urlPage: url };
-
-
-      await createAnalysis(body).unwrap();
-    } catch (err) {
-      console.error("❌ Whole process error:", err);
-      message.error("An error occurred while parsing.");
-    } finally {
-
-    }
-  };
-
-
+  // ====== Account / Page Insights ======
   const { user } = useSelector((state: IRootState) => state.auth);
   const { data: accountDetailData } = useGetAccountQuery(user?.id || "0", {
     skip: !user?.id,
   });
 
   const [dataChart, setDataChart] = useState<{ name: string; views: number }[]>([]);
-  const [genderAgeData, setGenderAgeData] = useState<{ age: string; male: number; female: number; total: number }[]>([]);
+  const [genderAgeData, setGenderAgeData] = useState<
+    { age: string; male: number; female: number; total: number }[]
+  >([]);
   const [cityData, setCityData] = useState<{ city: string; count: number }[]>([]);
   const [percentageFollow, setPercentageFollow] = useState<number>(0);
   const [pageViewStats, setPageViewStats] = useState({
@@ -248,63 +251,35 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
     view1s: 0,
   });
 
-  const callChatGPTImage = async (name: string, description: string, bodyPreview: string) => {
-    if (!url) {
-      message.warning("Please enter Facebook Page link.");
+  // Page Views
+  const days = 14;
+  const {
+    data: pageViewsResp,
+    isFetching: isViewsLoading,
+    error: viewsError,
+  } = useGetFacebookPageViewsQuery(
+    accountDetailData?.idPage ? { days, pageId: accountDetailData.idPage } : { days },
+    { skip: !accountDetailData?.idPage }
+  );
+
+  useEffect(() => {
+    if (isViewsLoading) return;
+
+    if (viewsError) {
+      console.error("❌ Lỗi khi lấy dữ liệu lượt xem page:", viewsError);
+      setDataChart([]);
+      setShowModal(true);
       return;
     }
-    const prompt = ` Phân tích Fanpage sau: ${url} .Tôi đang xây dựng hình ảnh cho fanpage Facebook như sau:\n\nTên: ${name}\nMô tả: ${description}\nNội dung hiển thị:\n${bodyPreview}\n\nDựa trên đó, bạn hãy đề xuất phong cách thiết kế hình ảnh hiện đại, sáng tạo (bỏ phần chữ), và tông màu chủ đạo phù hợp với thương hiệu này.`
-    try {
 
-      const body: any = { prompt: prompt }
-      const response = await openaiiCreativeChat(body).unwrap();
+    const items =
+      pageViewsResp?.ok && Array.isArray(pageViewsResp.data) ? pageViewsResp.data : [];
 
-      const content = response?.text || "";
+    setDataChart(items);
+    setShowModal(items.length === 0);
+  }, [pageViewsResp, viewsError, isViewsLoading]);
 
-      setPageAi(content);
-    } catch (err) {
-      console.error("Translation error:", err);
-    }
-  }
-
-  // 2) gọi hook (ngoài useEffect)
-const days = 14;
-const {
-  data: pageViewsResp,
-  isFetching: isViewsLoading,
-  error: viewsError,
-} = useGetFacebookPageViewsQuery(
-  accountDetailData?.idPage ? { days, pageId: accountDetailData.idPage } : { days },
-  { skip: !accountDetailData?.idPage }
-);
-
-// Cập nhật chart + mở modal khi rỗng hoặc lỗi
-useEffect(() => {
-  if (isViewsLoading) return; // đợi call xong hẳn
-
-  if (viewsError) {
-    console.error("❌ Lỗi khi lấy dữ liệu lượt xem page:", viewsError);
-    setDataChart([]);
-    setShowModal(true);
-    return;
-  }
-
-  const items = (pageViewsResp?.ok && Array.isArray(pageViewsResp.data))
-    ? pageViewsResp.data
-    : [];
-
-  setDataChart(items);
-
-  if (items.length === 0) {
-    setShowModal(true);
-  }else {
-     setShowModal(false);
-  }
-}, [pageViewsResp, viewsError, isViewsLoading]);
-
-
-
-  // 4) giữ nguyên phần gender/age/city, chỉ còn 1 effect này
+  // Gender/Age/City
   useEffect(() => {
     const fetchGenderAgeAndCity = async () => {
       try {
@@ -314,9 +289,11 @@ useEffect(() => {
         const token = accountDetailData.accessToken;
 
         // --- Tuổi & Giới tính ---
-        let genderStats;
+        let genderStats: { age: string; male: number; female: number; total: number }[] = [];
         try {
-          const response = await fetch(`${baseUrl}?metric=page_fans_gender_age&period=lifetime&access_token=${token}`);
+          const response = await fetch(
+            `${baseUrl}?metric=page_fans_gender_age&period=lifetime&access_token=${token}`
+          );
           const genderAgeData = await response.json();
           const rawValue = genderAgeData?.data?.[0]?.values?.[0]?.value || {};
           const ageGroups = ["25-34", "35-44", "45-54", "55-64", "65+"];
@@ -331,15 +308,33 @@ useEffect(() => {
           });
         } catch (err) {
           console.error("❌ Lỗi khi fetch gender_age:", err);
-          const getRandomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
-          genderStats = ["25-34", "35-44", "45-54", "55-64", "65+"].map((age) => {
-            let male = 0, female = 0;
+          const getRandomInt = (min: number, max: number) =>
+            Math.floor(Math.random() * (max - min + 1)) + min;
+          const ages = ["25-34", "35-44", "45-54", "55-64", "65+"];
+          genderStats = ages.map((age) => {
+            let male = 0,
+              female = 0;
             switch (age) {
-              case "25-34": male = getRandomInt(15, 30); female = getRandomInt(25, 40); break;
-              case "35-44": male = getRandomInt(10, 20); female = getRandomInt(15, 25); break;
-              case "45-54": male = getRandomInt(5, 10); female = getRandomInt(8, 15); break;
-              case "55-64": male = getRandomInt(3, 6); female = getRandomInt(5, 8); break;
-              case "65+": male = getRandomInt(1, 4); female = getRandomInt(2, 6); break;
+              case "25-34":
+                male = getRandomInt(15, 30);
+                female = getRandomInt(25, 40);
+                break;
+              case "35-44":
+                male = getRandomInt(10, 20);
+                female = getRandomInt(15, 25);
+                break;
+              case "45-54":
+                male = getRandomInt(5, 10);
+                female = getRandomInt(8, 15);
+                break;
+              case "55-64":
+                male = getRandomInt(3, 6);
+                female = getRandomInt(5, 8);
+                break;
+              case "65+":
+                male = getRandomInt(1, 4);
+                female = getRandomInt(2, 6);
+                break;
             }
             return { age, male, female, total: male + female };
           });
@@ -347,11 +342,13 @@ useEffect(() => {
         setGenderAgeData(genderStats);
 
         // --- Thành phố ---
-        let cityStats;
+        let cityStats: { city: string; count: number }[] = [];
         try {
-          const cityRes = await fetch(`${baseUrl}?metric=page_fans_city&period=lifetime&access_token=${token}`);
-          const cityData = await cityRes.json();
-          const rawCities = cityData?.data?.[0]?.values?.[0]?.value || {};
+          const cityRes = await fetch(
+            `${baseUrl}?metric=page_fans_city&period=lifetime&access_token=${token}`
+          );
+          const cityJson = await cityRes.json();
+          const rawCities = cityJson?.data?.[0]?.values?.[0]?.value || {};
           const trackedCities = ["Hanoi", "Ho Chi Minh City", "Hai Phong", "Da Nang"];
 
           const getRandomInt = (min: number, max: number) =>
@@ -366,7 +363,7 @@ useEffect(() => {
 
             const fallbackCounts: Record<string, [number, number]> = {
               "Hà Nội": [30, 60],
-              "HCM": [40, 80],
+              HCM: [40, 80],
               "Hải Phòng": [10, 20],
               "Đà Nẵng": [8, 16],
             };
@@ -398,7 +395,14 @@ useEffect(() => {
         }
       } catch (error) {
         console.error("❌ Lỗi tổng khi lấy dữ liệu tuổi, giới tính, thành phố:", error);
-        setGenderAgeData(["25-34", "35-44", "45-54", "55-64", "65+"].map((age) => ({ age, male: 0, female: 0, total: 0 })));
+        setGenderAgeData(
+          ["25-34", "35-44", "45-54", "55-64", "65+"].map((age) => ({
+            age,
+            male: 0,
+            female: 0,
+            total: 0,
+          }))
+        );
         setCityData([
           { city: "Hà Nội", count: 1603 },
           { city: "HCM", count: 1034 },
@@ -410,42 +414,15 @@ useEffect(() => {
     };
 
     if (accountDetailData?.idPage && accountDetailData?.accessToken) {
-      // phần views đã do hook lo; ở đây chỉ còn gọi nhóm gender/age/city
       fetchGenderAgeAndCity();
     }
   }, [accountDetailData]);
-
-
-
-  const getRandomInt = (min: number, max: number) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
-
-
-  const percentageContact = 0;
-
-
-  useEffect(() => {
-    if (interests.length > 0 && pageAI !== "") {
-      (async () => {
-        const body = { analysis, channelPlan, urlPage: url, targeting: interests, styleImage: pageAI };
-
-        console.log(`body-------------`, body);
-
-        await createAnalysis(body).unwrap();
-      })();
-    }
-  }, [interests, pageAI]);
-
 
   return (
     <>
       <Helmet>
         <title>All One Ads – Phân tích fanpage & đề xuất phát triển kênh</title>
-        <meta
-          property="og:title"
-          content="All One Ads – AI analyzes and suggests fanpage content"
-        />
+        <meta property="og:title" content="All One Ads – AI analyzes and suggests fanpage content" />
         <meta
           property="og:description"
           content="Automatically analyze fanpage and suggest content development plans and communication strategies in a professional style."
@@ -454,39 +431,31 @@ useEffect(() => {
         <meta property="og:url" content="https://alloneads.com/" />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="All One Ads" />
-
         <meta name="twitter:card" content="summary_large_image" />
-        <meta
-          name="twitter:title"
-          content="All One Ads – Analyze & recommend fanpage channels using AI"
-        />
+        <meta name="twitter:title" content="All One Ads – Analyze & recommend fanpage channels using AI" />
         <meta
           name="twitter:description"
           content="Optimize fanpage easily with AI: analysis - strategy - posting schedule - viral ideas."
         />
         <meta name="twitter:image" content="https://alloneads.com/og-image.png" />
       </Helmet>
-      <FullscreenLoader
-        spinning={loading}
-      />
+
+      <FullscreenLoader spinning={loading || createAnaly || isSimpleChat || isTargeting || isiCreativeChat} />
+
       <Layout className="image-layout">
         <Content style={{ padding: 24, color: "#F1F5F9" }}>
           <AutoPostModal visible={showModal} onClose={() => setShowModal(false)} />
 
           <div style={{ textAlign: "center", marginBottom: 24 }}>
-            <h3 style={{ color: "#F8FAFC", marginBottom: 4 }}>
-              {t("facebook_analysis.title")}
-            </h3>
-            <p style={{ color: "#94A3B8", fontSize: 14 }}>
-              {t("facebook_analysis.subtitle")}
-            </p>
+            <h3 style={{ color: "#F8FAFC", marginBottom: 4 }}>{t("facebook_analysis.title")}</h3>
+            <p style={{ color: "#94A3B8", fontSize: 14 }}>{t("facebook_analysis.subtitle")}</p>
           </div>
 
           <div style={{ width: "100%", display: "flex", justifyContent: "center", marginBottom: 24 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12, maxWidth: 800, width: "100%" }}>
               <Input
                 value={url}
-                onChange={e => setUrl(e.target.value)}
+                onChange={(e) => setUrl(e.target.value)}
                 placeholder={t("facebook_analysis.enter_page_link")}
                 style={{
                   flex: 1,
@@ -510,31 +479,41 @@ useEffect(() => {
                 }}
                 type="default"
                 onClick={analyzeFacebookPage}
+                disabled={loading || isSimpleChat || isTargeting || isiCreativeChat}
               >
                 {t("facebook_analysis.button_analyze")}
               </Button>
             </div>
           </div>
 
-          <div className="dashboard-wrapper" style={{
-            padding: 24,
-            borderRadius: 20,
-            width: "100%",
-            maxWidth: 1200,
-            margin: "0 auto",
-            boxSizing: "border-box",
-          }}><Title level={4} style={{ color: "#E2E8F0" }}>{t("facebook_analysis.section_page_analysis")}</Title></div>
+          <div
+            className="dashboard-wrapper"
+            style={{
+              padding: 24,
+              borderRadius: 20,
+              width: "100%",
+              maxWidth: 1200,
+              margin: "0 auto",
+              boxSizing: "border-box",
+            }}
+          >
+            <Title level={4} style={{ color: "#E2E8F0" }}>
+              {t("facebook_analysis.section_page_analysis")}
+            </Title>
+          </div>
 
-
-          <div className="dashboard-wrapper" style={{
-            padding: 24,
-            background: "#0f172a",
-            borderRadius: 20,
-            width: "100%",
-            maxWidth: 1200,
-            margin: "0 auto",
-            boxSizing: "border-box",
-          }}>
+          <div
+            className="dashboard-wrapper"
+            style={{
+              padding: 24,
+              background: "#0f172a",
+              borderRadius: 20,
+              width: "100%",
+              maxWidth: 1200,
+              margin: "0 auto",
+              boxSizing: "border-box",
+            }}
+          >
             <Row gutter={16} justify="space-between" align="middle" style={{ marginBottom: 24 }}>
               <Col>
                 <DatePicker.RangePicker
@@ -568,14 +547,17 @@ useEffect(() => {
 
             <Row gutter={16}>
               <Col span={12}>
-                <Card style={{
-                  background: "#1e293b",
-                  border: "none",
-                  borderTopLeftRadius: 20,
-                  borderBottomLeftRadius: 20,
-                  color: "#fff",
-                  height: "100%",
-                }} bodyStyle={{ padding: 10 }}>
+                <Card
+                  style={{
+                    background: "#1e293b",
+                    border: "none",
+                    borderTopLeftRadius: 20,
+                    borderBottomLeftRadius: 20,
+                    color: "#fff",
+                    height: "100%",
+                }}
+                  bodyStyle={{ padding: 10 }}
+                >
                   <div style={{ marginBottom: 16, fontWeight: 600, color: "#E2E8F0" }}>
                     {t("facebook_analysis.views")}
                   </div>
@@ -591,14 +573,17 @@ useEffect(() => {
               </Col>
 
               <Col span={12}>
-                <Card style={{
-                  background: "#1e293b",
-                  border: "none",
-                  borderTopLeftRadius: 20,
-                  borderBottomLeftRadius: 20,
-                  color: "#fff",
-                  height: "100%",
-                }} bodyStyle={{ padding: 10 }}>
+                <Card
+                  style={{
+                    background: "#1e293b",
+                    border: "none",
+                    borderTopLeftRadius: 20,
+                    borderBottomLeftRadius: 20,
+                    color: "#fff",
+                    height: "100%",
+                  }}
+                  bodyStyle={{ padding: 10 }}
+                >
                   <Row gutter={[24, 24]}>
                     <Col span={8}>
                       <div style={{ textAlign: "center" }}>
@@ -616,13 +601,16 @@ useEffect(() => {
                             })}
                           />
                         </div>
-                        <div style={{
-                          fontSize: 12,
-                          color: "#94a3b8",
-                          lineHeight: 1.5,
-                          marginTop: 12,
-                        }}>
-                          ● {t("facebook_analysis.follow")}<br />● {t("facebook_analysis.unfollow")}
+                        <div
+                          style={{
+                            fontSize: 12,
+                            color: "#94a3b8",
+                            lineHeight: 1.5,
+                            marginTop: 12,
+                          }}
+                        >
+                          ● {t("facebook_analysis.follow")}
+                          <br />● {t("facebook_analysis.unfollow")}
                         </div>
                       </div>
                     </Col>
@@ -637,21 +625,25 @@ useEffect(() => {
                         </div>
                         {genderAgeData.map((item) => (
                           <div key={item.age} style={{ marginBottom: 8 }}>
-                            <div style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              fontSize: 12,
-                              color: "#E2E8F0",
-                            }}>
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                fontSize: 12,
+                                color: "#E2E8F0",
+                              }}
+                            >
                               <span>{item.age}</span>
                               <span>{item.total || 0}%</span>
                             </div>
-                            <div style={{
-                              height: 6,
-                              background: "#a3a3a3",
-                              borderRadius: 6,
-                              marginTop: 4,
-                            }} />
+                            <div
+                              style={{
+                                height: 6,
+                                background: "#a3a3a3",
+                                borderRadius: 6,
+                                marginTop: 4,
+                              }}
+                            />
                           </div>
                         ))}
                       </div>
@@ -664,21 +656,25 @@ useEffect(() => {
                         </div>
                         {cityData.map((item) => (
                           <div key={item.city} style={{ marginBottom: 8 }}>
-                            <div style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              fontSize: 12,
-                              color: "#E2E8F0",
-                            }}>
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                fontSize: 12,
+                                color: "#E2E8F0",
+                              }}
+                            >
                               <span>{item.city}</span>
                               <span>{item.count || 0}%</span>
                             </div>
-                            <div style={{
-                              height: 6,
-                              background: "#a3a3a3",
-                              borderRadius: 6,
-                              marginTop: 4,
-                            }} />
+                            <div
+                              style={{
+                                height: 6,
+                                background: "#a3a3a3",
+                                borderRadius: 6,
+                                marginTop: 4,
+                              }}
+                            />
                           </div>
                         ))}
                       </div>
@@ -692,13 +688,20 @@ useEffect(() => {
           <br />
           <div style={styles.twoColumns}>
             <div style={styles.column}>
-              <Card style={{
-                background: "#1E293B",
-                border: "1px solid #334155",
-                color: "#F1F5F9",
-              }} bodyStyle={{ padding: 16 }}>
-                <Title level={5} style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}>
-                  <img src={page1} alt="icon" style={{ width: 20, height: 20 }} />{t("facebook_analysis.general_info")}
+              <Card
+                style={{
+                  background: "#1E293B",
+                  border: "1px solid #334155",
+                  color: "#F1F5F9",
+                }}
+                bodyStyle={{ padding: 16 }}
+              >
+                <Title
+                  level={5}
+                  style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}
+                >
+                  <img src={page1} alt="icon" style={{ width: 20, height: 20 }} />
+                  {t("facebook_analysis.general_info")}
                 </Title>
                 <TextArea
                   value={analysis.overview}
@@ -715,8 +718,12 @@ useEffect(() => {
                   }}
                 />
 
-                <Title level={5} style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}>
-                  <img src={page2} alt="icon" style={{ width: 20, height: 20 }} />{t("facebook_analysis.products_services")}
+                <Title
+                  level={5}
+                  style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}
+                >
+                  <img src={page2} alt="icon" style={{ width: 20, height: 20 }} />
+                  {t("facebook_analysis.products_services")}
                 </Title>
                 <TextArea
                   value={analysis.products}
@@ -733,8 +740,12 @@ useEffect(() => {
                   }}
                 />
 
-                <Title level={5} style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}>
-                  <img src={page3} alt="icon" style={{ width: 20, height: 20 }} />{t("facebook_analysis.customer_engagement")}
+                <Title
+                  level={5}
+                  style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}
+                >
+                  <img src={page3} alt="icon" style={{ width: 20, height: 20 }} />
+                  {t("facebook_analysis.customer_engagement")}
                 </Title>
                 <TextArea
                   value={analysis.engagement}
@@ -751,8 +762,12 @@ useEffect(() => {
                   }}
                 />
 
-                <Title level={5} style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}>
-                  <img src={page4} alt="icon" style={{ width: 20, height: 20 }} />{t("facebook_analysis.strategy")}
+                <Title
+                  level={5}
+                  style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}
+                >
+                  <img src={page4} alt="icon" style={{ width: 20, height: 20 }} />
+                  {t("facebook_analysis.strategy")}
                 </Title>
                 <TextArea
                   value={analysis.strategy}
@@ -769,25 +784,24 @@ useEffect(() => {
                   }}
                 />
 
-                <label style={{ display: "block", marginBottom: 4 }}>
-                  {t("video.AIbel")}
-                </label>
-                <TextArea
-                  rows={8}
-                  value={pageAI}
-                  className="image-textarea image-caption-textarea"
-                />
-
+                <label style={{ display: "block", marginBottom: 4 }}>{t("video.AIbel")}</label>
+                <TextArea rows={8} value={pageAI} className="image-textarea image-caption-textarea" />
               </Card>
             </div>
 
             <div style={styles.column}>
-              <Card style={{
-                background: "#1E293B",
-                border: "1px solid #334155",
-                color: "#F1F5F9",
-              }} bodyStyle={{ padding: 16 }}>
-                <Title level={5} style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}>
+              <Card
+                style={{
+                  background: "#1E293B",
+                  border: "1px solid #334155",
+                  color: "#F1F5F9",
+                }}
+                bodyStyle={{ padding: 16 }}
+              >
+                <Title
+                  level={5}
+                  style={{ color: "#CBD5E1", display: "flex", alignItems: "center", gap: 8 }}
+                >
                   {t("facebook_analysis.section_channel_plan")}
                 </Title>
                 <TextArea
@@ -811,7 +825,6 @@ useEffect(() => {
           </div>
         </Content>
       </Layout>
-
     </>
   );
 };
