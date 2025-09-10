@@ -297,6 +297,8 @@ useEffect(() => {
 
   if (items.length === 0) {
     setShowModal(true);
+  }else {
+     setShowModal(false);
   }
 }, [pageViewsResp, viewsError, isViewsLoading]);
 
