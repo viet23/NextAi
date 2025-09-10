@@ -72,6 +72,17 @@ const facebookApi = api.injectEndpoints({
       }),
       transformResponse: (res: any) => res,
     }),
+
+    getFacebookPageViews: build.query<any, { days?: number; pageId?: string } | void>({
+      query: (params) => {
+        const q = params ? `?${buildQueryString(params)}` : "";
+        return {
+          url: `/api/v1/facebook-posts/insights/page-views${q}`,
+          method: "GET",
+        };
+      },
+      transformResponse: (res: any) => res, // { ok: true, data: [{ name: 'dd/MM', views }, ...] }
+    }),
   }),
 });
 
@@ -89,6 +100,7 @@ export const {
   useUpdateFacebookPostMutation,
   useDeleteFacebookPostMutation,
   useRestoreFacebookPostMutation,
+  useGetFacebookPageViewsQuery
 } = facebookApi;
 
 export default facebookApi;

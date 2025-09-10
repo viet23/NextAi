@@ -131,7 +131,7 @@ const LandingPage: React.FC = () => {
                 </div>
                 <div className="nav-right">
                     <Link to="/signin" className="btn-text">Đăng nhập</Link>
-                    <Link to="/signin" className="btn-text-2">Đăng ký</Link>
+                    <Link to="#" className="btn-text-2" onClick={scrollToFooter}>Đăng ký</Link>
                 </div>
             </div>
 

@@ -17,6 +17,7 @@ import page3 from "../../assets/images/page3.png";
 import page4 from "../../assets/images/page4.png";
 import FullscreenLoader from "../FullscreenLoader";
 import { useOpenaiCreativeChatMutation, useOpenaiGenerateMutation, useOpenaiSimpleChatMutation } from "src/store/api/openaiApi";
+import { useGetFacebookPageViewsQuery } from "src/store/api/facebookApi";
 
 
 const { Content } = Layout;
@@ -254,7 +255,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
     }
     const prompt = ` Phân tích Fanpage sau: ${url} .Tôi đang xây dựng hình ảnh cho fanpage Facebook như sau:\n\nTên: ${name}\nMô tả: ${description}\nNội dung hiển thị:\n${bodyPreview}\n\nDựa trên đó, bạn hãy đề xuất phong cách thiết kế hình ảnh hiện đại, sáng tạo (bỏ phần chữ), và tông màu chủ đạo phù hợp với thương hiệu này.`
     try {
-     
+
       const body: any = { prompt: prompt }
       const response = await openaiiCreativeChat(body).unwrap();
 
@@ -266,40 +267,29 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
     }
   }
 
+  // 2) gọi hook (ngoài useEffect)
+  const days = 14;
+  const {
+    data: pageViewsResp,
+    isFetching: isViewsLoading,
+    error: viewsError,
+  } = useGetFacebookPageViewsQuery(
+    accountDetailData?.idPage ? { days, pageId: accountDetailData.idPage } : { days },
+    { skip: !accountDetailData?.idPage } // tránh gọi khi chưa có idPage
+  );
+
+  // 3) cập nhật chart khi dữ liệu từ BE về
   useEffect(() => {
-    const fetchPageInsights = async () => {
-      try {
-        if (!accountDetailData?.idPage || !accountDetailData?.accessToken) return;
+    if (pageViewsResp?.ok && Array.isArray(pageViewsResp.data)) {
+      setDataChart(pageViewsResp.data); // [{ name:'dd/MM', views }]
+    } else if (viewsError) {
+      console.error("❌ Lỗi khi lấy dữ liệu lượt xem page:", viewsError);
+      setDataChart([]);
+    }
+  }, [pageViewsResp, viewsError]);
 
-        // --- Lượt xem 14 ngày ---
-        const metric = "page_views_total";
-        const since = Math.floor(Date.now() / 1000) - 14 * 24 * 60 * 60;
-        const until = Math.floor(Date.now() / 1000);
-
-        const url = `https://graph.facebook.com/v19.0/${accountDetailData.idPage}/insights?metric=${metric}&since=${since}&until=${until}&period=day&access_token=${accountDetailData.accessToken}`;
-
-        const response = await fetch(url);
-        const fbData = await response.json();
-
-        const rawViews = fbData?.data?.find((item: any) => item.name === "page_views_total")?.values || [];
-
-        const formattedChart = rawViews.map((item: any) => {
-          const date = new Date(item.end_time);
-          const day = String(date.getDate()).padStart(2, "0");
-          const month = String(date.getMonth() + 1).padStart(2, "0");
-          return {
-            name: `${day}/${month}`,
-            views: item.value || 0,
-          };
-        });
-
-        setDataChart(formattedChart);
-      } catch (error) {
-        console.error("❌ Lỗi khi lấy dữ liệu lượt xem page:", error);
-      }
-    };
-
-
+  // 4) giữ nguyên phần gender/age/city, chỉ còn 1 effect này
+  useEffect(() => {
     const fetchGenderAgeAndCity = async () => {
       try {
         if (!accountDetailData?.idPage || !accountDetailData?.accessToken) return;
@@ -315,59 +305,28 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
           const rawValue = genderAgeData?.data?.[0]?.values?.[0]?.value || {};
           const ageGroups = ["25-34", "35-44", "45-54", "55-64", "65+"];
 
+          const getRandomInt = (min: number, max: number) =>
+            Math.floor(Math.random() * (max - min + 1)) + min;
+
           genderStats = ageGroups.map((age) => {
             const male = rawValue[`M.${age}`] ?? getRandomInt(2, 15);
             const female = rawValue[`F.${age}`] ?? getRandomInt(20, 45);
-            return {
-              age,
-              male,
-              female,
-              total: male + female,
-            };
+            return { age, male, female, total: male + female };
           });
         } catch (err) {
           console.error("❌ Lỗi khi fetch gender_age:", err);
-          const getRandomInt = (min: number, max: number) => {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-          };
-
-          const fallbackGenderStats = ["25-34", "35-44", "45-54", "55-64", "65+"].map((age) => {
-            let male = 0;
-            let female = 0;
-
+          const getRandomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+          genderStats = ["25-34", "35-44", "45-54", "55-64", "65+"].map((age) => {
+            let male = 0, female = 0;
             switch (age) {
-              case "25-34":
-                male = getRandomInt(15, 30);
-                female = getRandomInt(25, 40);
-                break;
-              case "35-44":
-                male = getRandomInt(10, 20);
-                female = getRandomInt(15, 25);
-                break;
-              case "45-54":
-                male = getRandomInt(5, 10);
-                female = getRandomInt(8, 15);
-                break;
-              case "55-64":
-                male = getRandomInt(3, 6);
-                female = getRandomInt(5, 8);
-                break;
-              case "65+":
-                male = getRandomInt(1, 4);
-                female = getRandomInt(2, 6);
-                break;
+              case "25-34": male = getRandomInt(15, 30); female = getRandomInt(25, 40); break;
+              case "35-44": male = getRandomInt(10, 20); female = getRandomInt(15, 25); break;
+              case "45-54": male = getRandomInt(5, 10); female = getRandomInt(8, 15); break;
+              case "55-64": male = getRandomInt(3, 6); female = getRandomInt(5, 8); break;
+              case "65+": male = getRandomInt(1, 4); female = getRandomInt(2, 6); break;
             }
-
-            return {
-              age,
-              male,
-              female,
-              total: male + female,
-            };
+            return { age, male, female, total: male + female };
           });
-
-          genderStats = fallbackGenderStats;
-
         }
         setGenderAgeData(genderStats);
 
@@ -400,13 +359,8 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
               ? getRandomInt(fallbackCounts[name][0], fallbackCounts[name][1])
               : 0;
 
-            return {
-              city: name,
-              count: rawCities?.[city] ?? fallback,
-            };
+            return { city: name, count: rawCities?.[city] ?? fallback };
           });
-
-
         } catch (err) {
           console.error("❌ Lỗi khi fetch city:", err);
           cityStats = [
@@ -418,27 +372,17 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
         }
         setCityData(cityStats);
 
-        // --- Tỉ lệ người theo dõi ---
+        // --- Tỉ lệ người theo dõi (demo) ---
         try {
-          // const res = await fetch(`https://graph.facebook.com/v19.0/${accountDetailData.idPage}?fields=followers_count&access_token=${token}`);
-          // const data = await res.json();
-          // const followers = data?.followers_count || 0;
-          // console.log(`followers`, followers);
           const randomPercentage = Math.floor(Math.random() * (90 - 60 + 1)) + 60;
-          setPercentageFollow(randomPercentage); // hoặc điều chỉnh nếu bạn có tổng người xem để tính %
+          setPercentageFollow(randomPercentage);
         } catch (err) {
           console.warn("⚠️ Không lấy được followers_count:", err);
           setPercentageFollow(0);
         }
-
       } catch (error) {
         console.error("❌ Lỗi tổng khi lấy dữ liệu tuổi, giới tính, thành phố:", error);
-        setGenderAgeData(["25-34", "35-44", "45-54", "55-64", "65+"].map((age) => ({
-          age,
-          male: 0,
-          female: 0,
-          total: 0,
-        })));
+        setGenderAgeData(["25-34", "35-44", "45-54", "55-64", "65+"].map((age) => ({ age, male: 0, female: 0, total: 0 })));
         setCityData([
           { city: "Hà Nội", count: 1603 },
           { city: "HCM", count: 1034 },
@@ -449,56 +393,12 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
       }
     };
 
-    // const fetchPageViewStats = async () => {
-    //   try {
-    //     if (!accountDetailData?.idPage || !accountDetailData?.accessToken) return;
-    //     const since = Math.floor(Date.now() / 1000) - 14 * 24 * 60 * 60;
-    //     const until = Math.floor(Date.now() / 1000);
-    //     const baseUrl = `https://graph.facebook.com/v19.0/${accountDetailData.idPage}/insights`;
-
-    //     const metrics = [
-    //       "page_views_total",
-    //       "page_video_views_3s",
-    //       "page_video_views_1s",
-    //     ].join(",");
-
-    //     const url = `${baseUrl}?metric=${metrics}&since=${since}&until=${until}&period=day&access_token=${accountDetailData.accessToken}`;
-    //     const res = await fetch(url);
-    //     const data = await res.json();
-
-    //     const viewsTotal = data?.data?.find((d: any) => d.name === "page_views_total")?.values || [];
-    //     const views3s = data?.data?.find((d: any) => d.name === "page_video_views_3s")?.values || [];
-    //     const views1s = data?.data?.find((d: any) => d.name === "page_video_views_1s")?.values || [];
-
-    //     const totalViews = viewsTotal.reduce((acc: number, item: any) => acc + (item.value || 0), 0);
-    //     const avgViews = viewsTotal.length > 0 ? Math.round(totalViews / viewsTotal.length) : 0;
-    //     const total3s = views3s.reduce((acc: number, item: any) => acc + (item.value || 0), 0);
-    //     const total1s = views1s.reduce((acc: number, item: any) => acc + (item.value || 0), 0);
-
-    //     setPageViewStats({
-    //       total: totalViews,
-    //       average: avgViews,
-    //       view3s: total3s,
-    //       view1s: total1s,
-    //     });
-    //   } catch (error) {
-    //     console.error("❌ Lỗi khi lấy dữ liệu page view stats:", error);
-    //     setPageViewStats({
-    //       total: 0,
-    //       average: 0,
-    //       view3s: 0,
-    //       view1s: 0,
-    //     });
-    //   }
-    // };
-
-
     if (accountDetailData?.idPage && accountDetailData?.accessToken) {
-      fetchPageInsights();
+      // phần views đã do hook lo; ở đây chỉ còn gọi nhóm gender/age/city
       fetchGenderAgeAndCity();
-      // fetchPageViewStats()
     }
   }, [accountDetailData]);
+
 
 
   const getRandomInt = (min: number, max: number) => {
