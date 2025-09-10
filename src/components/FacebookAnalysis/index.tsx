@@ -268,25 +268,39 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${result.strategy}
   }
 
   // 2) gọi hook (ngoài useEffect)
-  const days = 14;
-  const {
-    data: pageViewsResp,
-    isFetching: isViewsLoading,
-    error: viewsError,
-  } = useGetFacebookPageViewsQuery(
-    accountDetailData?.idPage ? { days, pageId: accountDetailData.idPage } : { days },
-    { skip: !accountDetailData?.idPage } // tránh gọi khi chưa có idPage
-  );
+const days = 14;
+const {
+  data: pageViewsResp,
+  isFetching: isViewsLoading,
+  error: viewsError,
+} = useGetFacebookPageViewsQuery(
+  accountDetailData?.idPage ? { days, pageId: accountDetailData.idPage } : { days },
+  { skip: !accountDetailData?.idPage }
+);
 
-  // 3) cập nhật chart khi dữ liệu từ BE về
-  useEffect(() => {
-    if (pageViewsResp?.ok && Array.isArray(pageViewsResp.data)) {
-      setDataChart(pageViewsResp.data); // [{ name:'dd/MM', views }]
-    } else if (viewsError) {
-      console.error("❌ Lỗi khi lấy dữ liệu lượt xem page:", viewsError);
-      setDataChart([]);
-    }
-  }, [pageViewsResp, viewsError]);
+// Cập nhật chart + mở modal khi rỗng hoặc lỗi
+useEffect(() => {
+  if (isViewsLoading) return; // đợi call xong hẳn
+
+  if (viewsError) {
+    console.error("❌ Lỗi khi lấy dữ liệu lượt xem page:", viewsError);
+    setDataChart([]);
+    setShowModal(true);
+    return;
+  }
+
+  const items = (pageViewsResp?.ok && Array.isArray(pageViewsResp.data))
+    ? pageViewsResp.data
+    : [];
+
+  setDataChart(items);
+
+  if (items.length === 0) {
+    setShowModal(true);
+  }
+}, [pageViewsResp, viewsError, isViewsLoading]);
+
+
 
   // 4) giữ nguyên phần gender/age/city, chỉ còn 1 effect này
   useEffect(() => {
