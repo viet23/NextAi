@@ -299,7 +299,7 @@ Image URL: ${imageUrl || "Không có"}
                   {[
                     { value: "message", label: t("ads.goal.message") },
                     { value: "engagement", label: t("ads.goal.engagement") },
-                    { value: "leads", label: t("ads.goal.leads") },
+                    { value: "engagement", label: t("ads.goal.leads") },
                     { value: "traffic", label: t("ads.goal.traffic") },
                   ].map((item) => {
                     const isSelected = goal === item.value;

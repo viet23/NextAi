@@ -11,6 +11,7 @@ import {
   Segmented,
   Switch,
   message,
+  Popconfirm,
 } from "antd";
 
 import { useSelector } from "react-redux";
@@ -26,8 +27,9 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "rec
 import { useGetFacebookadsQuery, useGetFacebookPostsGraphQuery } from "src/store/api/ticketApi";
 import DetailAdsReport from "../DetailAdsReport";
 import DetailAnalysis from "../DetailAnalysis";
-import qs from "qs";
-import axios from "axios";
+
+// ✅ NEW: RTK Query mutation gọi BE đổi trạng thái quảng cáo
+import { useSetAdStatusMutation } from "src/store/api/facebookApi";
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -39,10 +41,15 @@ const Dashboard = () => {
   // === View mode: 'posts' | 'ads'
   const [viewMode, setViewMode] = useState<"posts" | "ads">("posts");
 
-  // ====== Ads list (giữ như cũ)
+  // ====== Ads list (RTK Query)
   const [filter, setFilter] = useState<any>({ page: 1, pageSize: 20 });
   const { data: adsData } = useGetFacebookadsQuery({ filter });
-  const dataSource = adsData?.data;
+
+  // ✅ NEW: State cục bộ để hiển thị bảng Ads (tránh mutate Redux object)
+  const [adsRows, setAdsRows] = useState<any[]>([]);
+  useEffect(() => {
+    setAdsRows(adsData?.data ?? []);
+  }, [adsData?.data]);
 
   // ====== Posts list (mới: gọi BE thay vì Graph)
   const [postsFilter, setPostsFilter] = useState<{ page: number; pageSize: number; pageId?: string }>({
@@ -136,35 +143,30 @@ const Dashboard = () => {
     setIsOpenReport(false);
   };
 
-  // ====== Đổi trạng thái Ad (tạm thời vẫn gọi Graph trực tiếp — khuyến nghị chuyển BE sau)
-  async function setAdStatus(adId: string, isActive: boolean) {
+  // ====== NEW: đổi trạng thái ad gọi BE qua RTK Query
+  const [setAdStatusMutation] = useSetAdStatusMutation();
+  const [toggleBusy, setToggleBusy] = useState<Record<string, boolean>>({});
+
+  const setAdStatusUI = async (adId: string, isActive: boolean) => {
+    setToggleBusy((s) => ({ ...s, [adId]: true }));
+    const hide = message.loading(isActive ? "Đang bật quảng cáo..." : "Đang tạm dừng...", 0);
     try {
-      if (!accountDetailData?.accessTokenUser) {
-        message.error("Thiếu access token");
-        return false;
-      }
-      const url = `https://graph.facebook.com/v19.0/${adId}`;
-      const body = qs.stringify({
-        status: isActive ? "ACTIVE" : "PAUSED",
-        access_token: accountDetailData.accessTokenUser,
-      });
-      const res = await axios.post(url, body, {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      });
-      const data = res.data as { success?: boolean };
-      if (data.success === true) {
-        message.success(isActive ? "Đã bật quảng cáo" : "Đã tắt quảng cáo");
+      const res: any = await setAdStatusMutation({ adId, isActive }).unwrap();
+      if (res?.success) {
+        message.success(res?.message || (isActive ? "Đã bật quảng cáo" : "Đã tạm dừng quảng cáo"));
         return true;
-      } else {
-        message.error("Facebook API không trả về thành công");
-        return false;
       }
-    } catch (error: any) {
-      console.error("❌ Lỗi khi đổi trạng thái quảng cáo:", error?.response?.data || error.message);
-      message.error(error?.response?.data?.error?.message || "Không thể cập nhật trạng thái quảng cáo");
+      message.error("Máy chủ không xác nhận thành công");
       return false;
+    } catch (e: any) {
+      const msg = e?.data?.message || e?.error || e?.message || "Không thể cập nhật trạng thái quảng cáo";
+      message.error(msg);
+      return false;
+    } finally {
+      hide();
+      setToggleBusy((s) => ({ ...s, [adId]: false }));
     }
-  }
+  };
 
   // ====== Columns
   const postColumns: ColumnsType<any> = useMemo(
@@ -264,24 +266,38 @@ const Dashboard = () => {
         width: 110,
         render: (_: any, record: any) => {
           const checked = record?.status?.toUpperCase?.() === "ACTIVE";
-          const onToggle = async (nextChecked: boolean) => {
-            try {
-              await setAdStatus(record.adId, nextChecked);
-              record.status = nextChecked ? "ACTIVE" : "PAUSED";
-              message.success(nextChecked ? "Đã bật quảng cáo" : "Đã tắt quảng cáo");
-            } catch (err: any) {
-              console.error(err);
-              message.error(err?.response?.data?.error?.message || "Không thể cập nhật trạng thái quảng cáo");
-            }
-          };
+          const loading = !!toggleBusy[record.adId];
+          const next = !checked;
+
           return (
-            <Switch
-              checked={checked}
-              checkedChildren="Bật"
-              unCheckedChildren="Tắt"
-              onChange={onToggle}
-              style={{ backgroundColor: checked ? "#52c41a" : undefined }}
-            />
+            <Popconfirm
+              title={checked ? "Tạm dừng quảng cáo?" : "Bật quảng cáo?"}
+              description={checked ? "Quảng cáo sẽ dừng phân phối." : "Quảng cáo sẽ bắt đầu phân phối."}
+              okText={checked ? "Tạm dừng" : "Bật"}
+              cancelText="Huỷ"
+              disabled={loading}
+              onConfirm={async () => {
+                const ok = await setAdStatusUI(record.adId, next);
+                if (ok) {
+                  // ✅ Cập nhật bất biến vào adsRows, KHÔNG sửa record trực tiếp (tránh lỗi read-only)
+                  setAdsRows((prev) =>
+                    prev.map((r) =>
+                      (r?.adId || r?.id) === (record?.adId || record?.id)
+                        ? { ...r, status: next ? "ACTIVE" : "PAUSED" }
+                        : r
+                    )
+                  );
+                }
+              }}
+            >
+              <Switch
+                checked={checked}
+                loading={loading}
+                checkedChildren="Bật"
+                unCheckedChildren="Tắt"
+                style={{ backgroundColor: checked ? "#52c41a" : undefined }}
+              />
+            </Popconfirm>
           );
         },
       },
@@ -345,7 +361,7 @@ const Dashboard = () => {
         ),
       },
     ],
-    [t]
+    [t, toggleBusy] // setAdsRows là stable, không cần thêm
   );
 
   // ====== Responsive
@@ -485,9 +501,10 @@ const Dashboard = () => {
               </div>
             ) : (
               <div style={{ overflowX: "auto" }}>
+                {/* ✅ Dùng adsRows thay vì adsData.data */}
                 <Table
                   columns={adsColumns}
-                  dataSource={dataSource}
+                  dataSource={adsRows}
                   rowKey={(r) => r?.adId || r?.id}
                   pagination={{ pageSize: 10 }}
                   bordered

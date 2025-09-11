@@ -13,6 +13,7 @@ const facebookApi = api.injectEndpoints({
       }),
       transformResponse: (res: any) => res,
     }),
+
     updateAdInsight: build.mutation<any, any>({
       query: ({ id, body }) => ({
         url: `/api/v1/facebook-ads/${id}`,
@@ -22,10 +23,23 @@ const facebookApi = api.injectEndpoints({
       transformResponse: (res: any) => res,
     }),
 
+    // ✅ NEW: đổi trạng thái quảng cáo
+    setAdStatus: build.mutation<
+      { success: boolean; adId: string; status: "ACTIVE" | "PAUSED"; message?: string },
+      { adId: string; isActive: boolean }
+    >({
+      query: ({ adId, isActive }) => ({
+        url: `/api/v1/facebook-ads/${adId}/status`,
+        method: "PUT",
+        body: { isActive },
+      }),
+      transformResponse: (res: any) => res, // BE trả { success, adId, status, message }
+    }),
+
     // ====== Facebook Post CRUD (mới thêm) ======
     getFacebookPosts: build.query<any, any>({
       query: filter => ({
-        url: `/api/v1/facebook-posts?${buildQueryString(filter)}`, // { search, page, limit }
+        url: `/api/v1/facebook-posts?${buildQueryString(filter)}`,
         method: "GET",
       }),
       transformResponse: (res: any) => res,
@@ -81,7 +95,7 @@ const facebookApi = api.injectEndpoints({
           method: "GET",
         };
       },
-      transformResponse: (res: any) => res, // { ok: true, data: [{ name: 'dd/MM', views }, ...] }
+      transformResponse: (res: any) => res,
     }),
   }),
 });
@@ -90,6 +104,7 @@ export const {
   // Ads
   useCreateAdsMutation,
   useUpdateAdInsightMutation,
+  useSetAdStatusMutation,           // 👈 NEW
 
   // Facebook Post
   useGetFacebookPostsQuery,
@@ -100,7 +115,7 @@ export const {
   useUpdateFacebookPostMutation,
   useDeleteFacebookPostMutation,
   useRestoreFacebookPostMutation,
-  useGetFacebookPageViewsQuery
+  useGetFacebookPageViewsQuery,
 } = facebookApi;
 
 export default facebookApi;
