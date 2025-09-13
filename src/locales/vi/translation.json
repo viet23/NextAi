@@ -392,6 +392,7 @@
   "features": [
     {
       "title": "Quảng cáo tự động",
+      "url": "/ai-ads",
       "content": [
         {
           "heading": "Tự động lên chiến dịch trong 5 phút",
@@ -405,6 +406,7 @@
     },
     {
       "title": "Phân tích Fanpage",
+      "url": "/fb-anal",
       "content": [
         {
           "heading": "Phân tích dữ liệu & gợi ý cải thiện",
@@ -418,6 +420,7 @@
     },
     {
       "title": "Phân tích hiệu quả bài viết",
+      "url": "/ai-ads",
       "content": [
         {
           "heading": "Trình điểm hiệu quả bài viết",
@@ -431,6 +434,7 @@
     },
     {
       "title": "Tạo hình ảnh bằng AI",
+      "url": "/image-ai",
       "content": [
         {
           "heading": "Tạo hình ảnh tự động chỉ trong vài giây",
@@ -444,6 +448,7 @@
     },
     {
       "title": "Tạo video quảng cáo bằng AI",
+      "url": "/video-ai",
       "content": [
         {
           "heading": "Tự tạo kịch bản theo sản phẩm",
@@ -457,6 +462,7 @@
     },
     {
       "title": "Quản lý & Tối ưu real-time",
+      "url": "/ai-ads",
       "content": [
         {
           "heading": "Theo dõi CPC, CTR, ROAS liên tục",

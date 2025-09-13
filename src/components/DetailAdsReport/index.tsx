@@ -90,7 +90,7 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
   });
 
 
-  const [updateAccountGroup, { isSuccess: isUpdateSuccess }] = useUpdateAdInsightMutation();
+  const [updateAdInsight, { isSuccess: isUpdateSuccess }] = useUpdateAdInsightMutation();
 
 
   const [getDetailTicket] = useLazyDetailAdsQuery();
@@ -185,7 +185,7 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
       async onOk() {
         try {
 
-          updateAccountGroup({
+          updateAdInsight({
             id: id,
             body: { isActive: true },
           })

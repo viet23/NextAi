@@ -78,6 +78,58 @@ const LandingPage: React.FC = () => {
         "https://kenh14cdn.com/thumb_w/660/2017/6-1513528894695.png"
     ];
 
+    const plans = [
+        {
+            name: "FREE",
+            price: "0đ",
+            sub: "/ 7 Days",
+            features: [
+                "Số lượng chiến dịch: tối đa 2 chiến dịch.",
+                "Ngân sách mỗi chiến dịch: tối đa 5 triệu/tháng.",
+                "Không mở tính năng tối ưu nâng cao (AI chỉ gợi ý cơ bản).",
+            ],
+        },
+        {
+            name: "STARTER",
+            price: "499.000đ",
+            sub: "/tháng",
+            features: [
+                "Tối đa 3 chiến dịch/tháng.",
+                "Ngân sách tối đa 10 triệu/tháng.",
+                "AI gợi ý content, target & ngân sách.",
+                "Báo cáo & đề xuất tối ưu hằng tuần.",
+                "Báo cáo qua mail.",
+            ],
+        },
+        {
+            name: "PRO",
+            price: "1.999.000đ",
+            sub: "/tháng",
+            note: "(Giảm 50% khi mua 1 năm - 20% khi mua 6 tháng)",
+            features: [
+                "Chiến dịch không giới hạn.",
+                "AI tối ưu real-time theo CPC, CTR, ROAS.",
+                "Tự động A/B Testing mẫu quảng cáo.",
+                "Hỗ trợ nhiều nền tảng: Facebook, Google, TikTok.",
+                "Báo cáo & đề xuất tối ưu hằng ngày.",
+            ],
+        },
+        {
+            name: "ENTERPRISE",
+            price: "4.999.000đ",
+            sub: "/tháng",
+            note: "(Giảm 50% khi mua 1 năm - 20% khi mua 6 tháng)",
+            features: [
+                "Mọi tính năng gói Pro +",
+                "AI phân bổ ngân sách tự động đa kênh.",
+                "Quản lý nhiều tài khoản quảng cáo.",
+                "Cố vấn chiến dịch 1–1 hằng tháng.",
+                "Tích hợp CRM & remarketing tự động.",
+                "Hỗ trợ kỹ thuật ưu tiên 24/7.",
+            ],
+        },
+    ];
+
 
     const navigate = useNavigate();
 
@@ -289,7 +341,7 @@ const LandingPage: React.FC = () => {
                             ))}
 
                             {/* Nút cuộn xuống footer */}
-                            <div style={{ textAlign: "center" }}>
+                            <div style={{ display: "flex", justifyContent: "flex-start", marginTop: 20 }}>
                                 <Link to="#" className="btn-text" onClick={scrollToFooter}>
                                     Dùng thử miễn phí
                                 </Link>
@@ -376,6 +428,99 @@ const LandingPage: React.FC = () => {
                             </div>
                             <p className="testimonial-text">"{item.text}"</p>
                         </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className="customer-segment">
+
+                <h2 className="section-title no-before"> Ưu đãi credits tốt nhất hôm nay</h2>
+            </div>
+
+            <div className="customer-segment" style={{ textAlign: "center", color: "#fff" }} >
+
+                <div
+                    style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                        gap: 20,
+                        maxWidth: 1100,
+                        margin: "0 auto",
+                    }}
+                >
+                    {plans.map((plan, i) => (
+                        <div
+                            key={i}
+                            style={{
+                                background:
+                                    "linear-gradient(145deg, rgba(0,102,255,0.1), rgba(0,0,0,0.6))",
+                                border: "1px solid rgba(255,255,255,0.1)",
+                                borderRadius: 16,
+                                padding: 24,
+                                textAlign: "left",
+                                backdropFilter: "blur(10px)",
+                                boxShadow: "0 0 25px rgba(0,140,255,0.15)",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <div style={{ flex: 1 }}>
+                                <div
+                                    style={{
+                                        fontSize: 14,
+                                        fontWeight: 600,
+                                        letterSpacing: 1,
+                                        opacity: 0.7,
+                                        marginBottom: 10,
+                                        textAlign: "center",
+                                    }}
+                                >
+                                    {plan.name}
+                                </div>
+                                <div
+                                    style={{ fontSize: 24, textAlign: "center", fontWeight: "bold" }}
+                                >
+                                    {plan.price} {plan.sub}
+                                </div>
+                                {plan.note && (
+                                    <div style={{ fontSize: 12, color: "#bbb", marginBottom: 12 }}>
+                                        {plan.note}
+                                    </div>
+                                )}
+                                <ul style={{ listStyle: "none", padding: 0, margin: "20px 0" }}>
+                                    {plan.features.map((f, idx) => (
+                                        <li
+                                            key={idx}
+                                            style={{
+                                                margin: "8px 0",
+                                                fontSize: 14,
+                                                position: "relative",
+                                                paddingLeft: 20,
+                                            }}
+                                        >
+                                            <span
+                                                style={{
+                                                    position: "absolute",
+                                                    left: 0,
+                                                    color: "#3b82f6",
+                                                }}
+                                            >
+                                                ✔
+                                            </span>
+                                            {f}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            <div style={{ display: "flex", justifyContent: "center", marginTop: "auto" }}>
+                                <Link to="#" className="btn-text" onClick={scrollToFooter}>
+                                    Đăng ký ngay
+                                </Link>
+                            </div>
+
+                        </div>
+
                     ))}
                 </div>
             </div>
