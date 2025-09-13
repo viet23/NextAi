@@ -15,7 +15,7 @@ interface FormValues {
 
 const ZALO_LINK = "https://zalo.me/g/bshljq750";
 const YT_URL = "https://www.youtube.com/watch?v=bb-DW0W5-6s";
-const YT_EMBED = "https://www.youtube.com/embed/eTMTq1XUjls?start=1";
+const YT_EMBED = "https://www.youtube.com/embed/GW6IVfA-nZk?start=1";
 
 
 const AutoPostModal = ({ visible, onClose }: AutoPostModalProps) => {
