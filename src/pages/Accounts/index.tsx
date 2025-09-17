@@ -94,32 +94,27 @@ const AccountsPage = () => {
         width: 90,
         render: (_v, _r, index) => index + 1,
       },
-      {
-        title: t("accounts.columns.username"),
-        key: "username",
-        dataIndex: "username",
-      },
+      // {
+      //   title: t("accounts.columns.username"),
+      //   key: "username",
+      //   dataIndex: "username",
+      // },
       {
         title: t("accounts.columns.full_name"),
         key: "fullName",
         dataIndex: "fullName",
       },
-       {
+      {
         title: t("accounts.columns.phone"),
         key: "phone",
         dataIndex: "phone",
       },
-      //  {
-      //   title: t("accounts.columns.email"),
-      //   key: "email",
-      //   dataIndex: "email",
-      // },
       {
-        title: t("accounts.columns.created"),
-        key: "createdAt",
-        dataIndex: "createdAt",
-        render: value => dayjs(value).format("DD/MM/YYYY HH:mm"),
+        title: "Loại tài khoản",
+        key: "currentPlan",
+        render: value => value.currentPlan?.name,
       },
+     
       {
         title: t("accounts.columns.status"),
         key: "status",
@@ -146,11 +141,12 @@ const AccountsPage = () => {
           );
         },
       },
-       {
-        title:"credits",
+      {
+        title: "credits",
         key: "credits",
         dataIndex: "credits",
       },
+    
       {
         title: t("accounts.columns.actions"),
         key: "actions",
@@ -169,7 +165,14 @@ const AccountsPage = () => {
             <EditOutlined style={{ color: "#ffffff", fontSize: 18 }} />
           </Link>
         ),
+      },
+         {
+        title: t("accounts.columns.created"),
+        key: "createdAt",
+        dataIndex: "createdAt",
+        render: value => dayjs(value).format("DD/MM/YYYY HH:mm"),
       }
+      
     ],
     [t]
   );

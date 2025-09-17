@@ -21,6 +21,7 @@ export interface IAccount {
   roles: IRole[];
   groups: IRoleGroup[];
   isActive: boolean;
+  currentPlan?:any
   credits: number;
   zalo?: string;
   creditsData?: any;

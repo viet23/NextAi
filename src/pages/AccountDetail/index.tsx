@@ -10,6 +10,7 @@ import {
   Form,
   Input,
   Layout,
+  Modal,
   Row,
   Select,
   Table,
@@ -21,7 +22,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { PageTitleHOC } from "src/components/PageTitleHOC";
 import { ACCOUNT_ROUTE } from "src/constants/routes.constants";
-import { useGetAccountQuery, useUpdateAccountGroupMutation } from "src/store/api/accountApi";
+import { useConfirmPlanMutation, useGetAccountQuery, useUpdateAccountGroupMutation } from "src/store/api/accountApi";
 import { useGetRoleGroupsQuery } from "src/store/api/roleApi";
 import { useTranslation } from "react-i18next";
 import { Collapse } from "antd";
@@ -32,14 +33,17 @@ const { Panel } = Collapse;
 const AccountDetailPage = () => {
   const { t } = useTranslation();
   const [getDetailTicket] = useLazyDetailCreditQuery();
+  const [confirmPlan, { isLoading: confirming }] = useConfirmPlanMutation();
+
 
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
   const [form] = Form.useForm(); // Form instance
   const [userGroups, setUserGroups] = useState<undefined | any[]>([]);
-  const { data: accountDetailData } = useGetAccountQuery(params.id || "0", {
-    skip: !params.id,
-  });
+  const { data: accountDetailData, refetch } = useGetAccountQuery(params.id || "0", {
+  skip: !params.id,
+});
+
   const [updateAccountGroup, { isSuccess: isUpdateSuccess }] = useUpdateAccountGroupMutation();
   const { data: roleGroupsData, isFetching: isRoleGroupsFetching } = useGetRoleGroupsQuery({});
   const handleOnChangeCheckbox = (e: any, record: any) => {
@@ -126,6 +130,8 @@ const AccountDetailPage = () => {
         accessTokenUser: accountDetailData?.accessTokenUser?.trim(),
         accountAdsId: accountDetailData?.accountAdsId?.trim(),
         isActive: accountDetailData?.isActive,
+        plan: accountDetailData?.currentPlan?.name || "Free",
+        isPaid: accountDetailData?.currentPlan?.isPaid ? "Đã thanh toán" : "Chưa thanh toán",
       });
     } else {
       form.resetFields();
@@ -191,6 +197,30 @@ const AccountDetailPage = () => {
       message.error("Có lỗi xảy ra khi xác nhận")
     }
   }
+
+  const handleConfirmPayment = (subId?: string) => {
+    Modal.confirm({
+      title: "Xác nhận thanh toán?",
+      content: "Hành động này sẽ được thực hiện ngay.",
+      okText: "Đồng ý",
+      cancelText: "Hủy",
+      async onOk() {
+        try {
+          if (!subId) {
+            message.warning("Không tìm thấy subscriptionId để xác nhận.");
+            return;
+          }
+          await confirmPlan({ subscriptionId: subId }).unwrap();
+          message.success("Xác nhận thanh toán thành công!");
+          await refetch();
+          form.setFieldsValue({ isPaid: "Đã thanh toán" });
+        } catch (err: any) {
+          message.error(err?.data?.message || "Xác nhận thanh toán thất bại!");
+        }
+      },
+    });
+  };
+
 
 
 
@@ -300,6 +330,49 @@ const AccountDetailPage = () => {
                         <Input size="middle" placeholder="zalo" />
                       </Form.Item>
                     </Col>
+                    <Col xl={8}>
+                      <Form.Item
+                        label="Loại tài khoản"
+                        name="plan"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      >
+                        <Input size="middle" placeholder="plan" disabled />
+                      </Form.Item>
+
+
+                    </Col>
+
+                    <Col xl={8}>
+                      <Form.Item
+                        label="Tình trạng thanh toán"
+                        name="isPaid"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      >
+                        <Input size="middle" placeholder="isPaid" disabled />
+                      </Form.Item>
+                    </Col>
+
+                    <Col xl={8}>
+
+                      {/* Nếu chưa thanh toán thì hiển thị nút xác nhận */}
+                      {!accountDetailData?.currentPlan?.isPaid && (
+                        <>
+                          <br />
+                          <Button
+                            type="primary"
+                            className="btn-text"
+                            style={{ marginTop: 22 }}
+                            onClick={() => handleConfirmPayment(accountDetailData?.currentPlan?.id)}
+                          >
+                            Xác nhận thanh toán
+                          </Button>
+                        </>
+                      )}
+
+                    </Col>
+
                   </Row>
                 </Form>
               </Panel>
@@ -320,23 +393,6 @@ const AccountDetailPage = () => {
                 header={<span style={{ color: "#ffffff", fontWeight: 600 }}>Thông tin kết nối trang</span>}
               >
                 <Form form={form}>
-                  {/* <Row gutter={[0, 16]}>
-                    <Col span={24}>
-                      <Form.Item
-                        label="Cookie"
-                        name="cookie"
-                        labelCol={{ span: 24 }}
-                        wrapperCol={{ span: 24 }}
-                      // rules={[{ required: true, message: "Vui lòng nhập Access Token" }]}
-                      >
-                        <Input
-                          size="middle"
-                          placeholder="Cookie"
-                          style={{ width: "100%", fontSize: 16 }}
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row> */}
                   <Row gutter={[24, 0]}>
                     <Col span={24}>
                       <Form.Item

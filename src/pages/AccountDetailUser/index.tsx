@@ -76,6 +76,8 @@ const AccountDetailUserPage = () => {
         accessTokenUser: accountDetailData?.accessTokenUser?.trim(),
         accountAdsId: accountDetailData?.accountAdsId?.trim(),
         isActive: accountDetailData?.isActive,
+        plan: accountDetailData?.currentPlan?.name || "Free",
+        isPaid: accountDetailData?.currentPlan?.isPaid ? "Đã thanh toán" : "Chưa thanh toán",
       });
     } else {
       form.resetFields();
@@ -218,6 +220,28 @@ const AccountDetailUserPage = () => {
                         <Input size="middle" placeholder="zalo" />
                       </Form.Item>
                     </Col>
+                    <Col xl={8}>
+                      <Form.Item
+                        label="Loại tài khoản"
+                        name="plan"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      >
+                        <Input size="middle" placeholder="plan" disabled />
+                      </Form.Item>
+                    </Col>
+
+                    <Col xl={8}>
+                      <Form.Item
+                        label="Tình trạng thanh toán"
+                        name="isPaid"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      >
+                        <Input size="middle" placeholder="isPaid" disabled />
+                      </Form.Item>
+                    </Col>
+
 
                     <Col span={8}>
                       <Form.Item label="Id page" name="idPage" labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
