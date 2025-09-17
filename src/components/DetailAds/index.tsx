@@ -22,6 +22,7 @@ import LocationPicker from "./location";
 import { useTranslation } from "react-i18next";
 import FullscreenLoader from "../FullscreenLoader";
 import { useOpenaiTargetingMutation } from "src/store/api/openaiApi";
+import { ReloadOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -73,10 +74,7 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, postRecot, pageId }) => {
 
   const previewAlt = postRecot?.media?.props?.alt || "facebook post media";
 
-  const previewCaption =
-    postRecot?.caption ||
-    caption ||
-    "";
+  const previewCaption = postRecot?.caption || caption || "";
 
   const previewPermalink =
     postRecot?.permalink_url ||
@@ -91,7 +89,7 @@ YÊU CẦU BẮT BUỘC:
 1) CHỈ TRẢ VỀ MẢNG JSON (không text, không chú thích, không \`\`\`json).
 2) Mỗi phần tử trong mảng đại diện cho 1 cụm sản phẩm/chủ đề tìm thấy trong post.
 3) Điền đầy đủ các trường theo SCHEMA sau. Nếu thiếu dữ liệu, để chuỗi rỗng hoặc mảng rỗng.
-4) "keywordsForInterestSearch" dùng TIẾNG ANH để gọi Facebook Targeting Search API (type=adinterest).
+4) "keywordsForInterestSearch" dùng để gọi Facebook Targeting Search API (type=adinterest).
 5) "sampleTargetingJson" là OBJECT gợi ý body targeting (thay ID sau khi search), KHÔNG chứa text giải thích.
 
 SCHEMA:
@@ -110,7 +108,7 @@ SCHEMA:
       { "id": "6007101597783", "name": "Engaged Shoppers" }
     ],
     "keywordsForInterestSearch": [
-      "Các từ khóa TIẾNG ANH để gọi /search?type=adinterest (vd: Samsung Galaxy, Smartphones, Hair care, Organic cosmetics, Plum wine, Alcoholic beverage)"
+      "Các từ khóa để gọi /search?type=adinterest (vd: Samsung Galaxy, Smartphones, Hair care, Organic cosmetics, Plum wine, Alcoholic beverage)"
     ],
     "complianceNotes": "Lưu ý chính sách (vd: đồ uống có cồn → age_min >= 25)",
     "sampleTargetingJson": {
@@ -208,6 +206,10 @@ Image URL: ${imageUrl || "Không có"}
         return;
       }
 
+      if (goal == "leads") {
+        setGoal("engagement");
+      }
+
       const body: any = {
         goal,
         campaignName,
@@ -299,7 +301,7 @@ Image URL: ${imageUrl || "Không có"}
                   {[
                     { value: "message", label: t("ads.goal.message") },
                     { value: "engagement", label: t("ads.goal.engagement") },
-                    { value: "engagement", label: t("ads.goal.leads") },
+                    { value: "leads", label: t("ads.goal.leads") },
                     { value: "traffic", label: t("ads.goal.traffic") },
                   ].map((item) => {
                     const isSelected = goal === item.value;
@@ -519,6 +521,33 @@ Image URL: ${imageUrl || "Không có"}
             <Card
               title={t("ads.preview")}
               bordered={false}
+              extra={
+                <Button
+                  size="small"
+                  onClick={() =>
+                    analyzePostForTargeting(
+                      postRecot?.caption ?? caption ?? "",
+                      previewImg
+                    )
+                  }
+                  loading={analysisLoading || isTargeting}
+                  icon={<ReloadOutlined />}
+                  style={{
+                    backgroundColor: "#0f172a",
+                    border: "1px solid #4cc0ff",
+                    borderRadius: 8,
+                    padding: "2px 8px",
+                    margin: 2,
+                    fontSize: 14,
+                    color: "#ffffff",
+                    fontWeight: 500,
+                    boxShadow: "0 0 6px #4cc0ff",
+                    cursor: "pointer",
+                  }}
+                >
+                  Phân tích lại
+                </Button>
+              }
               style={{
                 backgroundColor: "#070719",
                 borderRadius: 12,

@@ -363,12 +363,20 @@ const AccountDetailUserPage = () => {
                             gutter={12}
                           >
                             <Col xs={24} md={8}>
+                             <div style={{ color: "#93c5fd" }}>
+                                Tên Page:{" "}
+                                <strong style={{ color: "#fff" }}>
+                                  {p.name}
+                                </strong>
+                              </div>
+                              
                               <div style={{ color: "#93c5fd" }}>
                                 ID Page:{" "}
                                 <strong style={{ color: "#fff" }}>
                                   {p.idPage}
                                 </strong>
                               </div>
+                             
                               <div style={{ color: "#94a3b8", fontSize: 12, marginTop: 4 }}>
                                 Access Token: <em>{truncate(p.accessToken, 12, 6)}</em>
                               </div>
