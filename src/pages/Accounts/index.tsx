@@ -94,11 +94,11 @@ const AccountsPage = () => {
         width: 90,
         render: (_v, _r, index) => index + 1,
       },
-      // {
-      //   title: t("accounts.columns.username"),
-      //   key: "username",
-      //   dataIndex: "username",
-      // },
+      {
+        title: t("accounts.columns.username"),
+        key: "username",
+        dataIndex: "username",
+      },
       {
         title: t("accounts.columns.full_name"),
         key: "fullName",

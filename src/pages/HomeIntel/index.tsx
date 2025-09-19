@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./styles.scss";
 import { Link } from "react-router-dom";
 import Container from "../../assets/images/Container.png";
@@ -34,15 +34,42 @@ import { useTranslation } from "react-i18next";
 import { useBuyPlanMutation } from "src/store/api/accountApi";
 import { useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
+import PlanModal from "src/components/PlanModal";
+import { current } from "@reduxjs/toolkit";
 
 type PlanName = "Free" | "Starter" | "Pro" | "Enterprise";
 
 const HomePage: React.FC = () => {
+    const [showPlanModal, setShowPlanModal] = useState(true);
     const { t } = useTranslation();
     const { user } = useSelector((state: IRootState) => state.auth || { user: undefined });
+    const hasAdminGroup = useMemo(
+        () => user?.groups?.some((g: { name: string }) => g?.name === "admin") ?? false,
+        [user]
+    );
+
+
+    const hasActivePaidPlan = useMemo(() => {
+        const p = user?.currentPlan;
+        if (!p) return false;
+        const end = new Date(p.endDate).getTime();
+        return p.isPaid === true && end >= Date.now();
+    }, [user?.currentPlan?.id, user?.currentPlan?.isPaid, user?.currentPlan?.endDate]);
+
+
+
+    useEffect(() => {
+        // chỉ cập nhật khi thật sự cần
+       
+        if ((hasAdminGroup && showPlanModal) || (hasActivePaidPlan && showPlanModal)) {
+            setShowPlanModal(false);
+        }
+    }, [hasAdminGroup, showPlanModal]);
+
 
     // API mua gói
     const [buyPlan, { isLoading: buying }] = useBuyPlanMutation();
+
 
     // Modal xác nhận thanh toán (quét QR)
     const [qrOpen, setQrOpen] = useState(false);
@@ -183,6 +210,7 @@ const HomePage: React.FC = () => {
     return (
         <PageTitleHOC title="Chi tiết tài khoản Credits">
             <Layout className="image-layout">
+                <PlanModal visible={showPlanModal} onClose={() => setShowPlanModal(false)} />
                 <Content style={{ padding: 24 }}>
                     <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
                         <br />
@@ -692,7 +720,7 @@ const HomePage: React.FC = () => {
                         {/* Đổi ảnh QR thật vào đây */}
                         <Image src={QR} alt="QR thanh toán" style={{ maxWidth: 260 }} preview={false} />
                     </div>
-                    <div style={{ fontSize: 14 , textAlign: "center" }}>
+                    <div style={{ fontSize: 14, textAlign: "center" }}>
                         <div>
                             <strong>Gói:</strong> {pendingPlan ?? "-"}
                         </div>

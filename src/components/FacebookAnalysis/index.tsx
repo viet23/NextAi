@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Layout, Input, Button, Typography, Card, message, Select } from "antd";
 import { useCreateAnalysisMutation, useGetAnalysisQuery } from "src/store/api/ticketApi";
 import { Helmet } from "react-helmet";
@@ -22,6 +22,7 @@ import {
   useOpenaiSimpleChatMutation,
 } from "src/store/api/openaiApi";
 import { useGetFacebookPageViewsQuery } from "src/store/api/facebookApi";
+import PlanModal from "../PlanModal";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -65,6 +66,7 @@ const FacebookPageAnalysis = () => {
 
   const [createAnalysis, { isLoading: createAnaly }] = useCreateAnalysisMutation();
   const [showModal, setShowModal] = useState(false);
+  const [showPlanModal, setShowPlanModal] = useState(true);
   const [channelPlan, setChannelPlan] = useState("");
 
   const [loading, setLoading] = useState(false);
@@ -74,6 +76,7 @@ const FacebookPageAnalysis = () => {
   const [openaiGenerate, { isLoading: isTargeting }] = useOpenaiGenerateMutation();
   const [openaiSimpleChat, { isLoading: isSimpleChat }] = useOpenaiSimpleChatMutation();
   const [openaiiCreativeChat, { isLoading: isiCreativeChat }] = useOpenaiCreativeChatMutation();
+
 
   // Gọi API ngay khi component render
   const { data, isSuccess } = useGetAnalysisQuery({});
@@ -237,6 +240,30 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${analysisNow.strategy}
   const { data: accountDetailData } = useGetAccountQuery(user?.id || "0", {
     skip: !user?.id,
   });
+
+  const hasAdminGroup = useMemo(
+    () => user?.groups?.some((g: { name: string }) => g?.name === "admin") ?? false,
+    [user]
+  );
+
+
+  const hasActivePaidPlan = useMemo(() => {
+    const p = user?.currentPlan;
+    if (!p) return false;
+    const end = new Date(p.endDate).getTime();
+    return p.isPaid === true && end >= Date.now();
+  }, [user?.currentPlan?.id, user?.currentPlan?.isPaid, user?.currentPlan?.endDate]);
+
+
+
+  useEffect(() => {
+    // chỉ cập nhật khi thật sự cần
+
+    if ((hasAdminGroup && showPlanModal) || (hasActivePaidPlan && showPlanModal)) {
+      setShowPlanModal(false);
+    }
+  }, [hasAdminGroup, showPlanModal]);
+
 
   const [dataChart, setDataChart] = useState<{ name: string; views: number }[]>([]);
   const [genderAgeData, setGenderAgeData] = useState<
@@ -445,6 +472,8 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${analysisNow.strategy}
       <Layout className="image-layout">
         <Content style={{ padding: 24, color: "#F1F5F9" }}>
           <AutoPostModal visible={showModal} onClose={() => setShowModal(false)} />
+          <PlanModal visible={showPlanModal} onClose={() => setShowPlanModal(false)} />
+
 
           <div style={{ textAlign: "center", marginBottom: 24 }}>
             <h3 style={{ color: "#F8FAFC", marginBottom: 4 }}>{t("facebook_analysis.title")}</h3>
@@ -555,7 +584,7 @@ CHIẾN LƯỢC TRUYỀN THÔNG: ${analysisNow.strategy}
                     borderBottomLeftRadius: 20,
                     color: "#fff",
                     height: "100%",
-                }}
+                  }}
                   bodyStyle={{ padding: 10 }}
                 >
                   <div style={{ marginBottom: 16, fontWeight: 600, color: "#E2E8F0" }}>
