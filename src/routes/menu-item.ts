@@ -46,11 +46,11 @@ export const getMenuItems = (t: TFunction): IMenuItem[] => [
     label: t("menu.ads_dashboard"),
     icon: createElement(TicketManageIcon),
   },
-  //   {
-  //   key: AI_ADS_ROUTE,
-  //   label: t("menu.ads_report"),
-  //   icon: createElement(TicketManageIcon),
-  // },
+    {
+    key: AI_ADS_ROUTE,
+    label: t("menu.ads_report"),
+    icon: createElement(TicketManageIcon),
+  },
 
   {
     key: IMAGE_ROUTE,

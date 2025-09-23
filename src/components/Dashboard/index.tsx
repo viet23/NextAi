@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Layout,
   Card,
@@ -8,50 +8,38 @@ import {
   Col,
   Spin,
   Drawer,
-  Segmented,
-  Switch,
   message,
-  Popconfirm,
 } from "antd";
-
 import { useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
 import { useGetAccountQuery } from "src/store/api/accountApi";
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import DetailAds from "../DetailAds";
+import DetailAnalysis from "../DetailAnalysis";
 import { useTranslation } from "react-i18next";
 import "./styles.scss";
 import { CloseOutlined } from "@ant-design/icons";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import { useGetFacebookadsQuery, useGetFacebookPostsGraphQuery } from "src/store/api/ticketApi";
-import DetailAdsReport from "../DetailAdsReport";
-import DetailAnalysis from "../DetailAnalysis";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { useGetFacebookPostsGraphQuery } from "src/store/api/ticketApi";
 
-// ✅ NEW: RTK Query mutation gọi BE đổi trạng thái quảng cáo
-import { useSetAdStatusMutation } from "src/store/api/facebookApi";
-
-const Dashboard = () => {
+const Dashboard: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useSelector((state: IRootState) => state.auth);
+
+  // Account detail (để lấy idPage)
   const { data: accountDetailData } = useGetAccountQuery(user?.id || "0", {
     skip: !user?.id,
   });
 
-  // === View mode: 'posts' | 'ads'
-  const [viewMode, setViewMode] = useState<"posts" | "ads">("posts");
-
-  // ====== Ads list (RTK Query)
-  const [filter, setFilter] = useState<any>({ page: 1, pageSize: 20 });
-  const { data: adsData } = useGetFacebookadsQuery({ filter });
-
-  // ✅ NEW: State cục bộ để hiển thị bảng Ads (tránh mutate Redux object)
-  const [adsRows, setAdsRows] = useState<any[]>([]);
-  useEffect(() => {
-    setAdsRows(adsData?.data ?? []);
-  }, [adsData?.data]);
-
-  // ====== Posts list (mới: gọi BE thay vì Graph)
+  // ====== Posts list (call BE thay vì Graph trực tiếp)
   const [postsFilter, setPostsFilter] = useState<{ page: number; pageSize: number; pageId?: string }>({
     page: 1,
     pageSize: 20,
@@ -100,11 +88,9 @@ const Dashboard = () => {
   // ====== Drawers / Details
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenAnl, setIsOpenAnl] = useState(false);
-  const [isOpenReport, setIsOpenReport] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
-  const [detailRecord, setDetailRecord] = useState<any | null>(null);
   const [pageId, setPageId] = useState<string | undefined>(undefined);
-  const [postRecot, setPostRecot] = useState<any[]>([]);
+  const [postRecot, setPostRecot] = useState<any | null>(null);
 
   const handleOnClickDetail = (record: any) => {
     setPostRecot(record);
@@ -130,45 +116,7 @@ const Dashboard = () => {
     setIsOpenAnl(false);
   };
 
-  const handleOnClickDetailReport = (record: any) => {
-    setDetailRecord(record);
-    setDetailId(record?.adId ?? null);
-    setPageId(accountDetailData?.idPage);
-    setIsOpenReport(true);
-  };
-
-  const handleOnCloseDrawerReport = () => {
-    setDetailRecord(null);
-    setDetailId(null);
-    setIsOpenReport(false);
-  };
-
-  // ====== NEW: đổi trạng thái ad gọi BE qua RTK Query
-  const [setAdStatusMutation] = useSetAdStatusMutation();
-  const [toggleBusy, setToggleBusy] = useState<Record<string, boolean>>({});
-
-  const setAdStatusUI = async (adId: string, isActive: boolean) => {
-    setToggleBusy((s) => ({ ...s, [adId]: true }));
-    const hide = message.loading(isActive ? "Đang bật quảng cáo..." : "Đang tạm dừng...", 0);
-    try {
-      const res: any = await setAdStatusMutation({ adId, isActive }).unwrap();
-      if (res?.success) {
-        message.success(res?.message || (isActive ? "Đã bật quảng cáo" : "Đã tạm dừng quảng cáo"));
-        return true;
-      }
-      message.error("Máy chủ không xác nhận thành công");
-      return false;
-    } catch (e: any) {
-      const msg = e?.data?.message || e?.error || e?.message || "Không thể cập nhật trạng thái quảng cáo";
-      message.error(msg);
-      return false;
-    } finally {
-      hide();
-      setToggleBusy((s) => ({ ...s, [adId]: false }));
-    }
-  };
-
-  // ====== Columns
+  // ====== Columns (Posts)
   const postColumns: ColumnsType<any> = useMemo(
     () => [
       {
@@ -256,115 +204,7 @@ const Dashboard = () => {
     [t]
   );
 
-  const adsColumns: ColumnsType<any> = useMemo(
-    () => [
-      {
-        title: "Trạng thái",
-        dataIndex: "status",
-        key: "status",
-        align: "center",
-        width: 110,
-        render: (_: any, record: any) => {
-          const checked = record?.status?.toUpperCase?.() === "ACTIVE";
-          const loading = !!toggleBusy[record.adId];
-          const next = !checked;
-
-          return (
-            <Popconfirm
-              title={checked ? "Tạm dừng quảng cáo?" : "Bật quảng cáo?"}
-              description={checked ? "Quảng cáo sẽ dừng phân phối." : "Quảng cáo sẽ bắt đầu phân phối."}
-              okText={checked ? "Tạm dừng" : "Bật"}
-              cancelText="Huỷ"
-              disabled={loading}
-              onConfirm={async () => {
-                const ok = await setAdStatusUI(record.adId, next);
-                if (ok) {
-                  // ✅ Cập nhật bất biến vào adsRows, KHÔNG sửa record trực tiếp (tránh lỗi read-only)
-                  setAdsRows((prev) =>
-                    prev.map((r) =>
-                      (r?.adId || r?.id) === (record?.adId || record?.id)
-                        ? { ...r, status: next ? "ACTIVE" : "PAUSED" }
-                        : r
-                    )
-                  );
-                }
-              }}
-            >
-              <Switch
-                checked={checked}
-                loading={loading}
-                checkedChildren="Bật"
-                unCheckedChildren="Tắt"
-                style={{ backgroundColor: checked ? "#52c41a" : undefined }}
-              />
-            </Popconfirm>
-          );
-        },
-      },
-      {
-        title: "Ad ID",
-        dataIndex: "adId",
-        key: "adId",
-        width: 160,
-      },
-      {
-        title: "Chiến dịch",
-        dataIndex: "campaignName",
-        key: "campaignName",
-        width: 220,
-        ellipsis: true,
-      },
-      {
-        title: "Hiển thị",
-        dataIndex: ["data", "impressions"],
-        key: "impressions",
-        align: "right",
-        width: 90,
-      },
-      {
-        title: "Clicks",
-        dataIndex: ["data", "clicks"],
-        key: "clicks",
-        align: "right",
-        width: 80,
-      },
-      {
-        title: "Chi phí (VNĐ)",
-        dataIndex: ["data", "spend"],
-        key: "spend",
-        align: "right",
-        width: 110,
-      },
-      {
-        title: "CTR (%)",
-        dataIndex: ["data", "ctr"],
-        key: "ctr",
-        align: "right",
-        width: 80,
-      },
-      {
-        title: "CPM (VNĐ)",
-        dataIndex: ["data", "cpm"],
-        key: "cpm",
-        align: "right",
-        width: 90,
-      },
-      {
-        title: t("dashboard.action"),
-        key: "action",
-        width: 100,
-        align: "center",
-        render: (_, record) => (
-          <button className="ads-button-glow" onClick={() => handleOnClickDetailReport(record)}>
-            Chi tiết
-          </button>
-        ),
-      },
-    ],
-    [t, toggleBusy] // setAdsRows là stable, không cần thêm
-  );
-
-  // ====== Responsive
+  // ====== Responsive (để hiển thị dạng thẻ trên mobile)
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -381,6 +221,7 @@ const Dashboard = () => {
         </h3>
 
         <Row gutter={[16, 16]}>
+          {/* Chart: Số bài theo tháng */}
           <Col xs={24}>
             <Card
               style={{
@@ -405,117 +246,91 @@ const Dashboard = () => {
             </Card>
           </Col>
 
+          {/* Bảng/Thẻ bài viết */}
           <Col xs={24}>
-            <div className="dash-header only-segmented">
-              <Segmented
-                className="segFix"
-                size="large"
-                value={viewMode}
-                onChange={(val) => setViewMode(val as "posts" | "ads")}
-                options={[
-                  { label: t("dashboard.post_list") || "Danh sách bài viết", value: "posts" },
-                  { label: t("dashboard.ads_report") || "Báo cáo quảng cáo", value: "ads" },
-                ]}
-              />
+            <div style={{ overflowX: "auto" }}>
+              <Spin spinning={isFetchingPosts}>
+                {isMobile ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 12,
+                      maxWidth: "100%",
+                      overflowX: "hidden",
+                    }}
+                  >
+                    {postData.map((item) => (
+                      <Card
+                        key={item.id}
+                        style={{
+                          background: "#1e293b",
+                          border: "1px solid #334155",
+                          borderRadius: 12,
+                          color: "#e2e8f0",
+                          fontSize: 13,
+                          maxWidth: 380,
+                        }}
+                        bodyStyle={{ padding: 12 }}
+                      >
+                        <Row gutter={[8, 8]}>
+                          <Col span={24}>
+                            <div style={{ marginBottom: 8 }}>
+                              <strong>{t("dashboard.media")}:</strong>
+                              <br />
+                              <Image
+                                src={item.url}
+                                alt="media"
+                                style={{
+                                  borderRadius: 8,
+                                  width: "100%",
+                                  maxWidth: 350,
+                                  height: "auto",
+                                }}
+                              />
+                            </div>
+
+                            <div style={{ marginBottom: 4 }}>
+                              <strong>{t("dashboard.caption")}:</strong>
+                              <div style={{ paddingLeft: 8, maxWidth: 350, wordWrap: "break-word" }}>
+                                {item.caption?.length > 100 ? item.caption.slice(0, 100) + "..." : item.caption}
+                              </div>
+                            </div>
+
+                            <div style={{ marginTop: 8, display: "flex", justifyContent: "center", gap: 8 }}>
+                              <button className="ads-button-glow" onClick={() => handleOnClickDetailAnl(item)}>
+                                Phân tích
+                              </button>
+                              <button className="ads-button-glow" onClick={() => handleOnClickDetail(item)}>
+                                {t("dashboard.ads_button")}
+                              </button>
+                            </div>
+                          </Col>
+                        </Row>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <Table
+                    columns={postColumns}
+                    dataSource={postData}
+                    pagination={{
+                      current: postsFilter.page,
+                      pageSize: postsFilter.pageSize,
+                      total: postsRes?.meta?.total ?? 0,
+                      onChange: (page, pageSize) => setPostsFilter((s) => ({ ...s, page, pageSize })),
+                    }}
+                    bordered
+                    scroll={{ x: "max-content" }}
+                    className="dark-header-table"
+                  />
+                )}
+              </Spin>
             </div>
-
-            {viewMode === "posts" ? (
-              <div style={{ overflowX: "auto" }}>
-                <Spin spinning={isFetchingPosts}>
-                  {isMobile ? (
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 12,
-                        maxWidth: "100%",
-                        overflowX: "hidden",
-                      }}
-                    >
-                      {postData.map((item) => (
-                        <Card
-                          key={item.id}
-                          style={{
-                            background: "#1e293b",
-                            border: "1px solid #334155",
-                            borderRadius: 12,
-                            color: "#e2e8f0",
-                            fontSize: 13,
-                            maxWidth: 380,
-                          }}
-                          bodyStyle={{ padding: 12 }}
-                        >
-                          <Row gutter={[8, 8]}>
-                            <Col span={24}>
-                              <div style={{ marginBottom: 8 }}>
-                                <strong>{t("dashboard.media")}:</strong>
-                                <br />
-                                <Image
-                                  src={item.url}
-                                  alt="media"
-                                  style={{
-                                    borderRadius: 8,
-                                    width: "100%",
-                                    maxWidth: 350,
-                                    height: "auto",
-                                  }}
-                                />
-                              </div>
-
-                              <div style={{ marginBottom: 4 }}>
-                                <strong>{t("dashboard.caption")}:</strong>
-                                <div style={{ paddingLeft: 8, maxWidth: 350, wordWrap: "break-word" }}>
-                                  {item.caption?.length > 100 ? item.caption.slice(0, 100) + "..." : item.caption}
-                                </div>
-                              </div>
-
-                              <div style={{ marginTop: 8, display: "flex", justifyContent: "center", gap: 8 }}>
-                                <button className="ads-button-glow" onClick={() => handleOnClickDetailAnl(item)}>
-                                  Phân tích
-                                </button>
-                                <button className="ads-button-glow" onClick={() => handleOnClickDetail(item)}>
-                                  {t("dashboard.ads_button")}
-                                </button>
-                              </div>
-                            </Col>
-                          </Row>
-                        </Card>
-                      ))}
-                    </div>
-                  ) : (
-                    <Table
-                      columns={postColumns}
-                      dataSource={postData}
-                      pagination={{
-                        current: postsFilter.page,
-                        pageSize: postsFilter.pageSize,
-                        total: postsRes?.meta?.total ?? 0,
-                        onChange: (page, pageSize) => setPostsFilter((s) => ({ ...s, page, pageSize })),
-                      }}
-                      bordered
-                      scroll={{ x: "max-content" }}
-                      className="dark-header-table"
-                    />
-                  )}
-                </Spin>
-              </div>
-            ) : (
-              <div style={{ overflowX: "auto" }}>
-                {/* ✅ Dùng adsRows thay vì adsData.data */}
-                <Table
-                  columns={adsColumns}
-                  dataSource={adsRows}
-                  rowKey={(r) => r?.adId || r?.id}
-                  pagination={{ pageSize: 10 }}
-                  bordered
-                  scroll={{ x: "max-content" }}
-                  className="dark-header-table"
-                />
-              </div>
-            )}
           </Col>
         </Row>
 
+        {/* Drawer tạo Ads */}
         <Drawer
           open={isOpen}
           onClose={handleOnCloseDrawer}
@@ -542,6 +357,7 @@ const Dashboard = () => {
           <DetailAds id={detailId} postRecot={postRecot} pageId={pageId ?? null} />
         </Drawer>
 
+        {/* Drawer phân tích bài */}
         <Drawer
           open={isOpenAnl}
           onClose={handleOnCloseDrawerAnl}
@@ -566,32 +382,6 @@ const Dashboard = () => {
           }}
         >
           <DetailAnalysis id={detailId} postRecot={postRecot} pageId={pageId ?? null} />
-        </Drawer>
-
-        <Drawer
-          open={isOpenReport}
-          onClose={handleOnCloseDrawerReport}
-          width="98%"
-          maskClosable={false}
-          closeIcon={<CloseOutlined style={{ color: "#e2e8f0", fontSize: 18 }} />}
-          title={detailId ? t("dashboard.ads_report") : t("dashboard.ads_new")}
-          className="custom-dark-drawer"
-          styles={{
-            header: {
-              backgroundColor: "#070719",
-              color: "#f8fafc",
-              borderBottom: "1px solid #334155",
-            },
-            body: {
-              backgroundColor: "#070719",
-              color: "#e2e8f0",
-              padding: 24,
-              maxHeight: "calc(100vh - 108px)",
-              overflowY: "auto",
-            },
-          }}
-        >
-          <DetailAdsReport id={detailId} detailRecord={detailRecord} pageId={pageId ?? null} />
         </Drawer>
       </div>
     </Layout>
