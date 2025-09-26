@@ -13,7 +13,7 @@ interface FormValues {
   zalo?: string;
 }
 
-const ZALO_LINK = "https://zalo.me/g/bshljq750";
+const ZALO_LINK = "https://zalo.me/g/iscqvy982";
 const YT_URL = "https://www.youtube.com/watch?v=bb-DW0W5-6s";
 const YT_EMBED = "https://www.youtube.com/embed/GW6IVfA-nZk?start=1";
 
