@@ -212,7 +212,7 @@ const HomePage: React.FC = () => {
             <Layout className="image-layout">
                 <PlanModal visible={showPlanModal} onClose={() => setShowPlanModal(false)} />
                 <Content style={{ padding: 24 }}>
-                    <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+                    <div style={{ maxWidth: "1600px", margin: "0 auto" }}>
                         <br />
                         {/* Hero */}
                         <div className="container hero">

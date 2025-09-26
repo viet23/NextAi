@@ -66,6 +66,7 @@ export const getMenuItems = (t: TFunction): IMenuItem[] => [
     key: MEDIA_ROUTE,
     label: t("menu.media_list"),
     icon: createElement(TicketManageIcon),
+    rolenames: [GET_USER],
   },
 
   {

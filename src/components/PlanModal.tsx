@@ -171,11 +171,11 @@ const PlanModal = ({ visible, onClose }: AutoPostModalProps) => {
     <>
       <Modal
         open={visible}
-        // onCancel={onClose}
+        onCancel={onClose}
         footer={null}
         centered
         width="90%"
-        closable={false}
+        // closable={false}
         style={{
           background: "#0F172A",
           boxShadow: "none",

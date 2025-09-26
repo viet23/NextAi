@@ -29,10 +29,13 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useGetFacebookPostsGraphQuery } from "src/store/api/ticketApi";
+import AutoPostModal from "../AutoPostModal";
+import { useGetFacebookPageViewsQuery } from "src/store/api/facebookApi";
 
 const Dashboard: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useSelector((state: IRootState) => state.auth);
+  const [showModal, setShowModal] = useState(false);
 
   // Account detail (để lấy idPage)
   const { data: accountDetailData } = useGetAccountQuery(user?.id || "0", {
@@ -84,6 +87,33 @@ const Dashboard: React.FC = () => {
     setPostData(formatted);
     setBarData(postsRes.meta?.monthlyCount || []);
   }, [postsRes]);
+
+
+  const days = 14;
+  const {
+    data: pageViewsResp,
+    isFetching: isViewsLoading,
+    error: viewsError,
+  } = useGetFacebookPageViewsQuery(
+    accountDetailData?.idPage ? { days, pageId: accountDetailData.idPage } : { days },
+    { skip: !accountDetailData?.idPage }
+  );
+
+  useEffect(() => {
+    if (isViewsLoading) return;
+
+    if (viewsError) {
+      console.error("❌ Lỗi khi lấy dữ liệu lượt xem page:", viewsError);
+      setShowModal(true);
+      return;
+    }
+
+    const items =
+      pageViewsResp?.ok && Array.isArray(pageViewsResp.data) ? pageViewsResp.data : [];
+
+    setShowModal(items.length === 0);
+  }, [pageViewsResp, viewsError, isViewsLoading]);
+
 
   // ====== Drawers / Details
   const [isOpen, setIsOpen] = useState(false);
@@ -215,6 +245,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <Layout className="image-layout">
+      <AutoPostModal visible={showModal} onClose={() => setShowModal(false)} />
       <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
         <h3 style={{ textAlign: "center", color: "#fff", marginBottom: 12 }}>
           {t("dashboard.title")}
