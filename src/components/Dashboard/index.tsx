@@ -88,7 +88,6 @@ const Dashboard: React.FC = () => {
     setBarData(postsRes.meta?.monthlyCount || []);
   }, [postsRes]);
 
-
   const days = 14;
   const {
     data: pageViewsResp,
@@ -169,7 +168,7 @@ const Dashboard: React.FC = () => {
         key: "caption",
         width: typeof window !== "undefined" && window.innerWidth < 768 ? 180 : 250,
         render: (text: string) => {
-          const shortText = text?.length > 100 ? text.slice(0, 100) + "..." : text;
+          const shortText = text?.length > 40 ? text.slice(0, 40) + "..." : text;
           return <span title={text}>{shortText}</span>;
         },
       },
