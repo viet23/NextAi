@@ -31,6 +31,7 @@ export interface IAccountFilter {
   where: {
     keyword: string;
     status?: boolean;
+    plan?: string;
   };
   page: number;
   pageSize: number;

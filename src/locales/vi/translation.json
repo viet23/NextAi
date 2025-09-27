@@ -291,6 +291,7 @@
     "search_label": "Tên Đăng nhập",
     "search_placeholder": "Tìm kiếm",
     "status_placeholder": "Trạng thái tài khoản",
+     "type_placeholder": "Loại tài khoản",
     "add_button": "Thêm mới",
     "edit": "Chỉnh sửa",
     "no_data": "Không có dữ liệu",

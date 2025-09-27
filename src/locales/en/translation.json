@@ -230,6 +230,7 @@
     "user_list": "List of user accounts",
     "search_placeholder": "Search",
     "status_placeholder": "Account status",
+    "type_placeholder": "Account type",
     "user_list_type": "User account",
     "search_label": "Login name",
     "add_button": "Add new",

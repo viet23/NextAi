@@ -1,7 +1,6 @@
-import { EditOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
 import "./Accounts.scss";
 import {
-  Button,
   Card,
   Col,
   Drawer,
@@ -26,9 +25,9 @@ import { Link, useSearchParams } from "react-router-dom";
 import {
   ACCOUNT_STATUS,
   ACCOUNT_STATUS_ACTIVE,
-  ACCOUNT_STATUS_ACTIVE_LABEL,
-  ACCOUNT_STATUS_INACTIVE_LABEL,
+  PLANS,
 } from "src/constants/accounts.constants";
+
 import dayjs from "dayjs";
 import { PageTitleHOC } from "src/components/PageTitleHOC";
 import CreateUser from "src/components/DetailUser";
@@ -38,6 +37,7 @@ import { Content } from "antd/es/layout/layout";
 interface IForm {
   search: string;
   status?: string;
+  plan?: string; // 👈 thêm plan
 }
 
 const AccountsPage = () => {
@@ -46,11 +46,19 @@ const AccountsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [form] = useForm<IForm>();
   const [isOpen, setIsOpen] = useState(false);
-  const searchWatch = useWatch("search", form) ?? (searchParams.get("search") || "");
-  const statusWatch = useWatch("status", form) ?? (searchParams.get("status") || undefined);
+
+  // Watch form values; fallback từ URL query
+  const searchWatch =
+    useWatch("search", form) ?? (searchParams.get("search") || "");
+  const statusWatch =
+    useWatch("status", form) ?? (searchParams.get("status") || undefined);
+  const planWatch =
+    useWatch("plan", form) ?? (searchParams.get("plan") || undefined);
 
   const [pagination, setPagination] = useState({
-    page: searchParams.get("page") ? Math.max(Number(searchParams.get("page")), 1) : 1,
+    page: searchParams.get("page")
+      ? Math.max(Number(searchParams.get("page")), 1)
+      : 1,
     pageSize: searchParams.get("pageSize")
       ? Math.max(Number(searchParams.get("pageSize")), 1)
       : DEFAULT_PAGE_SIZE,
@@ -69,19 +77,26 @@ const AccountsPage = () => {
     delay: 700,
   });
 
+  // Gọi API: status -> boolean theo ACCOUNT_STATUS_ACTIVE; plan -> chuỗi free|starter|pro|enterprise
   const { data } = useGetAccountsQuery({
     page: pagination.page,
     pageSize: pagination.pageSize,
     where: {
-      status: statusWatch !== undefined ? statusWatch === ACCOUNT_STATUS_ACTIVE : undefined,
+      status:
+        statusWatch !== undefined
+          ? statusWatch === ACCOUNT_STATUS_ACTIVE
+          : undefined,
       keyword: searchDebounce,
+      plan: planWatch || undefined, // 👈 filter theo gói
     },
   });
 
+  // Init form từ URL
   const initFormValues = useMemo<IForm>(
     () => ({
       search: searchParams.get("search") || "",
       status: searchParams.get("status") || undefined,
+      plan: searchParams.get("plan") || undefined, // 👈 thêm
     }),
     [searchParams]
   );
@@ -105,6 +120,11 @@ const AccountsPage = () => {
         dataIndex: "fullName",
       },
       {
+        title: "email",
+        key: "email",
+        dataIndex: "email",
+      },
+      {
         title: t("accounts.columns.phone"),
         key: "phone",
         dataIndex: "phone",
@@ -112,9 +132,18 @@ const AccountsPage = () => {
       {
         title: "Loại tài khoản",
         key: "currentPlan",
-        render: value => value.currentPlan?.name,
+        render: (row) => {
+          // Tuỳ payload BE, lấy code/name
+          const code =
+            row?.currentPlan?.code ??
+            (row?.currentPlan?.name
+              ? String(row.currentPlan.name).toLowerCase()
+              : undefined);
+          const found = PLANS.find((p) => p.value === code);
+          // Fallback hiển thị name từ BE nếu không map được
+          return found?.label ?? row?.currentPlan?.name ?? "-";
+        },
       },
-     
       {
         title: t("accounts.columns.status"),
         key: "status",
@@ -146,7 +175,6 @@ const AccountsPage = () => {
         key: "credits",
         dataIndex: "credits",
       },
-    
       {
         title: t("accounts.columns.actions"),
         key: "actions",
@@ -166,13 +194,12 @@ const AccountsPage = () => {
           </Link>
         ),
       },
-         {
+      {
         title: t("accounts.columns.created"),
         key: "createdAt",
         dataIndex: "createdAt",
-        render: value => dayjs(value).format("DD/MM/YYYY HH:mm"),
-      }
-      
+        render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
+      },
     ],
     [t]
   );
@@ -180,12 +207,10 @@ const AccountsPage = () => {
   const dataSource = useMemo(() => data?.data || [], [data]);
 
   const getCurrentSearchParams = () => {
-    const params = [];
-
+    const params: [string, string][] = [];
     for (let entry of searchParams.entries()) {
-      params.push(entry);
+      params.push(entry as [string, string]);
     }
-
     return Object.fromEntries(params);
   };
 
@@ -201,7 +226,8 @@ const AccountsPage = () => {
     if (newPage > 1) currentSearchParams.page = newPage.toString();
     else delete currentSearchParams.page;
 
-    if (newPageSize !== DEFAULT_PAGE_SIZE) currentSearchParams.pageSize = newPageSize.toString();
+    if (newPageSize !== DEFAULT_PAGE_SIZE)
+      currentSearchParams.pageSize = newPageSize.toString();
     else delete currentSearchParams.pageSize;
 
     setSearchParams(currentSearchParams, {
@@ -212,17 +238,21 @@ const AccountsPage = () => {
   const handleChange = (_v: unknown, values: IForm) => {
     const currentSearchParams = getCurrentSearchParams();
 
-    if (values.search?.trim()) currentSearchParams.search = values.search?.trim();
+    if (values.search?.trim())
+      currentSearchParams.search = values.search?.trim();
     else delete currentSearchParams.search;
 
     if (values.status) currentSearchParams.status = values.status;
     else delete currentSearchParams.status;
 
+    if (values.plan) currentSearchParams.plan = values.plan; // 👈 đồng bộ URL
+    else delete currentSearchParams.plan;
+
     setSearchParams(currentSearchParams, { replace: true });
   };
 
   const handleFinish = () => {
-    console.log("finish");
+    // no-op
   };
 
   return (
@@ -239,8 +269,8 @@ const AccountsPage = () => {
                 textAlign: "center",
                 color: "#e2e8f0",
                 width: "100%",
-                marginTop: "4px", // 👈 Sát hơn, có thể dùng "0px" nếu muốn sát hoàn toàn
-                marginBottom: "10px" // tuỳ chỉnh nếu cần khoảng dưới
+                marginTop: "4px",
+                marginBottom: "10px",
               }}
             >
               {t("accounts.user_list")}
@@ -257,7 +287,7 @@ const AccountsPage = () => {
               style={{ marginBottom: 24 }}
             >
               <Row gutter={[16, 16]} align="bottom">
-                <Col span={5} >
+                <Col span={5}>
                   <Form.Item name="search" label={t("accounts.search_label")}>
                     <Input
                       size="large"
@@ -275,18 +305,19 @@ const AccountsPage = () => {
                 </Col>
 
                 <Col span={5}>
-                  <Form.Item name="status" label={t("accounts.status_placeholder")} >
+                  <Form.Item
+                    name="status"
+                    label={t("accounts.status_placeholder")}
+                  >
                     <Select
                       size="large"
                       placeholder={t("accounts.status_placeholder")}
-                      style={{
-                        width: 250,
-                        height: 36,
-                      }}
+                      style={{ width: 250, height: 36 }}
                       dropdownStyle={{
                         backgroundColor: "#1e293b",
                         color: "#ffffff",
                       }}
+                      allowClear
                     >
                       {ACCOUNT_STATUS.map((status) => (
                         <Select.Option
@@ -298,20 +329,38 @@ const AccountsPage = () => {
                         </Select.Option>
                       ))}
                     </Select>
-
                   </Form.Item>
                 </Col>
 
-                {/* <Col xs={24} md={24} lg={6}>
-                  <Form.Item label=" ">
-                    <Button block size="large" type="primary" onClick={handleAddNew}>
-                      {t("accounts.add_button")}
-                    </Button>
+                <Col span={5}>
+                  <Form.Item
+                    name="plan"
+                    label={t("accounts.type_placeholder")} // “Loại tài khoản”
+                  >
+                    <Select
+                      size="large"
+                      placeholder={t("accounts.type_placeholder")}
+                      style={{ width: 250, height: 36 }}
+                      dropdownStyle={{
+                        backgroundColor: "#1e293b",
+                        color: "#ffffff",
+                      }}
+                      allowClear
+                    >
+                      {PLANS.map((p) => (
+                        <Select.Option
+                          key={p.value}
+                          value={p.value}
+                          style={{ color: "#ffffff" }}
+                        >
+                          {p.label}
+                        </Select.Option>
+                      ))}
+                    </Select>
                   </Form.Item>
-                </Col> */}
+                </Col>
               </Row>
             </Form>
-
 
             <>
               <Table
@@ -329,14 +378,14 @@ const AccountsPage = () => {
               {/* 🎯 CSS ép màu header cột giống ảnh */}
               <style>
                 {`
-      .dark-header-table .ant-table-thead > tr > th {
-        background-color: #1e293b !important;
-        color: #e2e8f0 !important;
-        font-weight: 500;
-        text-transform: uppercase;
-        font-size: 13px;
-      }
-    `}
+                  .dark-header-table .ant-table-thead > tr > th {
+                    background-color: #1e293b !important;
+                    color: #e2e8f0 !important;
+                    font-weight: 500;
+                    text-transform: uppercase;
+                    font-size: 13px;
+                  }
+                `}
               </style>
             </>
 
@@ -351,13 +400,18 @@ const AccountsPage = () => {
               </Flex>
             )}
           </Card>
-          <Drawer open={isOpen} onClose={handleOnCloseDrawer} width={"30%"} maskClosable={false}>
-            <CreateUser onRefetch={() => { }} />
+
+          <Drawer
+            open={isOpen}
+            onClose={handleOnCloseDrawer}
+            width={"30%"}
+            maskClosable={false}
+          >
+            <CreateUser onRefetch={() => {}} />
           </Drawer>
         </Content>
       </Layout>
-
-    </PageTitleHOC >
+    </PageTitleHOC>
   );
 };
 
