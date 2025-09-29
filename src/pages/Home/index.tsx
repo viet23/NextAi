@@ -149,18 +149,25 @@ const LandingPage: React.FC = () => {
 
   const handleChange =
     (key: "fullName" | "email" | "phone") =>
-    (e: React.ChangeEvent<HTMLInputElement>) =>
-      setForm((s) => ({ ...s, [key]: e.target.value }));
+      (e: React.ChangeEvent<HTMLInputElement>) =>
+        setForm((s) => ({ ...s, [key]: e.target.value }));
 
   // Submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (submitting) return; // chống double click
 
-    if (!form.fullName || !form.email) {
-      alert("Vui lòng nhập Họ tên và Email");
+    if (!form.fullName || !form.email || !form.phone) {
+      if (!form.fullName) {
+        alert("Vui lòng nhập Họ tên");
+      } else if (!form.email) {
+        alert("Vui lòng nhập Email");
+      } else if (!form.phone) {
+        alert("Vui lòng nhập Số điện thoại");
+      }
       return;
     }
+
 
     try {
       setSubmitting(true);
@@ -650,7 +657,7 @@ const LandingPage: React.FC = () => {
                 />
 
                 <input
-                  type="text"
+                  type="phone"
                   placeholder="Số điện thoại"
                   value={form.phone}
                   onChange={handleChange("phone")}

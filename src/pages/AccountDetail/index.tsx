@@ -304,8 +304,8 @@ const AccountDetailPage = () => {
                           <Select.Option value={true} label="Đang hoạt động">
                             <span style={{ color: "#ffffff" }}>Đang hoạt động</span>
                           </Select.Option>
-                          <Select.Option value={false} label="Ngừng hoạt động">
-                            <span style={{ color: "#ffffff" }}>Ngừng hoạt động</span>
+                          <Select.Option value={false} label="Chưa hoạt động">
+                            <span style={{ color: "#ffffff" }}>Chưa hoạt động</span>
                           </Select.Option>
                         </Select>
                       </Form.Item>

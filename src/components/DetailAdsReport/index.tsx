@@ -327,7 +327,7 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
   footer={
     <div style={{ display: "flex", justifyContent: "space-between", padding: "0 16px" }}>
       {/* Nút Tạm dừng/Bật lại chiến dịch: giữ nguyên logic cũ */}
-      <button
+      {/* <button
         style={{
           backgroundColor: detailRecord?.status === "ACTIVE" ? "#f5222d" : "#52c41a",
           border: "none",
@@ -358,10 +358,10 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
         }}
       >
         {detailRecord?.status === "ACTIVE" ? "⏸ Tạm dừng" : "▶ Bật lại"} chiến dịch
-      </button>
+      </button> */}
 
       {/* Nút Áp dụng khuyến nghị: giữ nguyên logic cũ */}
-      <button
+      {/* <button
         disabled={current?.isActive}
         style={{
           backgroundColor: current?.isActive ? "#d9d9d9" : "#52c41a",
@@ -375,7 +375,7 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
         onClick={!current?.isActive ? () => handleApply(current?.id) : undefined}
       >
         {current?.isActive ? "✔ Đã áp dụng" : "✔ Áp dụng khuyến nghị"}
-      </button>
+      </button> */}
     </div>
   }
 >
