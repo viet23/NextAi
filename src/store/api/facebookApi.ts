@@ -1,6 +1,7 @@
-// src/store/api/facebookApi.ts
 import { buildQueryString } from "src/utils/common-utils";
 import { api } from "./base";
+// (nếu cần) import type cho kết quả search
+// import type { GeoSearchItem } from "src/components/ads/types";
 
 const facebookApi = api.injectEndpoints({
   endpoints: build => ({
@@ -33,7 +34,7 @@ const facebookApi = api.injectEndpoints({
         method: "PUT",
         body: { isActive },
       }),
-      transformResponse: (res: any) => res, // BE trả { success, adId, status, message }
+      transformResponse: (res: any) => res,
     }),
 
     // ====== Facebook Post CRUD (mới thêm) ======
@@ -97,6 +98,27 @@ const facebookApi = api.injectEndpoints({
       },
       transformResponse: (res: any) => res,
     }),
+
+    // ================= NEW: Targeting Search =================
+    targetingSearch: build.query<
+      any[], // hoặc GeoSearchItem[]
+      { q: string; country_code?: string; location_types?: string; limit?: number; version?: string; normalize?: 0 | 1 }
+    >({
+      query: (params) => {
+        // BE controller: GET /api/v1/facebook-ads/targeting-search
+        const query = buildQueryString({
+          normalize: 1,
+          location_types: '["city","region","country","subcity"]',
+          ...params,
+        });
+        return {
+          url: `/api/v1/facebook-ads/targeting-search?${query}`,
+          method: "GET",
+        };
+      },
+      transformResponse: (res: any) => res, // BE đã normalize
+      // keepUnusedDataFor: 60, // (tuỳ chọn)
+    }),
   }),
 });
 
@@ -104,7 +126,7 @@ export const {
   // Ads
   useCreateAdsMutation,
   useUpdateAdInsightMutation,
-  useSetAdStatusMutation,           // 👈 NEW
+  useSetAdStatusMutation,
 
   // Facebook Post
   useGetFacebookPostsQuery,
@@ -116,6 +138,10 @@ export const {
   useDeleteFacebookPostMutation,
   useRestoreFacebookPostMutation,
   useGetFacebookPageViewsQuery,
+
+  // NEW: Targeting Search
+  useTargetingSearchQuery,
+  useLazyTargetingSearchQuery,
 } = facebookApi;
 
 export default facebookApi;
