@@ -57,7 +57,10 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, postRecot, pageId }) => {
   const [budgetVnd, setBudgetVnd] = useState<number>(100000); // ✅ ngân sách VNĐ
   const [locationMode, setLocationMode] = useState<"nationwide" | "custom">("nationwide");
 
-  // Theo dõi người dùng có sửa tên campaign thủ công không (để tránh bị ghi đè khi postRecot đổi)
+  // NEW: số lượng quảng cáo cần tạo
+  const [numAds, setNumAds] = useState<number>(1);
+
+  // Theo dõi người dùng có sửa tên campaign thủ công không
   const [isCampaignEdited, setIsCampaignEdited] = useState(false);
 
   // 👉 NEW: nhiều vị trí
@@ -86,16 +89,15 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, postRecot, pageId }) => {
 
   // ---- Campaign name: auto kèm 100 ký tự đầu của caption ----
   const initialCampaignName = useMemo(() => {
-    const base = "Generated Campaign";
+    const base = "Campaign";
     const raw = (postRecot?.caption || "").toString().trim();
     if (!raw) return base;
-    const snippet = raw.slice(0, 100);
+    const snippet = raw.slice(0, 30);
     return `${base} - ${snippet}`;
   }, [postRecot?.caption]);
 
   const [campaignName, setCampaignName] = useState<string>(initialCampaignName);
 
-  // Nếu postRecot thay đổi và người dùng CHƯA sửa tên, cập nhật campaignName theo caption mới
   useEffect(() => {
     if (!isCampaignEdited) {
       setCampaignName(initialCampaignName);
@@ -234,6 +236,12 @@ Image URL: ${imageUrl || "Không có"}
       }
       if (goal === "leads") setGoal("engagement");
 
+      // validate numAds
+      const sanitizedNumAds = Math.max(1, Math.min(Number(numAds || 1), 10));
+      if (sanitizedNumAds !== numAds) {
+        setNumAds(sanitizedNumAds);
+      }
+
       const body: any = {
         goal,
         campaignName,
@@ -245,6 +253,7 @@ Image URL: ${imageUrl || "Không có"}
         endTime: range[1].toISOString(),
         dailyBudget: Math.round(Number(budgetVnd)), // ✅ gửi VND trực tiếp
         targetingAI,
+        numAds: sanitizedNumAds, // ✅ GỬI LÊN BACKEND
         ...(isMessage && {
           imageUrl: postRecot?.url || previewImg,
           messageDestination: "MESSENGER",
@@ -263,7 +272,10 @@ Image URL: ${imageUrl || "Không có"}
       }
 
       const res = await createAds(body).unwrap();
-      message.success(t("ads.success"));
+
+      // xử lý thông báo theo số lượng ads trả về
+      const created = Array.isArray(res?.data) ? res.data.length : 1;
+      message.success(`${t("ads.success")} (${created} ad${created > 1 ? "s" : ""})`);
       console.log("Ad Created:", res.data);
       window.location.reload();
     } catch (err: any) {
@@ -486,6 +498,48 @@ Image URL: ${imageUrl || "Không có"}
                       {age[0]} – {age[1]}
                     </div>
                   </div>
+                  <br />
+
+                  {/* 🆕 SỐ LƯỢNG QUẢNG CÁO */}
+                  <div
+                    style={{
+                      marginBottom: 16,
+                      padding: 12,
+                      background: "#0b1020",
+                      border: "1px solid #1e293b",
+                      borderRadius: 12,
+                    }}
+                  >
+                    <label style={{ color: "#f8fafc", fontWeight: 600, marginBottom: 8, display: "block" }}>
+                      🆕 Số lượng quảng cáo (1–10)
+                    </label>
+                    <div style={{ fontSize: 12, color: "#94a3b8", marginBottom: 12 }}>
+                      Chọn số lượng quảng cáo để A/B test
+                    </div>
+
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                      {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                        <Button
+                          key={n}
+                          size="middle"
+                          onClick={() => setNumAds(n)}
+                          style={{
+                            width: 40,
+                            height: 40,
+                            background: numAds === n ? "#16a34a" : "#0f172a",
+                            color: numAds === n ? "#fff" : "#e2e8f0",
+                            border: numAds === n ? "1px solid #16a34a" : "1px solid #2a3446",
+                            borderRadius: 8,
+                            fontWeight: 600,
+                            transition: "all 0.2s ease",
+                          }}
+                        >
+                          {n}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+
                 </div>
               </>
             )}
