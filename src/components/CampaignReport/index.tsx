@@ -8,6 +8,7 @@ import {
   Card,
   Switch,
   Popconfirm,
+  Tag,
   message,
 } from "antd";
 import { useSelector } from "react-redux";
@@ -22,30 +23,79 @@ import { useGetFacebookadsQuery } from "src/store/api/ticketApi";
 import { useSetAdStatusMutation } from "src/store/api/facebookApi";
 import DetailAdsReport from "../DetailAdsReport";
 
+/** ===== Types khớp với dữ liệu BE mới ===== */
+type AdRow = {
+  adId: string;
+  name?: string;
+  caption?: string;
+  urlPost?: string;
+  status?: string;
+  data?: {
+    impressions?: number;
+    clicks?: number;
+    spend?: string | number;
+    ctr?: string | number;
+    cpm?: string | number;
+  };
+  createdAt?: string;
+};
+
+type CampaignRow = {
+  campaignRefId?: number;
+  campaignId: string;
+  name: string;
+  objective?: string;
+  startTime?: string;
+  endTime?: string;
+  dailyBudget?: number;
+  status?: string;
+  createdAt?: string;
+  totals?: {
+    impressions?: number;
+    clicks?: number;
+    spend?: string | number;
+  };
+  ads: AdRow[];
+};
+
 const { Panel } = Collapse;
 const { Title } = Typography;
+
+/** utils nhỏ để format số */
+const num = (v: any) => {
+  const n = Number(String(v ?? 0).replace(/[^\d.-]/g, ""));
+  return Number.isFinite(n) ? n : 0;
+};
+const fmtInt = (v: any) => num(v).toLocaleString("vi-VN");
+const fmtCurrency = (v: any) => num(v).toLocaleString("vi-VN");
+const fmtPercent = (v: any, digits = 2) => `${num(v).toFixed(digits)}%`;
 
 const CampaignReport: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useSelector((state: IRootState) => state.auth);
   useGetAccountQuery(user?.id || "0", { skip: !user?.id }); // giữ để đồng bộ session nếu cần
 
-  // ====== Lấy danh sách ads
+  // ====== Lấy danh sách campaigns (BE trả mảng campaign)
   const [filter] = useState<any>({ page: 1, pageSize: 100 });
-  const { data: adsData, isFetching } = useGetFacebookadsQuery({ filter });
+  const { data: campaignsRes, isFetching } = useGetFacebookadsQuery({ filter });
 
-  // ✅ Local state để không mutate RTK object
-  const [adsRows, setAdsRows] = useState<any[]>([]);
+  // Local state để không mutate RTK object
+  const [campaignRows, setCampaignRows] = useState<CampaignRow[]>([]);
   useEffect(() => {
-    setAdsRows(adsData?.data ?? []);
-  }, [adsData?.data]);
+    const items: CampaignRow[] = Array.isArray(campaignsRes?.data)
+      ? campaignsRes.data
+      : Array.isArray(campaignsRes)
+      ? campaignsRes
+      : [];
+    setCampaignRows(items);
+  }, [campaignsRes?.data]);
 
-  // ====== Drawer chi tiết báo cáo
+  // ====== Drawer chi tiết báo cáo (ở cấp ad)
   const [isOpenReport, setIsOpenReport] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
   const [detailRecord, setDetailRecord] = useState<any | null>(null);
 
-  const openReport = (record: any) => {
+  const openReport = (record: AdRow) => {
     setDetailRecord(record);
     setDetailId(record?.adId ?? null);
     setIsOpenReport(true);
@@ -56,7 +106,7 @@ const CampaignReport: React.FC = () => {
     setIsOpenReport(false);
   };
 
-  // ====== Đổi trạng thái ad qua BE
+  // ====== Bật/tắt ad (gọi qua BE)
   const [setAdStatusMutation] = useSetAdStatusMutation();
   const [toggleBusy, setToggleBusy] = useState<Record<string, boolean>>({});
 
@@ -81,8 +131,8 @@ const CampaignReport: React.FC = () => {
     }
   };
 
-  // ====== Columns
-  const adsColumns: ColumnsType<any> = useMemo(
+  /** ============== Cột bảng con (Ads trong Campaign) ============== */
+  const adColumns: ColumnsType<AdRow> = useMemo(
     () => [
       {
         title: "Trạng thái",
@@ -90,11 +140,10 @@ const CampaignReport: React.FC = () => {
         key: "status",
         align: "center",
         width: 120,
-        render: (_: any, record: any) => {
+        render: (_: any, record: AdRow) => {
           const checked = record?.status?.toUpperCase?.() === "ACTIVE";
           const loading = !!toggleBusy[record.adId];
           const next = !checked;
-
           return (
             <Popconfirm
               title={checked ? "Tạm dừng quảng cáo?" : "Bật quảng cáo?"}
@@ -105,12 +154,14 @@ const CampaignReport: React.FC = () => {
               onConfirm={async () => {
                 const ok = await setAdStatusUI(record.adId, next);
                 if (ok) {
-                  setAdsRows((prev) =>
-                    prev.map((r) =>
-                      (r?.adId || r?.id) === (record?.adId || record?.id)
-                        ? { ...r, status: next ? "ACTIVE" : "PAUSED" }
-                        : r
-                    )
+                  // cập nhật trạng thái trong state lồng (campaignRows -> ads)
+                  setCampaignRows((prev) =>
+                    prev.map((camp) => ({
+                      ...camp,
+                      ads: (camp.ads || []).map((ad) =>
+                        ad.adId === record.adId ? { ...ad, status: next ? "ACTIVE" : "PAUSED" } : ad
+                      ),
+                    }))
                   );
                 }
               }}
@@ -126,15 +177,45 @@ const CampaignReport: React.FC = () => {
           );
         },
       },
-      { title: "Ad ID", dataIndex: "adId", key: "adId", width: 160 },
-      { title: "Chiến dịch", dataIndex: "campaignName", key: "campaignName", width: 240, ellipsis: true },
-      { title: "Hiển thị", dataIndex: ["data", "impressions"], key: "impressions", align: "right", width: 100 },
-      { title: "Clicks", dataIndex: ["data", "clicks"], key: "clicks", align: "right", width: 90 },
-      { title: "Chi phí (VNĐ)", dataIndex: ["data", "spend"], key: "spend", align: "right", width: 120 },
-      { title: "CTR (%)", dataIndex: ["data", "ctr"], key: "ctr", align: "right", width: 90 },
-      { title: "CPM (VNĐ)", dataIndex: ["data", "cpm"], key: "cpm", align: "right", width: 100 },
+      { title: "Ad ID", dataIndex: "adId", key: "adId", width: 200 },
+      { title: "Tên quảng cáo", dataIndex: "name", key: "name", ellipsis: true },
       {
-        title: t("dashboard.action"),
+        title: "Hiển thị",
+        key: "impressions",
+        align: "right",
+        width: 110,
+        render: (_: any, r) => fmtInt(r?.data?.impressions),
+      },
+      {
+        title: "Clicks",
+        key: "clicks",
+        align: "right",
+        width: 100,
+        render: (_: any, r) => fmtInt(r?.data?.clicks),
+      },
+      {
+        title: "Chi phí (VNĐ)",
+        key: "spend",
+        align: "right",
+        width: 130,
+        render: (_: any, r) => fmtCurrency(r?.data?.spend),
+      },
+      {
+        title: "CTR (%)",
+        key: "ctr",
+        align: "right",
+        width: 100,
+        render: (_: any, r) => fmtPercent(r?.data?.ctr, 2),
+      },
+      {
+        title: "CPM (VNĐ)",
+        key: "cpm",
+        align: "right",
+        width: 120,
+        render: (_: any, r) => fmtCurrency(r?.data?.cpm),
+      },
+      {
+        title: "Hành động",
         key: "action",
         width: 110,
         align: "center",
@@ -145,12 +226,84 @@ const CampaignReport: React.FC = () => {
         ),
       },
     ],
-    [t, toggleBusy]
+    [toggleBusy]
   );
+
+  /** ============== Cột bảng cha (Campaigns) ============== */
+  const campaignColumns: ColumnsType<CampaignRow> = useMemo(
+    () => [
+      {
+        title: "Chiến dịch",
+        dataIndex: "name",
+        key: "name",
+        ellipsis: true,
+      },
+      {
+        title: "Campaign ID",
+        dataIndex: "campaignId",
+        key: "campaignId",
+        width: 200,
+      },
+      {
+        title: "Objective",
+        dataIndex: "objective",
+        key: "objective",
+        width: 160,
+      },
+      {
+        title: "Trạng thái",
+        dataIndex: "status",
+        key: "status",
+        width: 110,
+        render: (v: string) => (
+          <Tag color={v === "ACTIVE" ? "green" : v === "PAUSED" ? "orange" : "default"}>{v || "-"}</Tag>
+        ),
+      },
+      {
+        title: "Ngân sách/ngày (VNĐ)",
+        dataIndex: "dailyBudget",
+        key: "dailyBudget",
+        align: "right",
+        width: 170,
+        render: (v) => fmtCurrency(v),
+      },
+      {
+        title: "Hiển thị (Tổng)",
+        key: "total_impressions",
+        align: "right",
+        width: 150,
+        render: (_: any, r) => fmtInt(r?.totals?.impressions),
+      },
+      {
+        title: "Clicks (Tổng)",
+        key: "total_clicks",
+        align: "right",
+        width: 130,
+        render: (_: any, r) => fmtInt(r?.totals?.clicks),
+      },
+      {
+        title: "Chi phí (Tổng VNĐ)",
+        key: "total_spend",
+        align: "right",
+        width: 170,
+        render: (_: any, r) => fmtCurrency(r?.totals?.spend),
+      },
+    ],
+    []
+  );
+
+  /** ====== Mặc định expand tất cả chiến dịch có ads ====== */
+  const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
+  useEffect(() => {
+    const keys = (campaignRows || [])
+      .filter((c) => (c.ads || []).length > 0)
+      .map((c) => c.campaignRefId ?? c.campaignId);
+    setExpandedRowKeys(keys);
+  }, [campaignRows]);
 
   return (
     <Layout className="image-layout">
-      <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "1600px", margin: "0 auto" }}>
         <h3 style={{ textAlign: "center", color: "#fff", marginBottom: 12 }}>
           {t("menu.ads_report") || "Báo cáo quảng cáo"}
         </h3>
@@ -173,16 +326,33 @@ const CampaignReport: React.FC = () => {
               bodyStyle={{ padding: 12 }}
             >
               <div style={{ overflowX: "auto" }}>
-                <Table
+                <Table<CampaignRow>
                   className="table-scroll dark-header-table"
-                  rowKey={(r) => r?.adId || r?.id}
-                  columns={adsColumns}
-                  dataSource={adsRows}
+                  rowKey={(r) => r.campaignRefId ?? r.campaignId}
+                  columns={campaignColumns}
+                  dataSource={campaignRows}
                   loading={isFetching}
-                  pagination={{ pageSize: 10 }}
+                  pagination={{ pageSize: 8 }}
                   bordered
-                  // Tăng chiều cao vùng cuộn: 1000px
-                  scroll={{ x: 800, y: 1000 }}
+                  scroll={{ x: 1100, y: 700 }}
+                  expandable={{
+                    expandRowByClick: true,
+                    columnWidth: 48,
+                    rowExpandable: (record) => (record?.ads || []).length > 0,
+                    expandedRowRender: (record) => (
+                      <Table<AdRow>
+                        rowKey={(r) => r.adId}
+                        columns={adColumns}
+                        dataSource={record.ads || []}
+                        pagination={false}
+                        size="small"
+                        style={{ margin: 0, background: "#0b0b22" }}
+                        scroll={{ x: 900 }}
+                      />
+                    ),
+                    expandedRowKeys,
+                    onExpandedRowsChange: (expandedKeys) => setExpandedRowKeys([...expandedKeys]),
+                  }}
                 />
               </div>
             </Card>
@@ -208,6 +378,7 @@ const CampaignReport: React.FC = () => {
             },
           }}
         >
+          {/* truyền adId vào DetailAdsReport như trước */}
           <DetailAdsReport id={detailId} detailRecord={detailRecord} pageId={null} />
         </Drawer>
       </div>

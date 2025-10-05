@@ -312,7 +312,7 @@ const AccountDetailPage = () => {
                     </Col>
                     <Col xl={8}>
                       <Form.Item
-                        label="Phone"
+                        label={t("register.phone")}
                         name="phone"
                         labelCol={{ span: 24 }}
                         wrapperCol={{ span: 24 }}

@@ -210,7 +210,7 @@ const AccountDetailUserPage = () => {
                     </Col>
 
                     <Col xl={8}>
-                      <Form.Item label="Phone" name="phone" labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
+                      <Form.Item label={t("register.phone")} name="phone" labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
                         <Input size="middle" placeholder="phone" />
                       </Form.Item>
                     </Col>

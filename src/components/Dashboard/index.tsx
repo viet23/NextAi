@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import {
   Layout,
   Card,
@@ -9,17 +9,20 @@ import {
   Spin,
   Drawer,
   message,
+  Button,
+  Checkbox,
 } from "antd";
 import { useSelector } from "react-redux";
 import { IRootState } from "src/interfaces/app.interface";
 import { useGetAccountQuery } from "src/store/api/accountApi";
 import type { ColumnsType } from "antd/es/table";
+import type { TableRowSelection } from "antd/es/table/interface";
 import dayjs from "dayjs";
 import DetailAds from "../DetailAds";
 import DetailAnalysis from "../DetailAnalysis";
 import { useTranslation } from "react-i18next";
 import "./styles.scss";
-import { CloseOutlined } from "@ant-design/icons";
+import { CloseOutlined, ThunderboltOutlined } from "@ant-design/icons";
 import {
   LineChart,
   Line,
@@ -31,6 +34,22 @@ import {
 import { useGetFacebookPostsGraphQuery } from "src/store/api/ticketApi";
 import AutoPostModal from "../AutoPostModal";
 import { useGetFacebookPageViewsQuery } from "src/store/api/facebookApi";
+
+type PostRow = {
+  key: string;
+  id: string;
+  media: React.ReactNode;
+  caption: string;
+  react: number;
+  comment: number;
+  share: number;
+  createdTime: string;
+  reach: number;
+  url?: string | null;
+  permalink_url?: string | null;
+  // dữ liệu gốc để truyền về DetailAds khi cần
+  __raw?: any;
+};
 
 const Dashboard: React.FC = () => {
   const { t } = useTranslation();
@@ -60,13 +79,13 @@ const Dashboard: React.FC = () => {
     isFetching: isFetchingPosts,
   } = useGetFacebookPostsGraphQuery({});
 
-  const [postData, setPostData] = useState<any[]>([]);
+  const [postData, setPostData] = useState<PostRow[]>([]);
   const [barData, setBarData] = useState<{ date: string; quantity: number }[]>([]);
 
   useEffect(() => {
     if (!postsRes?.data) return;
 
-    const formatted = postsRes.data.map((post: any, index: number) => ({
+    const formatted: PostRow[] = postsRes.data.map((post: any, index: number) => ({
       key: post.key ?? String(index + 1),
       id: post.id,
       media: post.media ? (
@@ -82,6 +101,7 @@ const Dashboard: React.FC = () => {
       reach: post.reach ?? 0,
       url: post.url || post.media || null,
       permalink_url: post.permalink_url || null,
+      __raw: post,
     }));
 
     setPostData(formatted);
@@ -113,31 +133,51 @@ const Dashboard: React.FC = () => {
     setShowModal(items.length === 0);
   }, [pageViewsResp, viewsError, isViewsLoading]);
 
-
   // ====== Drawers / Details
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenCreateAds, setIsOpenCreateAds] = useState(false);
   const [isOpenAnl, setIsOpenAnl] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
   const [pageId, setPageId] = useState<string | undefined>(undefined);
-  const [postRecot, setPostRecot] = useState<any | null>(null);
 
-  const handleOnClickDetail = (record: any) => {
-    setPostRecot(record);
-    setDetailId(record?.id ?? null);
+  // ====== MULTI-SELECT state
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [selectedPosts, setSelectedPosts] = useState<any[]>([]);
+
+  const onSelectionChange = useCallback(
+    (keys: React.Key[], rows: PostRow[]) => {
+      setSelectedRowKeys(keys);
+      // Lưu dữ liệu gốc (__raw) để truyền sang DetailAds
+      const raws = rows.map((r) => r.__raw ?? r);
+      setSelectedPosts(raws);
+    },
+    []
+  );
+
+  const rowSelection: TableRowSelection<PostRow> = {
+    selectedRowKeys,
+    onChange: onSelectionChange,
+    preserveSelectedRowKeys: true,
+  };
+
+  // Mở drawer tạo quảng cáo từ các post đã chọn
+  const openCreateAdsDrawer = () => {
+    if (selectedPosts.length === 0) {
+      message.warning("Hãy chọn ít nhất 1 bài viết để tạo quảng cáo.");
+      return;
+    }
     setPageId(accountDetailData?.idPage);
-    setIsOpen(true);
+    setIsOpenCreateAds(true);
   };
 
-  const handleOnCloseDrawer = () => {
-    setDetailId(null);
-    setIsOpen(false);
-  };
-
-  const handleOnClickDetailAnl = (record: any) => {
-    setPostRecot(record);
+  // Phân tích bài viết (giữ như cũ – theo từng bài)
+  const handleOnClickDetailAnl = (record: PostRow) => {
     setDetailId(record?.id ?? null);
     setPageId(accountDetailData?.idPage);
     setIsOpenAnl(true);
+  };
+
+  const handleOnCloseDrawerCreateAds = () => {
+    setIsOpenCreateAds(false);
   };
 
   const handleOnCloseDrawerAnl = () => {
@@ -146,29 +186,29 @@ const Dashboard: React.FC = () => {
   };
 
   // ====== Columns (Posts)
-  const postColumns: ColumnsType<any> = useMemo(
+  const postColumns: ColumnsType<PostRow> = useMemo(
     () => [
       {
         title: t("dashboard.no"),
         dataIndex: "key",
         key: "key",
-        width: 30,
+        width: 50,
         responsive: ["md"],
       },
       {
         title: t("dashboard.media"),
         dataIndex: "media",
         key: "media",
-        width: 70,
+        width: 90,
         align: "center",
       },
       {
         title: t("dashboard.caption"),
         dataIndex: "caption",
         key: "caption",
-        width: typeof window !== "undefined" && window.innerWidth < 768 ? 180 : 250,
+        width: typeof window !== "undefined" && window.innerWidth < 768 ? 220 : 320,
         render: (text: string) => {
-          const shortText = text?.length > 40 ? text.slice(0, 40) + "..." : text;
+          const shortText = text?.length > 60 ? text.slice(0, 60) + "..." : text;
           return <span title={text}>{shortText}</span>;
         },
       },
@@ -183,7 +223,7 @@ const Dashboard: React.FC = () => {
         title: t("dashboard.react"),
         dataIndex: "react",
         key: "react",
-        width: 80,
+        width: 90,
         align: "center",
       },
       {
@@ -197,13 +237,13 @@ const Dashboard: React.FC = () => {
         title: t("dashboard.share"),
         dataIndex: "share",
         key: "share",
-        width: 70,
+        width: 90,
         align: "center",
       },
       {
         title: "Phân tích bài viết",
         key: "action_anl",
-        width: 100,
+        width: 120,
         align: "center",
         render: (_, record) => (
           <button className="ads-button-glow" onClick={() => handleOnClickDetailAnl(record)}>
@@ -211,29 +251,19 @@ const Dashboard: React.FC = () => {
           </button>
         ),
       },
-      {
-        title: t("dashboard.action"),
-        key: "action",
-        width: 100,
-        align: "center",
-        render: (_, record) => (
-          <button className="ads-button-glow" onClick={() => handleOnClickDetail(record)}>
-            {t("dashboard.ads_button")}
-          </button>
-        ),
-      },
+      // ❌ Bỏ nút tạo quảng cáo theo từng bài – chuyển sang chọn nhiều + thanh công cụ
       {
         title: t("dashboard.created_time"),
         dataIndex: "createdTime",
         key: "createdTime",
-        width: 120,
+        width: 150,
         align: "center",
       },
     ],
     [t]
   );
 
-  // ====== Responsive (để hiển thị dạng thẻ trên mobile)
+  // ====== Responsive (hiển thị dạng thẻ trên mobile) + checkbox chọn
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -242,6 +272,21 @@ const Dashboard: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Helpers cho mobile chọn/bỏ
+  const isCheckedMobile = (id: string) => selectedRowKeys.includes(id);
+  const toggleSelectMobile = (row: PostRow) => {
+    const exists = isCheckedMobile(row.id);
+    if (exists) {
+      const newKeys = selectedRowKeys.filter((k) => k !== row.id);
+      const newPosts = selectedPosts.filter((p: any) => (p.id ?? p?.__raw?.id) !== row.id);
+      setSelectedRowKeys(newKeys);
+      setSelectedPosts(newPosts);
+    } else {
+      setSelectedRowKeys([...selectedRowKeys, row.id]);
+      setSelectedPosts([...(selectedPosts as any[]), row.__raw ?? row]);
+    }
+  };
+
   return (
     <Layout className="image-layout">
       <AutoPostModal visible={showModal} onClose={() => setShowModal(false)} />
@@ -249,6 +294,32 @@ const Dashboard: React.FC = () => {
         <h3 style={{ textAlign: "center", color: "#fff", marginBottom: 12 }}>
           {t("dashboard.title")}
         </h3>
+
+        {/* Thanh công cụ: Tạo quảng cáo từ các bài đã chọn */}
+        <Row
+          gutter={[12, 12]}
+          style={{
+            marginBottom: 12,
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Col>
+            <div style={{ color: "#cbd5e1" }}>
+              Đã chọn <b>{selectedRowKeys.length}</b> bài viết
+            </div>
+          </Col>
+          <Col>
+            <Button
+              type="primary"
+              icon={<ThunderboltOutlined />}
+              disabled={selectedRowKeys.length === 0}
+              onClick={openCreateAdsDrawer}
+            >
+              Tạo quảng cáo
+            </Button>
+          </Col>
+        </Row>
 
         <Row gutter={[16, 16]}>
           {/* Chart: Số bài theo tháng */}
@@ -299,22 +370,30 @@ const Dashboard: React.FC = () => {
                           borderRadius: 12,
                           color: "#e2e8f0",
                           fontSize: 13,
-                          maxWidth: 380,
+                          maxWidth: 420,
+                          position: "relative",
                         }}
                         bodyStyle={{ padding: 12 }}
                       >
+                        <div style={{ position: "absolute", top: 10, right: 10 }}>
+                          <Checkbox
+                            checked={isCheckedMobile(item.id)}
+                            onChange={() => toggleSelectMobile(item)}
+                          />
+                        </div>
+
                         <Row gutter={[8, 8]}>
                           <Col span={24}>
                             <div style={{ marginBottom: 8 }}>
                               <strong>{t("dashboard.media")}:</strong>
                               <br />
                               <Image
-                                src={item.url}
+                                src={item.url || undefined}
                                 alt="media"
                                 style={{
                                   borderRadius: 8,
                                   width: "100%",
-                                  maxWidth: 350,
+                                  maxWidth: 380,
                                   height: "auto",
                                 }}
                               />
@@ -322,18 +401,24 @@ const Dashboard: React.FC = () => {
 
                             <div style={{ marginBottom: 4 }}>
                               <strong>{t("dashboard.caption")}:</strong>
-                              <div style={{ paddingLeft: 8, maxWidth: 350, wordWrap: "break-word" }}>
-                                {item.caption?.length > 100 ? item.caption.slice(0, 100) + "..." : item.caption}
+                              <div style={{ paddingLeft: 8, maxWidth: 380, wordWrap: "break-word" }}>
+                                {item.caption?.length > 120 ? item.caption.slice(0, 120) + "..." : item.caption}
                               </div>
                             </div>
 
-                            <div style={{ marginTop: 8, display: "flex", justifyContent: "center", gap: 8 }}>
+                            <div
+                              style={{
+                                marginTop: 8,
+                                display: "flex",
+                                justifyContent: "center",
+                                gap: 8,
+                                flexWrap: "wrap",
+                              }}
+                            >
                               <button className="ads-button-glow" onClick={() => handleOnClickDetailAnl(item)}>
                                 Phân tích
                               </button>
-                              <button className="ads-button-glow" onClick={() => handleOnClickDetail(item)}>
-                                {t("dashboard.ads_button")}
-                              </button>
+                              {/* Không còn nút tạo quảng cáo theo từng bài */}
                             </div>
                           </Col>
                         </Row>
@@ -341,7 +426,8 @@ const Dashboard: React.FC = () => {
                     ))}
                   </div>
                 ) : (
-                  <Table
+                  <Table<PostRow>
+                    rowSelection={rowSelection}
                     columns={postColumns}
                     dataSource={postData}
                     pagination={{
@@ -353,6 +439,7 @@ const Dashboard: React.FC = () => {
                     bordered
                     scroll={{ x: "max-content" }}
                     className="dark-header-table"
+                    rowKey={(r) => r.id}
                   />
                 )}
               </Spin>
@@ -360,14 +447,14 @@ const Dashboard: React.FC = () => {
           </Col>
         </Row>
 
-        {/* Drawer tạo Ads */}
+        {/* Drawer TẠO ADS từ nhiều bài viết */}
         <Drawer
-          open={isOpen}
-          onClose={handleOnCloseDrawer}
+          open={isOpenCreateAds}
+          onClose={handleOnCloseDrawerCreateAds}
           width="98%"
           maskClosable={false}
           closeIcon={<CloseOutlined style={{ color: "#e2e8f0", fontSize: 18 }} />}
-          title={detailId ? t("dashboard.ads") : t("dashboard.ads_new")}
+          title={`Tạo quảng cáo (${selectedRowKeys.length} bài đã chọn)`}
           className="custom-dark-drawer"
           styles={{
             header: {
@@ -384,10 +471,16 @@ const Dashboard: React.FC = () => {
             },
           }}
         >
-          <DetailAds id={detailId} postRecot={postRecot} pageId={pageId ?? null} />
+          {/* ✅ Truyền mảng bài viết đã chọn sang DetailAds */}
+          <DetailAds
+            id={null}
+            postRecot={null}
+            selectedPosts={selectedPosts} // <-- thêm prop mới cho nhiều bài
+            pageId={pageId ?? null}
+          />
         </Drawer>
 
-        {/* Drawer phân tích bài */}
+        {/* Drawer PHÂN TÍCH bài (theo từng bài, giữ nguyên) */}
         <Drawer
           open={isOpenAnl}
           onClose={handleOnCloseDrawerAnl}
@@ -411,7 +504,7 @@ const Dashboard: React.FC = () => {
             },
           }}
         >
-          <DetailAnalysis id={detailId} postRecot={postRecot} pageId={pageId ?? null} />
+          <DetailAnalysis id={detailId} postRecot={null} pageId={pageId ?? null} />
         </Drawer>
       </div>
     </Layout>
