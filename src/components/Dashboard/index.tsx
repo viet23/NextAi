@@ -55,7 +55,7 @@ const Dashboard: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useSelector((state: IRootState) => state.auth);
   const [showModal, setShowModal] = useState(false);
-
+  const [postRecot, setPostRecot] = useState<any | null>(null);
   // Account detail (để lấy idPage)
   const { data: accountDetailData } = useGetAccountQuery(user?.id || "0", {
     skip: !user?.id,
@@ -171,6 +171,7 @@ const Dashboard: React.FC = () => {
 
   // Phân tích bài viết (giữ như cũ – theo từng bài)
   const handleOnClickDetailAnl = (record: PostRow) => {
+    setPostRecot(record);
     setDetailId(record?.id ?? null);
     setPageId(accountDetailData?.idPage);
     setIsOpenAnl(true);
@@ -504,7 +505,7 @@ const Dashboard: React.FC = () => {
             },
           }}
         >
-          <DetailAnalysis id={detailId} postRecot={null} pageId={pageId ?? null} />
+          <DetailAnalysis id={detailId} postRecot={postRecot} pageId={pageId ?? null} />
         </Drawer>
       </div>
     </Layout>

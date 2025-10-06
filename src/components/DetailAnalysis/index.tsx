@@ -22,6 +22,8 @@ type ReviewRow = {
 };
 
 const DetailAnalysis: React.FC<AdsFormProps> = ({ id, postRecot, pageId }) => {
+  console.log("DetailAnalysis render", { id, postRecot, pageId });
+  
   const { t } = useTranslation();
 
   const [interests, setInterests] = useState<string[]>([]);
@@ -39,10 +41,23 @@ const DetailAnalysis: React.FC<AdsFormProps> = ({ id, postRecot, pageId }) => {
     pageId && postIdOnly ? `https://www.facebook.com/${pageId}/posts/${postIdOnly}` : "";
 
   // ---- Preview (thay cho iframe) ----
+  // Không fallback về via.placeholder để tránh spam request khi url không hợp lệ.
+  const getValidUrl = (u?: string | null) => {
+    if (!u) return null;
+    try {
+      const parsed = new URL(u);
+      // chỉ chấp nhận http/https
+      if (parsed.protocol === "http:" || parsed.protocol === "https:") return u;
+      return null;
+    } catch (e) {
+      return null;
+    }
+  };
+
   const previewImg =
-    postRecot?.media?.props?.src ||
-    postRecot?.url ||
-    "https://via.placeholder.com/720x720?text=Image+not+available";
+    getValidUrl(postRecot?.media?.props?.src) ||
+    getValidUrl(postRecot?.url) ||
+    null;
 
   const previewAlt = postRecot?.media?.props?.alt || "facebook post media";
 
@@ -365,16 +380,39 @@ Image URL: ${fallback.url || "Không có"}
                   rel="noopener noreferrer"
                   style={{ display: "block" }}
                 >
-                  <img
-                    src={previewImg}
-                    alt={previewAlt}
-                    style={{ width: "100%", height: "auto", display: "block" }}
-                    loading="lazy"
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).src =
-                        "https://via.placeholder.com/720x720?text=Image+not+available";
-                    }}
-                  />
+                  {previewImg ? (
+                    <img
+                      src={previewImg}
+                      alt={previewAlt}
+                      style={{ width: "100%", height: "auto", display: "block" }}
+                      loading="lazy"
+                      onError={(e) => {
+                        // Nếu load lỗi thì ẩn thẻ img để tránh fallback gây request vòng lặp
+                        const img = e.currentTarget as HTMLImageElement;
+                        img.style.display = "none";
+                        // remove src để chắc chắn không retry
+                        try {
+                          img.src = "";
+                        } catch {}
+                      }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        width: "100%",
+                        height: 360,
+                        background: "#1e293b",
+                        color: "#94a3b8",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 14,
+                        borderRadius: 8,
+                      }}
+                    >
+                      Không có hình ảnh
+                    </div>
+                  )}
                 </a>
 
                 {/* Caption + nút mở Facebook */}
