@@ -248,7 +248,8 @@
       "email": "Email",
       "created": "Creation date",
       "status": "Status",
-      "actions": "Actions"
+      "actions": "Actions",
+      "history": "History"
     }
   },
   "credits": {

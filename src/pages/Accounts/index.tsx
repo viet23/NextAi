@@ -1,4 +1,4 @@
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined } from "@ant-design/icons";
 import "./Accounts.scss";
 import {
   Card,
@@ -191,6 +191,25 @@ const AccountsPage = () => {
             }}
           >
             <EditOutlined style={{ color: "#ffffff", fontSize: 18 }} />
+          </Link>
+        ),
+      },
+      {
+        title: t("accounts.columns.history"),
+        key: "history",
+        dataIndex: "id",
+        render: (id: string) => (
+          <Link
+            className="view-icon"
+            to={`/history/${id}`}
+            style={{
+              display: "inline-block",
+              padding: 6,
+              borderRadius: 6,
+              backgroundColor: "#1e293b",
+            }}
+          >
+            <EyeOutlined style={{ color: "#ffffff", fontSize: 18 }} />
           </Link>
         ),
       },
@@ -407,7 +426,7 @@ const AccountsPage = () => {
             width={"30%"}
             maskClosable={false}
           >
-            <CreateUser onRefetch={() => {}} />
+            <CreateUser onRefetch={() => { }} />
           </Drawer>
         </Content>
       </Layout>

@@ -10,6 +10,7 @@ export const AI_ADS_ROUTE = "/ai-ads-report";
 export const USER_ROUTE = "/quan-ly-nguoi-dung";
 export const ACCOUNT_ROUTE = "/tai-khoan";
 export const ACCOUNT_DETAIL_ROUTE = ACCOUNT_ROUTE + "/:id";
+export const ACCOUNT_HYSTORY_ROUTE = "history/:id";
 export const ACCOUNT_DETAIL_USER_ROUTE = "user/:id";
 export const AUTHORIZATION_ROUTE = "/phan-quyen";
 export const ROLE_GROUPS_CREATE_ROUTE = "/phan-quyen/tao-nhom-quyen";

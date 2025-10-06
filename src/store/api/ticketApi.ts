@@ -47,6 +47,14 @@ const TicketApi = api.injectEndpoints({
       transformResponse: (res: any) => res,
     }),
 
+     getFacebookadsHistory: build.query<any, any>({
+      query: id => ({
+        url: `/api/v1/case/facebookads/${id}`,
+        method: "GET",
+      }),
+      transformResponse: (res: any) => res,
+    }),
+
     // ================= NEW: Lấy posts từ BE (đã ép Cookie/Bearer ở server) =================
     getFacebookPostsGraph: build.query<
       { data: any[]; meta: { total: number; monthlyCount: any[]; page?: number; pageSize?: number; totalPages?: number } },
@@ -190,6 +198,8 @@ export const {
   useGetCreditQuery,
   useLazyDetailCreditQuery,
   useLazyDetailAdsQuery,
+  useGetFacebookadsHistoryQuery,
+  
 
   // ===== NEW hooks
   useGetFacebookPostsGraphQuery,
