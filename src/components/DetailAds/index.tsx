@@ -13,7 +13,6 @@ import {
   Radio,
   Slider,
   Tag,
-  Space,
   Checkbox,
 } from "antd";
 import dayjs from "dayjs";
@@ -27,7 +26,6 @@ import FullscreenLoader from "../FullscreenLoader";
 import { useOpenaiTargetingMutation } from "src/store/api/openaiApi";
 import { ReloadOutlined } from "@ant-design/icons";
 
-// 👉 mới
 import LocationSelector from "./LocationSelector";
 import type { SelectedLocation } from "./types";
 import { PROMPT_ADS } from "./constans";
@@ -37,20 +35,18 @@ const { Title } = Typography;
 const { RangePicker } = DatePicker;
 
 interface AdsFormProps {
-  id: string | null;               // id của bài (flow cũ) → vẫn giữ tương thích
-  postRecot: any;                  // record của bài (flow cũ)
+  id: string | null;
+  postRecot: any;
   pageId: string | null;
-  // 👉 NEW: danh sách nhiều bài được chọn để tạo quảng cáo
-  selectedPosts?: any[];           // mỗi phần tử nên có: { id, caption, media/url, permalink_url, react/comment/share ...}
+  selectedPosts?: any[]; // expects fields including id, caption, media/url, permalink_url, react/comment/share, hasMessageCTA, cta
 }
 
 const DetailAds: React.FC<AdsFormProps> = ({ id, postRecot, pageId, selectedPosts = [] }) => {
   const { t } = useTranslation();
 
-  // ====== xác định chế độ nhiều bài hay 1 bài
   const isMulti = Array.isArray(selectedPosts) && selectedPosts.length > 0;
 
-  // ----- STATES -----
+  // states
   const [goal, setGoal] = useState<"message" | "engagement" | "leads" | "traffic">("message");
   const [caption, setCaption] = useState("");
   const [urlWebsite, setUrleWbsite] = useState<string | undefined>(undefined);
@@ -62,30 +58,28 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, postRecot, pageId, selectedPost
   const [language, setLanguage] = useState<string>("en");
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [targetingAI, setTargetingAI] = useState<any>({});
-  const [budgetVnd, setBudgetVnd] = useState<number>(100000); // ✅ ngân sách VNĐ
+  const [budgetVnd, setBudgetVnd] = useState<number>(100000);
   const [locationMode, setLocationMode] = useState<"nationwide" | "custom">("nationwide");
-
-  // Theo dõi người dùng có sửa tên campaign thủ công không
   const [isCampaignEdited, setIsCampaignEdited] = useState(false);
-
-  // 👉 NEW: nhiều vị trí
   const [locations, setLocations] = useState<SelectedLocation[]>([]);
 
   const postIdOnly = id?.split("_")[1];
   const isMessage = goal === "message";
 
-  // ----- API hooks -----
+  // API hooks
   const { data, isSuccess, isError } = useDetailFacebookPostQuery(id, { skip: !id || isMulti });
   const [createPost, { isLoading: creatingPost }] = useCreateFacebookPostMutation();
   const [openaiTargeting, { isLoading: isTargeting }] = useOpenaiTargetingMutation();
   const [createAds, { isLoading: creatingCase }] = useCreateAdsMutation();
 
-  // ====== Multi-select trong DetailAds (bật/tắt từng bài) ======
+  // multi-select active ids
   const [activeIds, setActiveIds] = useState<string[]>(
     isMulti ? selectedPosts.map((p) => p.id) : []
   );
+
   useEffect(() => {
     if (isMulti) {
+      // keep only ids that still exist + add any new posts (merge)
       setActiveIds((prev) => {
         const all = selectedPosts.map((p) => p.id);
         const merged = Array.from(new Set(prev.filter((id) => all.includes(id)).concat(all)));
@@ -97,17 +91,77 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, postRecot, pageId, selectedPost
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMulti, selectedPosts]);
 
+  // helper detect CTA
+  const postHasMessageCTA = (p: any) => {
+    if (!p) return false;
+    if (typeof p.hasMessageCTA === "boolean") return p.hasMessageCTA;
+    if (p?.cta && typeof p.cta?.type === "string") {
+      return p.cta.type.toString().toLowerCase().includes("message");
+    }
+    if (Array.isArray(p?.attachments)) {
+      try {
+        for (const a of p.attachments) {
+          const text = `${a?.title ?? ""} ${a?.description ?? ""} ${a?.name ?? ""}`.toLowerCase();
+          if (text.includes("send message") || text.includes("gửi tin") || text.includes("nhắn") || text.includes("message")) return true;
+        }
+      } catch { }
+    }
+    return false;
+  };
+
+  /**
+   * EFFECT: when goal changes
+   * - if goal === "message": remove active posts that don't have CTA message and notify user
+   * - else (other goals): auto-select ALL posts
+   */
+  useEffect(() => {
+    if (!isMulti) return;
+
+    if (goal === "message") {
+      const removed: string[] = [];
+      const newActive = activeIds.filter((id) => {
+        const p = selectedPosts.find((x) => x.id === id);
+        const ok = !!postHasMessageCTA(p);
+        if (!ok) removed.push(id);
+        return ok;
+      });
+
+      if (removed.length > 0) {
+        setActiveIds(newActive);
+        message.error(
+          `Bỏ ${removed.length} bài không có hành động Nhắn tin. Vui lòng gắn CTA "Nhắn tin" trên bài hoặc chọn bài khác.`,
+          6
+        );
+      }
+    } else {
+      // goal != "message" -> auto select all posts
+      const allIds = selectedPosts.map((p) => p.id);
+      setActiveIds(allIds);
+      // optionally inform user
+      message.success(`Tự động chọn ${allIds.length} bài vì mục tiêu không phải là Nhắn tin.`, 3);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [goal, isMulti, selectedPosts]);
+
   const activeSelectedPosts = isMulti
     ? selectedPosts.filter((p) => activeIds.includes(p.id))
     : [];
 
   const toggleOne = (id: string) => {
+    // If goal is message, prevent selecting posts without CTA
+    if (goal === "message") {
+      const p = selectedPosts.find((x) => x.id === id);
+      if (!postHasMessageCTA(p)) {
+        message.error("Bài này chưa gắn hành động Nhắn tin — không thể chọn khi mục tiêu là Tăng tin nhắn.");
+        return;
+      }
+    }
     setActiveIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : prev.concat(id)
     );
   };
 
-  // ====== Preview data (ưu tiên multi) ======
+  // preview helpers
   const firstPost = isMulti ? (activeSelectedPosts[0] ?? selectedPosts[0]) : postRecot;
   const previewImg =
     firstPost?.media?.props?.src ||
@@ -119,7 +173,6 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, postRecot, pageId, selectedPost
     firstPost?.permalink_url ||
     (pageId && postIdOnly ? `https://www.facebook.com/${pageId}/posts/${postIdOnly}` : undefined);
 
-  // Với multi: caption tổng hợp từ những bài đang chọn
   const combinedCaption = useMemo(() => {
     if (!isMulti) return previewCaptionSingle;
     const caps = activeSelectedPosts
@@ -130,11 +183,8 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, postRecot, pageId, selectedPost
     return caps.join(" | ");
   }, [isMulti, activeSelectedPosts, previewCaptionSingle]);
 
-  // ---- Campaign name: thời gian hiện tại + 30 ký tự đầu caption ----
   const initialCampaignName = useMemo(() => {
-    const now = dayjs().format("YYYY-MM-DD HH:mm"); // ⏰ thời gian hiện tại
-
-    // caption nguồn (multi lấy bài đầu tiên trong danh sách chọn, single lấy postRecot)
+    const now = dayjs().format("YYYY-MM-DD HH:mm");
     const raw = (
       isMulti
         ? (activeSelectedPosts[0]?.caption ?? selectedPosts[0]?.caption ?? "")
@@ -142,12 +192,10 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, postRecot, pageId, selectedPost
     )
       .toString()
       .trim()
-      .replace(/\s+/g, " "); // gọn khoảng trắng
-
-    const snippet = raw ? raw.slice(0, 30) : ""; // chỉ lấy 30 ký tự đầu
+      .replace(/\s+/g, " ");
+    const snippet = raw ? raw.slice(0, 30) : "";
     return snippet ? `Campaign ${now} - ${snippet}` : `Campaign ${now}`;
   }, [isMulti, activeSelectedPosts, selectedPosts, postRecot?.caption]);
-
 
   const [campaignName, setCampaignName] = useState<string>(initialCampaignName);
   useEffect(() => {
@@ -155,7 +203,6 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, postRecot, pageId, selectedPost
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialCampaignName]);
 
-  // ---- Prompt & phân tích AI ----
   const buildPrompt = (content: string, imageUrl: string) => `
 ${PROMPT_ADS}
 
@@ -190,7 +237,6 @@ Image URL: ${imageUrl || "Không có"}
       setAge([first?.persona?.age_min || 18, first?.persona?.age_max || 65]);
       setTargetingAI(first);
 
-      // Lưu lại kết quả phân tích theo bài đầu (hoặc multi summary)
       const urlPostForSaving = previewPermalinkSingle || imageUrl || "";
       await createPost({
         postId: isMulti ? (activeSelectedPosts[0]?.id ?? selectedPosts[0]?.id ?? id) : id,
@@ -208,15 +254,12 @@ Image URL: ${imageUrl || "Không có"}
     }
   }
 
-  // Auto-analyze:
   useEffect(() => {
-    // Multi: ưu tiên chạy phân tích từ caption tổng hợp & ảnh của bài đầu đang chọn
     if (isMulti) {
       analyzePostForTargeting(combinedCaption, previewImg);
       return;
     }
 
-    // Single: giữ logic cũ
     if (isSuccess && data) {
       if (data?.dataTargeting?.keywordsForInterestSearch?.length > 0) {
         setInterests(data.dataTargeting.keywordsForInterestSearch);
@@ -235,7 +278,6 @@ Image URL: ${imageUrl || "Không có"}
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMulti, isSuccess, isError, data, postRecot, combinedCaption]);
 
-  // ---- helper: build geo_locations từ selections ----
   function buildGeoLocationsPayload(selections: SelectedLocation[]) {
     const countries: string[] = [];
     const regions: any[] = [];
@@ -278,15 +320,12 @@ Image URL: ${imageUrl || "Không có"}
     if (cities.length) geo_locations.cities = cities;
     if (subcities.length) geo_locations.subcities = subcities;
     if (custom_locations.length) geo_locations.custom_locations = custom_locations;
-
-    // nếu rỗng, mặc định quốc gia VN để không bị lỗi
     if (!Object.keys(geo_locations).length) {
       geo_locations.countries = ["VN"];
     }
     return geo_locations;
   }
 
-  // ---- Publish ----
   const handlePublish = async () => {
     try {
       if (goal === "traffic" && (!urlWebsite || urlWebsite.trim() === "")) {
@@ -311,10 +350,11 @@ Image URL: ${imageUrl || "Không có"}
       }
 
       const postIds = minimalPosts.map((p) => p.id);
-      const images = minimalPosts.map((p) => p.media);      // 👈 mảng ảnh
-      const contents = minimalPosts.map((p) => p.caption);    // 👈 mảng nội dung (caption)
+      const images = minimalPosts.map((p) => p.media);
+      const contents = minimalPosts.map((p) => p.caption);
 
-      const body: any = {
+      // BUILD BODY
+      let body: any = {
         goal,
         campaignName,
         caption,
@@ -323,28 +363,50 @@ Image URL: ${imageUrl || "Không có"}
         aiTargeting: Boolean(aiTargeting),
         startTime: range[0].toISOString(),
         endTime: range[1].toISOString(),
-        dailyBudget: Math.round(Number(budgetVnd)), // ✅ gửi VND trực tiếp
+        dailyBudget: Math.round(Number(budgetVnd)),
         targetingAI,
-        ...(isMulti
-          ? {
-            // ✅ Multi: 1 ad/post
-            selectedPosts: minimalPosts,  // giữ nguyên cấu trúc chi tiết từng post
-            postIds,                      // tiện cho BE
-            images,                       // 👈 mảng ảnh
-            contents,                     // 👈 mảng nội dung
-            // fallback ảnh đầu nếu goal=message cần creative mẫu
-            imageUrl: images[0] || previewImg,
-          }
-          : {
-            // ✅ Single fallback
-            ...(isMessage && {
-              imageUrl: firstPost?.url || previewImg,
-              messageDestination: "MESSENGER",
-            }),
-            ...(!isMessage && { postId: id?.toString() }),
-          }),
       };
 
+      if (isMulti) {
+        if (goal === "message") {
+          // Khi mục tiêu là Nhắn tin: tạo ad từ postId(s)
+          body = {
+            ...body,
+            selectedPosts: minimalPosts, // để BE có context (title/url)
+            postIds, // BE dùng postIds để tạo ad từ post
+            messageDestination: "MESSENGER",
+          };
+        } else {
+          // Các mục tiêu khác: giữ behavior cũ (gửi creative nếu cần)
+          body = {
+            ...body,
+            selectedPosts: minimalPosts,
+            postIds,
+            images,
+            contents,
+            imageUrl: images[0] || previewImg,
+          };
+        }
+      } else {
+        // Single-case
+        if (goal === "message") {
+          body = {
+            ...body,
+            postId: id?.toString(),
+            messageDestination: "MESSENGER",
+          };
+        } else {
+          // Single & not message -> preserve previous intent:
+          body = {
+            ...body,
+            ...(isMessage
+              ? { imageUrl: firstPost?.url || previewImg, messageDestination: "MESSENGER" }
+              : { postId: id?.toString() }),
+          };
+        }
+      }
+
+      // Thêm targeting nếu không dùng AI
       if (!aiTargeting) {
         body.gender = gender;
         body.ageRange = [age[0], age[1]];
@@ -353,6 +415,7 @@ Image URL: ${imageUrl || "Không có"}
           locationMode === "nationwide" ? { countries: ["VN"] } : buildGeoLocationsPayload(locations);
       }
 
+      // Gọi API tạo quảng cáo
       const res = await createAds(body).unwrap();
 
       // Hiển thị số ad theo số bài đang chọn (1 ad/post)
@@ -404,14 +467,6 @@ Image URL: ${imageUrl || "Không có"}
 
             <div style={{ marginBottom: 12 }}>
               <label style={{ color: "#e2e8f0" }}>🎯 {t("ads.ads_goal")}</label>
-              <style>{`
-                #goal-group .ant-radio-button-wrapper::before { display: none !important; }
-                #goal-group .ant-radio-button-wrapper:not(:first-child) { border-left: 1px solid transparent !important; }
-                #goal-group .ant-radio-button-wrapper,
-                #goal-group .ant-radio-button-wrapper:first-child,
-                #goal-group .ant-radio-button-wrapper:last-child { border-radius: 8px !important; }
-              `}</style>
-
               <div id="goal-group">
                 <Radio.Group
                   value={goal}
@@ -553,7 +608,6 @@ Image URL: ${imageUrl || "Không có"}
                   </Select>
                 </div>
 
-                {/* 👤 ĐỘ TUỔI - Range Slider */}
                 <div style={{ marginBottom: 12 }}>
                   <label style={{ color: "#e2e8f0" }}>👤 Độ tuổi</label>
                   <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
@@ -610,7 +664,6 @@ Image URL: ${imageUrl || "Không có"}
               `}</style>
 
               <Col span={12}>
-                {/* 💰 NGÂN SÁCH HÀNG NGÀY (VNĐ) */}
                 <label style={{ color: "#f8fafc" }}>💰 Ngân sách hàng ngày (VNĐ)</label>
                 <InputNumber
                   className="daily-budget-input"
@@ -701,7 +754,6 @@ Image URL: ${imageUrl || "Không có"}
                   }}
                 >
                   {!isMulti ? (
-                    // ===== SINGLE PREVIEW (giữ nguyên)
                     <>
                       <a
                         href={previewPermalinkSingle}
@@ -740,7 +792,6 @@ Image URL: ${imageUrl || "Không có"}
                       </div>
                     </>
                   ) : (
-                    // ===== MULTI PREVIEW → MỖI BÀI 1 HÀNG NGANG (checkbox | ảnh | nội dung)
                     <div
                       style={{
                         padding: 12,
@@ -760,28 +811,31 @@ Image URL: ${imageUrl || "Không có"}
                         const comment = p.comment ?? p.comments ?? null;
                         const share = p.share ?? p.shares ?? null;
                         const checked = activeIds.includes(p.id);
+                        const hasCTA = postHasMessageCTA(p);
 
                         return (
                           <div
                             key={p.id}
+                            data-row="multi-preview-row"
                             style={{
                               background: "#0b1020",
                               border: "1px solid #1e293b",
                               borderRadius: 10,
                               padding: 10,
                               display: "grid",
-                              gridTemplateColumns: "24px 180px 1fr", // checkbox | image | content
+                              gridTemplateColumns: "24px 180px 1fr",
                               gap: 12,
                               alignItems: "stretch",
                               opacity: checked ? 1 : 0.45,
                             }}
                           >
-                            {/* Checkbox chọn/bỏ */}
                             <div style={{ display: "flex", alignItems: "flex-start", paddingTop: 4 }}>
-                              <Checkbox checked={checked} onChange={() => toggleOne(p.id)} />
+                              <Checkbox
+                                checked={checked}
+                                onChange={() => toggleOne(p.id)}
+                              />
                             </div>
 
-                            {/* Cột ảnh */}
                             <a
                               href={permalink}
                               target={permalink ? "_blank" : undefined}
@@ -806,18 +860,28 @@ Image URL: ${imageUrl || "Không có"}
                               />
                             </a>
 
-                            {/* Cột nội dung */}
                             <div style={{ display: "flex", flexDirection: "column", minHeight: 160 }}>
-                              <Typography.Paragraph
-                                style={{
-                                  margin: 0,
-                                  color: "#e2e8f0",
-                                  whiteSpace: "pre-wrap",
-                                  lineHeight: 1.45,
-                                }}
-                              >
-                                {shortCap || "(No content)"}
-                              </Typography.Paragraph>
+                              <div style={{ display: "flex", gap: 8, alignItems: "center", justifyContent: "space-between" }}>
+                                <Typography.Paragraph
+                                  style={{
+                                    margin: 0,
+                                    color: "#e2e8f0",
+                                    whiteSpace: "pre-wrap",
+                                    lineHeight: 1.45,
+                                    flex: 1,
+                                  }}
+                                >
+                                  {shortCap || "(No content)"}
+                                </Typography.Paragraph>
+
+                                {goal === "message" && !hasCTA && (
+                                  <div style={{ marginLeft: 8 }}>
+                                    <Tag color="red" style={{ borderRadius: 6, padding: "4px 8px" }}>
+                                      Chưa gắn hành động Nhắn tin
+                                    </Tag>
+                                  </div>
+                                )}
+                              </div>
 
                               {(react || comment || share) && (
                                 <div
@@ -864,7 +928,6 @@ Image URL: ${imageUrl || "Không có"}
                               </div>
                             </div>
 
-                            {/* Responsive: stack dọc trên màn nhỏ */}
                             <style>{`
                               @media (max-width: 768px) {
                                 [data-row="multi-preview-row"] {
@@ -889,7 +952,6 @@ Image URL: ${imageUrl || "Không có"}
                         </div>
                       )}
 
-                      {/* Caption tổng hợp để tham chiếu nhanh */}
                       <div
                         style={{
                           marginTop: 10,
