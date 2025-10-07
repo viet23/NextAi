@@ -22,6 +22,7 @@ import type { ColumnsType } from "antd/es/table";
 import { useGetFacebookadsQuery } from "src/store/api/ticketApi";
 import { useSetAdStatusMutation } from "src/store/api/facebookApi";
 import DetailAdsReport from "../DetailAdsReport";
+import dayjs from "dayjs";
 
 /** ===== Types khớp với dữ liệu BE mới ===== */
 type AdRow = {
@@ -85,8 +86,8 @@ const CampaignReport: React.FC = () => {
     const items: CampaignRow[] = Array.isArray(campaignsRes?.data)
       ? campaignsRes.data
       : Array.isArray(campaignsRes)
-      ? campaignsRes
-      : [];
+        ? campaignsRes
+        : [];
     setCampaignRows(items);
   }, [campaignsRes?.data]);
 
@@ -287,6 +288,20 @@ const CampaignReport: React.FC = () => {
         align: "right",
         width: 170,
         render: (_: any, r) => fmtCurrency(r?.totals?.spend),
+      },
+      {
+        title: "Ngày bắt đầu",
+        key: "startTime",
+        width: 160,
+        render: (_: any, r) =>
+          r?.startTime ? dayjs(r.startTime).format("DD/MM/YYYY") : "-",
+      },
+      {
+        title: "Ngày kết thúc",
+        key: "endTime",
+        width: 160,
+        render: (_: any, r) =>
+          r?.endTime ? dayjs(r.endTime).format("DD/MM/YYYY") : "—",
       },
     ],
     []
