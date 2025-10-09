@@ -70,7 +70,12 @@ const num = (v: any) => {
   return Number.isFinite(n) ? n : 0;
 };
 const fmtInt = (v: any) => num(v).toLocaleString("vi-VN");
-const fmtCurrency = (v: any) => Math.trunc(Number(v)).toLocaleString("vi-VN")
+const fmtCurrency = (v: any) => {
+  if (v == null || v === '') return '0'
+  const num = parseFloat(String(v).replace(/,/g, '')) || 0
+  return Math.trunc(num).toLocaleString("vi-VN")
+}
+
 const fmtPercent = (v: any, digits = 2) => `${num(v).toFixed(digits)}%`;
 
 const CampaignHistory: React.FC = () => {
