@@ -34,6 +34,7 @@ type AdRow = {
   data?: {
     impressions?: number;
     clicks?: number;
+    messages?: number;
     spend?: string | number;
     ctr?: string | number;
     cpm?: string | number;
@@ -54,6 +55,7 @@ type CampaignRow = {
   totals?: {
     impressions?: number;
     clicks?: number;
+    messages?: number;
     spend?: string | number;
   };
   ads: AdRow[];
@@ -193,6 +195,13 @@ const CampaignReport: React.FC = () => {
         align: "right",
         width: 100,
         render: (_: any, r) => fmtInt(r?.data?.clicks),
+      },
+       {
+        title: "Tin nhắn",
+        key: "messages",
+        align: "right",
+        width: 100,
+        render: (_: any, r) => fmtInt(r?.data?.messages),
       },
       {
         title: "Chi phí (VNĐ)",

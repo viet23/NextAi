@@ -16,9 +16,9 @@ import "./styles.scss";
 import { CaretRightOutlined, CloseOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { useSetAdStatusMutation } from "src/store/api/facebookApi";
-import DetailAdsReport from "../DetailAdsReport";
 import { useParams } from "react-router-dom";
 import { useGetFacebookadsHistoryQuery } from "src/store/api/ticketApi";
+import DetailAdsReportHistory from "../DetailAdsReportHistory";
 
 /** ===== Types khớp với dữ liệu BE mới ===== */
 type AdRow = {
@@ -30,6 +30,7 @@ type AdRow = {
   data?: {
     impressions?: number;
     clicks?: number;
+    messages?: number;
     spend?: string | number;
     ctr?: string | number;
     cpm?: string | number;
@@ -50,6 +51,7 @@ type CampaignRow = {
   totals?: {
     impressions?: number;
     clicks?: number;
+    messages?: number;
     spend?: string | number;
   };
   ads: AdRow[];
@@ -67,10 +69,10 @@ const fmtInt = (v: any) => num(v).toLocaleString("vi-VN");
 const fmtCurrency = (v: any) => num(v).toLocaleString("vi-VN");
 const fmtPercent = (v: any, digits = 2) => `${num(v).toFixed(digits)}%`;
 
-const CampaignHistory: React.FC = () => { 
+const CampaignHistory: React.FC = () => {
   const { t } = useTranslation();
-  
- const { id } = useParams<{ id: string }>(); // lấy id từ URL /tai-khoan/:id
+
+  const { id } = useParams<{ id: string }>(); // lấy id từ URL /tai-khoan/:id
 
   const { data: campaignsRes, isFetching } = useGetFacebookadsHistoryQuery(id);
 
@@ -80,8 +82,8 @@ const CampaignHistory: React.FC = () => {
     const items: CampaignRow[] = Array.isArray(campaignsRes?.data)
       ? campaignsRes.data
       : Array.isArray(campaignsRes)
-      ? campaignsRes
-      : [];
+        ? campaignsRes
+        : [];
     setCampaignRows(items);
   }, [campaignsRes?.data]);
 
@@ -187,6 +189,13 @@ const CampaignHistory: React.FC = () => {
         align: "right",
         width: 100,
         render: (_: any, r) => fmtInt(r?.data?.clicks),
+      },
+      {
+        title: "Tin nhắn",
+        key: "messages",
+        align: "right",
+        width: 100,
+        render: (_: any, r) => fmtInt(r?.data?.messages),
       },
       {
         title: "Chi phí (VNĐ)",
@@ -300,7 +309,7 @@ const CampaignHistory: React.FC = () => {
     <Layout className="image-layout">
       <div style={{ maxWidth: "1600px", margin: "0 auto" }}>
         <h3 style={{ textAlign: "center", color: "#fff", marginBottom: 12 }}>
-          { "Lịch sử quảng cáo"}
+          {"Lịch sử quảng cáo"}
         </h3>
 
         <Collapse
@@ -374,7 +383,7 @@ const CampaignHistory: React.FC = () => {
           }}
         >
           {/* truyền adId vào DetailAdsReport như trước */}
-          <DetailAdsReport id={detailId} detailRecord={detailRecord} pageId={null} />
+          <DetailAdsReportHistory id={detailId} detailRecord={detailRecord} pageId={null} />
         </Drawer>
       </div>
     </Layout>

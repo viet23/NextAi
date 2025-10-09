@@ -1,0 +1,126 @@
+.image-layout {
+  min-height: 100vh;
+  background-color: #070719;
+  padding: 24px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Typography */
+.image-layout .ant-typography {
+  color: #e6edff !important;
+  font-weight: 600;
+}
+
+/* Card biểu đồ */
+.image-layout .ant-card {
+  background-color: #101828 !important;
+  border: 1px solid #233654;
+  border-radius: 16px;
+}
+
+/* Spinner loading */
+.image-layout .ant-spin-dot-item {
+  background-color: #4cc0ff !important;
+}
+
+/* Drawer chi tiết */
+.image-layout .ant-drawer-body {
+  background-color: #141b2e;
+  color: #e0e4ff;
+}
+
+/* Nút quảng cáo phát sáng */
+.ads-button-glow {
+  background-color: #0f172a;
+  border: 1px solid #4cc0ff;
+  border-radius: 8px;
+  padding: 2px 8px;
+  margin: 2px;
+  font-size: 14px;
+  color: #ffffff;
+  font-weight: 500;
+  box-shadow: 0 0 6px #4cc0ff;
+  cursor: pointer;
+}
+
+/* Bảng */
+.dark-header-table .ant-table,
+.dark-header-table .ant-table-tbody > tr > td {
+  background-color: #070719 !important; /* đồng bộ với nền */
+  color: #e2e8f0 !important;
+  border-bottom: 1px solid #1f2a44;
+}
+
+.dark-header-table .ant-table-thead > tr > th {
+  background-color: #101828 !important; /* hơi sáng hơn nền để dễ phân biệt */
+  color: #c2c8d4 !important;
+  font-weight: 500;
+  font-size: 13px;
+  border-bottom: 1px solid #1f2a44;
+}
+
+.dark-header-table .ant-table-tbody > tr:hover > td {
+  background-color: #101828 !important;
+}
+
+.dark-header-table .ant-table-cell {
+  border-right: none !important;
+}
+
+/* ========================== */
+/* ✅ GIAO DIỆN ĐIỆN THOẠI */
+/* ========================== */
+@media (max-width: 768px) {
+  .image-layout {
+    padding: 12px;
+  }
+
+  .image-layout > div {
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* Biểu đồ */
+  .image-layout .ant-card {
+    padding: 12px !important;
+    overflow-x: auto;
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  .image-layout .ant-card > div {
+    min-width: 500px; /* Giữ kích thước biểu đồ đủ hiển thị */
+  }
+
+  /* Bảng */
+  .image-layout .ant-table-wrapper {
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  .image-layout .ant-table {
+    width: 100%;
+    min-width: 600px; /* Đảm bảo đủ cột không bị bóp méo */
+  }
+
+  .image-layout .ant-table-thead > tr > th,
+  .image-layout .ant-table-tbody > tr > td {
+    font-size: 12px;
+    padding: 6px;
+    white-space: nowrap;
+  }
+
+  .image-layout .ant-typography {
+    font-size: 15px !important;
+    text-align: center;
+  }
+}
+
+.ant-drawer-content {
+  background-color: #070719 !important;
+}
+
+.custom-collapse-content .ant-collapse-content-box {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}

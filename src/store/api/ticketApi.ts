@@ -47,7 +47,7 @@ const TicketApi = api.injectEndpoints({
       transformResponse: (res: any) => res,
     }),
 
-     getFacebookadsHistory: build.query<any, any>({
+    getFacebookadsHistory: build.query<any, any>({
       query: id => ({
         url: `/api/v1/case/facebookads/${id}`,
         method: "GET",
@@ -88,6 +88,14 @@ const TicketApi = api.injectEndpoints({
     detailAds: build.query<any, any>({
       query: id => ({
         url: `/api/v1/case/ads/${id}`,
+        method: "GET",
+      }),
+      transformResponse: (res: any) => res,
+    }),
+
+    detailAdsHistory: build.query<any, any>({
+      query: id => ({
+        url: `/api/v1/case/ads/history/${id}`,
         method: "GET",
       }),
       transformResponse: (res: any) => res,
@@ -198,8 +206,9 @@ export const {
   useGetCreditQuery,
   useLazyDetailCreditQuery,
   useLazyDetailAdsQuery,
+  useLazyDetailAdsHistoryQuery,
   useGetFacebookadsHistoryQuery,
-  
+
 
   // ===== NEW hooks
   useGetFacebookPostsGraphQuery,
