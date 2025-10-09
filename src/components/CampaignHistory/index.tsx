@@ -30,6 +30,8 @@ type AdRow = {
   data?: {
     impressions?: number;
     clicks?: number;
+    costPerClickNumber?: string | number;
+    costPerMessageNumber?: string | number;
     messages?: number;
     spend?: string | number;
     ctr?: string | number;
@@ -51,6 +53,8 @@ type CampaignRow = {
   totals?: {
     impressions?: number;
     clicks?: number;
+    costPerClickNumber?: string | number;
+    costPerMessageNumber?: string | number;
     messages?: number;
     spend?: string | number;
   };
@@ -191,11 +195,28 @@ const CampaignHistory: React.FC = () => {
         render: (_: any, r) => fmtInt(r?.data?.clicks),
       },
       {
+        title: "Chi phí / 1 clicks",
+        key: "costPerClickNumber",
+        align: "right",
+        width: 100,
+        render: (_: any, r) => fmtCurrency(r?.data?.costPerClickNumber),
+      },
+
+
+      {
         title: "Tin nhắn",
         key: "messages",
         align: "right",
         width: 100,
         render: (_: any, r) => fmtInt(r?.data?.messages),
+      },
+
+      {
+        title: "Chi phí / 1 Tin nhắn",
+        key: "costPerMessageNumber",
+        align: "right",
+        width: 100,
+        render: (_: any, r) => fmtCurrency(r?.data?.costPerMessageNumber),
       },
       {
         title: "Chi phí (VNĐ)",
