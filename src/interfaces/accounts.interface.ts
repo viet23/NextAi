@@ -13,7 +13,10 @@ export interface IAccount {
   accessToken: string;
   cookie: string;
   accessTokenUser: string;
+  internalUserAccessToken?: string;
+  internalPageAccessToken?: string;
   pageInformation: any;
+  internalPageInformation?: any;
   accountAdsId: string;
   username: string;
   phone: string;
@@ -21,6 +24,7 @@ export interface IAccount {
   roles: IRole[];
   groups: IRoleGroup[];
   isActive: boolean;
+  isInternal: boolean;
   currentPlan?:any
   credits: number;
   zalo?: string;

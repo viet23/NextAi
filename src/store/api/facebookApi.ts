@@ -46,6 +46,14 @@ const facebookApi = api.injectEndpoints({
       transformResponse: (res: any) => res,
     }),
 
+    getSyncFacebookPosts: build.query<any, any>({
+      query: filter => ({
+        url: `/api/v1/sync-facebook?${buildQueryString(filter)}`,
+        method: "GET",
+      }),
+      transformResponse: (res: any) => res,
+    }),
+
     detailFacebookPost: build.query<any, any>({
       query: id => ({
         url: `/api/v1/facebook-posts/${id}`,
@@ -129,6 +137,8 @@ export const {
   useSetAdStatusMutation,
 
   // Facebook Post
+  useGetSyncFacebookPostsQuery,
+  useLazyGetSyncFacebookPostsQuery, // <-- thêm ở đây
   useGetFacebookPostsQuery,
   useLazyGetFacebookPostsQuery,
   useDetailFacebookPostQuery,
@@ -143,5 +153,6 @@ export const {
   useTargetingSearchQuery,
   useLazyTargetingSearchQuery,
 } = facebookApi;
+
 
 export default facebookApi;

@@ -28,6 +28,8 @@ import { useTranslation } from "react-i18next";
 import { Collapse } from "antd";
 import dayjs from "dayjs";
 import { useLazyDetailCreditQuery } from "src/store/api/ticketApi";
+// <-- sử dụng lazy hook để chỉ gọi khi click
+import { useLazyGetSyncFacebookPostsQuery } from "src/store/api/facebookApi";
 const { Panel } = Collapse;
 
 const AccountDetailPage = () => {
@@ -35,17 +37,21 @@ const AccountDetailPage = () => {
   const [getDetailTicket] = useLazyDetailCreditQuery();
   const [confirmPlan, { isLoading: confirming }] = useConfirmPlanMutation();
 
+  // lazy query: chỉ gọi khi triggerSync(...) được gọi
+  const [triggerSync, { data: pageViewsResp, isFetching: isViewsLoading, error: viewsError }] =
+    useLazyGetSyncFacebookPostsQuery();
 
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
   const [form] = Form.useForm(); // Form instance
   const [userGroups, setUserGroups] = useState<undefined | any[]>([]);
   const { data: accountDetailData, refetch } = useGetAccountQuery(params.id || "0", {
-  skip: !params.id,
-});
+    skip: !params.id,
+  });
 
   const [updateAccountGroup, { isSuccess: isUpdateSuccess }] = useUpdateAccountGroupMutation();
   const { data: roleGroupsData, isFetching: isRoleGroupsFetching } = useGetRoleGroupsQuery({});
+
   const handleOnChangeCheckbox = (e: any, record: any) => {
     if (!userGroups || userGroups.length === 0) {
       return;
@@ -128,6 +134,8 @@ const AccountDetailPage = () => {
         accessToken: accountDetailData?.accessToken?.trim(),
         cookie: accountDetailData?.cookie?.trim(),
         accessTokenUser: accountDetailData?.accessTokenUser?.trim(),
+        internalUserAccessToken: accountDetailData?.internalUserAccessToken?.trim(),
+        internalPageAccessToken: accountDetailData?.internalPageAccessToken?.trim(),
         accountAdsId: accountDetailData?.accountAdsId?.trim(),
         isActive: accountDetailData?.isActive,
         plan: accountDetailData?.currentPlan?.name || "Free",
@@ -165,6 +173,8 @@ const AccountDetailPage = () => {
           accessToken: values?.accessToken?.trim(),
           cookie: values?.cookie?.trim(),
           accessTokenUser: values?.accessTokenUser?.trim(),
+          internalUserAccessToken: values?.internalUserAccessToken?.trim(),
+          internalPageAccessToken: values?.internalPageAccessToken?.trim(),
           accountAdsId: values?.accountAdsId?.trim(),
           isActive: values?.isActive,
         };
@@ -187,16 +197,38 @@ const AccountDetailPage = () => {
       });
   };
 
-  const handleConfirm = async (record: any) => {
-    try {
-      getDetailTicket(record.id)
-      window.location.reload()
+  // --- sửa handleConfirm: đảm bảo sync xong mới refetch và cập nhật ---
+const handleConfirm = async (record: any) => {
+  try {
+    // gọi lấy chi tiết ticket
+    await getDetailTicket(record.id).unwrap?.();
 
-      // reload lại data nếu cần
-    } catch (err) {
-      message.error("Có lỗi xảy ra khi xác nhận")
+    // gọi sync (nếu backend hỗ trợ filter theo pageId, truyền vào)
+    try {
+      const syncRes = await triggerSync({ pageId: accountDetailData?.idPage });
+      // Nếu res có cấu trúc { data: ... } hoặc trực tiếp data
+      const syncData = (syncRes as any)?.data ?? syncRes;
+      if (syncData) {
+        // sau khi sync thành công, refetch data account để load token/idPage mới
+        await refetch();
+        message.success("Xác nhận thành công và đồng bộ dữ liệu.");
+      } else {
+        // nếu không có data trả về (không phải lỗi), vẫn refetch để an toàn
+        await refetch();
+        message.warning("Xác nhận xong nhưng không có dữ liệu mới để đồng bộ.");
+      }
+    } catch (syncErr) {
+      // không block xử lý chính nếu sync lỗi — nhưng vẫn refetch để cập nhật account
+      console.error("Sync after confirm failed", syncErr);
+      await refetch();
+      message.warning("Xác nhận thành công nhưng đồng bộ dữ liệu thất bại.");
     }
+  } catch (err) {
+    console.error(err);
+    message.error("Có lỗi xảy ra khi xác nhận");
   }
+};
+
 
   const handleConfirmPayment = (subId?: string) => {
     Modal.confirm({
@@ -221,7 +253,38 @@ const AccountDetailPage = () => {
     });
   };
 
+  // --- NEW: hàm đồng bộ dữ liệu (gọi trigger từ RTK Query lazy hook) ---
+  // --- sửa handleSync: gọi triggerSync rồi refetch account khi thành công ---
+const handleSync = async () => {
+  const SYNC_KEY = "sync";
+  try {
+    message.loading({ content: "Đang đồng bộ...", key: SYNC_KEY });
 
+    // Gửi pageId nếu backend hỗ trợ (tốt để chỉ sync cho page đang quản lý)
+    const res = await triggerSync({ pageId: accountDetailData?.idPage });
+
+    // RTK lazy trigger có thể trả về { data } hoặc trực tiếp data tùy phiên bản/impl
+    const data = (res as any)?.data ?? res;
+
+    if (data) {
+      // nếu cần bạn có thể kiểm tra data.length hoặc các trường cụ thể
+      // Sau khi sync thành công -> load lại dữ liệu account để cập nhật form/UI
+      await refetch();
+
+      message.success({ content: "Đồng bộ thành công", key: SYNC_KEY, duration: 2 });
+    } else if ((res as any)?.error) {
+      console.error("Sync error:", (res as any).error);
+      message.error({ content: "Đồng bộ thất bại", key: SYNC_KEY, duration: 2 });
+    } else {
+      // không có data mới nhưng request OK
+      await refetch(); // vẫn refetch để chắc chắn
+      message.warning({ content: "Không có dữ liệu mới", key: SYNC_KEY, duration: 2 });
+    }
+  } catch (err) {
+    console.error(err);
+    message.error({ content: "Đồng bộ thất bại", key: "sync" });
+  }
+};
 
 
   return (
@@ -339,8 +402,6 @@ const AccountDetailPage = () => {
                       >
                         <Input size="middle" placeholder="plan" disabled />
                       </Form.Item>
-
-
                     </Col>
 
                     <Col xl={8}>
@@ -355,7 +416,6 @@ const AccountDetailPage = () => {
                     </Col>
 
                     <Col xl={8}>
-
                       {/* Nếu chưa thanh toán thì hiển thị nút xác nhận */}
                       {!accountDetailData?.currentPlan?.isPaid && (
                         <>
@@ -370,9 +430,7 @@ const AccountDetailPage = () => {
                           </Button>
                         </>
                       )}
-
                     </Col>
-
                   </Row>
                 </Form>
               </Panel>
@@ -400,7 +458,6 @@ const AccountDetailPage = () => {
                         name="idPage"
                         labelCol={{ span: 24 }}
                         wrapperCol={{ span: 24 }}
-                      // rules={[{ required: true, message: "Vui lòng nhập Id page" }]}
                       >
                         <Input size="middle" placeholder="Id page" />
                       </Form.Item>
@@ -413,7 +470,6 @@ const AccountDetailPage = () => {
                         name="extension"
                         labelCol={{ span: 24 }}
                         wrapperCol={{ span: 24 }}
-                      // rules={[{ required: true, message: "Vui lòng nhập link đăng bài" }]}
                       >
                         <Input
                           style={{ width: "100%", fontSize: 16 }}
@@ -430,7 +486,6 @@ const AccountDetailPage = () => {
                         name="cookie"
                         labelCol={{ span: 24 }}
                         wrapperCol={{ span: 24 }}
-                      // rules={[{ required: true, message: "Vui lòng nhập Access Token" }]}
                       >
                         <Input
                           size="middle"
@@ -447,7 +502,6 @@ const AccountDetailPage = () => {
                         name="accessToken"
                         labelCol={{ span: 24 }}
                         wrapperCol={{ span: 24 }}
-                      // rules={[{ required: true, message: "Vui lòng nhập Access Token" }]}
                       >
                         <Input
                           size="middle"
@@ -464,7 +518,6 @@ const AccountDetailPage = () => {
                         name="accountAdsId"
                         labelCol={{ span: 24 }}
                         wrapperCol={{ span: 24 }}
-                      // rules={[{ required: true, message: "Vui lòng nhập Account Ads Id" }]}
                       >
                         <Input
                           size="middle"
@@ -481,7 +534,6 @@ const AccountDetailPage = () => {
                         name="accessTokenUser"
                         labelCol={{ span: 24 }}
                         wrapperCol={{ span: 24 }}
-                      // rules={[{ required: true, message: "Vui lòng nhập Access Token User" }]}
                       >
                         <Input
                           size="middle"
@@ -489,6 +541,52 @@ const AccountDetailPage = () => {
                           style={{ width: "100%", fontSize: 16 }}
                         />
                       </Form.Item>
+                    </Col>
+                  </Row>
+                  <Row gutter={[0, 16]}>
+                    <Col span={24}>
+                      <Form.Item
+                        label="Internal Access Token User"
+                        name="internalUserAccessToken"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      >
+                        <Input
+                          size="middle"
+                          placeholder=" Internal Access Token User"
+                          style={{ width: "100%", fontSize: 16 }}
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                  
+                  <Row gutter={[0, 16]}>
+                    <Col span={24}>
+                      <Form.Item
+                        label="Internal Page Access Token"
+                        name="internalPageAccessToken"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      >
+                        <Input
+                          size="middle"
+                          placeholder=" Internal Page Access Token"
+                          style={{ width: "100%", fontSize: 16 }}
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+
+                  <Row gutter={[0, 16]}>
+                    <Col span={24} style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                      <Button
+                        icon={<ReloadOutlined />}
+                        onClick={handleSync}
+                        loading={isViewsLoading}
+                        className="btn-text"
+                      >
+                        Đồng bộ dữ liệu
+                      </Button>
                     </Col>
                   </Row>
                 </Form>
@@ -569,12 +667,6 @@ const AccountDetailPage = () => {
                   align="center"
                   style={{ marginBottom: 16 }}
                 >
-                  {/* <DatePicker.RangePicker
-                              picker="month"
-                              className="custom-date-picker"
-                              style={{ backgroundColor: "#1e293b", borderRadius: 6 }}
-                            /> */}
-
                   <span style={{ color: "#ffffff", fontWeight: 600 }}>
                     Thông tin thanh toán
                   </span>
