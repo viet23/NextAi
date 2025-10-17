@@ -19,6 +19,7 @@ import { useSetAdStatusMutation } from "src/store/api/facebookApi";
 import { useParams } from "react-router-dom";
 import { useGetFacebookadsHistoryQuery } from "src/store/api/ticketApi";
 import DetailAdsReportHistory from "../DetailAdsReportHistory";
+import dayjs from "dayjs";
 
 /** ===== Types khớp với dữ liệu BE mới ===== */
 type AdRow = {
@@ -318,6 +319,20 @@ const CampaignHistory: React.FC = () => {
         width: 170,
         render: (_: any, r) => fmtCurrency(r?.totals?.spend),
       },
+      {
+              title: "Ngày bắt đầu",
+              key: "startTime",
+              width: 160,
+              render: (_: any, r) =>
+                r?.startTime ? dayjs(r.startTime).format("DD/MM/YYYY") : "-",
+            },
+            {
+              title: "Ngày kết thúc",
+              key: "endTime",
+              width: 160,
+              render: (_: any, r) =>
+                r?.endTime ? dayjs(r.endTime).format("DD/MM/YYYY") : "—",
+            },
     ],
     []
   );
