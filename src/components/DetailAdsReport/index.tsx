@@ -30,16 +30,16 @@ export type RowType = {
   reach?: string | number;
   frequency?: string | number;
   clicks?: string | number;
-  inlineLinkClicks?: string | number; // ✅ tên mới
+  inlineLinkClicks?: string | number;  // ✅ tên mới
   spendVnd?: string | number;
-  ctrPercent?: string | number; // vd "0.140384" -> 0.14%
+  ctrPercent?: string | number;        // vd "0.140384" -> 0.14%
   cpmVnd?: string | number;
   cpcVnd?: string | number;
   totalEngagement?: string | number;
 
-  engagementDetails?: string; // html <li>...</li>
-  recommendation?: string; // text
-  htmlReport?: string; // html đầy đủ
+  engagementDetails?: string;          // html <li>...</li>
+  recommendation?: string;             // text
+  htmlReport?: string;                 // html đầy đủ
   userId?: string;
   isActive?: boolean;
   linkClicks?: string | number;
@@ -73,7 +73,12 @@ const fmtInt = (v: any) => num(v).toLocaleString("vi-VN");
 const fmtCurrency = (v: any) => num(v).toLocaleString("vi-VN");
 const fmtPercent = (v: any, digits = 2) => `${num(v).toFixed(digits)}%`;
 
-// --- Helpers patch HTML "Chi phí / 1 tin nhắn" ---
+/** =========================
+ *  Patch trực tiếp htmlReport
+ *  =========================
+ *  - Sửa "Chi phí / 1 tin nhắn" = "💸 Chi phí" / "Số lượng hành động liên quan tin nhắn"
+ *  - Ưu tiên đọc từ bản HTML; nếu thiếu "Chi phí", dùng fallbackSpend từ record.
+ */
 const parseVndFromText = (s?: string) => {
   const digits = String(s ?? "").replace(/[^\d]/g, "");
   return digits ? parseInt(digits, 10) : 0;
@@ -82,28 +87,25 @@ const formatVnd = (n: number) => Math.round(n).toLocaleString("vi-VN");
 
 function patchHtmlReport(
   html: string | undefined,
-  fallbackSpend?: number, // dùng spend từ record nếu HTML thiếu
-  fallbackActions?: number // nếu sau này có số actions từ API bên ngoài HTML
+  fallbackSpend?: number,   // dùng spend từ record nếu HTML thiếu
+  fallbackActions?: number  // dành cho tương lai nếu bạn có số actions ngoài HTML
 ) {
   if (!html) return html;
 
   try {
-    // Dùng DOMParser (chạy client-side)
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, "text/html");
 
-    // Tìm <p> theo nhãn <strong> bắt đầu bằng label
+    // Tìm <p> có <strong> bắt đầu bằng nhãn cho trước
     const getPByLabel = (label: string) => {
       const ps = Array.from(doc.querySelectorAll("p"));
-      return (
-        ps.find((p) => {
-          const s = p.querySelector("strong");
-          return s && s.textContent?.trim().startsWith(label);
-        }) || null
-      );
+      return ps.find(p => {
+        const s = p.querySelector("strong");
+        return s && s.textContent?.trim().startsWith(label);
+      }) || null;
     };
 
-    // Lấy phần text sau <strong> của một dòng p
+    // Lấy phần text sau <strong> trong cùng <p>
     const getValueTextByLabel = (label: string) => {
       const p = getPByLabel(label);
       if (!p) return "";
@@ -127,37 +129,34 @@ function patchHtmlReport(
     }
 
     if (totalCost > 0 && actions > 0) {
-      const costPerMsg = totalCost / actions; // VD: 315561 / 49 ≈ 6440.02
+      const costPerMsg = totalCost / actions; // vd: 315561 / 49 ≈ 6440.02
 
-      // Tìm dòng "Chi phí / 1 tin nhắn" để thay giá trị
+      // Tìm dòng "Chi phí / 1 tin nhắn" để thay thế
       const targetP =
         getPByLabel("Chi phí / 1 tin nhắn:") ||
         getPByLabel("💬 Chi phí / 1 tin nhắn:");
       if (targetP) {
-        targetP.innerHTML = `<strong>Chi phí / 1 tin nhắn:</strong> ${formatVnd(
-          costPerMsg
-        )} VNĐ`;
+        targetP.innerHTML =
+          `<strong>Chi phí / 1 tin nhắn:</strong> ${formatVnd(costPerMsg)} VNĐ`;
       } else {
-        // Nếu không có sẵn dòng này, chèn thêm ngay sau section "Tin nhắn (Messaging)" nếu tìm được
-        const heading = Array.from(doc.querySelectorAll("h4")).find((h) =>
-          /Tin nhắn|Messaging/i.test(h.textContent || "")
-        );
+        // Nếu HTML chưa có, chèn ngay sau "Tin nhắn (Messaging)"
+        const heading = Array.from(doc.querySelectorAll("h4"))
+          .find(h => /Tin nhắn|Messaging/i.test(h.textContent || ""));
         const p = doc.createElement("p");
-        p.innerHTML = `<strong>Chi phí / 1 tin nhắn:</strong> ${formatVnd(
-          costPerMsg
-        )} VNĐ`;
+        p.innerHTML =
+          `<strong>Chi phí / 1 tin nhắn:</strong> ${formatVnd(costPerMsg)} VNĐ`;
         if (heading && heading.parentNode) {
           heading.parentNode.insertBefore(p, heading.nextSibling);
         } else {
-          // fallback: append cuối body
           doc.body.appendChild(p);
         }
       }
     }
 
+    // trả về chuỗi HTML đã vá (chỉ phần body)
     return doc.body.innerHTML;
   } catch {
-    // Fallback nhẹ nhàng nếu DOMParser lỗi: giữ nguyên
+    // Nếu DOMParser lỗi, trả nguyên
     return html;
   }
 }
@@ -169,10 +168,9 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
     skip: !user?.id,
   });
 
-  const [updateAdInsight, { isSuccess: isUpdateSuccess }] =
-    useUpdateAdInsightMutation();
-
+  const [updateAdInsight] = useUpdateAdInsightMutation();
   const [getDetailTicket] = useLazyDetailAdsQuery();
+
   const [dataSource, setDataSource] = useState<RowType[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -180,8 +178,14 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState<RowType | null>(null);
 
+  // Khi bấm "Chi tiết": PATCH TRỰC TIẾP record.htmlReport rồi setCurrent
   const handleOnClickDetail = (record: RowType) => {
-    setCurrent(record);
+    const patchedHtml = patchHtmlReport(
+      record.htmlReport,
+      num(record.spendVnd) /* fallback spend từ record */,
+      undefined            /* chừa sẵn nếu sau này có actions ngoài HTML */
+    );
+    setCurrent({ ...record, htmlReport: patchedHtml });
     setOpen(true);
   };
 
@@ -252,8 +256,7 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
         error?.response?.data || error.message
       );
       message.error(
-        error?.response?.data?.error?.message ||
-          "Không thể cập nhật trạng thái quảng cáo"
+        error?.response?.data?.error?.message || "Không thể cập nhật trạng thái quảng cáo"
       );
       return false;
     }
@@ -279,8 +282,6 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
               message.error("Đã xảy ra lỗi khi cập nhật tài khoản!");
             });
           message.success("Đã thực thi khuyến nghị!");
-          // Ví dụ cập nhật UI:
-          // setCurrent(p => ({ ...p, isActive: true }));
           setOpen(false);
         } catch {
           message.error("Thao tác thất bại. Vui lòng thử lại!");
@@ -381,6 +382,7 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
                 align: "right",
                 render: (v) => fmtCurrency(v),
               },
+
             ]}
             dataSource={dataSource}
             pagination={false}
@@ -395,8 +397,7 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
         centered
         title={
           <div style={{ textAlign: "center", width: "100%" }}>
-            All One Ads – Báo cáo quảng cáo (Daily Report) –{" "}
-            {current?.adId ?? "-"}
+            All One Ads – Báo cáo quảng cáo (Daily Report) – {current?.adId ?? "-"}
           </div>
         }
         onCancel={() => setOpen(false)}
@@ -406,23 +407,12 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
           header: { textAlign: "center" },
         }}
         footer={
-          <div
-            style={{ display: "flex", justifyContent: "space-between", padding: "0 16px" }}
-          ></div>
+          <div style={{ display: "flex", justifyContent: "space-between", padding: "0 16px" }} />
         }
       >
-        {/* Nếu có htmlReport thì ưu tiên render sẵn (đã patch) */}
+        {/* Ưu tiên render htmlReport nếu có (đã được patch ngay khi bấm "Chi tiết") */}
         {current?.htmlReport ? (
-          <div
-            className="prose prose-invert"
-            dangerouslySetInnerHTML={{
-              __html: patchHtmlReport(
-                current?.htmlReport,
-                num(current?.spendVnd), // fallback spend nếu HTML thiếu
-                undefined // nếu sau này có số actions ngoài HTML thì truyền vào đây
-              ) ?? "",
-            }}
-          />
+          <div className="prose prose-invert" dangerouslySetInnerHTML={{ __html: current.htmlReport }} />
         ) : (
           <div style={{ lineHeight: 1.7 }}>
             {/* ===== Thông tin chiến dịch ===== */}
@@ -441,14 +431,7 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
               </span>
             </div>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: 12,
-                marginBottom: 12,
-              }}
-            >
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
               <div>
                 <strong>Ad ID:</strong> {current?.adId ?? "-"}
               </div>
@@ -467,16 +450,9 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
 
             {/* ===== Chỉ số cơ bản ===== */}
             <h4 style={{ marginTop: 12, marginBottom: 8 }}>📊 Chỉ số cơ bản</h4>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, minmax(0,1fr))",
-                gap: 10,
-              }}
-            >
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 10 }}>
               <div>
-                <strong>Hiển thị:</strong>{" "}
-                {fmtInt?.(current?.impressions) ?? "-"}
+                <strong>Hiển thị:</strong> {fmtInt?.(current?.impressions) ?? "-"}
               </div>
               <div>
                 <strong>Reach:</strong> {fmtInt?.(current?.reach) ?? "-"}
@@ -489,9 +465,7 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
                 <strong>Clicks:</strong> {fmtInt?.(current?.clicks) ?? "-"}
               </div>
               <div>
-                <strong>Link Clicks:</strong>{" "}
-                {fmtInt?.(current?.inlineLinkClicks ?? current?.linkClicks) ??
-                  "-"}
+                <strong>Link Clicks:</strong> {fmtInt?.(current?.inlineLinkClicks ?? current?.linkClicks) ?? "-"}
               </div>
               <div>
                 <strong>Chi phí:</strong> {fmtCurrency?.(current?.spendVnd)} VNĐ
@@ -509,8 +483,7 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
 
               {current?.totalEngagement != null && (
                 <div style={{ gridColumn: "span 3" }}>
-                  <strong>📌 Tổng tương tác:</strong>{" "}
-                  {fmtInt?.(current?.totalEngagement)}
+                  <strong>📌 Tổng tương tác:</strong> {fmtInt?.(current?.totalEngagement)}
                 </div>
               )}
             </div>
@@ -520,106 +493,54 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
               current?.purchaseValueVnd != null ||
               current?.cpaVnd != null ||
               current?.roas != null) && (
-              <>
-                <h4 style={{ marginTop: 16, marginBottom: 8 }}>
-                  💰 Chỉ số kinh doanh (Pixel/CAPI)
-                </h4>
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(4, minmax(0,1fr))",
-                    gap: 10,
-                  }}
-                >
-                  {current?.conversions != null && (
-                    <div>
-                      <strong>Conversions:</strong>{" "}
-                      {fmtInt?.(current?.conversions)}
-                    </div>
-                  )}
-                  {current?.purchaseValueVnd != null && (
-                    <div>
-                      <strong>Doanh thu:</strong>{" "}
-                      {fmtCurrency?.(current?.purchaseValueVnd)} VNĐ
-                    </div>
-                  )}
-                  {current?.cpaVnd != null && (
-                    <div>
-                      <strong>CPA:</strong>{" "}
-                      {fmtCurrency?.(current?.cpaVnd)} VNĐ
-                    </div>
-                  )}
-                  {current?.roas != null && (
-                    <div>
-                      <strong>ROAS:</strong>{" "}
-                      {Number(current?.roas).toFixed(2)}
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
+                <>
+                  <h4 style={{ marginTop: 16, marginBottom: 8 }}>💰 Chỉ số kinh doanh (Pixel/CAPI)</h4>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0,1fr))", gap: 10 }}>
+                    {current?.conversions != null && (
+                      <div>
+                        <strong>Conversions:</strong> {fmtInt?.(current?.conversions)}
+                      </div>
+                    )}
+                    {current?.purchaseValueVnd != null && (
+                      <div>
+                        <strong>Doanh thu:</strong> {fmtCurrency?.(current?.purchaseValueVnd)} VNĐ
+                      </div>
+                    )}
+                    {current?.cpaVnd != null && (
+                      <div>
+                        <strong>CPA:</strong> {fmtCurrency?.(current?.cpaVnd)} VNĐ
+                      </div>
+                    )}
+                    {current?.roas != null && (
+                      <div>
+                        <strong>ROAS:</strong> {Number(current?.roas).toFixed(2)}
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
 
             {/* ===== Breakdown (nếu có) ===== */}
-            {(current?.breakdownAgeGenderHtml ||
-              current?.breakdownRegionHtml ||
-              current?.breakdownPlacementHtml) && (
+            {(current?.breakdownAgeGenderHtml || current?.breakdownRegionHtml || current?.breakdownPlacementHtml) && (
               <>
-                <h4 style={{ marginTop: 16, marginBottom: 8 }}>
-                  🔍 Phân tích chi tiết (Breakdown)
-                </h4>
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(3, minmax(0,1fr))",
-                    gap: 10,
-                  }}
-                >
+                <h4 style={{ marginTop: 16, marginBottom: 8 }}>🔍 Phân tích chi tiết (Breakdown)</h4>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 10 }}>
                   {current?.breakdownAgeGenderHtml && (
-                    <div
-                      style={{
-                        border: "1px solid #f0f0f0",
-                        borderRadius: 8,
-                        padding: 10,
-                      }}
-                    >
+                    <div style={{ border: "1px solid #f0f0f0", borderRadius: 8, padding: 10 }}>
                       <strong>Theo độ tuổi/giới tính</strong>
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: current?.breakdownAgeGenderHtml,
-                        }}
-                      />
+                      <div dangerouslySetInnerHTML={{ __html: current?.breakdownAgeGenderHtml }} />
                     </div>
                   )}
                   {current?.breakdownRegionHtml && (
-                    <div
-                      style={{
-                        border: "1px solid #f0f0f0",
-                        borderRadius: 8,
-                        padding: 10,
-                      }}
-                    >
+                    <div style={{ border: "1px solid #f0f0f0", borderRadius: 8, padding: 10 }}>
                       <strong>Theo khu vực</strong>
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: current?.breakdownRegionHtml,
-                        }}
-                      />
+                      <div dangerouslySetInnerHTML={{ __html: current?.breakdownRegionHtml }} />
                     </div>
                   )}
                   {current?.breakdownPlacementHtml && (
-                    <div
-                      style={{
-                        border: "1px solid #f0f0f0",
-                        borderRadius: 8,
-                        padding: 10,
-                      }}
-                    >
+                    <div style={{ border: "1px solid #f0f0f0", borderRadius: 8, padding: 10 }}>
                       <strong>Theo vị trí hiển thị</strong>
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: current?.breakdownPlacementHtml,
-                        }}
-                      />
+                      <div dangerouslySetInnerHTML={{ __html: current?.breakdownPlacementHtml }} />
                     </div>
                   )}
                 </div>
@@ -627,40 +548,16 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
             )}
 
             {/* ===== Gợi ý tối ưu từ AI ===== */}
-            <h4 style={{ marginTop: 16, marginBottom: 8 }}>
-              🧠 Đánh giá & Gợi ý tối ưu từ AI
-            </h4>
+            <h4 style={{ marginTop: 16, marginBottom: 8 }}>🧠 Đánh giá & Gợi ý tối ưu từ AI</h4>
             {(() => {
-              const aiKpis = Array.isArray(current?.aiKpis)
-                ? (current?.aiKpis as any[])
-                : [];
+              const aiKpis = Array.isArray(current?.aiKpis) ? current?.aiKpis! : [];
               if (aiKpis.length > 0) {
                 return (
-                  <table
-                    style={{
-                      width: "100%",
-                      borderCollapse: "collapse",
-                      fontSize: 13,
-                    }}
-                  >
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                     <thead>
                       <tr>
-                        {[
-                          "Chỉ số / KPI",
-                          "Mức",
-                          "Nhận xét AI",
-                          "Hành động gợi ý",
-                          "Lý do (KPI)",
-                          "Nút",
-                        ].map((h) => (
-                          <th
-                            key={h}
-                            style={{
-                              textAlign: "left",
-                              padding: 8,
-                              borderBottom: "1px solid #f0f0f0",
-                            }}
-                          >
+                        {["Chỉ số / KPI", "Mức", "Nhận xét AI", "Hành động gợi ý", "Lý do (KPI)", "Nút"].map((h) => (
+                          <th key={h} style={{ textAlign: "left", padding: 8, borderBottom: "1px solid #f0f0f0" }}>
                             {h}
                           </th>
                         ))}
@@ -669,69 +566,19 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
                     <tbody>
                       {aiKpis.map((row: any, idx: number) => {
                         const lvl = row?.level;
-                        const badgeColor =
-                          lvl === "Tốt"
-                            ? "#52c41a"
-                            : lvl === "Trung bình"
-                            ? "#faad14"
-                            : "#f5222d";
+                        const badgeColor = lvl === "Tốt" ? "#52c41a" : lvl === "Trung bình" ? "#faad14" : "#f5222d";
                         return (
                           <tr key={row?.key ?? row?.kpi ?? idx}>
-                            <td
-                              style={{
-                                padding: 8,
-                                borderBottom: "1px solid #f5f5f5",
-                              }}
-                            >
-                              {row?.kpi ?? "-"}
-                            </td>
-                            <td
-                              style={{
-                                padding: 8,
-                                borderBottom: "1px solid #f5f5f5",
-                              }}
-                            >
-                              <span
-                                style={{
-                                  background: badgeColor,
-                                  color: "#fff",
-                                  padding: "2px 8px",
-                                  borderRadius: 12,
-                                }}
-                              >
+                            <td style={{ padding: 8, borderBottom: "1px solid #f5f5f5" }}>{row?.kpi ?? "-"}</td>
+                            <td style={{ padding: 8, borderBottom: "1px solid #f5f5f5" }}>
+                              <span style={{ background: badgeColor, color: "#fff", padding: "2px 8px", borderRadius: 12 }}>
                                 {row?.level ?? "-"}
                               </span>
                             </td>
-                            <td
-                              style={{
-                                padding: 8,
-                                borderBottom: "1px solid #f5f5f5",
-                              }}
-                            >
-                              {row?.comment ?? "-"}
-                            </td>
-                            <td
-                              style={{
-                                padding: 8,
-                                borderBottom: "1px solid #f5f5f5",
-                              }}
-                            >
-                              {row?.action ?? "-"}
-                            </td>
-                            <td
-                              style={{
-                                padding: 8,
-                                borderBottom: "1px solid #f5f5f5",
-                              }}
-                            >
-                              {row?.reason ?? "-"}
-                            </td>
-                            <td
-                              style={{
-                                padding: 8,
-                                borderBottom: "1px solid #f5f5f5",
-                              }}
-                            >
+                            <td style={{ padding: 8, borderBottom: "1px solid #f5f5f5" }}>{row?.comment ?? "-"}</td>
+                            <td style={{ padding: 8, borderBottom: "1px solid #f5f5f5" }}>{row?.action ?? "-"}</td>
+                            <td style={{ padding: 8, borderBottom: "1px solid #f5f5f5" }}>{row?.reason ?? "-"}</td>
+                            <td style={{ padding: 8, borderBottom: "1px solid #f5f5f5" }}>
                               <button
                                 style={{
                                   backgroundColor: "#1677ff",
@@ -754,32 +601,16 @@ const DetailAdsReport: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) =
                 );
               }
               if (current?.recommendation) {
-                return (
-                  <pre
-                    style={{
-                      whiteSpace: "pre-wrap",
-                      fontFamily: "inherit",
-                      margin: 0,
-                    }}
-                  >
-                    {current?.recommendation}
-                  </pre>
-                );
+                return <pre style={{ whiteSpace: "pre-wrap", fontFamily: "inherit", margin: 0 }}>{current?.recommendation}</pre>;
               }
-              return (
-                <p style={{ fontStyle: "italic", color: "#8c8c8c" }}>
-                  Chưa có bảng khuyến nghị chi tiết.
-                </p>
-              );
+              return <p style={{ fontStyle: "italic", color: "#8c8c8c" }}>Chưa có bảng khuyến nghị chi tiết.</p>;
             })()}
 
             {/* ===== Kết luận ===== */}
             {current?.summary && (
               <>
                 <hr />
-                <h4 style={{ marginTop: 12, marginBottom: 8 }}>
-                  ✅ Kết luận & Khuyến nghị tổng quan
-                </h4>
+                <h4 style={{ marginTop: 12, marginBottom: 8 }}>✅ Kết luận & Khuyến nghị tổng quan</h4>
                 <div>{current?.summary}</div>
               </>
             )}

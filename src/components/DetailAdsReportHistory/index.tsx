@@ -64,8 +64,6 @@ export type RowType = {
   summary?: string;
 };
 
-
-
 const num = (v: any) => {
   const n = Number(String(v ?? 0).replace(/[^\d.-]/g, ""));
   return Number.isFinite(n) ? n : 0;
@@ -75,6 +73,94 @@ const fmtInt = (v: any) => num(v).toLocaleString("vi-VN");
 const fmtCurrency = (v: any) => num(v).toLocaleString("vi-VN");
 const fmtPercent = (v: any, digits = 2) => `${num(v).toFixed(digits)}%`;
 
+/** =========================
+ *  Patch trực tiếp htmlReport
+ *  =========================
+ *  - Sửa "Chi phí / 1 tin nhắn" = "💸 Chi phí" / "Số lượng hành động liên quan tin nhắn"
+ *  - Ưu tiên đọc từ bản HTML; nếu thiếu "Chi phí", dùng fallbackSpend từ record.
+ */
+const parseVndFromText = (s?: string) => {
+  const digits = String(s ?? "").replace(/[^\d]/g, "");
+  return digits ? parseInt(digits, 10) : 0;
+};
+const formatVnd = (n: number) => Math.round(n).toLocaleString("vi-VN");
+
+function patchHtmlReport(
+  html: string | undefined,
+  fallbackSpend?: number,   // dùng spend từ record nếu HTML thiếu
+  fallbackActions?: number  // dành cho tương lai nếu bạn có số actions ngoài HTML
+) {
+  if (!html) return html;
+
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    // Tìm <p> có <strong> bắt đầu bằng nhãn cho trước
+    const getPByLabel = (label: string) => {
+      const ps = Array.from(doc.querySelectorAll("p"));
+      return ps.find(p => {
+        const s = p.querySelector("strong");
+        return s && s.textContent?.trim().startsWith(label);
+      }) || null;
+    };
+
+    // Lấy phần text sau <strong> trong cùng <p>
+    const getValueTextByLabel = (label: string) => {
+      const p = getPByLabel(label);
+      if (!p) return "";
+      const strongText = p.querySelector("strong")?.textContent ?? "";
+      return p.textContent?.replace(strongText, "").trim() ?? "";
+    };
+
+    // ---- Lấy tổng chi phí ----
+    const totalCostText =
+      getValueTextByLabel("💸 Chi phí:") || getValueTextByLabel("Chi phí:");
+    let totalCost = parseVndFromText(totalCostText);
+    if (!totalCost && Number.isFinite(fallbackSpend || 0)) {
+      totalCost = Number(fallbackSpend || 0);
+    }
+
+    // ---- Lấy số hành động liên quan tin nhắn ----
+    const actionsText = getValueTextByLabel("Số lượng hành động liên quan tin nhắn:");
+    let actions = parseVndFromText(actionsText);
+    if (!actions && Number.isFinite(fallbackActions || 0)) {
+      actions = Number(fallbackActions || 0);
+    }
+
+    if (totalCost > 0 && actions > 0) {
+      const costPerMsg = totalCost / actions; // vd: 315561 / 49 ≈ 6440.02
+
+      // Tìm dòng "Chi phí / 1 tin nhắn" để thay thế
+      const targetP =
+        getPByLabel("Chi phí / 1 tin nhắn:") ||
+        getPByLabel("💬 Chi phí / 1 tin nhắn:");
+      if (targetP) {
+        targetP.innerHTML =
+          `<strong>Chi phí / 1 tin nhắn:</strong> ${formatVnd(costPerMsg)} VNĐ`;
+      } else {
+        // Nếu HTML chưa có, chèn ngay sau "Tin nhắn (Messaging)"
+        const heading = Array.from(doc.querySelectorAll("h4"))
+          .find(h => /Tin nhắn|Messaging/i.test(h.textContent || ""));
+        const p = doc.createElement("p");
+        p.innerHTML =
+          `<strong>Chi phí / 1 tin nhắn:</strong> ${formatVnd(costPerMsg)} VNĐ`;
+        if (heading && heading.parentNode) {
+          heading.parentNode.insertBefore(p, heading.nextSibling);
+        } else {
+          doc.body.appendChild(p);
+        }
+      }
+    }
+
+    // trả về chuỗi HTML đã vá (chỉ phần body)
+    return doc.body.innerHTML;
+  } catch {
+    // Nếu DOMParser lỗi, trả nguyên
+    return html;
+  }
+}
+
 const DetailAdsReportHistory: React.FC<AdsFormProps> = ({ id, detailRecord, pageId }) => {
   const { t } = useTranslation();
   const { user } = useSelector((state: IRootState) => state.auth);
@@ -82,9 +168,7 @@ const DetailAdsReportHistory: React.FC<AdsFormProps> = ({ id, detailRecord, page
     skip: !user?.id,
   });
 
-
-  const [updateAdInsight, { isSuccess: isUpdateSuccess }] = useUpdateAdInsightMutation();
-
+  const [updateAdInsight] = useUpdateAdInsightMutation();
 
   const [getDetailTicket] = useLazyDetailAdsHistoryQuery();
   const [dataSource, setDataSource] = useState<RowType[]>([]);
@@ -94,8 +178,14 @@ const DetailAdsReportHistory: React.FC<AdsFormProps> = ({ id, detailRecord, page
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState<RowType | null>(null);
 
+  // Khi bấm "Chi tiết": PATCH TRỰC TIẾP record.htmlReport rồi setCurrent
   const handleOnClickDetail = (record: RowType) => {
-    setCurrent(record);
+    const patchedHtml = patchHtmlReport(
+      record.htmlReport,
+      num(record.spendVnd) /* fallback spend từ record */,
+      undefined            /* chừa sẵn nếu sau này có actions ngoài HTML */
+    );
+    setCurrent({ ...record, htmlReport: patchedHtml });
     setOpen(true);
   };
 
@@ -128,7 +218,6 @@ const DetailAdsReportHistory: React.FC<AdsFormProps> = ({ id, detailRecord, page
       mounted = false;
     };
   }, [id, getDetailTicket]);
-
 
   // Gọi Graph API để bật/tắt Ad theo adId
   async function setAdStatus(adId: string, isActive: boolean) {
@@ -199,7 +288,6 @@ const DetailAdsReportHistory: React.FC<AdsFormProps> = ({ id, detailRecord, page
       },
     });
   };
-
 
   return (
     <>
@@ -318,11 +406,10 @@ const DetailAdsReportHistory: React.FC<AdsFormProps> = ({ id, detailRecord, page
           header: { textAlign: "center" },
         }}
         footer={
-          <div style={{ display: "flex", justifyContent: "space-between", padding: "0 16px" }}>
-          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", padding: "0 16px" }} />
         }
       >
-        {/* Nếu có htmlReport thì ưu tiên render sẵn */}
+        {/* Nếu có htmlReport thì ưu tiên render sẵn (đÃ PATCH trong handleOnClickDetail) */}
         {current?.htmlReport ? (
           <div className="prose prose-invert" dangerouslySetInnerHTML={{ __html: current?.htmlReport }} />
         ) : (
@@ -529,9 +616,6 @@ const DetailAdsReportHistory: React.FC<AdsFormProps> = ({ id, detailRecord, page
           </div>
         )}
       </Modal>
-
-
-
     </>
   );
 };
