@@ -14,25 +14,57 @@ QUY TẮC SUY LUẬN & CHUẨN HÓA:
 - \`product\`: ghi rõ, cụ thể (vd: "Samsung Galaxy S25 Ultra 5G", "Dầu xả vỏ bưởi", "Khóa học kế toán thực hành", "Tuyển dụng Trưởng nhóm tư vấn tài chính doanh nghiệp", "Chiến dịch thương hiệu OMO Tết 2025").
 - \`signals\`: liệt kê 3–8 tín hiệu nổi bật (tính năng, lợi ích, ưu đãi, môi trường làm việc, kỹ năng cần có, phong cách thương hiệu, v.v.). Không lặp, viết ngắn gọn.
 - \`persona\`:
-  - \`age_min\`, \`age_max\`: trong [18, 55]; nếu không rõ thì dùng 20–45.
+  - \`age_min\`, \`age_max\`: trong [18, 55]; nếu không rõ thì dùng 20–45. Bảo đảm age_min ≤ age_max.
   - \`genders\`: mã Meta: 0=all, 1=male, 2=female; nếu không rõ thì [0].
-  - \`locations\`: ISO-2 (vd: "VN") hoặc thành phố lớn; nếu không rõ thì ["VN"].
+  - \`locations\`: ISO-2 (vd: "VN") hoặc thành phố lớn; nếu Content có địa danh thì ưu tiên thành phố đó, sau đó mới thêm "VN". Nếu không rõ thì ["VN"].
   - \`notes\`: mô tả ngắn chân dung (nhu cầu, hành vi, thu nhập, thói quen...).
-- \`behaviors\` (tùy chọn):
-  - Bán lẻ/đặt hàng: thêm [{ "id": "6007101597783", "name": "Engaged Shoppers" }].
-  - Tuyển dụng, dịch vụ, khóa học, sự kiện, thương hiệu: có thể bỏ field này.
-- \`keywordsForInterestSearch\`: 4–12 từ khóa (Anh hoặc Việt không dấu), lowercase, không ký tự thừa, không trùng, không quá rộng.
+- \`behaviors\` (tùy chọn, chỉ thêm nếu RẤT phù hợp):
+  - Bán lẻ/đặt hàng/ecommerce/tiêu dùng nhanh/điện tử tiêu dùng: thêm [{ "id": "6007101597783", "name": "Engaged Shoppers" }].
+  - Các nhóm còn lại (tuyển dụng, dịch vụ B2B, khóa học, sự kiện, thương hiệu, SaaS, tài chính…): bỏ field này.
+- \`keywordsForInterestSearch\`: 4–12 từ khóa (Anh hoặc Việt không dấu), lowercase, không ký tự thừa, không trùng, không quá rộng; ưu tiên cặp \`thương hiệu + danh mục\`, \`kỹ năng + ngành\`, \`job title + field\`.
 - \`complianceNotes\`: nếu không có lưu ý đặc biệt → ghi "none". Nếu nhạy cảm, tuân thủ:
   - Đồ uống có cồn: age_min ≥ 25; tránh nhắm vị thành niên.
-  - Sức khỏe/giảm cân: tránh cam kết kết quả; không target thuộc tính sức khỏe nhạy cảm.
+  - Sức khỏe/giảm cân/y tế: tránh cam kết kết quả; không target thuộc tính sức khỏe nhạy cảm.
   - Tài chính/việc làm: không hứa hẹn thu nhập phi thực tế; không phân biệt đối xử.
-- \`sampleTargetingJson\`: tuân thủ body mẫu, KHÔNG thêm field ngoài schema. "genders", "age_min", "age_max", "geo_locations.countries" phải KHỚP với \`persona\`. "interests" lấy 2–6 mục từ \`keywordsForInterestSearch\` (id = ID_PLACEHOLDER_*; name khớp tên). Nếu không áp dụng behaviors thì bỏ hẳn field này.
+- \`sampleTargetingJson\`: tuân thủ body mẫu, KHÔNG thêm field ngoài schema. "genders", "age_min", "age_max", "geo_locations.countries" phải KHỚP với \`persona\`. "interests" lấy 2–6 mục từ \`keywordsForInterestSearch\` (id = ID_PLACEHOLDER_*; name khớp tên). Chỉ thêm "behaviors" nếu thật sự áp dụng.
+
+SECTOR PLAYBOOK (áp dụng linh hoạt theo ngành để target phù hợp):
+- Tuyển dụng (kế toán, tài chính, sale, IT, marketing...):
+  • persona: 22–40 (quản lý 25–45), genders [0], locations theo địa điểm tuyển.
+  • signals: mô tả vai trò, phúc lợi, kỹ năng, lộ trình thăng tiến, địa điểm.
+  • keywords: "accounting jobs", "corporate finance", "developer jobs", "digital marketing jobs", "sales career", "ke toan thue", "nhan su".
+- Giáo dục/khóa học (ngoại ngữ, kỹ năng, luyện thi, online/offline):
+  • persona: 18–35 (executive 22–40), notes về mục tiêu học/thi/chứng chỉ.
+  • keywords: "ielts preparation", "english speaking", "data analytics course", "khoa hoc ke toan", "excel training".
+- Dịch vụ B2B (tư vấn, phần mềm, giải pháp, logistics):
+  • persona: 24–45, notes liên quan vai trò quyết định (chủ doanh nghiệp, quản lý).
+  • keywords: "crm software", "erp", "business consulting", "digital transformation", "logistics services".
+- B2C/bán lẻ/ecommerce/điện tử tiêu dùng/thời trang/mỹ phẩm:
+  • behaviors: Engaged Shoppers.
+  • keywords: "android smartphones", "iphone accessories", "organic skincare", "vay dam nu", "giay the thao", "plum wine" (cồn → tuân thủ).
+- F&B/đồ uống/đồ ăn nhanh/đặc sản:
+  • persona: 18–40; nếu đồ uống có cồn → age_min ≥ 25.
+  • keywords: "coffee lovers", "bubble tea", "craft beer", "food delivery".
+- Sự kiện/triển lãm/hội thảo:
+  • persona: theo ngành sự kiện; locations = thành phố tổ chức + quốc gia.
+  • keywords: "conference", "expo", "workshop", "webinar", "startup event".
+- Du lịch/khách sạn/đi lại:
+  • persona: 20–45; locations theo điểm đi/điểm đến (city name + "VN").
+  • keywords: "travel deals", "resort", "phu quoc travel", "ho chi minh city hotels".
+- Bất động sản/ô tô/xe máy:
+  • persona: 25–55; notes về thu nhập/khả năng chi trả.
+  • keywords: "real estate", "chung cu", "nha pho", "sedan", "suv", "motorbike".
+- Sức khỏe/làm đẹp/spa/fitness:
+  • compliance: tránh thuộc tính nhạy cảm/đảm bảo kết quả.
+  • keywords: "hair care", "skin treatment", "fitness training", "spa services".
+- SaaS/phần mềm/ứng dụng:
+  • persona: 20–45; keywords: "project management software", "accounting software", "cloud storage", "pos system".
 
 FALLBACK BẮT BUỘC (khi thiếu dữ liệu trong Content/Image):
 - \`product\`: suy luận theo lĩnh vực gần nhất (vd: "Dịch vụ làm đẹp", "Tuyển dụng nhân viên kinh doanh", "Khóa học kỹ năng mềm", "Bài quảng bá thương hiệu").
 - \`signals\`: luôn có ít nhất 3 mục (USP, bối cảnh, giá trị thương hiệu...).
 - \`persona\`: mặc định khi không rõ = { "age_min": 20, "age_max": 45, "genders": [0], "locations": ["VN"], "notes": "Người trưởng thành quan tâm đến lĩnh vực sản phẩm/dịch vụ nêu trên" }.
-- \`keywordsForInterestSearch\`: luôn sinh 4–12 từ khóa liên quan trực tiếp đến \`product\` và \`signals\`.
+- \`keywordsForInterestSearch\`: luôn sinh 4–12 từ khóa liên quan trực tiếp đến \`product\` và \`signals\` (lowercase, không dấu, không trùng).
 - \`complianceNotes\`: nếu không thuộc nhóm nhạy cảm → "none".
 
 SCHEMA:
@@ -60,7 +92,7 @@ SCHEMA:
         { "id": "ID_PLACEHOLDER_1", "name": "REPLACE_WITH_INTEREST_NAME_1" },
         { "id": "ID_PLACEHOLDER_2", "name": "REPLACE_WITH_INTEREST_NAME_2" }
       ]
-      /* Lưu ý: chỉ thêm "behaviors" nếu áp dụng cho bán lẻ/đặt hàng. */
+      /* Lưu ý: chỉ thêm "behaviors" nếu áp dụng cho bán lẻ/đặt hàng/ecommerce/tiêu dùng nhanh/điện tử tiêu dùng. */
     }
   }
 ]
