@@ -66,6 +66,24 @@ const DetailAds: React.FC<AdsFormProps> = ({ id, postRecot, pageId, selectedPost
   const postIdOnly = id?.split("_")[1];
   const isMessage = goal === "message";
 
+  const sanitizeInterests = (vals: string[]) => {
+    const cleaned = vals
+      .map(v => v.trim())
+      .filter(v => v.length > 0)
+      .slice(0, 100); // giới hạn tối đa nếu muốn
+    // khử trùng lặp theo lowercase
+    const seen = new Set<string>();
+    const uniq: string[] = [];
+    for (const v of cleaned) {
+      const key = v.toLowerCase();
+      if (!seen.has(key)) {
+        seen.add(key);
+        uniq.push(v);
+      }
+    }
+    return uniq;
+  };
+
   // API hooks
   const { data, isSuccess, isError } = useDetailFacebookPostQuery(id, { skip: !id || isMulti });
   const [createPost, { isLoading: creatingPost }] = useCreateFacebookPostMutation();
@@ -586,27 +604,22 @@ Image URL: ${imageUrl || "Không có"}
                 <br />
                 <div style={{ marginBottom: 12 }}>
                   <label style={{ color: "#e2e8f0" }}>🎯 {t("ads.detailed_targeting")}</label>
+
                   <Select
-                    mode="multiple"
-                    style={{
-                      width: "100%",
-                      backgroundColor: "#e2e8f0",
-                      color: "#1e293b",
-                      borderColor: "#334155",
-                    }}
-                    placeholder={t("ads.select_targeting_group")}
+                    mode="tags"
                     value={interests}
-                    onChange={setInterests}
-                    optionLabelProp="label"
-                    dropdownStyle={{ backgroundColor: "#e2e8f0", color: "#1e293b" }}
-                  >
-                    {interests.map((value) => (
-                      <Option key={value} value={value} label={t(value)}>
-                        {t(value)}
-                      </Option>
-                    ))}
-                  </Select>
+                    onChange={(vals) => setInterests(sanitizeInterests(vals as string[]))}
+                    tokenSeparators={[","]}
+                    style={{ width: "100%", backgroundColor: "#e2e8f0", color: "#1e293b", borderColor: "#334155" }}
+                    options={(targetingAI?.keywordsForInterestSearch ?? []).map((k: string) => ({ label: k, value: k }))}
+                  />
+
+                  <div style={{ color: "#94a3b8", fontSize: 12, marginTop: 6 }}>
+                    {t("Nhập từ khoá rồi nhấn Enter hoặc dấu phẩy (,). Ví dụ:")}{" "}
+                    <code>fitness</code>, <code>wellness</code>, <code>vitamin C</code>
+                  </div>
                 </div>
+
 
                 <div style={{ marginBottom: 12 }}>
                   <label style={{ color: "#e2e8f0" }}>👤 Độ tuổi</label>
