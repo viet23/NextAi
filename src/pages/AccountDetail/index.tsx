@@ -16,6 +16,7 @@ import {
   Table,
   Typography,
   message,
+  Switch, // <-- thêm Switch
 } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useEffect, useMemo, useState } from "react";
@@ -51,6 +52,9 @@ const AccountDetailPage = () => {
 
   const [updateAccountGroup, { isSuccess: isUpdateSuccess }] = useUpdateAccountGroupMutation();
   const { data: roleGroupsData, isFetching: isRoleGroupsFetching } = useGetRoleGroupsQuery({});
+
+  // theo dõi realtime giá trị isOptimization để hiển thị nhãn
+  const isOptimizationWatch = Form.useWatch("isOptimization", form);
 
   const handleOnChangeCheckbox = (e: any, record: any) => {
     if (!userGroups || userGroups.length === 0) {
@@ -114,7 +118,7 @@ const AccountDetailPage = () => {
       setUserGroups(
         roleGroupsData?.map((group: any) => ({
           ...group,
-          checked: accountDetailData?.groups.some(i => i?.id === group.id),
+          checked: accountDetailData?.groups.some((i: any) => i?.id === group.id),
         }))
       );
     }
@@ -140,6 +144,7 @@ const AccountDetailPage = () => {
         isActive: accountDetailData?.isActive,
         plan: accountDetailData?.currentPlan?.name || "Free",
         isPaid: accountDetailData?.currentPlan?.isPaid ? "Đã thanh toán" : "Chưa thanh toán",
+        isOptimization: accountDetailData?.isOptimization, // <-- init giá trị Switch
       });
     } else {
       form.resetFields();
@@ -177,6 +182,8 @@ const AccountDetailPage = () => {
           internalPageAccessToken: values?.internalPageAccessToken?.trim(),
           accountAdsId: values?.accountAdsId?.trim(),
           isActive: values?.isActive,
+          // <-- gửi trạng thái tối ưu hoá
+          isOptimization: values?.isOptimization === undefined ? null : !!values.isOptimization,
         };
 
         updateAccountGroup({
@@ -198,37 +205,32 @@ const AccountDetailPage = () => {
   };
 
   // --- sửa handleConfirm: đảm bảo sync xong mới refetch và cập nhật ---
-const handleConfirm = async (record: any) => {
-  try {
-    // gọi lấy chi tiết ticket
-    await getDetailTicket(record.id).unwrap?.();
-
-    // gọi sync (nếu backend hỗ trợ filter theo pageId, truyền vào)
+  const handleConfirm = async (record: any) => {
     try {
-      const syncRes = await triggerSync({ pageId: accountDetailData?.idPage });
-      // Nếu res có cấu trúc { data: ... } hoặc trực tiếp data
-      const syncData = (syncRes as any)?.data ?? syncRes;
-      if (syncData) {
-        // sau khi sync thành công, refetch data account để load token/idPage mới
-        await refetch();
-        message.success("Xác nhận thành công và đồng bộ dữ liệu.");
-      } else {
-        // nếu không có data trả về (không phải lỗi), vẫn refetch để an toàn
-        await refetch();
-        message.warning("Xác nhận xong nhưng không có dữ liệu mới để đồng bộ.");
-      }
-    } catch (syncErr) {
-      // không block xử lý chính nếu sync lỗi — nhưng vẫn refetch để cập nhật account
-      console.error("Sync after confirm failed", syncErr);
-      await refetch();
-      message.warning("Xác nhận thành công nhưng đồng bộ dữ liệu thất bại.");
-    }
-  } catch (err) {
-    console.error(err);
-    message.error("Có lỗi xảy ra khi xác nhận");
-  }
-};
+      // gọi lấy chi tiết ticket
+      await getDetailTicket(record.id).unwrap?.();
 
+      // gọi sync (nếu backend hỗ trợ filter theo pageId, truyền vào)
+      try {
+        const syncRes = await triggerSync({ pageId: accountDetailData?.idPage });
+        const syncData = (syncRes as any)?.data ?? syncRes;
+        if (syncData) {
+          await refetch();
+          message.success("Xác nhận thành công và đồng bộ dữ liệu.");
+        } else {
+          await refetch();
+          message.warning("Xác nhận xong nhưng không có dữ liệu mới để đồng bộ.");
+        }
+      } catch (syncErr) {
+        console.error("Sync after confirm failed", syncErr);
+        await refetch();
+        message.warning("Xác nhận thành công nhưng đồng bộ dữ liệu thất bại.");
+      }
+    } catch (err) {
+      console.error(err);
+      message.error("Có lỗi xảy ra khi xác nhận");
+    }
+  };
 
   const handleConfirmPayment = (subId?: string) => {
     Modal.confirm({
@@ -255,37 +257,29 @@ const handleConfirm = async (record: any) => {
 
   // --- NEW: hàm đồng bộ dữ liệu (gọi trigger từ RTK Query lazy hook) ---
   // --- sửa handleSync: gọi triggerSync rồi refetch account khi thành công ---
-const handleSync = async () => {
-  const SYNC_KEY = "sync";
-  try {
-    message.loading({ content: "Đang đồng bộ...", key: SYNC_KEY });
+  const handleSync = async () => {
+    const SYNC_KEY = "sync";
+    try {
+      message.loading({ content: "Đang đồng bộ...", key: SYNC_KEY });
 
-    // Gửi pageId nếu backend hỗ trợ (tốt để chỉ sync cho page đang quản lý)
-    const res = await triggerSync({ pageId: accountDetailData?.idPage });
+      const res = await triggerSync({ pageId: accountDetailData?.idPage });
+      const data = (res as any)?.data ?? res;
 
-    // RTK lazy trigger có thể trả về { data } hoặc trực tiếp data tùy phiên bản/impl
-    const data = (res as any)?.data ?? res;
-
-    if (data) {
-      // nếu cần bạn có thể kiểm tra data.length hoặc các trường cụ thể
-      // Sau khi sync thành công -> load lại dữ liệu account để cập nhật form/UI
-      await refetch();
-
-      message.success({ content: "Đồng bộ thành công", key: SYNC_KEY, duration: 2 });
-    } else if ((res as any)?.error) {
-      console.error("Sync error:", (res as any).error);
-      message.error({ content: "Đồng bộ thất bại", key: SYNC_KEY, duration: 2 });
-    } else {
-      // không có data mới nhưng request OK
-      await refetch(); // vẫn refetch để chắc chắn
-      message.warning({ content: "Không có dữ liệu mới", key: SYNC_KEY, duration: 2 });
+      if (data) {
+        await refetch();
+        message.success({ content: "Đồng bộ thành công", key: SYNC_KEY, duration: 2 });
+      } else if ((res as any)?.error) {
+        console.error("Sync error:", (res as any).error);
+        message.error({ content: "Đồng bộ thất bại", key: SYNC_KEY, duration: 2 });
+      } else {
+        await refetch();
+        message.warning({ content: "Không có dữ liệu mới", key: SYNC_KEY, duration: 2 });
+      }
+    } catch (err) {
+      console.error(err);
+      message.error({ content: "Đồng bộ thất bại", key: "sync" });
     }
-  } catch (err) {
-    console.error(err);
-    message.error({ content: "Đồng bộ thất bại", key: "sync" });
-  }
-};
-
+  };
 
   return (
     <PageTitleHOC title="Chi tiết tài khoản">
@@ -340,6 +334,7 @@ const handleSync = async () => {
                         <Input size="middle" placeholder="credits" />
                       </Form.Item>
                     </Col>
+
                     <Col xl={8}>
                       <Form.Item
                         label="Trạng thái tài khoản"
@@ -373,6 +368,7 @@ const handleSync = async () => {
                         </Select>
                       </Form.Item>
                     </Col>
+
                     <Col xl={8}>
                       <Form.Item
                         label={t("register.phone")}
@@ -393,6 +389,7 @@ const handleSync = async () => {
                         <Input size="middle" placeholder="zalo" />
                       </Form.Item>
                     </Col>
+
                     <Col xl={8}>
                       <Form.Item
                         label="Loại tài khoản"
@@ -413,6 +410,25 @@ const handleSync = async () => {
                       >
                         <Input size="middle" placeholder="isPaid" disabled />
                       </Form.Item>
+                    </Col>
+
+                    {/* ====== Chế độ tối ưu (isOptimization) ====== */}
+                    <Col xl={8}>
+                      <Form.Item
+                        label="Chế độ tối ưu"
+                        name="isOptimization"
+                        valuePropName="checked"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      >
+                        <Switch
+                          checkedChildren="Tự động tối ưu"
+                          unCheckedChildren="Tối ưu chỉnh tay"
+                        />
+                      </Form.Item>
+                      <div style={{ color: "#94a3b8", fontSize: 12, marginTop: -8 }}>
+                        {isOptimizationWatch ? "Tự động tối ưu" : "Tối ưu chỉnh tay"}
+                      </div>
                     </Col>
 
                     <Col xl={8}>

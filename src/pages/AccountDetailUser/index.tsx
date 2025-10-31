@@ -11,16 +11,21 @@ import {
   Layout,
   Row,
   message,
+  Switch,
+  Collapse,
 } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { PageTitleHOC } from "src/components/PageTitleHOC";
 import { ACCOUNT_ROUTE } from "src/constants/routes.constants";
-import { useGetAccountQuery, useUpdateAccountGroupMutation } from "src/store/api/accountApi";
+import {
+  useGetAccountQuery,
+  useUpdateAccountGroupMutation,
+} from "src/store/api/accountApi";
 import { useGetRoleGroupsQuery } from "src/store/api/roleApi";
 import { useTranslation } from "react-i18next";
-import { Collapse } from "antd";
 import { store } from "src/store/store";
+
 const { Panel } = Collapse;
 
 const AccountDetailUserPage = () => {
@@ -29,13 +34,24 @@ const AccountDetailUserPage = () => {
   const params = useParams<{ id: string }>();
   const [form] = Form.useForm();
   const [userGroups, setUserGroups] = useState<undefined | any[]>([]);
-  const { data: accountDetailData, refetch } = useGetAccountQuery(params.id || "0", {
-    skip: !params.id,
-  });
+
+  const { data: accountDetailData, refetch } = useGetAccountQuery(
+    params.id || "0",
+    {
+      skip: !params.id,
+    }
+  );
+
   const { auth } = store.getState();
   const token = auth.token || null;
-  const [updateAccountGroup, { isSuccess: isUpdateSuccess }] = useUpdateAccountGroupMutation();
+
+  const [updateAccountGroup, { isSuccess: isUpdateSuccess }] =
+    useUpdateAccountGroupMutation();
+
   const { data: roleGroupsData } = useGetRoleGroupsQuery({});
+
+  // Watch optimization state to render label in realtime
+  const isOptimizationWatch = Form.useWatch("isOptimization", form);
 
   // safe trim helper
   const safeTrim = (v?: any) => {
@@ -48,7 +64,7 @@ const AccountDetailUserPage = () => {
   const handleOnChangeCheckbox = (e: any, record: any) => {
     if (!userGroups || userGroups.length === 0) return;
     setUserGroups(
-      userGroups.map(item => {
+      userGroups.map((item) => {
         if (item.id === record.id) item.checked = e.target.checked;
         return item;
       })
@@ -61,7 +77,9 @@ const AccountDetailUserPage = () => {
       setUserGroups(
         roleGroupsData?.map((group: any) => ({
           ...group,
-          checked: accountDetailData?.groups?.some((i: any) => i?.id === group.id),
+          checked: accountDetailData?.groups?.some(
+            (i: any) => i?.id === group.id
+          ),
         }))
       );
     }
@@ -88,11 +106,16 @@ const AccountDetailUserPage = () => {
         token,
         accountAdsId: accountDetailData?.accountAdsId ?? "",
         isActive: accountDetailData?.isActive,
+        isOptimization: accountDetailData?.isOptimization, // <-- init Switch
         plan: accountDetailData?.currentPlan?.name || "Free",
-        isPaid: accountDetailData?.currentPlan?.isPaid ? "Đã thanh toán" : "Chưa thanh toán",
+        isPaid: accountDetailData?.currentPlan?.isPaid
+          ? "Đã thanh toán"
+          : "Chưa thanh toán",
         // Internal tokens shown in form
-        internalUserAccessToken: accountDetailData?.internalUserAccessToken ?? "",
-        internalPageAccessToken: accountDetailData?.internalPageAccessToken ?? "",
+        internalUserAccessToken:
+          accountDetailData?.internalUserAccessToken ?? "",
+        internalPageAccessToken:
+          accountDetailData?.internalPageAccessToken ?? "",
         // raw page info kept if needed
         pageInformation: accountDetailData?.pageInformation,
         internalPageInformation: accountDetailData?.internalPageInformation,
@@ -112,9 +135,11 @@ const AccountDetailUserPage = () => {
   const handleSubmit = () => {
     form
       .validateFields()
-      .then(values => {
+      .then((values) => {
         const updatedData = {
-          groupIds: userGroups?.filter((i: any) => i.checked).map(group => group.id) ?? [],
+          groupIds:
+            userGroups?.filter((i: any) => i.checked).map((group) => group.id) ??
+            [],
           email: safeTrim(values.email),
           phone: safeTrim(values.phone),
           zalo: safeTrim(values.zalo),
@@ -131,6 +156,11 @@ const AccountDetailUserPage = () => {
           internalPageAccessToken: safeTrim(values.internalPageAccessToken),
           accountAdsId: safeTrim(values.accountAdsId),
           isActive: values?.isActive === undefined ? null : values.isActive,
+          // send boolean for isOptimization
+          isOptimization:
+            values?.isOptimization === undefined
+              ? null
+              : !!values.isOptimization,
         };
 
         updateAccountGroup({
@@ -145,7 +175,7 @@ const AccountDetailUserPage = () => {
             message.error("Đã xảy ra lỗi khi cập nhật tài khoản!");
           });
       })
-      .catch(errorInfo => {
+      .catch((errorInfo) => {
         console.error("Validation Failed:", errorInfo);
         message.error("Vui lòng kiểm tra lại các trường nhập liệu!");
       });
@@ -167,7 +197,11 @@ const AccountDetailUserPage = () => {
         const idPage = p.idPage ?? p.id ?? p.pageId ?? p.id_page ?? "";
         const name = p.name ?? p.page_name ?? p.pageName ?? "";
         const accessToken =
-          p.internalPageAccessToken ?? p.page_access_token ?? p.accessToken ?? p.access_token ?? "";
+          p.internalPageAccessToken ??
+          p.page_access_token ??
+          p.accessToken ??
+          p.access_token ??
+          "";
         return {
           idPage: String(idPage),
           name,
@@ -191,7 +225,12 @@ const AccountDetailUserPage = () => {
   }, [accountDetailData?.idPage]);
 
   // Choose page logic depends on isInternal flag
-  const handleChoosePage = (p: { idPage: string; accessToken: string; name?: string; __raw?: any }) => {
+  const handleChoosePage = (p: {
+    idPage: string;
+    accessToken: string;
+    name?: string;
+    __raw?: any;
+  }) => {
     const isInternal = !!accountDetailData?.isInternal;
     setSelectedPageId(p.idPage);
 
@@ -219,7 +258,14 @@ const AccountDetailUserPage = () => {
     <PageTitleHOC title="Chi tiết tài khoản">
       <Layout style={{ minHeight: "100vh", background: "#0f172a" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <h3 style={{ textAlign: "center", color: "#fff", marginBottom: 12, marginTop: 24 }}>
+          <h3
+            style={{
+              textAlign: "center",
+              color: "#fff",
+              marginBottom: 12,
+              marginTop: 24,
+            }}
+          >
             {t("accounts.user_detail")}
           </h3>
 
@@ -229,23 +275,40 @@ const AccountDetailUserPage = () => {
               ghost
               expandIconPosition="start"
               expandIcon={({ isActive }) => (
-                <CaretRightOutlined rotate={isActive ? 90 : 0} style={{ color: "#ffffff" }} />
+                <CaretRightOutlined
+                  rotate={isActive ? 90 : 0}
+                  style={{ color: "#ffffff" }}
+                />
               )}
             >
               <Panel
                 key="1"
-                header={<span style={{ color: "#ffffff", fontWeight: 600 }}>Thông tin tài khoản</span>}
+                header={
+                  <span style={{ color: "#ffffff", fontWeight: 600 }}>
+                    Thông tin tài khoản
+                  </span>
+                }
               >
                 <Form form={form}>
                   <Row gutter={[24, 0]}>
                     <Col xl={8}>
-                      <Form.Item label="Họ và tên" name="fullName" labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
+                      <Form.Item
+                        label="Họ và tên"
+                        name="fullName"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      >
                         <Input size="middle" placeholder="Họ và tên" />
                       </Form.Item>
                     </Col>
 
                     <Col xl={8}>
-                      <Form.Item label="Credits" name="credits" labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
+                      <Form.Item
+                        label="Credits"
+                        name="credits"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      >
                         <Input
                           disabled
                           size="middle"
@@ -261,16 +324,27 @@ const AccountDetailUserPage = () => {
                     </Col>
 
                     <Col xl={8}>
-                      <Form.Item label={t("register.phone")} name="phone" labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
+                      <Form.Item
+                        label={t("register.phone")}
+                        name="phone"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      >
                         <Input size="middle" placeholder="phone" />
                       </Form.Item>
                     </Col>
 
                     <Col xl={8}>
-                      <Form.Item label="Zalo" name="zalo" labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
+                      <Form.Item
+                        label="Zalo"
+                        name="zalo"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      >
                         <Input size="middle" placeholder="zalo" />
                       </Form.Item>
                     </Col>
+
                     <Col xl={8}>
                       <Form.Item
                         label="Loại tài khoản"
@@ -294,7 +368,12 @@ const AccountDetailUserPage = () => {
                     </Col>
 
                     <Col span={8}>
-                      <Form.Item label="Id page" name="idPage" labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
+                      <Form.Item
+                        label="Id page"
+                        name="idPage"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      >
                         <Input size="middle" placeholder="Id page" />
                       </Form.Item>
                     </Col>
@@ -306,14 +385,46 @@ const AccountDetailUserPage = () => {
                         labelCol={{ span: 24 }}
                         wrapperCol={{ span: 24 }}
                       >
-                        <Input size="middle" placeholder="Account Ads Id" style={{ width: "100%", fontSize: 16 }} />
+                        <Input
+                          size="middle"
+                          placeholder="Account Ads Id"
+                          style={{ width: "100%", fontSize: 16 }}
+                        />
                       </Form.Item>
+                    </Col>
+
+                     {/* ====== Chế độ tối ưu (isOptimization) ====== */}
+                    <Col xl={8}>
+                      <Form.Item
+                        label="Chế độ tối ưu"
+                        name="isOptimization"
+                        valuePropName="checked"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      >
+                        <Switch
+                          checkedChildren="Tự động tối ưu"
+                          unCheckedChildren="Tối ưu chỉnh tay"
+                        />
+                      </Form.Item>
+                      <div
+                        style={{ color: "#94a3b8", fontSize: 12, marginTop: -8 }}
+                      >
+                        {isOptimizationWatch
+                          ? "Tự động tối ưu"
+                          : "Tối ưu chỉnh tay"}
+                      </div>
                     </Col>
                   </Row>
 
                   <Row gutter={[0, 16]}>
                     <Col span={24}>
-                      <Form.Item label="Token User" name="token" labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
+                      <Form.Item
+                        label="Token User"
+                        name="token"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      >
                         <Input.Group compact>
                           <Form.Item name="token" noStyle>
                             <Input
@@ -338,7 +449,9 @@ const AccountDetailUserPage = () => {
                               try {
                                 const tokenValue = form.getFieldValue("token");
                                 if (tokenValue) {
-                                  await navigator.clipboard.writeText(tokenValue);
+                                  await navigator.clipboard.writeText(
+                                    tokenValue
+                                  );
                                   message.success("Đã copy Token!");
                                 } else {
                                   message.warning("Không có dữ liệu để copy");
@@ -357,16 +470,34 @@ const AccountDetailUserPage = () => {
 
                   <Row gutter={[0, 16]}>
                     <Col span={24}>
-                      <Form.Item label="Access Token page" name="accessToken" labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
-                        <Input size="middle" placeholder="Access Token page" style={{ width: "100%", fontSize: 16 }} />
+                      <Form.Item
+                        label="Access Token page"
+                        name="accessToken"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      >
+                        <Input
+                          size="middle"
+                          placeholder="Access Token page"
+                          style={{ width: "100%", fontSize: 16 }}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
 
                   <Row gutter={[0, 16]}>
                     <Col span={24}>
-                      <Form.Item label="Cookie" name="cookie" labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
-                        <Input size="middle" placeholder="Cookie" style={{ width: "100%", fontSize: 16 }} />
+                      <Form.Item
+                        label="Cookie"
+                        name="cookie"
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                      >
+                        <Input
+                          size="middle"
+                          placeholder="Cookie"
+                          style={{ width: "100%", fontSize: 16 }}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -379,7 +510,11 @@ const AccountDetailUserPage = () => {
                         labelCol={{ span: 24 }}
                         wrapperCol={{ span: 24 }}
                       >
-                        <Input size="middle" placeholder="Access Token User" style={{ width: "100%", fontSize: 16 }} />
+                        <Input
+                          size="middle"
+                          placeholder="Access Token User"
+                          style={{ width: "100%", fontSize: 16 }}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -421,69 +556,118 @@ const AccountDetailUserPage = () => {
                   {pages?.length > 0 && (
                     <Card
                       size="small"
-                      style={{ marginTop: 8, background: "#0b1220", borderColor: "#334155" }}
+                      style={{
+                        marginTop: 8,
+                        background: "#0b1220",
+                        borderColor: "#334155",
+                      }}
                       title={
                         <span style={{ color: "#fff", fontWeight: 600 }}>
-                          Chọn trang Facebook ({pages.length}) — {accountDetailData?.isInternal ? "Internal flow" : "Normal flow"}
+                          Chọn trang Facebook ({pages.length}) —{" "}
+                          {accountDetailData?.isInternal
+                            ? "Internal flow"
+                            : "Normal flow"}
                         </span>
                       }
                     >
-                      {pages.map((p: { idPage: any; name: any; accessToken: any; __raw?: any; }, idx: number) => {
-                        const isSelected = selectedPageId === p.idPage;
-                        return (
-                          <Row
-                            key={p.idPage ?? idx}
-                            style={{
-                              padding: "8px 0",
-                              borderBottom: idx < pages.length - 1 ? "1px solid #1f2937" : "none",
-                            }}
-                            align="middle"
-                            gutter={12}
-                          >
-                            <Col xs={24} md={8}>
-                              <div style={{ color: "#93c5fd" }}>
-                                Tên Page:{" "}
-                                <strong style={{ color: "#fff" }}>
-                                  {p.name || "-"}
-                                </strong>
-                              </div>
+                      {pages.map(
+                        (
+                          p: {
+                            idPage: any;
+                            name: any;
+                            accessToken: any;
+                            __raw?: any;
+                          },
+                          idx: number
+                        ) => {
+                          const isSelected = selectedPageId === p.idPage;
+                          return (
+                            <Row
+                              key={p.idPage ?? idx}
+                              style={{
+                                padding: "8px 0",
+                                borderBottom:
+                                  idx < pages.length - 1
+                                    ? "1px solid #1f2937"
+                                    : "none",
+                              }}
+                              align="middle"
+                              gutter={12}
+                            >
+                              <Col xs={24} md={8}>
+                                <div style={{ color: "#93c5fd" }}>
+                                  Tên Page:{" "}
+                                  <strong style={{ color: "#fff" }}>
+                                    {p.name || "-"}
+                                  </strong>
+                                </div>
 
-                              <div style={{ color: "#93c5fd" }}>
-                                ID Page:{" "}
-                                <strong style={{ color: "#fff" }}>
-                                  {p.idPage}
-                                </strong>
-                              </div>
+                                <div style={{ color: "#93c5fd" }}>
+                                  ID Page:{" "}
+                                  <strong style={{ color: "#fff" }}>
+                                    {p.idPage}
+                                  </strong>
+                                </div>
 
-                              <div style={{ color: "#94a3b8", fontSize: 12, marginTop: 4 }}>
-                                Token (source: {accountDetailData?.isInternal ? "internal" : "normal"}): <em>{truncate(p.accessToken, 12, 6)}</em>
-                              </div>
-                            </Col>
+                                <div
+                                  style={{
+                                    color: "#94a3b8",
+                                    fontSize: 12,
+                                    marginTop: 4,
+                                  }}
+                                >
+                                  Token (source:{" "}
+                                  {accountDetailData?.isInternal
+                                    ? "internal"
+                                    : "normal"}
+                                  ):{" "}
+                                  <em>{truncate(p.accessToken, 12, 6)}</em>
+                                </div>
+                              </Col>
 
-                            <Col xs={24} md={10} style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                              <Button
-                                className="btn-text"
-                                onClick={() => window.open(`https://facebook.com/${p.idPage}`, "_blank")}
+                              <Col
+                                xs={24}
+                                md={10}
+                                style={{
+                                  display: "flex",
+                                  gap: 8,
+                                  flexWrap: "wrap",
+                                }}
                               >
-                                Mở Page
-                              </Button>
+                                <Button
+                                  className="btn-text"
+                                  onClick={() =>
+                                    window.open(
+                                      `https://facebook.com/${p.idPage}`,
+                                      "_blank"
+                                    )
+                                  }
+                                >
+                                  Mở Page
+                                </Button>
 
-                              <Button
-                                type={isSelected ? "default" : "primary"}
-                                onClick={() => handleChoosePage(p)}
-                                disabled={isSelected}
-                              >
-                                {isSelected ? "Đang chọn" : "Chọn trang này"}
-                              </Button>
-                            </Col>
-                          </Row>
-                        );
-                      })}
+                                <Button
+                                  type={isSelected ? "default" : "primary"}
+                                  onClick={() => handleChoosePage(p)}
+                                  disabled={isSelected}
+                                >
+                                  {isSelected ? "Đang chọn" : "Chọn trang này"}
+                                </Button>
+                              </Col>
+                            </Row>
+                          );
+                        }
+                      )}
                     </Card>
                   )}
                 </Form>
 
-                <Flex justify="center" gap={12} wrap="wrap" style={{ marginTop: 24 }}>
+                <Flex
+                  justify="center"
+                  gap={12}
+                  wrap="wrap"
+                  style={{ marginTop: 24 }}
+                >
                   <Button className="btn-text" onClick={handleSubmit}>
                     Cập nhật tài khoản
                   </Button>
