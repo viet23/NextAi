@@ -74,7 +74,7 @@ function App() {
         {/* Widget chat cố định (hiển thị trên mọi trang) */}
         <ChatWidget
           title="Hỗ trợ quảng cáo"
-          systemPrompt="Bạn là trợ lý giúp tối ưu quảng cáo Facebook/Google/TikTok cho SMEs Việt Nam. Trả lời ngắn gọn, có checklist/next-steps."
+          systemPrompt="Bạn là trợ lý giúp tối ưu quảng cáo Facebook cho SMEs Việt Nam. Trả lời ngắn gọn, có checklist/next-steps."
           endpoint={CHAT_ENDPOINT}
           defaultOpen={false}
           position={{ right: 18, bottom: 18 }}
