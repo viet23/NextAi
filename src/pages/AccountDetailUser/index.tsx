@@ -1,5 +1,5 @@
 // src/pages/account/AccountDetailUserPage.tsx
-import { CaretRightOutlined } from "@ant-design/icons";
+import { CaretRightOutlined, ReloadOutlined } from "@ant-design/icons"; // <-- + ReloadOutlined
 import "./AccountDetail.scss";
 import {
   Button,
@@ -25,6 +25,8 @@ import {
 import { useGetRoleGroupsQuery } from "src/store/api/roleApi";
 import { useTranslation } from "react-i18next";
 import { store } from "src/store/store";
+// --- NEW: import lazy sync hook
+import { useLazyGetSyncFacebookPostsQuery } from "src/store/api/facebookApi";
 
 const { Panel } = Collapse;
 
@@ -49,6 +51,10 @@ const AccountDetailUserPage = () => {
     useUpdateAccountGroupMutation();
 
   const { data: roleGroupsData } = useGetRoleGroupsQuery({});
+
+  // --- NEW: init lazy sync
+  const [triggerSync, { isFetching: isSyncing }] =
+    useLazyGetSyncFacebookPostsQuery();
 
   // Watch optimization state to render label in realtime
   const isOptimizationWatch = Form.useWatch("isOptimization", form);
@@ -254,6 +260,30 @@ const AccountDetailUserPage = () => {
   const truncate = (s?: string, head = 16, tail = 8) =>
     s ? `${s.slice(0, head)}…${s.slice(-tail)}` : "-";
 
+  // --- NEW: handler to sync data
+  const handleSync = async () => {
+    const SYNC_KEY = "sync";
+    try {
+      message.loading({ content: "Đang đồng bộ...", key: SYNC_KEY });
+      // nếu có idPage thì truyền lên, nếu không truyền null (backend tự xử lý)
+      const pageId = accountDetailData?.idPage ?? null;
+
+      // unwrap để throw error nếu có
+      const data = await triggerSync({ pageId }).unwrap();
+
+      if (data) {
+        await refetch?.();
+        message.success({ content: "Đồng bộ thành công", key: SYNC_KEY, duration: 2 });
+      } else {
+        await refetch?.();
+        message.warning({ content: "Không có dữ liệu mới", key: SYNC_KEY, duration: 2 });
+      }
+    } catch (err) {
+      console.error("Sync error:", err);
+      message.error({ content: "Đồng bộ thất bại", key: "sync" });
+    }
+  };
+
   return (
     <PageTitleHOC title="Chi tiết tài khoản">
       <Layout style={{ minHeight: "100vh", background: "#0f172a" }}>
@@ -393,7 +423,7 @@ const AccountDetailUserPage = () => {
                       </Form.Item>
                     </Col>
 
-                     {/* ====== Chế độ tối ưu (isOptimization) ====== */}
+                    {/* ====== Chế độ tối ưu (isOptimization) ====== */}
                     <Col xl={8}>
                       <Form.Item
                         label="Chế độ tối ưu"
@@ -549,6 +579,20 @@ const AccountDetailUserPage = () => {
                           placeholder="Internal Page Access Token (được lấy từ luồng internal khi chọn Page)"
                         />
                       </Form.Item>
+                    </Col>
+                  </Row>
+
+                  {/* --- NEW: nút đồng bộ dữ liệu --- */}
+                  <Row gutter={[0, 16]}>
+                    <Col span={24} style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                      <Button
+                        icon={<ReloadOutlined />}
+                        onClick={handleSync}
+                        loading={isSyncing}
+                        className="btn-text"
+                      >
+                        Đồng bộ dữ liệu
+                      </Button>
                     </Col>
                   </Row>
 

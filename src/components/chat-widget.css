@@ -1,0 +1,24 @@
+/* ------------------------------------------------------------------
+chat-widget.css (đặt cạnh ChatWidget.tsx: src/components/ChatWidget/chat-widget.css)
+------------------------------------------------------------------- */
+/* stylelint-disable */
+.chat-widget-root{position:fixed;right:18px;bottom:18px;z-index:1000}
+.chat-toggle{border-radius:999px;height:44px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 22px rgba(0,0,0,.25)}
+.chat-panel{width:360px;height:520px;background:#0f1023;color:#e5e7eb;border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.4);display:flex;flex-direction:column}
+.chat-header{height:52px;display:flex;align-items:center;justify-content:space-between;padding:8px 8px 8px 10px;background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));border-bottom:1px solid rgba(255,255,255,.06)}
+.chat-header-left{display:flex;gap:10px;align-items:center}
+.chat-title .name{font-weight:600;line-height:1}
+.chat-title .online{font-size:12px;opacity:.75;display:flex;align-items:center;gap:6px}
+.chat-title .dot{width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block}
+.chat-list{flex:1;overflow:auto;padding:12px;display:grid;gap:10px;background:#0b0c1d}
+.chat-empty{opacity:.7;text-align:center;margin-top:40px}
+.msg{display:flex;gap:8px;max-width:90%}
+.msg.assistant{align-items:flex-end}
+.msg.user{margin-left:auto;justify-content:flex-end}
+.msg .av{background:#1f2937}
+.bubble{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);padding:10px 12px;border-radius:16px;line-height:1.5}
+.msg.user .bubble{background:#2563eb;border-color:#2563eb;color:white}
+.typing{display:flex;align-items:center;gap:8px;opacity:.8}
+.chat-input{display:grid;grid-template-columns:1fr auto;gap:8px;padding:10px;border-top:1px solid rgba(255,255,255,.06);background:#0f1023}
+
+
