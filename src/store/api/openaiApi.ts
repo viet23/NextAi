@@ -51,6 +51,7 @@ const openaiApi = api.injectEndpoints({
       }),
       transformResponse: (res: any) => res,
     }),
+
     openaiCreativeChat: build.mutation<any, any>({
       query: body => ({
         url: "/api/v1/openai/creative-chat",
@@ -59,21 +60,25 @@ const openaiApi = api.injectEndpoints({
       }),
       transformResponse: (res: any) => res,
     }),
-    openaiScoreCaption: build.mutation<{ ok: boolean; score: number | null; raw: string }, { contentFetchOpportunityScore: string; captionText: string }>({
-      query: (body) => ({
+
+    openaiScoreCaption: build.mutation<
+      { ok: boolean; score: number | null; raw: string },
+      { contentFetchOpportunityScore: string; captionText: string }
+    >({
+      query: body => ({
         url: "/api/v1/openai/score-caption",
         method: "POST",
         body,
       }),
-      // Có thể map về chỉ số điểm cho tiện FE
       transformResponse: (res: any) => ({
         ok: !!res?.ok,
         score: typeof res?.score === "number" ? res.score : null,
         raw: res?.raw ?? "",
       }),
     }),
+
     openaiTranslateExpand: build.mutation<any, { text: string }>({
-      query: (body) => ({
+      query: body => ({
         url: "/api/v1/openai/translate-expand",
         method: "POST",
         body,
@@ -81,8 +86,11 @@ const openaiApi = api.injectEndpoints({
       transformResponse: (res: any) => res,
     }),
 
-    openaiGenerateCaption: build.mutation<{ ok: boolean; caption: string }, { contentGenerateCaption: string; description: string }>({
-      query: (body) => ({
+    openaiGenerateCaption: build.mutation<
+      { ok: boolean; caption: string },
+      { contentGenerateCaption: string; description: string }
+    >({
+      query: body => ({
         url: "/api/v1/openai/generate-caption",
         method: "POST",
         body,
@@ -92,16 +100,40 @@ const openaiApi = api.injectEndpoints({
         caption: res?.caption ?? "",
       }),
     }),
-    openaiPromptChat: build.mutation<{ ok: boolean; text: string }, { promptContent: string }>({
-      query: (body) => ({
-        url: '/api/v1/openai/prompt-chat',
-        method: 'POST',
+
+    openaiPromptChat: build.mutation<
+      { ok: boolean; text: string },
+      { promptContent: string }
+    >({
+      query: body => ({
+        url: "/api/v1/openai/prompt-chat",
+        method: "POST",
         body,
       }),
-      transformResponse: (res: any) => ({ ok: !!res?.ok, text: res?.text ?? '' }),
+      transformResponse: (res: any) => ({
+        ok: !!res?.ok,
+        text: res?.text ?? "",
+      }),
     }),
 
-
+    /** 🟢 Gọi API chat widget (đa turn, có previousResponseId) */
+    openaiChatWidget: build.mutation<
+      { reply: string; responseId?: string | null },
+      {
+        messages: { role: string; content: string }[];
+        previousResponseId?: string | null;
+      }
+    >({
+      query: body => ({
+        url: "/api/v1/openai/chat-widget",
+        method: "POST",
+        body,
+      }),
+      transformResponse: (res: any) => ({
+        reply: res?.reply ?? "",
+        responseId: res?.responseId ?? null,
+      }),
+    }),
   }),
 });
 
@@ -115,8 +147,8 @@ export const {
   useOpenaiScoreCaptionMutation,
   useOpenaiTranslateExpandMutation,
   useOpenaiGenerateCaptionMutation,
-  useOpenaiPromptChatMutation
-
+  useOpenaiPromptChatMutation,
+  useOpenaiChatWidgetMutation,   // 👈 hook mới
 } = openaiApi;
 
 export default openaiApi;
