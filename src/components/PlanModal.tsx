@@ -51,16 +51,16 @@ const PlanModal = ({ visible, onClose }: AutoPostModalProps) => {
     features: string[];
   }> = useMemo(
     () => [
-      {
-        name: "Free",
-        price: "0đ",
-        sub: "/ 7 Days",
-        features: [
-          "Số lượng chiến dịch: tối đa 2 chiến dịch.",
-          "Ngân sách mỗi chiến dịch: tối đa 5 triệu/tháng.",
-          "Không mở tính năng tối ưu nâng cao (AI chỉ gợi ý cơ bản).",
-        ],
-      },
+      // {
+      //   name: "Free",
+      //   price: "0đ",
+      //   sub: "/ 7 Days",
+      //   features: [
+      //     "Số lượng chiến dịch: tối đa 2 chiến dịch.",
+      //     "Ngân sách mỗi chiến dịch: tối đa 5 triệu/tháng.",
+      //     "Không mở tính năng tối ưu nâng cao (AI chỉ gợi ý cơ bản).",
+      //   ],
+      // },
       {
         name: "Starter",
         price: "499.000đ",

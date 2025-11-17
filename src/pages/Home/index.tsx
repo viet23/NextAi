@@ -88,16 +88,16 @@ const LandingPage: React.FC = () => {
   ];
 
   const plans = [
-    {
-      name: "FREE",
-      price: "0đ",
-      sub: "/ 7 Days",
-      features: [
-        "Số lượng chiến dịch: tối đa 2 chiến dịch.",
-        "Ngân sách mỗi chiến dịch: tối đa 5 triệu/tháng.",
-        "Không mở tính năng tối ưu nâng cao (AI chỉ gợi ý cơ bản).",
-      ],
-    },
+    // {
+    //   name: "FREE",
+    //   price: "0đ",
+    //   sub: "/ 7 Days",
+    //   features: [
+    //     "Số lượng chiến dịch: tối đa 2 chiến dịch.",
+    //     "Ngân sách mỗi chiến dịch: tối đa 5 triệu/tháng.",
+    //     "Không mở tính năng tối ưu nâng cao (AI chỉ gợi ý cơ bản).",
+    //   ],
+    // },
     {
       name: "STARTER",
       price: "499.000đ",
@@ -339,7 +339,7 @@ const LandingPage: React.FC = () => {
               }}
               onClick={scrollToFooter}
             >
-              DÙNG THỬ MIỄN PHÍ
+              Trải nghiệm 1 tháng chỉ với 499k
             </button>
           </div>
         </div>
@@ -376,7 +376,7 @@ const LandingPage: React.FC = () => {
 
               <div style={{ display: "flex", justifyContent: "flex-start", marginTop: 20 }}>
                 <Link to="#" className="btn-text" onClick={scrollToFooter}>
-                  Dùng thử miễn phí
+                  Trải nghiệm 1 tháng chỉ với 499k
                 </Link>
               </div>
             </div>
