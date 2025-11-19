@@ -624,7 +624,7 @@ const LandingPage: React.FC = () => {
               }}
             >
               <h3 style={{ marginBottom: 16, fontSize: 18, fontWeight: 600 }}>
-                ĐĂNG KÝ DÙNG THỬ <br /> MIỄN PHÍ 7 NGÀY
+                ĐĂNG KÝ TRẢI NGHIỆM ƯU ĐÃI NGAY 
               </h3>
 
               <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
